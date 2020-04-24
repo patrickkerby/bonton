@@ -1,0 +1,62 @@
+.nav-primary {
+  ul {
+    justify-content: space-evenly;
+    height: 106px;
+
+    li a {
+      font-size: 22px;
+      color: #343534;
+    }
+  }
+}
+
+.banner .nav li {
+  @extend .nav-item;
+}
+
+.banner .nav a {
+  @extend .nav-link;
+}
+
+.hero {
+  background-size: cover;
+  background-position: center center;
+}
+
+.post-type-archive header.hero {
+  height: 450px;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  margin: 0 30px;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    margin: 10px;
+    border: solid 2px #fff;
+  }
+
+  h2 {
+    font-size: 63px;
+    display: flex;
+    flex-direction: column;
+    color: #fff;
+    text-align: center;
+    line-height: 72px;
+
+    &::after {
+      content: "........................";
+      letter-spacing: 6px;
+      font-size: 30px;
+      color: $highlight;
+      margin: 0 auto;
+    }
+  }
+}
