@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use Sober\Controller\Controller;
-require '/Users/patrickkerby/Documents/sites/valet/bonton/web/app/themes/bonton/vendor/autoload.php';
 
 class PickupList extends Controller
 {
