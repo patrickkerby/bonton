@@ -1,22 +1,42 @@
 .nav-primary {
   ul {
-    justify-content: space-evenly;
+    justify-content: space-around;
     height: 106px;
 
+    li {
+      display: flex;
+      align-content: center;
+      width: 19%;
+      justify-content: center;
+    }
+
     li a {
-      font-size: 22px;
+      font-size: 19px;
       color: #343534;
+      padding-top: 2rem;
+    }
+
+    li.menu-bon-ton-bakery-patisserie {
+      width: 23%;
+
+      a {
+        display: flex;
+        width: 311px;
+        height: 99px;
+        text-indent: -999999px;
+        background: url(../images/BonTon-Logo.png) no-repeat center center;
+        background-size: contain;
+        border: solid 10px #fff;
+      }
     }
   }
 }
-
-.banner .nav li {
-  @extend .nav-item;
-}
-
-.banner .nav a {
-  @extend .nav-link;
-}
+// .banner .nav li {
+//   @extend .nav-item;
+// }
+// .banner .nav a {
+//   @extend .nav-link;
+// }
 
 .hero {
   background-size: cover;
