@@ -90,7 +90,7 @@ $woocommerce = new Client(
 
   // Item quantity (ex: 1/2 dozen buns would be 6 buns)
   function itemQuantity($name) {
-    if(strpos($name, " Dozen") !== false){
+    if(strpos($name, "- Dozen") !== false){
       return 12;
     } 
     elseif(strpos($name, "1/2 Dozen") !== false){
