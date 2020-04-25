@@ -4,7 +4,7 @@ ul,
 ol,
 li,
 div {
-  font-family: "Greycliff CF", Arial, Helvetica, sans-serif;
+  font-family: $font-family-sans-serif;
 }
 
 h1,
@@ -12,5 +12,5 @@ h2,
 h3,
 h4,
 h5 {
-  font-family: "OrpheusPro-Bold", Times, serif;
+  font-family: $font-family-serif;
 }

@@ -15,3 +15,50 @@ $highlight: ( #53c999 );
 /** Bootstrap navbar fix (https://git.io/fADqW) */
 $navbar-dark-toggler-icon-bg: none;
 $navbar-light-toggler-icon-bg: none;
+
+@font-face {
+  font-family: "Greycliff";
+  src:
+    url("../fonts/greycliff/GreycliffCF-Medium.woff2") format("woff2"),
+    url("../fonts/greycliff/GreycliffCF-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+  font-display: auto;
+}
+
+@font-face {
+  font-family: "Greycliff";
+  src:
+    url("../fonts/greycliff/GreycliffCF-Bold.woff2") format("woff2"),
+    url("../fonts/greycliff/GreycliffCF-Bold.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+  font-display: auto;
+}
+
+@font-face {
+  font-family: "Greycliff";
+  src:
+    url("../fonts/greycliff/GreycliffCF-ExtraBold.woff2") format("woff2"),
+    url("../fonts/greycliff/GreycliffCF-ExtraBold.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+  font-display: auto;
+}
+
+$font-family-sans-serif: Greycliff, Arial, sans-serif;
+$font-family-serif: orpheuspro, serif;
+
+@mixin slowfade($time: 0.4) {
+  -webkit-transition: all #{$time}s;
+  -moz-transition: all #{$time}s;
+  transition: all #{$time}s;
+}
+
+@mixin fullwidth() {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  width: 100vw;
+  left: calc(-1 * (100vw - 100%) / 2);
+}
