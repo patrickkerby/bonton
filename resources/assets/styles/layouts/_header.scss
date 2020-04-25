@@ -1,12 +1,16 @@
 .nav-primary {
+  margin-top: 2rem;
+
   ul {
     justify-content: space-around;
-    height: 106px;
+    position: relative;
+    z-index: 2;
+    margin-bottom: -1.5rem;
 
     li {
       display: flex;
       align-content: center;
-      width: 19%;
+      width: 18%;
       justify-content: center;
     }
 
@@ -17,16 +21,17 @@
     }
 
     li.menu-bon-ton-bakery-patisserie {
-      width: 23%;
+      width: 311px;
+      border: solid 10px #fff;
+      background: #343534;
 
       a {
         display: flex;
         width: 311px;
-        height: 99px;
+        height: 93px;
         text-indent: -999999px;
         background: url(../images/BonTon-Logo.png) no-repeat center center;
-        background-size: contain;
-        border: solid 10px #fff;
+        background-size: cover;
       }
     }
   }
