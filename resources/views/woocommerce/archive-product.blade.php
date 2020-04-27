@@ -23,29 +23,31 @@ the readme will list any important changes.
   @endphp
 
   @if(woocommerce_product_loop())
-    <section>
-    @php
-      woocommerce_product_loop_start();
-    @endphp
-
-    @if(wc_get_loop_prop('total'))
-      @while(have_posts())
+    <section class="row justify-content-center">
+      <div class="col-sm-11">
         @php
-          the_post();
-          do_action('woocommerce_shop_loop');
-          wc_get_template_part('content', 'product');
+          woocommerce_product_loop_start();
         @endphp
-      @endwhile
-    @endif
 
-    @php
-      woocommerce_product_loop_end();
-      do_action('woocommerce_after_shop_loop');
-    @endphp
-  @else
-    @php
-      do_action('woocommerce_no_products_found');
-    @endphp
+        @if(wc_get_loop_prop('total'))
+          @while(have_posts())
+            @php
+              the_post();
+              do_action('woocommerce_shop_loop');
+              wc_get_template_part('content', 'product');
+            @endphp
+          @endwhile
+        @endif
+
+        @php
+          woocommerce_product_loop_end();
+          do_action('woocommerce_after_shop_loop');
+        @endphp
+      @else
+        @php
+          do_action('woocommerce_no_products_found');
+        @endphp
+      </div>
     </section>
   @endif
 

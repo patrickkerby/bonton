@@ -13,4 +13,9 @@ h3,
 h4,
 h5 {
   font-family: $font-family-serif;
+  font-weight: normal;
+}
+
+.button {
+  border-radius: none;
 }

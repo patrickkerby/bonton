@@ -1,0 +1,180 @@
+.woocommerce {
+  li.product {
+    display: flex;
+    justify-content: center;
+
+    a.woocommerce-loop-product__link {
+      width: 100%;
+      height: 345px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: #343534;
+
+      @include slowfade;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+        margin: 10px 0 0 10px;
+        border: solid 2px #fff;
+      }
+
+      img.attachment-woocommerce_thumbnail {
+        flex-shrink: 0;
+        min-width: 100%;
+        min-height: 100%;
+        object-fit: cover;
+        margin: 0;
+        padding: 0;
+        opacity: 1;
+      }
+
+      .price {
+        display: none;
+      }
+
+      h2.woocommerce-loop-product__title {
+        position: absolute;
+        bottom: 2.5rem;
+        background: #343534;
+        font-size: 20px;
+        line-height: 21px;
+        color: #fff;
+        padding: 1rem 1.5rem;
+      }
+
+      &:hover {
+        h2 {
+          bottom: 70%;
+          background: none;
+
+          @include slowfade(0.3);
+        }
+
+        img {
+          opacity: 0.2;
+
+          @include slowfade;
+        }
+      }
+    }
+
+    a.button {
+      display: none;
+    }
+
+    .inside-thumb {
+      display: flex;
+      position: absolute;
+      bottom: 2rem;
+      top: unset !important;
+      right: unset !important;
+      padding: 0.75rem 1.5rem;
+      border: solid 2px $highlight;
+      margin: 0;
+      border-radius: 0;
+      background: none;
+      color: #53c999;
+      opacity: 0;
+      z-index: 20;
+
+      span,
+      span:focus {
+        color: #53c999 !important;
+        font-size: 18px;
+        font-weight: normal;
+        text-transform: none;
+        line-height: 18px;
+        padding: 0;
+      }
+
+      &:hover {
+        span,
+        span:focus {
+          background: none !important;
+        }
+      }
+
+      @include slowfade(0.2);
+    }
+  }
+
+  //Quick View styles
+  .yith-quick-view.yith-modal {
+    .yith-wcqv-wrapper {
+      top: 2rem !important;
+      left: 40% !important;
+      width: 60vw !important;
+      height: 100vh !important;
+    }
+
+    .yith-quick-view-overlay {
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .yith-wcqv-head {
+      top: 1.5rem;
+      right: unset;
+      left: -1.75rem;
+      background: #fff;
+      border-radius: 2rem;
+      padding: 1.25rem;
+    }
+
+    .yith-wcqv-main {
+      box-shadow: 0 0 41px 0 rgba(0, 0, 0, 0.22);
+      padding-bottom: 4rem;
+    }
+
+    .yith-quick-view-content {
+      overflow-y: scroll;
+      padding: 4rem;
+
+      div.summary {
+        width: 100% !important;
+        display: inline-flex;
+        margin-top: -3rem;
+
+        .summary-content {
+          display: inline-flex;
+          justify-content: center;
+          flex-direction: column;
+          width: 100%;
+
+          h1 {
+            background: #f8f7f2;
+            color: #383838;
+            display: inline-flex;
+            font-size: 44px;
+            line-height: 46px;
+            text-transform: none;
+            text-align: center;
+            align-self: center;
+            padding: 2rem 4rem;
+          }
+        }
+      }
+    }
+
+    .yith-quick-view-content div.images {
+      width: 100% !important;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: calc(100% - 20px);
+        height: calc(100% - 20px);
+        margin: 10px;
+        border: solid 2px #fff;
+      }
+    }
+  }
+}

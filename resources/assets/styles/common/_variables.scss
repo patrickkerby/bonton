@@ -50,9 +50,9 @@ $font-family-sans-serif: Greycliff, Arial, sans-serif;
 $font-family-serif: orpheuspro, serif;
 
 @mixin slowfade($time: 0.4) {
-  -webkit-transition: all #{$time}s;
-  -moz-transition: all #{$time}s;
-  transition: all #{$time}s;
+  -webkit-transition: all #{$time}s ease-in-out;
+  -moz-transition: all #{$time}s ease-in-out;
+  transition: all #{$time}s ease-in-out;
 }
 
 @mixin fullwidth() {
