@@ -51,6 +51,8 @@
         line-height: 21px;
         color: #fff;
         padding: 1rem 1.5rem;
+        text-align: center;
+        max-width: 80%;
       }
 
       &:hover {
@@ -319,5 +321,10 @@
   //Filtered results
   .wpf-search-container section div {
     width: 100%;
+  }
+
+  ul.products li.product .woocommerce-placeholder {
+    border: none;
+    width: 38px;
   }
 }
