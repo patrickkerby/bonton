@@ -78,7 +78,6 @@ add_action('after_setup_theme', function () {
      * Add WooCommerce Support
      */
     add_theme_support('woocommerce');
-    remove_all_actions('woocommerce_sidebar');
     add_theme_support( 'wc-product-gallery-zoom' );
     add_theme_support( 'wc-product-gallery-lightbox' );
     add_theme_support( 'wc-product-gallery-slider' );

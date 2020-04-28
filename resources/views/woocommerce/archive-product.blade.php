@@ -14,7 +14,7 @@ the readme will list any important changes.
 @version 3.4.0
 --}}
 
-@extends('layouts.app')
+@extends('layouts.shop')
 
 @section('content')
   @php
@@ -23,8 +23,8 @@ the readme will list any important changes.
   @endphp
 
   @if(woocommerce_product_loop())
-    <section class="row justify-content-center">
-      <div class="col-sm-11">
+    <section class="row no-gutters justify-content-center">
+      <div>
         @php
           woocommerce_product_loop_start();
         @endphp
@@ -32,7 +32,7 @@ the readme will list any important changes.
         @if(wc_get_loop_prop('total'))
           @while(have_posts())
             @php
-              the_post();
+                the_post();
               do_action('woocommerce_shop_loop');
               wc_get_template_part('content', 'product');
             @endphp
@@ -53,7 +53,6 @@ the readme will list any important changes.
 
   @php
     do_action('woocommerce_after_main_content');
-    do_action('get_sidebar', 'shop');
     do_action('get_footer', 'shop');
   @endphp
 @endsection

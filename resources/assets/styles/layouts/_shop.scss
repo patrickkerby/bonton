@@ -1,4 +1,8 @@
 .woocommerce {
+  .wrap {
+    padding: 3rem 0 0 0;
+  }
+
   li.product {
     display: flex;
     justify-content: center;
@@ -92,6 +96,7 @@
         text-transform: none;
         line-height: 18px;
         padding: 0;
+        width: auto;
       }
 
       &:hover {
@@ -108,10 +113,14 @@
   //Quick View styles
   .yith-quick-view.yith-modal {
     .yith-wcqv-wrapper {
-      top: 2rem !important;
+      top: 0 !important;
       left: 40% !important;
       width: 60vw !important;
       height: 100vh !important;
+
+      @include media-breakpoint-down(sm) {
+        width: 90vw !important;
+      }
     }
 
     .yith-quick-view-overlay {
@@ -135,6 +144,10 @@
     .yith-quick-view-content {
       overflow-y: scroll;
       padding: 4rem;
+
+      @include media-breakpoint-down(sm) {
+        padding: 0.75rem;
+      }
 
       div.summary {
         width: 100% !important;
@@ -176,5 +189,133 @@
         border: solid 2px #fff;
       }
     }
+  }
+
+  // Sidebar Filter
+  .wpf_item {
+    &::after {
+      content: "...................................";
+      letter-spacing: 4px;
+      line-height: 3px;
+      font-size: 18px;
+      color: $highlight;
+      margin: 1.5rem auto 0 auto;
+      overflow: hidden;
+    }
+  }
+
+  .wpf_item_wpf_cat label.wpf_item_name {
+    display: none; //hide title from only category section
+  }
+
+  .wpf_item_count {
+    color: #53c999;
+    font-family: $font-family-serif;
+    font-size: 15px;
+    background: none;
+    padding: 0.25rem 0 0 0.25rem;
+
+    &::before {
+      content: "(";
+    }
+
+    &::after {
+      content: ")";
+    }
+  }
+
+  .wpf_item_name {
+    font-family: $font-family-serif;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 0;
+    margin: 0 0 0.5rem 0;
+    border: none;
+  }
+
+  ul.wpf_hierachy {
+    display: flex;
+    flex-direction: column;
+
+    input {
+      display: none;
+    }
+
+    label {
+      font-family: $font-family-serif;
+      font-size: 22px;
+      font-weight: bold;
+
+      &::after {
+        content: ":";
+      }
+    }
+
+    .wpf_item_count {
+      display: none;
+    }
+
+    li {
+      border-bottom: solid 2px #ebe9e0;
+      padding-bottom: 25px;
+      margin-bottom: 25px;
+
+      &:last-of-type {
+        border: none;
+        padding-bottom: 0;
+        margin-bottom: 1rem;
+      }
+
+      ul.wpf_submenu li {
+        border: none;
+        margin-bottom: 0.55rem;
+        padding-bottom: 0;
+      }
+    }
+  }
+
+  ul.wpf_submenu,
+  ul.wpf_column_vertical {
+    border: none;
+    display: flex;
+    flex-direction: column;
+
+    input {
+      display: inline-flex;
+      border: 2px solid #53c999;
+      width: 15px;
+      height: 15px;
+      margin-top: 3px;
+    }
+
+    input[type="checkbox"]:checked::before {
+      content: "";
+      width: 7px;
+      height: 7px;
+      background: #53c999;
+      left: 2px;
+      top: 2px;
+      position: relative;
+    }
+
+    label {
+      font-family: $font-family-sans-serif;
+      font-size: 18px;
+      font-weight: normal;
+      margin: 0;
+
+      &::after {
+        content: none;
+      }
+    }
+
+    .wpf_item_count {
+      display: inline-flex;
+    }
+  }
+
+  //Filtered results
+  .wpf-search-container section div {
+    width: 100%;
   }
 }
