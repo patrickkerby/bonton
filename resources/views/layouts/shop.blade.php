@@ -13,9 +13,7 @@
           </div>
          <div class="content col-sm-9">          
             @yield('content')
-          </div>
-          
-          
+          </div>                    
         </main>
       @else
         <main class="main row">

@@ -103,3 +103,31 @@ add_filter('sage/display_sidebar', function ($display) {
 
     return $display;
 });
+
+/**
+ * Add availability display to product single page and product modal
+ */
+add_filter('woocommerce_short_description', function($description) {    
+    static $display;
+
+    $terms = get_the_terms( get_the_ID(), 'pa_availability' );
+    $days_available = array_column($terms, 'name');
+    
+    if (in_array('Everyday', $days_available)) {
+        $display = '<div class="notice">This is available for pickup Tuesday-Saturday!</div>';
+    }
+    else {
+        $days = implode(', ', $days_available);
+        $display = '<div class="notice">This is only available for pickup '.$days .'!</div>';
+    }
+
+    return $description.$display;
+  }, 20);
+
+  remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
+
+    remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10 );
+    remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
+    remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10 );
+    
+    
