@@ -1,6 +1,6 @@
 .woocommerce {
   .wrap {
-    padding: 3rem 0 0 0;
+    padding: 3rem 10%;
   }
 
   ul.products {
@@ -41,6 +41,7 @@
         bottom: 2.5rem;
         background: #343534;
         font-size: 20px;
+        font-weight: 500;
         line-height: 21px;
         color: #fff;
         padding: 1rem 1.5rem;
@@ -205,7 +206,7 @@
   // Sidebar Filter
   .wpf_item {
     &::after {
-      content: "...................................";
+      content: ".............................................";
       letter-spacing: 4px;
       line-height: 3px;
       font-size: 18px;
@@ -213,6 +214,8 @@
       margin: 1.5rem auto 0 auto;
       overflow: hidden;
     }
+
+    overflow: hidden;
 
     li {
       margin-right: 0 !important;

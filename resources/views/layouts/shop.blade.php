@@ -5,7 +5,7 @@
     @php do_action('get_header') @endphp
     @include('partials.header')
 
-    <div class="wrap container" role="document">
+    <div class="wrap container-fluid" role="document">
       @if (App\display_sidebar())
         <main class="main row justify-content-center">
           <div class="sidebar col-sm-3">
