@@ -28,7 +28,7 @@ $woocommerce = new Client(
   $order_query = [
     'status' => 'processing',
     'after' => '2020-04-10T00:00:00',
-    'before' => '2020-04-23T23:59:59',
+    'before' => '2020-09-23T23:59:59',
     'per_page'=> '100'
   ];
   

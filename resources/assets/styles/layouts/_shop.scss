@@ -110,9 +110,11 @@
   .yith-quick-view.yith-modal {
     .yith-wcqv-wrapper {
       top: 0 !important;
-      left: 40% !important;
+      left: unset !important;
+      right: 0 !important;
       width: 60vw !important;
       height: 100vh !important;
+      max-width: 825px !important;
 
       @include media-breakpoint-down(sm) {
         width: 90vw !important;
