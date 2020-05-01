@@ -1,29 +1,57 @@
 .nav-primary {
   margin-top: 2rem;
 
+  @include media-breakpoint-down(lg) {
+    margin-top: 1rem;
+  }
+
   ul {
     justify-content: space-around;
     position: relative;
     z-index: 2;
     margin-bottom: -1.5rem;
 
+    @include media-breakpoint-down(lg) {
+      margin-bottom: -1rem;
+    }
+
     li {
       display: flex;
       align-content: center;
       width: 18%;
       justify-content: center;
+
+      @include media-breakpoint-down(lg) {
+        width: 11%;
+      }
     }
 
     li a {
       font-size: 19px;
       color: #343534;
       padding-top: 2rem;
+
+      @include media-breakpoint-down(lg) {
+        padding-top: 1.5rem;
+        font-size: 16px;
+        line-height: 16px;
+        text-align: center;
+      }
+
+      &:hover {
+        color: $highlight;
+      }
     }
 
     li.menu-bon-ton-bakery-patisserie {
       width: 311px;
       border: solid 10px #fff;
       background: #343534;
+
+      @include media-breakpoint-down(lg) {
+        width: 260px;
+        border: solid 6px #fff;
+      }
 
       a {
         display: flex;
@@ -32,6 +60,11 @@
         text-indent: -999999px;
         background: url(../images/BonTon-Logo.png) no-repeat center center;
         background-size: cover;
+
+        @include media-breakpoint-down(lg) {
+          width: 204;
+          height: 78px;
+        }
       }
     }
   }
@@ -57,6 +90,11 @@
   position: relative;
   margin: 0 30px;
 
+  @include media-breakpoint-down(lg) {
+    margin: 0 2%;
+    height: 275px;
+  }
+
   &::after {
     content: "";
     position: absolute;
@@ -66,6 +104,13 @@
     height: calc(100% - 20px);
     margin: 10px;
     border: solid 2px #fff;
+
+    @include media-breakpoint-down(lg) {
+      width: calc(100% - 8px);
+      height: calc(100% - 8px);
+      margin: 4px;
+      border: solid 2px #fff;
+    }
   }
 
   h2 {
@@ -75,6 +120,11 @@
     color: #fff;
     text-align: center;
     line-height: 72px;
+
+    @include media-breakpoint-down(lg) {
+      font-size: 48px;
+      line-height: 34px;
+    }
 
     &::after {
       content: "........................";

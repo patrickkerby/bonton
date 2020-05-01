@@ -8,10 +8,10 @@
     <div class="wrap container-fluid" role="document">
       @if (App\display_sidebar())
         <main class="main row justify-content-center">
-          <div class="sidebar col-sm-3">
+          <div class="sidebar col-md-4 col-lg-3">
             @include('partials.sidebar')
           </div>
-         <div class="content col-sm-9">          
+         <div class="content col-md-8 col-lg-9">          
             @yield('content')
           </div>                    
         </main>

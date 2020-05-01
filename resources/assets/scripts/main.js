@@ -12,6 +12,7 @@ import 'datatables.net-fixedheader-bs4';
 import 'datatables.net-responsive-bs4';
 import 'datatables.net-rowgroup-bs4';
 import 'datatables.net-searchpanes-bs4';
+import 'typeturajs';
 
 // Import everything from autoload
 import './autoload/**/*'

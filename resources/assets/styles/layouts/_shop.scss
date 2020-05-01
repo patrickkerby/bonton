@@ -1,6 +1,10 @@
 .woocommerce {
   .wrap {
     padding: 3rem 10%;
+
+    @include media-breakpoint-down(lg) {
+      padding: 3rem 2%;
+    }
   }
 
   ul.products {
@@ -233,6 +237,11 @@
     background: none;
     padding: 0.25rem 0 0 0.25rem;
 
+    @include media-breakpoint-down(lg) {
+      padding: 0.25rem 0 0 0;
+      font-size: 14px;
+    }
+
     &::before {
       content: "(";
     }
@@ -305,6 +314,10 @@
       width: 15px;
       height: 15px;
       margin-top: 3px;
+
+      @include media-breakpoint-down(lg) {
+        margin-right: 1px;
+      }
     }
 
     input[type="checkbox"]:checked::before {
@@ -318,13 +331,31 @@
     }
 
     label {
+      --tt-key: filter-label;
+      --tt-max: 1300;
+      --tt-ease: ease;
+
       font-family: $font-family-sans-serif;
       font-size: 17px;
       font-weight: normal;
       margin: 0;
 
+      // @include media-breakpoint-down(lg) {
+      //   font-size: 14.5px;
+      // }
+
       &::after {
         content: none;
+      }
+    }
+
+    @keyframes filter-label {
+      25% {
+        font-size: 0.5rem;
+      }
+
+      100% {
+        font-size: 1rem;
       }
     }
 
