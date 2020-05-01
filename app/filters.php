@@ -111,7 +111,19 @@ add_filter('woocommerce_short_description', function($description) {
     static $display;
 
     $terms = get_the_terms( get_the_ID(), 'pa_availability' );
-    $days_available = array_column($terms, 'name');
+
+    $prefix = $days_available = '';
+   
+    if (is_array($terms) || is_object($terms)) {
+        
+        foreach ($terms as $term) {
+            $days = $term->name;
+            $days_available .= $prefix . '' . $days . '';
+            $prefix = ', ';
+        }
+    }
+    $days_available = explode(",",$days_available);
+    
 
     if (in_array('Everyday', $days_available)) {
         $display = '<div class="notice">This is available for pickup Tuesday-Saturday!</div>';
@@ -120,6 +132,7 @@ add_filter('woocommerce_short_description', function($description) {
         $days = implode(', ', $days_available);
         $display = '<div class="notice">This is only available for pickup '.$days .'!</div>';
     }
+
 
     return $description.$display;
 }, 20);
