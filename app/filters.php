@@ -129,7 +129,7 @@ remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_p
 remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_product_link_close', 5 );
 remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10 );
 
-
+// TODO: check to see if this removes tax label from emails
 function sv_change_email_tax_label( $label ) {
     $label = '';
     return $label;
@@ -147,9 +147,7 @@ add_filter( 'woocommerce_countries_ex_tax_or_vat', 'sv_change_email_tax_label' )
  * @donate $9     https://businessbloomer.com/bloomer-armada/
  */
  
-add_filter( 'woocommerce_variable_price_html', 'bbloomer_variation_price_format', 10, 2 );
- 
-function bbloomer_variation_price_format( $price, $product ) {
+add_filter( 'woocommerce_variable_price_html', function( $price, $product ) {
  
 // 1. Get min/max regular and sale variation prices
  
@@ -168,7 +166,5 @@ if ( ! ( $min_var_reg_price == $max_var_reg_price && $min_var_sale_price == $max
    }
 }
  
-// 3. Return $price
- 
 return $price;
-}
+}, 10, 2 );

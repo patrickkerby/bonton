@@ -1,6 +1,8 @@
 /** Import Bootstrap functions */
 @import "~bootstrap/scss/functions";
 
+$grid-gutter-width: 50px !default;
+
 $theme-colors: (
   primary: #53c999
 );

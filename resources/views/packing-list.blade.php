@@ -23,11 +23,11 @@ $woocommerce = new Client(
   $customers = $woocommerce->get('customers');
   
   // All products
-    $products = $woocommerce->get('products');
+    // $products = $woocommerce->get('products');
 
   // Cooler Products (Full objects)
   // Warning! as we add multiple categories to products, it may mess with the cooler vs. shelf categorization
-    $products_cooler = $woocommerce->get('products', array('status' => 'publish', 'category'=>'22,53,51', 'per_page'=> '100'));
+    $products_cooler = $woocommerce->get('products', array('status' => 'publish', 'category'=>'22,53,51, 84, 104', 'per_page'=> '100'));
   
   // Cooler Product ID Array
     $prefix = $cooler_array = '';
