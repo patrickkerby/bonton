@@ -8,7 +8,7 @@
     <div class="wrap container-fluid" role="document">
       @if (App\display_sidebar())
         <main class="main row justify-content-center">
-          <div class="sidebar typetura col-sm-4 col-lg-3">
+          <div class="sidebar typetura d-none d-sm-block col-sm-4 col-lg-3">
             @include('partials.sidebar')
           </div>
          <div class="content col-sm-8 col-lg-9">          

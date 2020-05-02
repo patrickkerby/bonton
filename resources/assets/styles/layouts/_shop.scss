@@ -119,10 +119,11 @@
       right: 0 !important;
       width: 60vw !important;
       height: 100vh !important;
-      max-width: 825px !important;
+      max-width: 900px !important;
 
-      @include media-breakpoint-down(sm) {
+      @include media-breakpoint-down(md) {
         width: 90vw !important;
+        max-width: 90vw !important;
       }
     }
 
