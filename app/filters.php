@@ -181,3 +181,24 @@ if ( ! ( $min_var_reg_price == $max_var_reg_price && $min_var_sale_price == $max
  
 return $price;
 }, 10, 2 );
+
+//Get rid of sku and categories on product modal
+remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );
+
+// settings for product modal photo gallery. show bullets rather than thumbs. show prev and next arrows
+add_filter( 'woocommerce_single_product_carousel_options', function( $options ) {
+    $options['directionNav'] = true;
+    $options['controlNav'] = true;
+	return $options;
+} );
+
+
+    remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
+    
+    
+add_action('woocommerce_after_shop_loop_item', function() {
+global $product;
+$link = $product->get_permalink();
+$id = $product->get_id();
+echo do_shortcode('<a class="inside-thumb quick-view-button manual" data-product_id="' . esc_attr($id) . '" href="#"><span>Learn more</a></span>');
+} );

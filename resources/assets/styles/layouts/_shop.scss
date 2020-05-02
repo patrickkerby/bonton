@@ -48,31 +48,12 @@
         font-weight: 500;
         line-height: 21px;
         color: #fff;
-        padding: 1rem 1.5rem;
+        padding: 1rem 1.25rem;
         text-align: center;
         max-width: 80%;
       }
 
-      &:hover {
-        h2 {
-          bottom: 70%;
-          background: none;
-
-          @include slowfade(0.3);
-        }
-
-        img {
-          opacity: 0.2;
-
-          @include slowfade;
-        }
-      }
-
-      a.button {
-        display: none;
-      }
-
-      .inside-thumb {
+      .inside-thumb.quick-view-button {
         display: flex;
         position: absolute;
         bottom: 2rem;
@@ -88,8 +69,7 @@
         z-index: 20;
         width: auto;
 
-        span,
-        span:focus {
+        span {
           color: $highlight !important;
           font-size: 18px;
           font-weight: normal;
@@ -97,47 +77,78 @@
           line-height: 18px;
           padding: 0;
           width: auto;
-        }
+          margin: 0;
+          display: inline-flex;
+          height: auto;
+          background: none;
+          position: relative;
+          border-radius: none;
+          transform: none;
 
-        &:hover {
-          span,
-          span:focus {
-            background: none !important;
+          &::before,
+          &::after {
+            content: none;
           }
         }
-
-        @include slowfade(0.2);
       }
+
+      &:hover {
+        h2 {
+          bottom: 70%;
+          background: none;
+
+          @include slowfade(0.3);
+        }
+
+        img {
+          opacity: 0.2;
+
+          @include slowfade;
+        }
+
+        .inside-thumb.quick-view-button.manual {
+          opacity: 1;
+
+          @include slowfade;
+        }
+      }
+
+      // a.button {
+      //   display: none;
+      // }
+
+      @include slowfade(0.2);
     }
   }
 
   //Quick View styles
-  .yith-quick-view.yith-modal {
-    .yith-wcqv-wrapper {
-      top: 0 !important;
-      left: unset !important;
-      right: 0 !important;
-      width: 60vw !important;
-      height: 100vh !important;
-      max-width: 900px !important;
+  .pp_overlay {
+    background: rgba(255, 255, 255, 0.6);
+  }
 
-      @include media-breakpoint-down(md) {
-        width: 90vw !important;
-        max-width: 90vw !important;
-      }
+  .pp_woocommerce_quick_view {
+    top: 0 !important;
+    left: unset !important;
+    right: 0 !important;
+    width: 60vw !important;
+    height: 100vh !important;
+    max-width: 900px !important;
+    display: flex;
+    position: fixed;
+    border-radius: 0;
+
+    .ppt {
+      display: none !important;
     }
 
-    .yith-quick-view-overlay {
-      background: rgba(255, 255, 255, 0.6);
+    @include media-breakpoint-down(md) {
+      width: 90vw !important;
+      max-width: 90vw !important;
     }
 
-    .yith-wcqv-head {
-      top: 1.5rem;
-      right: unset;
-      left: -1.75rem;
-      background: #fff;
-      border-radius: 2rem;
-      padding: 1.25rem;
+    .woocommerce-product-gallery,
+    .flex-viewport {
+      width: 100%;
     }
 
     .yith-wcqv-main {
@@ -145,52 +156,154 @@
       padding-bottom: 4rem;
     }
 
-    .yith-quick-view-content {
+    .pp_content_container {
       overflow-y: scroll;
-      padding: 4rem;
+      padding: 2rem;
+      border-radius: 0;
 
       @include media-breakpoint-down(sm) {
         padding: 0.75rem;
       }
 
-      div.summary {
-        width: 100% !important;
-        display: inline-flex;
-        margin-top: -3rem;
+      .pp_content {
+        width: auto !important;
+        overflow: hidden;
+        overflow-y: scroll;
+      }
 
-        .summary-content {
-          display: inline-flex;
-          justify-content: center;
-          flex-direction: column;
-          width: 100%;
+      .woocommerce-product-gallery {
+        width: 100%;
+        margin: 0;
 
-          h1 {
-            background: #f8f7f2;
-            color: #383838;
-            display: inline-flex;
-            font-size: 44px;
-            line-height: 46px;
-            text-transform: none;
-            text-align: center;
-            align-self: center;
-            padding: 2rem 4rem;
+        &::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: calc(100% - 20px);
+          height: calc(100% - 20px);
+          margin: 10px;
+          border: solid 2px #fff;
+        }
+      }
+
+      //Flexslider styles
+      ol.flex-control-nav {
+        position: absolute;
+        bottom: 2.7rem;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+        padding: 0;
+        margin: 0;
+        z-index: 999;
+
+        li {
+          list-style-type: none;
+          background: #fff;
+          border-radius: 8px;
+          margin: 0.3rem;
+
+          a {
+            width: 14px;
+            height: 14px;
+            text-indent: -99999px;
+            display: flex;
+            position: relative;
+
+            &.flex-active::after {
+              content: "";
+              background: $highlight;
+              position: absolute;
+              left: 3px;
+              top: 3px;
+              width: 8px;
+              height: 8px;
+              border-radius: 5px;
+            }
           }
         }
       }
-    }
 
-    .yith-quick-view-content div.images {
-      width: 100% !important;
-
-      &::after {
-        content: "";
+      ul.flex-direction-nav {
         position: absolute;
-        top: 0;
+        margin: 0 4%;
+        padding: 0;
+        list-style-type: none;
+        top: 28%;
         left: 0;
-        width: calc(100% - 20px);
-        height: calc(100% - 20px);
-        margin: 10px;
-        border: solid 2px #fff;
+        width: 92%;
+        display: flex;
+        justify-content: space-between;
+        z-index: 998;
+
+        li a {
+          position: relative;
+          display: block;
+          text-align: center;
+          padding: 0;
+          margin-bottom: 0;
+          height: 200px;
+          width: 27px;
+          text-indent: -999999px;
+        }
+
+        li a::before {
+          content: "";
+          position: absolute;
+          top: 47%;
+          left: 0;
+          height: 3px;
+          width: 41%;
+          background: #fff;
+          transform: skew(0deg, -45deg);
+        }
+
+        li a::after {
+          content: "";
+          position: absolute;
+          bottom: 46%;
+          left: 0;
+          height: 3px;
+          width: 40%;
+          background: #fff;
+          transform: skew(0deg, 45deg);
+        }
+
+        li.flex-nav-next a::before {
+          right: 0;
+          left: unset;
+          transform: skew(0deg, 45deg);
+        }
+
+        li.flex-nav-next a::after {
+          right: 0;
+          left: unset;
+          transform: skew(0deg, -45deg);
+        }
+      }
+
+      div.summary {
+        width: 100% !important;
+        display: inline-flex;
+        flex-direction: column;
+        margin-top: -2rem;
+        margin-bottom: 0;
+        position: relative;
+
+        h1 {
+          background: #f8f7f2;
+          color: #383838;
+          display: inline-flex;
+          font-size: 44px;
+          line-height: 46px;
+          text-transform: none;
+          text-align: center;
+          align-self: center;
+          padding: 2rem 4rem;
+          max-width: 88%;
+        }
       }
     }
 
@@ -206,171 +319,5 @@
       box-shadow: 0 -17px 20px rgba(0, 0, 0, 0.08), 0 -44px 80px rgba(0, 0, 0, 0.06), 0 0 14px rgba(0, 0, 0, 0.1);
       text-align: center;
     }
-  }
-
-  // Sidebar Filter
-  .wpf_item {
-    &::after {
-      content: ".............................................";
-      letter-spacing: 4px;
-      line-height: 3px;
-      font-size: 18px;
-      color: $highlight;
-      margin: 1.5rem auto 0 auto;
-      overflow: hidden;
-    }
-
-    overflow: hidden;
-
-    li {
-      margin-right: 0 !important;
-    }
-  }
-
-  .wpf_item_wpf_cat label.wpf_item_name {
-    display: none; //hide title from only category section
-  }
-
-  .wpf_item_count {
-    color: $highlight;
-    font-family: $font-family-serif;
-    font-size: 15px;
-    background: none;
-    padding: 0.25rem 0 0 0;
-
-    @include media-breakpoint-down(lg) {
-      font-size: 14px;
-    }
-
-    &::before {
-      content: "(";
-    }
-
-    &::after {
-      content: ")";
-    }
-  }
-
-  .wpf_item_name {
-    font-family: $font-family-serif;
-    font-size: 17px;
-    font-weight: bold;
-    padding: 0;
-    margin: 0 0 0.5rem 0;
-    border: none;
-  }
-
-  ul.wpf_hierachy {
-    display: flex;
-    flex-direction: column;
-
-    input {
-      display: none;
-    }
-
-    label {
-      font-family: $font-family-serif;
-      font-size: 22px;
-      font-weight: bold;
-
-      &::after {
-        content: ":";
-      }
-    }
-
-    .wpf_item_count {
-      display: none;
-    }
-
-    li {
-      border-bottom: solid 2px #ebe9e0;
-      padding-bottom: 25px;
-      margin-bottom: 25px;
-
-      &:last-of-type {
-        border: none;
-        padding-bottom: 0;
-        margin-bottom: 1rem;
-      }
-
-      ul.wpf_submenu li {
-        border: none;
-        margin-bottom: 0.55rem;
-        padding-bottom: 0;
-        margin-right: 0;
-      }
-    }
-  }
-
-  ul.wpf_submenu,
-  ul.wpf_column_vertical {
-    border: none;
-    display: flex;
-    flex-direction: column;
-
-    input {
-      display: inline-flex;
-      border: 2px solid $highlight;
-      width: 15px;
-      height: 15px;
-      margin-top: 3px;
-
-      @include media-breakpoint-down(lg) {
-        margin-right: 1px;
-      }
-    }
-
-    input[type="checkbox"]:checked::before {
-      content: "";
-      width: 7px;
-      height: 7px;
-      background: $highlight;
-      left: 2px;
-      top: 2px;
-      position: relative;
-    }
-
-    label {
-      --tt-key: filter-label;
-      --tt-max: 275;
-      --tt-ease: linear;
-
-      font-family: $font-family-sans-serif;
-      font-size: 17px;
-      font-weight: normal;
-      margin: 0;
-
-      // @include media-breakpoint-down(lg) {
-      //   font-size: 14.5px;
-      // }
-
-      &::after {
-        content: none;
-      }
-    }
-
-    @keyframes filter-label {
-      60% {
-        font-size: 0.8rem;
-      }
-
-      100% {
-        font-size: 1rem;
-      }
-    }
-
-    .wpf_item_count {
-      display: inline-flex;
-    }
-  }
-
-  //Filtered results
-  .wpf-search-container section div {
-    width: 100%;
-  }
-
-  ul.products li.product .woocommerce-placeholder {
-    border: none;
-    width: 38px;
   }
 }

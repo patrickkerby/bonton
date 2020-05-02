@@ -7,9 +7,6 @@ use Roots\Sage\Assets\JsonManifest;
 use Roots\Sage\Template\Blade;
 use Roots\Sage\Template\BladeProvider;
 
-
-
-
 /**
  * Theme assets
  */
@@ -79,7 +76,7 @@ add_action('after_setup_theme', function () {
      */
     add_theme_support('woocommerce');
     add_theme_support( 'wc-product-gallery-zoom' );
-    add_theme_support( 'wc-product-gallery-lightbox' );
+    remove_theme_support( 'wc-product-gallery-lightbox' );
     add_theme_support( 'wc-product-gallery-slider' );
     add_theme_support( 'post-thumbnails', array( 'post', 'page', 'product' ) );
     
