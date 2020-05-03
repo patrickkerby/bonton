@@ -332,6 +332,7 @@
   top: 1.5rem;
   right: 0;
   width: 62vw;
+  max-width: 925px;
   height: 58px;
   border-radius: 2rem;
   text-indent: -99999px;
@@ -345,6 +346,11 @@
     content: "";
     background-color: #fff;
     border-radius: 100%;
+  }
+
+  @include media-breakpoint-down(md) {
+    width: 92vw !important;
+    max-width: 92vw !important;
   }
 }
 
