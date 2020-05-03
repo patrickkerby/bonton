@@ -18,7 +18,6 @@ add_filter( 'woocommerce_add_to_cart_form_action', '__return_empty_string' );
 do_action( 'wc_quick_view_before_single_product' );
 ?>
 <div class="woocommerce quick-view single-product">
-
 	<div id="product-<?php the_ID(); ?>" <?php wc_product_class(); ?>>
 
 		<?php
@@ -30,7 +29,6 @@ do_action( 'wc_quick_view_before_single_product' );
 		 */
 		do_action( 'woocommerce_before_single_product_summary' );
 		?>
-
 		<div class="summary entry-summary">
 			<?php
 			/**
@@ -47,6 +45,7 @@ do_action( 'wc_quick_view_before_single_product' );
 			 */
 			do_action( 'woocommerce_single_product_summary' );
 			?>
+
 		</div>
 	</div>
 </div>
