@@ -167,9 +167,16 @@
         overflow-y: scroll;
       }
 
+      .product {
+        display: grid;
+        column-gap: 2rem;
+        grid-template-rows: auto;
+        row-gap: 2rem;
+      }
+
       .woocommerce-product-gallery {
         width: 100%;
-        margin: 0;
+        grid-column: 1 / span 2;
 
         &::after {
           content: "";
@@ -280,47 +287,39 @@
         }
       }
 
+      h1 {
+        position: relative;
+        background: #f8f7f2;
+        color: #383838;
+        font-size: 44px;
+        line-height: 46px;
+        text-transform: none;
+        text-align: center;
+        padding: 2rem 4rem;
+        margin: -6rem auto 0 auto;
+        max-width: 88%;
+        grid-column: 1 / span 2;
+
+        @include media-breakpoint-down(sm) {
+          font-size: 34px;
+          max-width: 80%;
+          line-height: 36px;
+          padding: 1.5rem 1.5rem;
+        }
+      }
+
       div.summary {
         width: 100% !important;
         display: inline-flex;
         flex-direction: column;
-        margin-top: -2rem;
         margin-bottom: 0;
         position: relative;
-
-        h1 {
-          background: #f8f7f2;
-          color: #383838;
-          display: inline-flex;
-          font-size: 44px;
-          line-height: 46px;
-          text-transform: none;
-          text-align: center;
-          align-self: center;
-          padding: 2rem 4rem;
-          max-width: 88%;
-
-          @include media-breakpoint-down(sm) {
-            font-size: 34px;
-            max-width: 80%;
-            line-height: 36px;
-            padding: 1.5rem 1.5rem;
-          }
-        }
       }
-    }
 
-    .notice {
-      background: $highlight;
-      padding: 1.5rem 2rem;
-      font-size: 16px;
-      color: #fff;
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      left: 0;
-      box-shadow: 0 -17px 20px rgba(0, 0, 0, 0.08), 0 -44px 80px rgba(0, 0, 0, 0.06), 0 0 14px rgba(0, 0, 0, 0.1);
-      text-align: center;
+      div.sidebar ul {
+        border-top: solid 2px #ebe9e0;
+        padding: 1.25rem 0 0 0;
+      }
     }
   }
 }
