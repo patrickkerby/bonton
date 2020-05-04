@@ -153,7 +153,7 @@
     }
 
     .pp_content_container {
-      // overflow-y: scroll;
+      overflow-y: scroll;
       padding: 2rem;
       border-radius: 0;
 
@@ -164,7 +164,6 @@
       .pp_content {
         width: auto !important;
         overflow: hidden;
-        overflow-y: scroll;
       }
 
       .product {
