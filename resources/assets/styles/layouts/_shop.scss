@@ -1,3 +1,4 @@
+/* stylelint-disable no-descending-specificity */
 .woocommerce {
   .wrap {
     padding: 3rem 10%;
@@ -168,7 +169,8 @@
 
       .product {
         display: grid;
-        column-gap: 2rem;
+        column-gap: 7%;
+        grid-template-columns: 32% 61%;
         grid-template-rows: auto;
         row-gap: 2rem;
       }
@@ -315,9 +317,33 @@
         position: relative;
       }
 
-      div.sidebar ul {
+      .sidebar ul,
+      .ingredients {
         border-top: solid 2px #ebe9e0;
         padding: 1.25rem 0 0 0;
+        font-weight: 600;
+        font-size: 15.5px;
+
+        span {
+          font-weight: normal;
+        }
+      }
+
+      .sidebar ul li {
+        position: relative;
+        padding-left: 1rem;
+        margin-bottom: 0.75rem;
+        line-height: 19px;
+
+        &::before {
+          color: $highlight;
+          content: "\2022";
+          font-size: 25px;
+          position: absolute;
+          left: 0;
+          top: 0;
+          line-height: 17px;
+        }
       }
     }
   }
@@ -355,3 +381,4 @@
 .modal-open .close-product {
   display: block;
 }
+/* stylelint-enable no-descending-specificity */

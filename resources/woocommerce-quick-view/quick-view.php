@@ -34,14 +34,13 @@ do_action( 'wc_quick_view_before_single_product' );
 		<div class="sidebar">
 			<ul>
 				<?php
+				
 				/**
 				 * Add availability display to product single page and product modal
 				 */
 
 					$terms = get_the_terms( $product_id, 'pa_availability' );
-
 					$prefix = $days_available = '';
-				
 					if (is_array($terms) || is_object($terms)) {
 							
 							foreach ($terms as $term) {
@@ -53,33 +52,33 @@ do_action( 'wc_quick_view_before_single_product' );
 					$days_available = explode(",",$days_available);
 					
 					if (in_array('Everyday', $days_available)) {
-							$display = '<li>Available: Tuesday - Saturday!</li>';
+						echo '<li>Available: <span>Tuesday - Saturday!</span></li>';
 					}
 					else {
 							$days = implode(', ', $days_available);
-							$display = '<li>Available: '.$days .'!</li>';
+							echo '<li>Available: <span>'.$days .'</span></li>';
 					}
-					
-					echo $display;
 					
 					// get product_tags of the current product
 					$current_tags = get_the_terms( $product_id, 'product_tag' );
-
-					//only start if we have some tags
 					if ( $current_tags && ! is_wp_error( $current_tags ) ) { 
-
-						//for each tag we create a list item
 						foreach ($current_tags as $tag) {
-
 							$tag_title = $tag->name; // tag name
-							$tag_link = get_term_link( $tag );// might use this later. for now only displaying text
-
+							$tag_link = get_term_link( $tag ); // might use this later. for now only displaying text
 							echo '<li>'.$tag_title.'</li>';
 						}
 					}
+					?>
+					</ul>
+
+					<?php
+					// Ingredients list
+					$ingredients = get_field( "ingredients", $product_id );
+					if ( $ingredients && ! is_wp_error( $ingredients ) ) { 
+						echo '<div class="ingredients">Ingredients: <span>'.$ingredients.'</span></div>';
+					}
 				?>
 
-			</ul>
 		</div>
 		<div class="summary entry-summary">
 			<?php
