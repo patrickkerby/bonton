@@ -381,4 +381,10 @@
 .modal-open .close-product {
   display: block;
 }
+
+.woocommerce .quantity .qty {
+  padding: 0.4rem;
+  border: solid 3px #f8f7f2;
+  margin-right: 0.75rem;
+}
 /* stylelint-enable no-descending-specificity */
