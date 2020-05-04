@@ -134,6 +134,10 @@
     position: fixed;
     border-radius: 0;
 
+    div.quick-view {
+      padding-bottom: 2rem;
+    }
+
     .ppt {
       display: none !important;
     }
@@ -386,5 +390,48 @@
   padding: 0.4rem;
   border: solid 3px #f8f7f2;
   margin-right: 0.75rem;
+}
+
+.qib-container {
+  border: solid 3px #f8f7f2;
+}
+
+.qib-button:not(#qib_id):not(#qib_id) {
+  background: #f8f7f2 !important;
+  color: #707070 !important;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  padding: 0 0 4px 0 !important;
+  border: none !important;
+  height: 45px !important;
+}
+
+.qib-button:hover:not(#qib_id):not(#qib_id) {
+  background: #f0ede1 !important;
+}
+
+.qib-container .quantity input.qty:not(#qib_id):not(#qib_id) {
+  border: none !important;
+  font-weight: 600 !important;
+  height: 45px !important;
+}
+
+.wcpa_form_item {
+  label {
+    display: none;
+  }
+}
+
+.warning {
+  font-size: 13px;
+  line-height: 16px;
+  color: $highlight;
+  font-weight: 600;
+  padding: 1rem 3rem;
+  background: #fff;
+  box-shadow: 0 0 25px -2px rgba(0, 0, 0, 0.1);
+  background-color: r;
+  width: 90%;
+  text-align: center;
 }
 /* stylelint-enable no-descending-specificity */

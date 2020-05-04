@@ -42,7 +42,55 @@ if ( post_password_required() ) {
 	 */
 	do_action( 'woocommerce_before_single_product_summary' );
 @endphp
+<div class="sidebar">
+			<ul>
+				<?php
+				
+				/**
+				 * Add availability display to product single page and product modal
+				 */
 
+					$terms = get_the_terms( $product_id, 'pa_availability' );
+					$prefix = $days_available = '';
+					if (is_array($terms) || is_object($terms)) {
+							
+							foreach ($terms as $term) {
+									$days = $term->name;
+									$days_available .= $prefix . '' . $days . '';
+									$prefix = ', ';
+							}
+					}
+					$days_available = explode(",",$days_available);
+					
+					if (in_array('Everyday', $days_available)) {
+						echo '<li>Available: <span>Tuesday - Saturday!</span></li>';
+					}
+					else {
+							$days = implode(', ', $days_available);
+							echo '<li>Available: <span>'.$days .'</span></li>';
+					}
+					
+					// get product_tags of the current product
+					$current_tags = get_the_terms( $product_id, 'product_tag' );
+					if ( $current_tags && ! is_wp_error( $current_tags ) ) { 
+						foreach ($current_tags as $tag) {
+							$tag_title = $tag->name; // tag name
+							$tag_link = get_term_link( $tag ); // might use this later. for now only displaying text
+							echo '<li>'.$tag_title.'</li>';
+						}
+					}
+					?>
+					</ul>
+
+					<?php
+					// Ingredients list
+					$ingredients = get_field( "ingredients", $product_id );
+					if ( $ingredients && ! is_wp_error( $ingredients ) ) { 
+						echo '<div class="ingredients">Ingredients: <span>'.$ingredients.'</span></div>';
+					}
+				?>
+
+		</div>
 	<div class="summary entry-summary">
 		@php
 			/**

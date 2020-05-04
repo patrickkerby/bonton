@@ -52,7 +52,8 @@ do_action( 'wc_quick_view_before_single_product' );
 					$days_available = explode(",",$days_available);
 					
 					if (in_array('Everyday', $days_available)) {
-						echo '<li>Available: <span>Tuesday - Saturday!</span></li>';
+						$days = "";
+						echo '<li>Available: <span>Every day! (Tuesday - Saturday)</span></li>';
 					}
 					else {
 							$days = implode(', ', $days_available);
@@ -96,7 +97,12 @@ do_action( 'wc_quick_view_before_single_product' );
 			 */
 			do_action( 'woocommerce_single_product_summary' );
 			?>
-
+			<?php 
+				if($days) {
+					// echo '<span>Please note, this is only available for pick up on' . $days . '</span>';
+					echo '<span class="warning">Please ensure this product is available on your intended pickup date!</span>';
+				}
+			?>
 		</div>
 	</div>
 </div>
