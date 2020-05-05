@@ -17,16 +17,36 @@
 
 defined( 'ABSPATH' ) || exit;
 
-do_action( 'woocommerce_before_cart' ); ?>
+// $post_id = the_ID();
+do_action( 'acf/save_post', $post_id );
+$day_of_week = $GLOBALS['day_of_week'];
+
+do_action('acf/validate_save_post');
+
+do_action( 'woocommerce_before_cart' ); 
+
+?>
+<div class="row justify-content-center">
+	<div class="col-sm-8">
+	@php
+		acf_form(array(
+			'submit_value' => __('Select date', 'acf'),
+			'fields' => array(
+					'pickup_date'
+			),
+			'return' => '%post_url%',
+			'updated_message' => false,
+		));
+	@endphp
+	</div>
+</div>  
 
 <form class="woocommerce-cart-form" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
 	<?php do_action( 'woocommerce_before_cart_table' ); ?>
-
 	<table class="shop_table shop_table_responsive cart woocommerce-cart-form__contents" cellspacing="0">
 		<thead>
 			<tr>
 				<th class="product-remove">&nbsp;</th>
-				<th class="product-thumbnail">&nbsp;</th>
 				<th class="product-name"><?php esc_html_e( 'Product', 'woocommerce' ); ?></th>
 				<th class="product-price"><?php esc_html_e( 'Price', 'woocommerce' ); ?></th>
 				<th class="product-quantity"><?php esc_html_e( 'Quantity', 'woocommerce' ); ?></th>
@@ -44,7 +64,33 @@ do_action( 'woocommerce_before_cart' ); ?>
 				if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 					$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 					?>
-					<tr class="woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
+
+					<?php
+					// Check availability
+					$availability = get_field('availability', $product_id );
+
+					$prefix = $days_available = '';
+					if (is_array($availability) || is_object($availability)) {
+							
+							foreach ($availability as $term) {
+									$days = $term->name;
+									$days_available .= $prefix . '' . $days . '';
+									$prefix = ', ';
+							}
+						}
+						$days_available = explode(", ",$days_available);
+
+						if(!in_array($day_of_week, $days_available)){
+							$availability_status = "not-available";
+							$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
+						}
+						else {
+							$availability_msg = '';
+							$availability_status = "available";
+						}
+
+					?>
+					<tr class="<?php echo $availability_status; ?> woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
 
 						<td class="product-remove">
 							<?php
@@ -60,19 +106,7 @@ do_action( 'woocommerce_before_cart' ); ?>
 									$cart_item_key
 								);
 							?>
-						</td>
-
-						<td class="product-thumbnail">
-						<?php
-						$thumbnail = apply_filters( 'woocommerce_cart_item_thumbnail', $_product->get_image(), $cart_item, $cart_item_key );
-
-						if ( ! $product_permalink ) {
-							echo $thumbnail; // PHPCS: XSS ok.
-						} else {
-							printf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $thumbnail ); // PHPCS: XSS ok.
-						}
-						?>
-						</td>
+						</td>					
 
 						<td class="product-name" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
 						<?php
@@ -94,25 +128,17 @@ do_action( 'woocommerce_before_cart' ); ?>
 						?>
 
 						<?php
-						// Add availability meta data
-
-
-								// $object_terms = get_the_terms( $_product->get_id(), 'pa_availability' );
-								// 	if ( ! is_array( $object_terms ) ) {
-								// 			var_dump( $object_terms);
-								// 	}
-
-								// if (in_array('Everyday', $days_available)) {
-								// 		$display = '<div class="notice">This is available for pickup Tuesday-Saturday!</div>';
-								// }
-								// else {
-								// 		$days = implode(', ', $days_available);
-								// 		$display = '<div class="notice">This is only available for pickup '.$days .'!</div>';
-								// }
-								// echo $display;
-	
+							if (in_array('Everyday', $days_available)) {
+								echo '<span class="availability"><strong>Availability: </strong> Everyday!</span>';
+							}
+							else {
+									$days = implode(', ', $days_available);
+									echo '<span class="availability"><strong>Availability: </strong>' . $days . '</span>';
+							}
+							if($availability_msg){
+								echo $availability_msg;
+							}
 						?>				
-
 
 						</td>
 

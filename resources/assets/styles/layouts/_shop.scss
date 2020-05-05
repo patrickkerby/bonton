@@ -386,7 +386,8 @@
   display: block;
 }
 
-.woocommerce .quantity .qty {
+.woocommerce .quantity .qty,
+.acf-field input[type="text"] {
   padding: 0.4rem;
   border: solid 3px #f8f7f2;
   margin-right: 0.75rem;
@@ -416,9 +417,17 @@
   height: 45px !important;
 }
 
+.woocommerce table.cart td.product-quantity .qib-container:not(#qib_id):not(#qib_id) {
+  display: inline-flex !important;
+}
+
 .wcpa_form_item {
   label {
     display: none;
+  }
+
+  div.sliced label {
+    display: inline-block;
   }
 }
 
@@ -433,5 +442,58 @@
   background-color: r;
   width: 90%;
   text-align: center;
+}
+
+.acf-form {
+  display: flex;
+  align-items: center;
+
+  .acf-field {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .acf-field input[type="text"] {
+    height: 50px;
+    font-size: 18px;
+  }
+
+  .acf-label {
+    margin: 0;
+  }
+
+  .acf-field .acf-label label {
+    margin: 0 1rem 0 0;
+    height: 50px;
+    line-height: 50px;
+  }
+}
+
+.shop_table {
+  td {
+    padding: 22px 12px !important;
+  }
+
+  td.product-name a {
+    font-size: 20px;
+  }
+
+  .availability {
+    font-size: 15px;
+    display: block;
+  }
+
+  .not-available {
+    .not-available-message {
+      color: red;
+      font-size: 13px;
+      line-height: 15px;
+      border: solid 2px red;
+      padding: 0.25rem 0.5rem;
+      margin: 0.25rem 0 0 0;
+      width: 94%;
+      display: flex;
+    }
+  }
 }
 /* stylelint-enable no-descending-specificity */
