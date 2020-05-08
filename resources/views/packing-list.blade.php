@@ -27,7 +27,7 @@ $woocommerce = new Client(
 
   // Cooler Products (Full objects)
   // Warning! as we add multiple categories to products, it may mess with the cooler vs. shelf categorization
-    $products_cooler = $woocommerce->get('products', array('status' => 'publish', 'category'=>'22,53,51, 84, 104', 'per_page'=> '100'));
+    $products_cooler = $woocommerce->get('products', array('status' => 'publish', 'category'=>'22,53,51,84,104', 'per_page'=> '100'));
   
   // Cooler Product ID Array
     $prefix = $cooler_array = '';
@@ -40,7 +40,7 @@ $woocommerce = new Client(
     $cooler_array=explode(",",$cooler_array);
 
   // Shelf Products (Full objects)
-    $shelf_categories = $woocommerce->get('products/categories', array('exclude'=>'22,53,51')); //get category ids so we can make a new list with the cooler excluded (because api doesn't have "category_exclude" on product level)
+    $shelf_categories = $woocommerce->get('products/categories', array('exclude'=>'22,53,51,84,104')); //get category ids so we can make a new list with the cooler excluded (because api doesn't have "category_exclude" on product level)
     $prefix = $shelf_list = ''; // prevent trailing commas
     foreach ($shelf_categories as $shelf_category)
     {
