@@ -12,7 +12,7 @@
             @include('partials.sidebar')
           </div>
           <div class="content col-sm-8 col-lg-9">
-            @php dynamic_sidebar('sidebar-primary') @endphp
+            @php dynamic_sidebar('sidebar-shop') @endphp
             @yield('content')
           </div>                    
         </main>
