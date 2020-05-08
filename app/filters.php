@@ -179,7 +179,7 @@ add_filter( 'woocommerce_variable_price_html', function ( $price, $product ) {
     return $price;
 }, 10, 2 );
 
-// CART LOGIC
+// CART LOGIC: use pickup date to 
 add_action('acf/validate_save_post', function() {
     if(!wp_doing_ajax() || !isset($_POST['_acf_post_id']) || !acf_verify_nonce('acf_form'))
         return;
@@ -212,3 +212,21 @@ add_action('acf/validate_save_post', function() {
         'data' 	=> 'Success!',
     ));
 });
+
+// /**
+//  * Save pickup date selection to customer order.
+//  *
+//  * @param WC_Order_Item_Product $item
+//  * @param string                $cart_item_key
+//  * @param array                 $values
+//  * @param WC_Order              $order
+//  */
+// function iconic_add_engraving_text_to_order_items( $item, $cart_item_key, $values, $order ) {
+// 	if ( empty( $values['iconic-engraving'] ) ) {
+// 		return;
+// 	}
+
+// 	$item->add_meta_data( __( 'Engraving', 'iconic' ), $values['iconic-engraving'] );
+// }
+
+// add_action( 'woocommerce_checkout_create_order_line_item', 'iconic_add_engraving_text_to_order_items', 10, 4 );

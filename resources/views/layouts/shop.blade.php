@@ -11,7 +11,8 @@
           <div class="sidebar typetura d-none d-sm-block col-sm-4 col-lg-3">
             @include('partials.sidebar')
           </div>
-          <div class="content col-sm-8 col-lg-9">          
+          <div class="content col-sm-8 col-lg-9">
+            @php dynamic_sidebar('sidebar-primary') @endphp
             @yield('content')
           </div>                    
         </main>

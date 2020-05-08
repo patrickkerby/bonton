@@ -100,6 +100,10 @@ add_action('widgets_init', function () {
         'name'          => __('Footer', 'sage'),
         'id'            => 'sidebar-footer'
     ] + $config);
+    register_sidebar([
+        'name'          => __('Shop Page - Before Products', 'sage'),
+        'id'            => 'sidebar-shop'
+    ] + $config);
 });
 
 /**
