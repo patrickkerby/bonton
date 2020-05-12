@@ -8,6 +8,7 @@
       height: 880px;
       width: 100%;
       overflow: hidden;
+      margin-left: -3rem;
 
       img {
         object-fit: cover;
@@ -20,6 +21,7 @@
       background: $cream;
       padding: 3.25rem;
       margin: 13rem 0 0 -8rem;
+      max-width: 100%;
 
       h1 {
         font-size: 122px;
