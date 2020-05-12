@@ -5,7 +5,7 @@
     @php do_action('get_header') @endphp
       @include('partials.header')
 
-    <div class="wrap container" role="document">
+    <div class="wrap container-fluid" role="document">
       <div class="content">
         @if ( is_front_page() )
           <main class="main">

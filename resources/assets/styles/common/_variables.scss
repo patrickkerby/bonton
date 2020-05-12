@@ -7,16 +7,23 @@ $theme-colors: (
   primary: #53c999
 );
 
-$charcoal: (
-  color: #343534
-);
-
 $charcoal: ( #343534 );
 $highlight: ( #53c999 );
+$cream: ( #f8f7f2 );
 
 /** Bootstrap navbar fix (https://git.io/fADqW) */
 $navbar-dark-toggler-icon-bg: none;
 $navbar-light-toggler-icon-bg: none;
+
+@font-face {
+  font-family: "Greycliff";
+  src:
+    url("../fonts/greycliff/GreycliffCF-Regular.woff2") format("woff2"),
+    url("../fonts/greycliff/GreycliffCF-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 @font-face {
   font-family: "Greycliff";

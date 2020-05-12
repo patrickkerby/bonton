@@ -5,9 +5,13 @@
   "fonts/greycliff/GreycliffCF-ExtraBold.woff2": "fonts/greycliff/GreycliffCF-ExtraBold_9dbd82dc.woff2",
   "fonts/greycliff/GreycliffCF-Medium.woff": "fonts/greycliff/GreycliffCF-Medium_eeb82db0.woff",
   "fonts/greycliff/GreycliffCF-Medium.woff2": "fonts/greycliff/GreycliffCF-Medium_bc3ef6ef.woff2",
+  "fonts/greycliff/GreycliffCF-Regular.woff": "fonts/greycliff/GreycliffCF-Regular_6119ed96.woff",
+  "fonts/greycliff/GreycliffCF-Regular.woff2": "fonts/greycliff/GreycliffCF-Regular_8fa109bb.woff2",
   "images/Arrow.svg": "images/Arrow_c731abfe.svg",
   "images/BonTon-Logo.png": "images/BonTon-Logo_82cb9ade.png",
-  "scripts/customizer.js": "scripts/customizer_31040805.js",
-  "styles/main.css": "styles/main_31040805.css",
-  "scripts/main.js": "scripts/main_31040805.js"
+  "images/blob.png": "images/blob_688a6f85.png",
+  "images/product-arrow.svg": "images/product-arrow_2c408cf8.svg",
+  "scripts/customizer.js": "scripts/customizer_5e668e7a.js",
+  "styles/main.css": "styles/main_5e668e7a.css",
+  "scripts/main.js": "scripts/main_5e668e7a.js"
 }
