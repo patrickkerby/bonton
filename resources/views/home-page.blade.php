@@ -15,10 +15,10 @@
         </div>
         <div class="col-sm-5">
           @include('partials.page-header')
-          <h3>{{ $sub_title }}</h3>
+          <h3>{!! $sub_title !!}</h3>
         </div>
       </div>
-      <div class="container intro">
+      <div class="container-fluid intro">
         <img class="illustration" src="{{ $intro->intro_image }}" />
         <div class="row justify-content-center">
           <div class="col-sm-5">
