@@ -31,15 +31,15 @@ export default {
       // close the modal when you click on our new button  
       $('.close-product').on('click',function() { $.prettyPhoto.close(); });
 
-      //Restrict pickup date picker to allow next day and future only
-      let $datepicker = $( '#acf-field_5eb050868b169 + .hasDatepicker' );        
-      $datepicker.datepicker( 'option', {
-        'minDate': new Date(((new Date).getTime() + 33 * 60 * 60 * 1000) ),
-        beforeShowDay: function(date) {
-          var day = date.getDay();
-          return [(day != 0 && day != 1), ''];
-        },
-      });
+      // //Restrict pickup date picker to allow next day and future only
+      // let $datepicker = $( '#acf-field_5eb050868b169 + .hasDatepicker' );        
+      // $datepicker.datepicker( 'option', {
+      //   'minDate': new Date(((new Date).getTime() + 33 * 60 * 60 * 1000) ),
+      //   beforeShowDay: function(date) {
+      //     var day = date.getDay();
+      //     return [(day != 0 && day != 1), ''];
+      //   },
+      // });
 
       $('.modal').each(function () {
         const modalId = `#${$(this).attr('id')}`;
