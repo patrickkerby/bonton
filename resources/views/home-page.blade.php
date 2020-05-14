@@ -20,7 +20,7 @@
       </div>
       <div class="container-fluid intro">
         <img class="illustration" src="{{ $intro->intro_image }}" />
-        <div class="row justify-content-center">
+        <div class="row no-gutters justify-content-center">
           <div class="col-sm-5">
             {!! $intro->column_1 !!}
           </div>
@@ -31,7 +31,7 @@
       </div>
       <div class="container-fluid featured-products">
         <div class="row justify-content-center">
-          <div class="col-sm-6 feature-intro">
+          <div class="col-10 col-sm-6 feature-intro">
             <h2>{{ $featured_products->heading }}</h2>
             <p>{{ $featured_products->sub_heading }}</p>
             <a href="/products" class="button btn">View all products</a>
@@ -40,7 +40,7 @@
         <div class="row justify-content-center no-gutters">
           <div class="col-sm-11">
             <div id="featuredProducts1" class="carousel slide row no-gutters" data-ride="carousel" data-interval="4000">
-              <div class="col-sm-2">
+              <div class="d-none d-sm-block col-sm-2">
                 <ul class="carousel-indicators">
                   @foreach ($featured_products->featured_row_1->product as $item)                                      
                     <li data-target="#featuredProducts1" data-slide-to="{{ $loop->index }}" @if ($loop->first) class="active" @endif>{{ $item->product->post_title }}</li>
@@ -56,7 +56,7 @@
                     @endphp                  
 
                     <img class="featured-product" src="{{ $prod_img }}" alt="{{ $item->product->post_title }}" />
-                    <div class="carousel-caption d-none d-md-block">
+                    <div class="carousel-caption">
                       <h4>{{ $item->product->post_title }}</h4>
                       <p>{!! $item->product->post_excerpt !!}</p>
                       <div class="meta">
@@ -80,7 +80,7 @@
                       $prod_img = get_the_post_thumbnail_url($post_id);
                     @endphp                  
                     <img class="featured-product" src="{{ $prod_img }}" alt="{{ $item->product->post_title }}" />
-                    <div class="carousel-caption left d-none d-md-block">
+                    <div class="carousel-caption left">
                       <h4>{{ $item->product->post_title }}</h4>
                       <p>{!! $item->product->post_excerpt !!}</p>
                       <div class="meta">
@@ -90,7 +90,7 @@
                   </div>                                                       
                 @endforeach                             
               </div>              
-              <div class="col-sm-2">
+              <div class="d-none d-sm-block col-sm-2">
                 <ul class="carousel-indicators right">
                   @foreach ($featured_products->featured_row_1->product_2 as $item)                                      
                     <li data-target="#featuredProducts2" data-slide-to="{{ $loop->index }}" @if ($loop->first) class="active" @endif>{{ $item->product->post_title }}</li>
