@@ -186,6 +186,11 @@
     h4 {
       font-size: 28px;
       font-weight: 800;
+
+      @include media-breakpoint-down(xs) {
+        text-align: center;
+        margin-bottom: 0;
+      }
     }
 
     p {
@@ -213,25 +218,11 @@
       }
     }
 
-    @include media-breakpoint-down(xs) {
-      width: 80%;
-      margin: 0 auto;
-      position: relative;
-      top: -5rem;
-      left: unset;
-      right: unset;
-    }
-
-    &.left {
-      right: unset;
-      left: 0;
-    }
-
     .meta {
       overflow: hidden;
 
       &::before {
-        content: ".............................";
+        content: "............................................";
         letter-spacing: 6px;
         font-size: 20px;
         color: #fff;
@@ -245,6 +236,21 @@
         font-size: 14px;
         font-weight: 600;
       }
+    }
+
+    @include media-breakpoint-down(xs) {
+      width: 80%;
+      margin: 0 auto;
+      padding: 1rem;
+      position: relative;
+      top: -6rem;
+      left: unset;
+      right: unset;
+    }
+
+    &.left {
+      right: unset;
+      left: 0;
     }
   }
 }
