@@ -53,6 +53,7 @@
                     @php
                       $post_id = $item->product->ID;
                       $prod_img = get_the_post_thumbnail_url($post_id);
+                      $url = get_permalink( $post_id );
                     @endphp                  
 
                     <img class="featured-product" src="{{ $prod_img }}" alt="{{ $item->product->post_title }}" />
@@ -60,7 +61,8 @@
                       <h4>{{ $item->product->post_title }}</h4>
                       <p>{!! $item->product->post_excerpt !!}</p>
                       <div class="meta">
-                        <a href="">More info</a>
+                        <a href="{{ $url }}" class="product-link">More Info</a>
+                        {{-- <a href="#" title="{{ $item->product->post_title }}" data-product_id="{!! $item->product->post_excerpt !!}" class="quick-view-button inside-thumb"><span>Learn More</span></a> --}}
                       </div>
                     </div> 
                   </div>                                                       
@@ -82,9 +84,13 @@
                     <img class="featured-product" src="{{ $prod_img }}" alt="{{ $item->product->post_title }}" />
                     <div class="carousel-caption left">
                       <h4>{{ $item->product->post_title }}</h4>
-                      <p>{!! $item->product->post_excerpt !!}</p>
+                      @if ($item->description_override)
+                        <p>{{ $item->description_override }}</p>
+                      @else
+                        <p>{!! $item->product->post_excerpt !!}</p>
+                      @endif
                       <div class="meta">
-                        <a href="">More info</a>
+                        <a href="{{ $url }}" class="product-link">More Info</a>
                       </div>
                     </div> 
                   </div>                                                       
