@@ -1,3 +1,117 @@
-footer {
-  display: flex;
+footer.container-fluid {
+  padding: 6rem 4rem;
+
+  .row div {
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav {
+    align-self: flex-end;
+
+    ul {
+      text-align: right;
+    }
+
+    li {
+      margin: 0;
+      position: relative;
+
+      a {
+        font-family: $font-family-serif;
+        font-size: 31px;
+        line-height: 45px;
+        color: $charcoal;
+
+        @include slowfade;
+
+        &:hover {
+          color: $highlight;
+          text-decoration: none;
+
+          @include slowfade;
+        }
+      }
+
+      &.small {
+        a {
+          font-family: $font-family-sans-serif;
+          font-size: 16px;
+          font-weight: 800;
+          line-height: 36px;
+        }
+      }
+    }
+
+    li.end-main-links {
+      padding-bottom: 2rem;
+      margin-bottom: 2rem;
+
+      &::after {
+        content: "";
+        display: flex;
+        width: 70px;
+        height: 4px;
+        background: $highlight;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+      }
+    }
+  }
+
+  .hours ul {
+    li {
+      font-weight: 800;
+      font-size: 17px;
+      line-height: 20px;
+      margin: 0 0 0.75rem 0;
+      width: 329px;
+      display: flex;
+      justify-content: space-between;
+
+      span {
+        color: $highlight;
+        width: 100px;
+      }
+    }
+  }
+
+  .phone {
+    font-family: $font-family-serif;
+    font-size: 29px;
+    line-height: 29px;
+    margin-top: 1.5rem;
+    padding: 2.5rem 0 0.75rem 0;
+    position: relative;
+
+    &::before {
+      content: "";
+      display: flex;
+      width: 70px;
+      height: 4px;
+      background: $highlight;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  }
+
+  address {
+    font-size: 18px;
+    line-height: 28px;
+    max-width: 160px;
+  }
+
+  img {
+    display: flex;
+    margin: 0 auto;
+  }
 }

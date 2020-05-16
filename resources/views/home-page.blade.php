@@ -107,6 +107,15 @@
           </div>
         </div>
       </div>
+      <div class="container-fluid videos">
+        <div class="row justify-content-center">
+          <div class="col-sm-10">
+            <h2>Our Story &amp; Our Process define us.</h2>
+            <p>We know every ingredient that goes into our products because they're all made on site by our incredible team who use slow and steady traditional baking techniques. </p>
+            <p>We don't use trans fat at all and keep our ingredient list simple so you can understand and enjoy what you're eating.</p>
+          </div>
+        </div>
+      </div>
     
       
   @endwhile
