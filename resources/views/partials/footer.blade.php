@@ -1,3 +1,13 @@
+<section class="social container-fluid">
+  <div class="row">
+    <div class="col-sm-9">
+      @php dynamic_sidebar('sidebar-footer') @endphp
+    </div>
+    <div class="col-sm-3">
+
+    </div>
+  </div>
+</section>
 <footer class="container-fluid">
   <div class="row">
     <div class="col-sm-4">
@@ -20,8 +30,6 @@
           {!! wp_nav_menu(['theme_location' => 'footer_navigation', 'menu_class' => 'footer-nav']) !!}
         @endif
       </nav>
-      @php dynamic_sidebar('sidebar-footer') @endphp
-
     </div>
   </div>
 </footer>
