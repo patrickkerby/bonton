@@ -4,10 +4,20 @@
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    padding: 4rem 3rem;
+    padding: 2rem 3rem;
     margin-top: 1rem;
     margin-bottom: 0.65rem;
     background: rgba($color: $charcoal, $alpha: 0.9);
+
+    @include media-breakpoint-up(xl) {
+      padding: 4rem 3rem;
+    }
+
+    @include media-breakpoint-down(sm) {
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 0;
+    }
 
     &::after {
       content: "";
@@ -23,10 +33,25 @@
 
     h2 {
       font-weight: 600;
-      font-size: 78px;
-      line-height: 67px;
+      font-size: 58px;
+      line-height: 47px;
       margin: 0 1rem 0 0;
       color: #fff;
+
+      @include media-breakpoint-up(lg) {
+        font-size: 78px;
+        line-height: 67px;
+      }
+
+      @include media-breakpoint-down(lg) {
+        font-size: 48px;
+        line-height: 44px;
+      }
+
+      @include media-breakpoint-down(sm) {
+        text-align: center;
+        margin: 0 3rem;
+      }
     }
 
     h5 {
@@ -43,6 +68,12 @@
       width: 240px;
       background: $highlight;
       color: #fff;
+      margin: 0.5rem 0;
+
+      @include media-breakpoint-down(sm) {
+        width: 75%;
+        margin: 1.25rem 0;
+      }
 
       &:hover {
         background: none;

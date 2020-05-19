@@ -143,11 +143,11 @@
       </div>
       <section class="social container-fluid">
         <div class="row">
-          <div class="col-sm-8">
+          <div class="col-md-6 col-lg-8">
             @php dynamic_sidebar('sidebar-footer') @endphp
           </div>
-          <div class="col-sm-4 cta">
-            <h5>Stay informed:</h5>
+          <div class="col-md-6 col-lg-4 cta">
+            <h5 class="d-none d-lg-block">Stay informed:</h5>
             <h2>The latest Bon Ton News &amp; Offers</h2>
             <a href="http://eepurl.com/gsxWP9" class="button btn full" target="_blank">Newsletter Signup</a>
             <div class="feeds">
