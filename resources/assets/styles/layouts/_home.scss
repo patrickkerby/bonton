@@ -195,7 +195,7 @@
       display: flex;
       align-self: center;
       margin-top: -4rem;
-      margin-bottom: 6rem;
+      justify-content: center;
     }
 
     .btn {
@@ -259,6 +259,16 @@
           }
         }
       }
+    }
+  }
+
+  .container-fluid.social {
+    width: calc(100% + 30px);
+    margin: 0 -15px;
+    padding: 0;
+
+    ul {
+      padding-inline-start: unset !important;
     }
   }
 }

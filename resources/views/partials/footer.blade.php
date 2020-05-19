@@ -1,13 +1,3 @@
-<section class="social container-fluid">
-  <div class="row">
-    <div class="col-sm-9">
-      @php dynamic_sidebar('sidebar-footer') @endphp
-    </div>
-    <div class="col-sm-3">
-
-    </div>
-  </div>
-</section>
 <footer class="container-fluid">
   <div class="row">
     <div class="col-sm-4">
