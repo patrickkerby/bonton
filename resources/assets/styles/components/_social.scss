@@ -1,4 +1,8 @@
 .social {
+  .zoom-instagram-widget {
+    margin-right: 10px;
+  }
+
   .cta {
     position: relative;
     display: flex;
@@ -57,11 +61,11 @@
     h5 {
       font-family: $font-family-sans-serif;
       border-bottom: solid 3px $highlight;
-      padding-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
       font-weight: 800;
       font-size: 16px;
       color: #fff;
-      margin: 0 auto 0 0;
+      margin: 0 auto 0.5rem 0;
     }
 
     .btn.full {

@@ -1,10 +1,22 @@
 footer.container-fluid {
   padding: 3.5rem 4rem;
 
+  @include media-breakpoint-down(lg) {
+    padding: 3.5rem 2rem;
+  }
+
+  @include media-breakpoint-down(md) {
+    padding: 3.5rem 1rem;
+  }
+
   .row div {
     justify-content: center;
     display: flex;
     flex-direction: column;
+
+    @include media-breakpoint-down(xs) {
+      align-items: center;
+    }
   }
 
   ul {
@@ -77,9 +89,17 @@ footer.container-fluid {
       display: flex;
       justify-content: space-between;
 
+      @include media-breakpoint-down(md) {
+        width: 275px;
+      }
+
       span {
         color: $highlight;
         width: 100px;
+
+        @include media-breakpoint-down(sm) {
+          text-align: right;
+        }
       }
     }
   }
@@ -101,6 +121,10 @@ footer.container-fluid {
       position: absolute;
       top: 0;
       left: 0;
+
+      @include media-breakpoint-down(sm) {
+        left: 30%;
+      }
     }
   }
 
@@ -108,10 +132,41 @@ footer.container-fluid {
     font-size: 18px;
     line-height: 28px;
     max-width: 160px;
+
+    @include media-breakpoint-down(sm) {
+      text-align: center;
+    }
   }
 
   img {
     display: flex;
     margin: 0 auto;
+    max-width: 100%;
+
+    @include media-breakpoint-down(md) {
+      margin-top: 3rem;
+    }
+  }
+}
+
+.copyright {
+  background: $cream;
+  width: 100%;
+  text-align: center;
+  height: 46px;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  p {
+    margin: 0;
+    padding: 0;
+    color: #adaca7;
+    font-weight: bold;
+    font-size: 14px;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
   }
 }

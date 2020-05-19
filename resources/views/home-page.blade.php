@@ -142,7 +142,7 @@
         </div>
       </div>
       <section class="social container-fluid">
-        <div class="row">
+        <div class="row no-gutters">
           <div class="col-md-6 col-lg-8">
             @php dynamic_sidebar('sidebar-footer') @endphp
           </div>
