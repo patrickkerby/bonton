@@ -7,17 +7,17 @@
     padding-bottom: 3rem;
 
     h2 {
+      font-weight: 600;
       font-size: 78px;
-      line-height: 76px;
+      line-height: 67px;
       margin: 0 1rem 0 0;
     }
 
     h5 {
       font-family: $font-family-sans-serif;
-      border-bottom: solid 4px $highlight;
+      border-bottom: solid 3px $highlight;
       padding-bottom: 0.75rem;
       width: 140px;
-      text-transform: uppercase;
       font-weight: 800;
       font-size: 16px;
     }
@@ -36,10 +36,11 @@
     .icon {
       width: 40px;
       height: 40px;
+      margin: 0 1.5rem 0 0;
       border-radius: 100%;
       display: inline-flex;
       position: relative;
-      background: $charcoal;
+      background: #424242;
       justify-content: center;
       align-items: center;
 
