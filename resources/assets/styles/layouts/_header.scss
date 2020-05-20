@@ -79,8 +79,8 @@
 
   .logo {
     display: flex;
-    width: 270px;
-    height: 94px;
+    width: 240px;
+    height: 88px;
     text-indent: -999999px;
     background: url(../images/BonTon-Logo.png) no-repeat center center $charcoal;
     background-size: cover;
@@ -92,9 +92,13 @@
 
   button {
     position: absolute;
-    right: 0;
+    right: 0.5rem;
     top: 1.5rem;
     z-index: 10;
+
+    &:focus {
+      outline: none;
+    }
   }
 
   .navbar-collapse {
@@ -105,6 +109,51 @@
     left: 0;
     background: $cream;
     z-index: 9;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(100% - 20px);
+      height: calc(100% - 20px);
+      margin: 10px;
+      border: solid 4px #fff;
+    }
+
+    nav {
+      display: flex;
+      height: 100%;
+      align-items: center;
+    }
+
+    .nav-mobile {
+      ul,
+      li {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        text-align: center;
+      }
+
+      a {
+        font-family: $font-family-serif;
+        font-size: 38px;
+        line-height: 36px;
+        padding: 1rem 0;
+        display: flex;
+        justify-content: center;
+      }
+
+      li.util a {
+        font-family: $font-family-sans-serif;
+        color: $charcoal;
+        font-size: 17px;
+        font-weight: 600;
+        padding: 0.5rem 0;
+      }
+    }
   }
 }
 

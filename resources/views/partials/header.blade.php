@@ -30,9 +30,13 @@ $sub_title = get_field('sub_title');
 
 <header class="mobile-banner d-sm-none">
   <a href="https://bonton.local/" class="logo">Bon Ton Bakery &amp; Pâtisserie</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">MENU</button>
+  <button class="navbar-toggler hamburger hamburger--arrow" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="hamburger-box">
+      <span class="hamburger-inner"></span>
+    </span>
+  </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent1">
-    <nav class="nav-primary">
+    <nav class="nav-mobile">
       @if (has_nav_menu('mobile_navigation'))
         {!! wp_nav_menu(['theme_location' => 'mobile_navigation', 'menu_class' => 'mobile-nav']) !!}
       @endif

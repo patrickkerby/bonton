@@ -2,6 +2,16 @@ export default {
   init() {
     $.noConflict();
 
+    $('.hamburger').click(function() {
+      $(this).toggleClass('is-active');
+      $('.navbar-collapse').toggleClass('is-active');
+      $('body').toggleClass('is-active');
+    });
+    $('.menu-item').click(function(){
+      $('body').removeClass('is-active');
+      $('.navbar-collapse').removeClass('is-active');
+      $('.hamburger').removeClass('is-active');
+    });
   },
   finalize() {
     // JavaScript to be fired on all pages, after page specific JS is fired
