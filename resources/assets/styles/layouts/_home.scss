@@ -78,13 +78,15 @@
       }
 
       @include media-breakpoint-down(xs) {
-        margin: -10rem auto 0 auto;
+        margin: -7rem auto 0 auto;
         width: 80%;
+        padding: 0.5rem;
 
         h1.hero-headline {
-          font-size: 4rem;
-          line-height: 3.5rem;
-          margin: 1rem;
+          font-size: 1.75rem;
+          line-height: 1.75rem;
+          margin: 0;
+          text-align: center;
         }
       }
     }
