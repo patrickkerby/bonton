@@ -18,7 +18,7 @@ $sub_title = get_field('sub_title');
 
 @endphp
 
-<header class="banner">
+<header class="banner d-none d-sm-flex">
   <div class="container-fluid">
     <nav class="nav-primary">
       @if (has_nav_menu('primary_navigation'))
@@ -27,6 +27,19 @@ $sub_title = get_field('sub_title');
     </nav>
   </div>
 </header>
+
+<header class="mobile-banner d-sm-none">
+  <a href="https://bonton.local/" class="logo">Bon Ton Bakery &amp; Pâtisserie</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">MENU</button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent1">
+    <nav class="nav-primary">
+      @if (has_nav_menu('mobile_navigation'))
+        {!! wp_nav_menu(['theme_location' => 'mobile_navigation', 'menu_class' => 'mobile-nav']) !!}
+      @endif
+    </nav>
+  </div>
+</header>
+
 @if ( is_front_page() )
   <header class="hero" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay }}), rgba(45,51,55,0.{{ $overlay }})), url('{{ $hero }}');">
 @elseif ( is_home() )

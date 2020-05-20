@@ -71,6 +71,43 @@
     }
   }
 }
+
+// mobile nav
+.mobile-banner {
+  display: flex;
+  position: relative;
+
+  .logo {
+    display: flex;
+    width: 270px;
+    height: 94px;
+    text-indent: -999999px;
+    background: url(../images/BonTon-Logo.png) no-repeat center center $charcoal;
+    background-size: cover;
+    margin: 1rem auto -1rem auto;
+    border: solid #fff 7px;
+    position: relative;
+    z-index: 2;
+  }
+
+  button {
+    position: absolute;
+    right: 0;
+    top: 1.5rem;
+    z-index: 10;
+  }
+
+  .navbar-collapse {
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: $cream;
+    z-index: 9;
+  }
+}
+
 // .banner .nav li {
 //   @extend .nav-item;
 // }

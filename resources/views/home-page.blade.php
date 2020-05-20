@@ -108,7 +108,7 @@
         </div>
       </div>
       <div class="container-fluid videos">
-        <div class="row justify-content-center">
+        <div class="row justify-content-center no-gutters">
           <div class="col-sm-8 process">
             <h2>Our Story &amp;<br>Our Process define us.</h2>
             <div class="row">
