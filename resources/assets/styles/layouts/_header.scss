@@ -1,5 +1,9 @@
 body.is-active {
   position: fixed;
+
+  .mobile-banner button.hamburger {
+    position: fixed;
+  }
 }
 
 .nav-primary {
@@ -95,7 +99,7 @@ body.is-active {
   }
 
   button {
-    position: fixed;
+    position: absolute;
     right: 0.5rem;
     top: 1.5rem;
     z-index: 10;
