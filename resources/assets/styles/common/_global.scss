@@ -18,6 +18,19 @@ h5 {
   color: $charcoal;
 }
 
+a {
+  color: $highlight;
+
+  @include slowfade;
+
+  &:hover {
+    text-decoration: none;
+    color: darken($color: $highlight, $amount: 10);
+
+    @include slowfade;
+  }
+}
+
 .button {
   border-radius: none;
 }
