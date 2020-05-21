@@ -38,6 +38,7 @@ body.is-active {
       font-size: 19px;
       color: #343534;
       padding-top: 2rem;
+      font-weight: 500;
 
       @include media-breakpoint-down(lg) {
         padding-top: 1.5rem;
