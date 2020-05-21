@@ -56,5 +56,12 @@ $sub_title = get_field('sub_title');
   <header class="hero" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay_shop }}), rgba(45,51,55,0.{{ $overlay_shop }})), url('{{ $hero_shop }}');">
 @else
   <header class="hero" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay }}), rgba(45,51,55,0.{{ $overlay }})), url('{{ $hero }}');">
+    <div class="page-header">
+      <h1 class="hero-headline">{!! App::title() !!}</h1>
+      @if($sub_title)
+        <h2>{!! $sub_title !!}</h2>
+      @endif
+    </div>
 @endif
   </header>
+  

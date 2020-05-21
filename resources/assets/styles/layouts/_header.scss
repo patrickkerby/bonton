@@ -56,7 +56,7 @@ body.is-active {
     li.menu-bon-ton-bakery-patisserie {
       width: 311px;
       border: solid 10px #fff;
-      // background: #343534;
+      background: #343534;
 
       @include media-breakpoint-down(lg) {
         width: 260px;
@@ -72,7 +72,7 @@ body.is-active {
         background-size: cover;
 
         @include media-breakpoint-down(lg) {
-          width: 204;
+          width: 204px;
           height: 78px;
         }
       }

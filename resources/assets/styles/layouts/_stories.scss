@@ -1,0 +1,88 @@
+body.stories {
+  .hero {
+    height: 400px;
+    display: flex;
+    align-items: flex-end;
+
+    h1 {
+      font-size: 63px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    h2 {
+      font-size: 23px;
+    }
+  }
+
+  .page-header {
+    background: $cream;
+    padding: 1.25rem 3rem;
+    text-align: center;
+    margin: 0 auto -3rem auto;
+  }
+
+  .intro {
+    text-align: center;
+    font-size: 25px;
+    line-height: 37px;
+    font-weight: 200;
+    margin: 8rem 0 4rem 0;
+  }
+
+  .story {
+    width: calc(100% + 30px);
+    padding: 0;
+    margin: 6rem -15px;
+    align-items: center;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    h3 {
+      font-size: 110px;
+      line-height: 100px;
+      font-weight: 600;
+      margin: 0 0 0 -4rem;
+      background: #fff;
+      display: flex;
+      padding: 0.75rem 1.5rem;
+    }
+
+    .excerpt {
+      margin: 0 9rem 0 3rem;
+    }
+
+    p {
+      font-size: 17px;
+      line-height: 29px;
+
+      strong {
+        font-size: 26px;
+        line-height: 24px;
+        font-weight: 300;
+      }
+    }
+
+    .button {
+      display: inline-flex;
+      margin: 1.25rem auto 0 0;
+    }
+
+    &:nth-child(odd) {
+      flex-direction: row-reverse;
+
+      h3 {
+        margin: 0 -4rem 0 0;
+        justify-content: flex-end;
+      }
+
+      .excerpt {
+        margin: 0 3rem 0 9rem;
+      }
+    }
+  }
+}
