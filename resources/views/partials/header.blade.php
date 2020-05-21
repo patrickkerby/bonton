@@ -59,7 +59,7 @@ $sub_title = get_field('sub_title');
     <div class="page-header">
       <h1 class="hero-headline">{!! App::title() !!}</h1>
       @if($sub_title)
-        <h2>{!! $sub_title !!}</h2>
+        {!! $sub_title !!}
       @endif
     </div>
 @endif
