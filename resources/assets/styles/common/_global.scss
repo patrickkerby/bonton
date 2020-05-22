@@ -117,3 +117,100 @@ a {
   font-size: 18px;
   line-height: 50px;
 }
+
+//Flexslider styles
+ol.flex-control-nav {
+  position: absolute;
+  bottom: 2.7rem;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  padding: 0;
+  margin: 0;
+  z-index: 999;
+
+  li {
+    list-style-type: none;
+    background: #fff;
+    border-radius: 8px;
+    margin: 0.3rem;
+
+    a {
+      width: 14px;
+      height: 14px;
+      text-indent: -99999px;
+      display: flex;
+      position: relative;
+
+      &.flex-active::after {
+        content: "";
+        background: $highlight;
+        position: absolute;
+        left: 3px;
+        top: 3px;
+        width: 8px;
+        height: 8px;
+        border-radius: 5px;
+      }
+    }
+  }
+}
+
+ul.flex-direction-nav {
+  position: absolute;
+  margin: 0 4%;
+  padding: 0;
+  list-style-type: none;
+  top: 28%;
+  left: 0;
+  width: 92%;
+  display: flex;
+  justify-content: space-between;
+  z-index: 998;
+
+  li a {
+    position: relative;
+    display: block;
+    text-align: center;
+    padding: 0;
+    margin-bottom: 0;
+    height: 200px;
+    width: 27px;
+    text-indent: -999999px;
+  }
+
+  li a::before {
+    content: "";
+    position: absolute;
+    top: 47%;
+    left: 0;
+    height: 3px;
+    width: 41%;
+    background: #fff;
+    transform: skew(0deg, -45deg);
+  }
+
+  li a::after {
+    content: "";
+    position: absolute;
+    bottom: 46%;
+    left: 0;
+    height: 3px;
+    width: 40%;
+    background: #fff;
+    transform: skew(0deg, 45deg);
+  }
+
+  li.flex-nav-next a::before {
+    right: 0;
+    left: unset;
+    transform: skew(0deg, 45deg);
+  }
+
+  li.flex-nav-next a::after {
+    right: 0;
+    left: unset;
+    transform: skew(0deg, -45deg);
+  }
+}

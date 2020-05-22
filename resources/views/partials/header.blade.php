@@ -52,9 +52,7 @@ $sub_title = get_field('sub_title');
   <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay_shop }}), rgba(94,84,71,0.{{ $overlay_shop }})), url('{{ $hero_shop }}');">
     <h2>{!! $shop_title !!}</h2>
   </header>
-@elseif ( is_product() )
-  <header class="hero" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay_shop }}), rgba(45,51,55,0.{{ $overlay_shop }})), url('{{ $hero_shop }}');">
-@elseif ( is_single() )
+@elseif ( is_single() && 'product' != get_post_type() )
   <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
     <div class="page-header">
       <h1 class="hero-headline">{!! App::title() !!}</h1>
@@ -67,6 +65,8 @@ $sub_title = get_field('sub_title');
         <a href="">Previous Story</a> | <a href="">All</a> |<a href="">Next Story</a>
       </div>
     </div> --}}
+@elseif ( is_product() )
+  <header class="hero-product" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay }}), rgba(45,51,55,0.{{ $overlay }})), url('{{ $hero }}');">
 @else
   <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
     <div class="page-header">

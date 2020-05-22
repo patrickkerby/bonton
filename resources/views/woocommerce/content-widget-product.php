@@ -32,7 +32,7 @@ $image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $item->get_prod
 
 	<a href="<?php echo esc_url( $product->get_permalink() ); ?>" class="background-image: url({{ $image_url[0] }});">
 		<span class="product-title"><?php echo wp_kses_post( $product->get_name() ); ?></span>
-	TEST TEST TEST</a>
+	</a>
 
 	<?php if ( ! empty( $show_rating ) ) : ?>
 		<?php echo wc_get_rating_html( $product->get_average_rating() ); // PHPCS:Ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>

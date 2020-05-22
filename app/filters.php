@@ -90,6 +90,7 @@ add_filter('comments_template', function ($comments_template) {
     return $comments_template;
 }, 100);
 
+//Settings for displaying sidebar
 add_filter('sage/display_sidebar', function ($display) {
     static $display;
 
@@ -103,6 +104,12 @@ add_filter('sage/display_sidebar', function ($display) {
 
     return $display;
 });
+
+//remove woocommerce tabs
+add_filter( 'woocommerce_product_tabs', function ( $tabs ) {
+	unset( $tabs['additional_information'] );
+	return $tabs;
+}, 11);
 
 //Setup for thumbnails
 remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
