@@ -20,12 +20,12 @@
                     "key": "layout_5ec6e79c4c477",
                     "name": "flexible-content",
                     "label": "Content",
-                    "display": "row",
+                    "display": "block",
                     "sub_fields": [
                         {
                             "key": "field_5ec6f0cd333e9",
-                            "label": "",
-                            "name": "",
+                            "label": "Content",
+                            "name": "content",
                             "type": "wysiwyg",
                             "instructions": "",
                             "required": 0,
@@ -44,9 +44,80 @@
                     ],
                     "min": "",
                     "max": ""
+                },
+                "layout_5ec6f61c9578d": {
+                    "key": "layout_5ec6f61c9578d",
+                    "name": "flexible-photo",
+                    "label": "Full Width Photo",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_5ec6f6319578f",
+                            "label": "Full Width Photo",
+                            "name": "full_width_photo",
+                            "type": "image",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "url",
+                            "preview_size": "medium",
+                            "library": "all",
+                            "min_width": "",
+                            "min_height": "",
+                            "min_size": "",
+                            "max_width": "",
+                            "max_height": "",
+                            "max_size": "",
+                            "mime_types": ""
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
+                },
+                "layout_5ec6f68095790": {
+                    "key": "layout_5ec6f68095790",
+                    "name": "flexible-photorow",
+                    "label": "Photo Row",
+                    "display": "block",
+                    "sub_fields": [
+                        {
+                            "key": "field_5ec6f68095791",
+                            "label": "Photos",
+                            "name": "photos",
+                            "type": "gallery",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "return_format": "array",
+                            "preview_size": "thumbnail",
+                            "insert": "append",
+                            "library": "all",
+                            "min": 2,
+                            "max": 4,
+                            "min_width": "",
+                            "min_height": "",
+                            "min_size": "",
+                            "max_width": "",
+                            "max_height": "",
+                            "max_size": "",
+                            "mime_types": ""
+                        }
+                    ],
+                    "min": "",
+                    "max": ""
                 }
             },
-            "button_label": "Add Text Contet",
+            "button_label": "Add Content Row",
             "min": "",
             "max": ""
         }
@@ -68,5 +139,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1590096185
+    "modified": 1590103095
 }

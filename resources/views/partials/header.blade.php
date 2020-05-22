@@ -54,8 +54,21 @@ $sub_title = get_field('sub_title');
   </header>
 @elseif ( is_product() )
   <header class="hero" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay_shop }}), rgba(45,51,55,0.{{ $overlay_shop }})), url('{{ $hero_shop }}');">
+@elseif ( is_single() )
+  <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
+    <div class="page-header">
+      <h1 class="hero-headline">{!! App::title() !!}</h1>
+      @if($sub_title)
+        {!! $sub_title !!}
+      @endif
+    </div>  
+    {{-- <div class="row meta">
+      <div class="col-sm6">
+        <a href="">Previous Story</a> | <a href="">All</a> |<a href="">Next Story</a>
+      </div>
+    </div> --}}
 @else
-  <header class="hero" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay }}), rgba(45,51,55,0.{{ $overlay }})), url('{{ $hero }}');">
+  <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
     <div class="page-header">
       <h1 class="hero-headline">{!! App::title() !!}</h1>
       @if($sub_title)

@@ -1,0 +1,12 @@
+.single {
+  .gallery,
+  .full-width-photo {
+    width: calc(100% + 36px);
+    padding: 0;
+    margin: 0 -18px;
+
+    img {
+      padding: 3px;
+    }
+  }
+}
