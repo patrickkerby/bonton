@@ -71,6 +71,10 @@ body.is-active {
         &:hover {
           color: $highlight;
         }
+
+        i {
+          color: $highlight;
+        }
       }
 
       &.map a {
@@ -92,6 +96,10 @@ body.is-active {
         .dgwt-wcas-ico-magnifier-handler {
           max-width: 16px;
         }
+      }
+
+      &.wpmenucartli a {
+        padding: 0.5rem 0 0.5rem 0;
       }
     }
   }
