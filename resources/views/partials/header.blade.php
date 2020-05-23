@@ -7,18 +7,22 @@ $overlay = get_field('overlay');
 $overlay_news = get_field('overlay', get_option('page_for_posts'));	
 $overlay_shop = get_field('overlay', get_option('woocommerce_shop_page_id'));	
 
-// $logo = get_field('logo');
-
 $shop_title = get_the_title( get_option('woocommerce_shop_page_id') );
 $news_title = get_the_title( get_option('page_for_posts', true) );
-
 $hero_product = get_field('shop_header_image', 'option');
-
 $sub_title = get_field('sub_title');
 
 @endphp
 
 <header class="banner d-none d-sm-flex">
+  <div class="util-nav">    	
+    <div class="hours">@php echo do_shortcode('[mbhi location="Bon Ton Bakery"]'); @endphp</div>
+    <div class="top-nav-row">
+      @if (has_nav_menu('top_navigation'))
+        {!! wp_nav_menu(['theme_location' => 'top_navigation', 'menu_class' => 'top-nav']) !!}
+      @endif
+    </div>
+  </div>
   <div class="container-fluid">
     <nav class="nav-primary">
       @if (has_nav_menu('primary_navigation'))
