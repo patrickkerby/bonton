@@ -12,11 +12,7 @@ body.is-active {
 }
 
 .nav-primary {
-  margin-top: 2rem;
-
-  @include media-breakpoint-down(lg) {
-    margin-top: 1rem;
-  }
+  margin-top: 1rem;
 
   ul {
     justify-content: space-around;
@@ -44,7 +40,7 @@ body.is-active {
         left: 0;
         padding: 0;
         width: 100%;
-        top: 70%;
+        top: 90%;
         background: $cream;
         overflow: hidden;
         height: 0;
