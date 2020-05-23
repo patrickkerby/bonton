@@ -62,7 +62,7 @@ body.is-active {
 
     li {
       a {
-        margin: 0.5rem 0 0.5rem 2rem;
+        margin: 0 0 0 2rem;
         padding: 0.5rem 0 0.5rem 1.25rem;
         font-size: 14px;
         font-weight: 500;
@@ -98,8 +98,15 @@ body.is-active {
         }
       }
 
-      &.wpmenucartli a {
-        padding: 0.5rem 0 0.5rem 0;
+      &.wpmenucartli {
+        margin-left: 1rem;
+        padding-right: 1rem;
+        background: $cream;
+
+        a {
+          padding: 0.5rem 0;
+          margin-left: 1rem;
+        }
       }
     }
   }
