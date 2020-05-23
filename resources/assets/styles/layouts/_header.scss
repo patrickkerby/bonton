@@ -85,6 +85,14 @@ body.is-active {
       &.schedule a {
         background: url("../images/schedule.svg") left center no-repeat;
       }
+
+      &.menu-dgwt_wcas_search_box {
+        margin-left: 1.25rem;
+
+        .dgwt-wcas-ico-magnifier-handler {
+          max-width: 16px;
+        }
+      }
     }
   }
 }
