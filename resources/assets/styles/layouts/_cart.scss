@@ -1,0 +1,246 @@
+.cart .wrap {
+  padding-top: 3rem;
+}
+
+.woocommerce .quantity .qty,
+.acf-field input[type="text"] {
+  padding: 0.4rem;
+  border: solid 3px #f8f7f2;
+  margin-right: 0.75rem;
+}
+
+.qib-container {
+  border: solid 3px #f8f7f2 !important;
+  width: auto !important;
+}
+
+.qib-button:not(#qib_id):not(#qib_id) {
+  background: #f8f7f2 !important;
+  color: #707070 !important;
+  font-size: 22px !important;
+  font-weight: 600 !important;
+  padding: 0 0 4px 0 !important;
+  border: none !important;
+  height: 45px !important;
+}
+
+.qib-button:hover:not(#qib_id):not(#qib_id) {
+  background: #f0ede1 !important;
+}
+
+.qib-container .quantity input.qty:not(#qib_id):not(#qib_id) {
+  border: none !important;
+  font-weight: 600 !important;
+  height: 45px !important;
+}
+
+.woocommerce table.cart td.product-quantity .qib-container:not(#qib_id):not(#qib_id) {
+  display: inline-flex !important;
+}
+
+.wcpa_form_item {
+  label {
+    display: none;
+  }
+
+  div.sliced label {
+    display: inline-block;
+  }
+}
+
+.warning {
+  font-size: 13px;
+  line-height: 16px;
+  color: $highlight;
+  font-weight: 600;
+  padding: 1rem 3rem;
+  background: #fff;
+  box-shadow: 0 0 25px -2px rgba(0, 0, 0, 0.1);
+  background-color: r;
+  width: 90%;
+  text-align: center;
+}
+
+.acf-form {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 3rem 0;
+
+  .acf-field {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  @include media-breakpoint-down(sm) {
+    .acf-fields {
+      display: flex;
+      flex-direction: row;
+    }
+  }
+
+  .acf-field input[type="text"] {
+    height: 50px;
+    font-size: 18px;
+  }
+
+  .acf-label {
+    margin: 0;
+  }
+
+  .acf-radio-list li {
+    label {
+      font-size: 17px;
+
+      input {
+        margin-right: 0.75rem !important;
+      }
+    }
+  }
+
+  .acf-field .acf-label label {
+    margin: 0 1rem 0 0;
+    height: 50px;
+    line-height: 50px;
+    font-family: $font-family-serif;
+    font-size: 18px;
+  }
+
+  .acf-fields > .acf-field {
+    padding: 0;
+    border: none;
+    margin-bottom: 1.5rem;
+
+    @include media-breakpoint-down(sm) {
+      margin: 0 1rem 1.5rem 1rem;
+    }
+  }
+
+  input.acf-button {
+    line-height: 30px !important;
+    background: #fff;
+    border: solid 3px $highlight;
+    color: #53c999;
+    height: 40px !important;
+
+    @include slowfade;
+
+    &:hover {
+      background: $highlight;
+      color: #fff;
+
+      @include slowfade;
+    }
+  }
+}
+
+.shop_table {
+  border: solid 3px $cream !important;
+  border-radius: 0 !important;
+
+  th {
+    padding: 0.5rem 0.5rem 0.5rem 0 !important;
+    border-top: none !important;
+  }
+
+  td {
+    padding: 0 12px 15px 0 !important;
+    border-top: none !important;
+  }
+
+  tr.title td.product-name,
+  tr.title td.product-remove {
+    border-top: solid 3px $cream !important;
+    padding: 1rem 0 0.5rem 0 !important;
+  }
+
+  td.product-name a {
+    font-size: 20px;
+  }
+
+  a.remove {
+    margin: 0 0.5rem;
+  }
+
+  .availability {
+    font-size: 15px;
+    display: block;
+    text-align: left;
+    line-height: 18px;
+  }
+
+  .not-available {
+    td {
+      border: none !important;
+      padding-top: 0 !important;
+    }
+
+    .not-available-message {
+      color: red;
+      font-size: 13px;
+      line-height: 15px;
+      display: flex;
+      text-align: center;
+      justify-content: center;
+    }
+  }
+
+  td.actions {
+    padding-top: 1.5rem !important;
+    padding-bottom: 1.5rem !important;
+    border-top: solid 3px $cream !important;
+
+    .coupon {
+      margin-left: 2rem;
+
+      .input-text {
+        height: 50px;
+        border: solid 3px #f8f7f2 !important;
+        width: auto !important;
+      }
+
+      button {
+        line-height: 40px !important;
+        background: #fff;
+        border: solid 3px $highlight;
+        color: $highlight;
+
+        @include slowfade;
+
+        &:hover {
+          background: $highlight;
+          color: #fff;
+
+          @include slowfade;
+        }
+      }
+    }
+  }
+}
+
+.cart-collaterals .cart_totals table.shop_table {
+  border-top: none !important;
+
+  th {
+    font-family: $font-family-serif;
+    font-size: 20px;
+    padding: 1.25rem 0 1rem 1rem !important;
+    border-top: solid 3px $cream !important;
+  }
+
+  td {
+    font-size: 22px;
+    padding: 1rem !important;
+    border-top: solid 3px $cream !important;
+  }
+}
+
+.cart-collaterals.conflict {
+  a.checkout-button {
+    opacity: 0.2;
+    pointer-events: none;
+    cursor: default;
+  }
+}

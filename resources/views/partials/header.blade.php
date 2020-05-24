@@ -75,11 +75,13 @@ $sub_title = get_field('sub_title');
     <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
       <div class="page-header">
         <h1 class="hero-headline">{!! App::title() !!}</h1>
-        @if($sub_title)
-          {!! $sub_title !!}
-        @endif
       </div>
     </header>
+    <div class="intro">
+      @if($sub_title)
+        {!! $sub_title !!}
+      @endif
+    </div>
 
   @else
   {{-- Show no header --}}

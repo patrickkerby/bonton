@@ -27,20 +27,21 @@ do_action( 'woocommerce_before_cart' );
 
 ?>
 	<div class="row justify-content-center">
-		<div class="col-sm-8">
+		<div class="col-sm-4">
 		@php
 			acf_form(array(
-				'submit_value' => __('Select date', 'acf'),
+				'submit_value' => __('Save', 'acf'),
 				'fields' => array(
-						'pickup_date'
+						'pickup_date',
+						'timeslot'
 				),
 				'return' => '%post_url%',
 				'updated_message' => false,
 			));
 		@endphp
 		</div>
-	</div>  
 
+		<div class="col-sm-8">
 		<form class="woocommerce-cart-form" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
 			<?php do_action( 'woocommerce_before_cart_table' ); ?>
 			<table class="shop_table shop_table_responsive cart woocommerce-cart-form__contents" cellspacing="0">
@@ -90,26 +91,24 @@ do_action( 'woocommerce_before_cart' );
 								}
 
 							?>
-							<tr class="<?php echo $availability_status; ?> woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
-
-								<td class="product-remove">
-									<?php
-										echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-											'woocommerce_cart_item_remove_link',
-											sprintf(
-												'<a href="%s" class="remove" aria-label="%s" data-product_id="%s" data-product_sku="%s">&times;</a>',
-												esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
-												esc_html__( 'Remove this item', 'woocommerce' ),
-												esc_attr( $product_id ),
-												esc_attr( $_product->get_sku() )
-											),
-											$cart_item_key
-										);
-									?>
-								</td>					
-
-								<td class="product-name" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
+						<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
+							<td class="product-remove">
 								<?php
+									echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+										'woocommerce_cart_item_remove_link',
+										sprintf(
+											'<a href="%s" class="remove" aria-label="%s" data-product_id="%s" data-product_sku="%s">&times;</a>',
+											esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
+											esc_html__( 'Remove this item', 'woocommerce' ),
+											esc_attr( $product_id ),
+											esc_attr( $_product->get_sku() )
+										),
+										$cart_item_key
+									);
+								?>
+							</td>	
+							<td class="product-name" colspan="4" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
+								@php
 								if ( ! $product_permalink ) {
 									echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;' );
 								} else {
@@ -117,7 +116,14 @@ do_action( 'woocommerce_before_cart' );
 								}
 
 								do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key );
-
+								@endphp
+							</td>
+						</tr>
+						
+						<tr class="<?php echo $availability_status; ?> woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
+							<td></td>
+							<td class="product-meta" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
+								<?php
 								// Meta data.
 								echo wc_get_formatted_cart_item_data( $cart_item ); // PHPCS: XSS ok.
 
@@ -135,11 +141,7 @@ do_action( 'woocommerce_before_cart' );
 											$days = implode(', ', $days_available);
 											echo '<span class="availability"><strong>Availability: </strong>' . $days . '</span>';
 									}
-									if($availability_msg){
-										echo $availability_msg;
-									}
 								?>				
-
 								</td>
 
 								<td class="product-price" data-title="<?php esc_attr_e( 'Price', 'woocommerce' ); ?>">
@@ -176,7 +178,15 @@ do_action( 'woocommerce_before_cart' );
 									?>
 								</td>
 							</tr>
+							@if($availability_msg)
+								<tr class="not-available">
+									<td colspan="5">{!! $availability_msg !!}</td>
+								</tr>
+								@php static $conflict = TRUE; @endphp
+							@endif
+							
 							<?php
+							
 						}
 					}
 					?>
@@ -206,10 +216,11 @@ do_action( 'woocommerce_before_cart' );
 			</table>
 			<?php do_action( 'woocommerce_after_cart_table' ); ?>
 		</form>
+		</div>
 
 	<?php do_action( 'woocommerce_before_cart_collaterals' ); ?>
 
-	<div class="cart-collaterals">
+	<div class="cart-collaterals @if($conflict) conflict @endif col-sm-12">
 		<?php
 			/**
 			 * Cart collaterals hook.
