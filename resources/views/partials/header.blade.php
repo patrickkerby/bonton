@@ -15,7 +15,6 @@ $hero_product = get_field('shop_header_image', 'option');
 $sub_title = get_field('sub_title');
 
 @endphp
-
 <header class="banner d-none d-sm-flex">
   <div class="util-nav">    	
     <div class="hours">@php echo do_shortcode('[mbhi location="Bon Ton Bakery"]'); @endphp</div>

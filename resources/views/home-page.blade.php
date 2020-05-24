@@ -61,8 +61,8 @@
                       <h4>{{ $item->product->post_title }}</h4>
                       <p>{!! $item->product->post_excerpt !!}</p>
                       <div class="meta">
-                        <a href="{{ $url }}" class="product-link">More Info</a>
-                        {{-- <a href="#" title="{{ $item->product->post_title }}" data-product_id="{!! $item->product->post_excerpt !!}" class="quick-view-button inside-thumb"><span>Learn More</span></a> --}}
+                        <a href="{{ $url }}" class="product-link">More Info</a> 
+                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb"><span>Learn More</span></a>
                       </div>
                     </div> 
                   </div>                                                       
