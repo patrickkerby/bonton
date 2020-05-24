@@ -141,7 +141,7 @@ footer.container-fluid {
   img {
     display: flex;
     margin: 0 auto;
-    max-width: 100%;
+    max-width: 240px;
 
     @include media-breakpoint-down(md) {
       margin-top: 3rem;

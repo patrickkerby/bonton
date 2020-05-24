@@ -30,6 +30,7 @@ class App extends Controller
         }
         return get_the_title();
     }
+
     protected $acf = true;
 
     public function acf()
@@ -37,6 +38,17 @@ class App extends Controller
         add_filter('sober/controller/acf/array', function () {
             return true;
         });
+    }
+
+    public function container()
+    {
+        $container = 'container';
+        $container_fluid = 'container-fluid';
+
+        if (is_cart()) {
+            return $container;
+        }
+        return $container_fluid;
     }
 }
 

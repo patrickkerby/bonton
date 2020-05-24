@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.contained')
 
 @section('content')
   @while(have_posts()) @php the_post() @endphp

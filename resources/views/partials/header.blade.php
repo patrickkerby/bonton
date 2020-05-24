@@ -48,37 +48,33 @@ $sub_title = get_field('sub_title');
   </div>
 </header>
 
-@if ( is_front_page() )
-  <header class="hero" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay }}), rgba(45,51,55,0.{{ $overlay }})), url('{{ $hero }}');">
-@elseif ( is_home() )
-  <header class="hero" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay_news }}), rgba(45,51,55,0.{{ $overlay_news }})), url('{{ $hero_news }}');">
-@elseif ( is_shop() )
+
+@if ( is_shop() )
   <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay_shop }}), rgba(94,84,71,0.{{ $overlay_shop }})), url('{{ $hero_shop }}');">
     <h2>{!! $shop_title !!}</h2>
   </header>
-@elseif ( is_single() && 'product' != get_post_type() )
-  <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
-    <div class="page-header">
-      <h1 class="hero-headline">{!! App::title() !!}</h1>
-      @if($sub_title)
-        {!! $sub_title !!}
-      @endif
-    </div>  
-    {{-- <div class="row meta">
-      <div class="col-sm6">
-        <a href="">Previous Story</a> | <a href="">All</a> |<a href="">Next Story</a>
+
+  @elseif ( is_single() && 'product' != get_post_type() )
+    <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
+      <div class="page-header">
+        <h1 class="hero-headline">{!! App::title() !!}</h1>
+        @if($sub_title)
+          {!! $sub_title !!}
+        @endif
+      </div>  
+    </header>
+
+  @elseif ($use_custom_header == TRUE)
+    <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
+      <div class="page-header">
+        <h1 class="hero-headline">{!! App::title() !!}</h1>
+        @if($sub_title)
+          {!! $sub_title !!}
+        @endif
       </div>
-    </div> --}}
-@elseif ( is_product() )
-  <header class="hero-product" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay }}), rgba(45,51,55,0.{{ $overlay }})), url('{{ $hero }}');">
-@else
-  <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
-    <div class="page-header">
-      <h1 class="hero-headline">{!! App::title() !!}</h1>
-      @if($sub_title)
-        {!! $sub_title !!}
-      @endif
-    </div>
+    </header>
+
+  @else
+  {{-- Show no header --}}
 @endif
-  </header>
   

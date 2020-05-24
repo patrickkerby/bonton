@@ -305,8 +305,9 @@
   margin-right: 0.75rem;
 }
 
-.qib-container {
-  border: solid 3px #f8f7f2;
+.qib-container,
+.woocommerce-page table.cart td.actions .input-text {
+  border: solid 3px #f8f7f2 !important;
   width: auto !important;
 }
 
@@ -407,6 +408,10 @@
       width: 94%;
       display: flex;
     }
+  }
+
+  td.actions .coupon .input-text {
+    height: 50px;
   }
 }
 
