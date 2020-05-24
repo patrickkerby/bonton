@@ -11,6 +11,9 @@
  */
 // @import "~some-node-module";
 @import "~hamburgers/_sass/hamburgers/hamburgers";
+@import "~slick-carousel/slick/slick.scss";
+@import "~slick-carousel/slick/slick-theme.scss";
+@import "~slick-lightbox/dist/slick-lightbox.css";
 
 /** Import theme styles */
 @import "common/global";

@@ -9037,6 +9037,16 @@ slice-ansi@1.0.0:
   dependencies:
     is-fullwidth-code-point "^2.0.0"
 
+slick-carousel@^1.8.1:
+  version "1.8.1"
+  resolved "https://registry.yarnpkg.com/slick-carousel/-/slick-carousel-1.8.1.tgz#a4bfb29014887bb66ce528b90bd0cda262cc8f8d"
+  integrity sha512-XB9Ftrf2EEKfzoQXt3Nitrt/IPbT+f1fgqBdoxO3W/+JYvtEOW6EgxnWfr9GH6nmULv7Y2tPmEX3koxThVmebA==
+
+slick-lightbox@^0.2.12:
+  version "0.2.12"
+  resolved "https://registry.yarnpkg.com/slick-lightbox/-/slick-lightbox-0.2.12.tgz#cdd35287ab2445ba1f8d1b469f665c897df6828c"
+  integrity sha512-OwY/gDvh8Xc7wvch/71U8iK+2rXQS0dAzJZvCO8c4u9ZbxQEdnUz8UjyDQJENALXPhrnXXz/yC8qwUhJEoJhcA==
+
 snapdragon-node@^2.0.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/snapdragon-node/-/snapdragon-node-2.1.1.tgz#6c175f86ff14bdb0724563e8f3c1b021a286853b"

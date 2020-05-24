@@ -56,6 +56,11 @@ export default {
             $(modalId).modal('show');
         }
     });
+
+    // Enable slick lightbox on appropriate images
+    $('main').slickLightbox({
+      itemSelector: '.slick',
+    });
       
     });
   },

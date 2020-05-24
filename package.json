@@ -90,6 +90,8 @@
     "jszip": "^3.4.0",
     "pdfmake": "^0.1.65",
     "popper.js": "^1.14.7",
+    "slick-carousel": "^1.8.1",
+    "slick-lightbox": "^0.2.12",
     "typeturajs": "^1.2.2"
   }
 }

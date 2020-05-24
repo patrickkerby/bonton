@@ -13,6 +13,8 @@ import 'datatables.net-responsive-bs4';
 import 'datatables.net-rowgroup-bs4';
 import 'datatables.net-searchpanes-bs4';
 import 'typeturajs';
+import 'slick-carousel/slick/slick.min.js';
+import 'slick-lightbox/dist/slick-lightbox.min.js';
 
 // Import everything from autoload
 import './autoload/**/*'

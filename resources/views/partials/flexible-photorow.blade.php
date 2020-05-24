@@ -6,7 +6,7 @@
   <section class="row gallery no-gutters">
     @foreach ($images as $item)
       <div class="col-sm">
-        <a href="{!! $item['url'] !!}">
+        <a href="{!! $item['url'] !!}" class="slick">
           <img src="{{ $item['sizes']['medium'] }}" alt="{{ $item['alt'] }}" />
         </a>
       </div>
