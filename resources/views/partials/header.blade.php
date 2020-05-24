@@ -8,6 +8,8 @@ $overlay_news = get_field('overlay', get_option('page_for_posts'));
 $overlay_shop = get_field('overlay', get_option('woocommerce_shop_page_id'));	
 
 $shop_title = get_the_title( get_option('woocommerce_shop_page_id') );
+$shop_subtitle = get_field('sub_title', get_option('woocommerce_shop_page_id'));
+
 $news_title = get_the_title( get_option('page_for_posts', true) );
 $hero_product = get_field('shop_header_image', 'option');
 $sub_title = get_field('sub_title');
@@ -53,6 +55,11 @@ $sub_title = get_field('sub_title');
   <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay_shop }}), rgba(94,84,71,0.{{ $overlay_shop }})), url('{{ $hero_shop }}');">
     <h2>{!! $shop_title !!}</h2>
   </header>
+  @if($shop_subtitle)
+    <div class="intro">
+      {!! $shop_subtitle !!}
+    </div>
+  @endif
 
   @elseif ( is_single() && 'product' != get_post_type() )
     <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">

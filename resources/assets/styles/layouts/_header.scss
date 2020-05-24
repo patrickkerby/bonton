@@ -408,6 +408,7 @@ body.is-active {
 .post-type-archive header.hero {
   height: 450px;
   display: flex;
+  flex-direction: column;
   text-align: center;
   align-items: center;
   justify-content: center;
@@ -458,5 +459,30 @@ body.is-active {
       margin: 0 auto;
     }
   }
+
+  p {
+    color: #fff;
+  }
 }
+
+.post-type-archive-product .intro {
+  display: flex;
+  justify-content: center;
+  background: $cream;
+  max-width: 80%;
+  padding: 1.5rem 3rem;
+  text-align: center;
+  margin: -4rem auto 0 auto;
+  width: fit-content;
+  position: relative;
+
+  p {
+    color: $charcoal;
+    font-weight: 500;
+    line-height: 31px;
+    font-size: 16px;
+    margin: 0;
+  }
+}
+
 /* stylelint-enable no-descending-specificity */
