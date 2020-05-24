@@ -45,7 +45,7 @@ class App extends Controller
         $container = 'container';
         $container_fluid = 'container-fluid';
 
-        if (is_cart()) {
+        if ( is_checkout() ) {
             return $container;
         }
         return $container_fluid;

@@ -27,7 +27,7 @@ do_action( 'woocommerce_before_cart' );
 
 ?>
 	<div class="row justify-content-center">
-		<div class="col-sm-4">
+		<div class="col-md-4">
 		@php
 			acf_form(array(
 				'submit_value' => __('Save', 'acf'),
@@ -41,10 +41,10 @@ do_action( 'woocommerce_before_cart' );
 		@endphp
 		</div>
 
-		<div class="col-sm-8">
+		<div class="col-md-8">
 		<form class="woocommerce-cart-form" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
 			<?php do_action( 'woocommerce_before_cart_table' ); ?>
-			<table class="shop_table shop_table_responsive cart woocommerce-cart-form__contents" cellspacing="0">
+			<table class="shop_table cart woocommerce-cart-form__contents" cellspacing="0">
 				<thead>
 					<tr>
 						<th class="product-remove">&nbsp;</th>

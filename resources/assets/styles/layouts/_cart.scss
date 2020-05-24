@@ -22,6 +22,10 @@
   padding: 0 0 4px 0 !important;
   border: none !important;
   height: 45px !important;
+
+  @include media-breakpoint-down(sm) {
+    width: 28px !important;
+  }
 }
 
 .qib-button:hover:not(#qib_id):not(#qib_id) {
@@ -32,6 +36,10 @@
   border: none !important;
   font-weight: 600 !important;
   height: 45px !important;
+
+  @include media-breakpoint-down(sm) {
+    width: 32px !important;
+  }
 }
 
 .woocommerce table.cart td.product-quantity .qib-container:not(#qib_id):not(#qib_id) {
@@ -118,6 +126,11 @@
     }
   }
 
+  .acf-form-submit {
+    display: flex;
+    justify-content: center;
+  }
+
   input.acf-button {
     line-height: 30px !important;
     background: #fff;
@@ -140,11 +153,6 @@
   border: solid 3px $cream !important;
   border-radius: 0 !important;
 
-  th {
-    padding: 0.5rem 0.5rem 0.5rem 0 !important;
-    border-top: none !important;
-  }
-
   td {
     padding: 0 12px 15px 0 !important;
     border-top: none !important;
@@ -156,12 +164,21 @@
     padding: 1rem 0 0.5rem 0 !important;
   }
 
+  th {
+    padding: 0.5rem 0.5rem 0.5rem 0 !important;
+    border-top: none !important;
+  }
+
   td.product-name a {
     font-size: 20px;
   }
 
   a.remove {
     margin: 0 0.5rem;
+
+    @include media-breakpoint-down(sm) {
+      margin: 0 0.25rem;
+    }
   }
 
   .availability {
@@ -169,6 +186,10 @@
     display: block;
     text-align: left;
     line-height: 18px;
+
+    @include media-breakpoint-down(sm) {
+      font-size: 14px;
+    }
   }
 
   .not-available {
@@ -214,6 +235,18 @@
           color: #fff;
 
           @include slowfade;
+        }
+      }
+
+      @include media-breakpoint-down(xs) {
+        margin: 0 auto;
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+
+        button {
+          width: 100% !important;
+          margin-top: 0.5rem;
         }
       }
     }
