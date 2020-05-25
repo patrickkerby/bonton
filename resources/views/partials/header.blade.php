@@ -42,12 +42,19 @@ $sub_title = get_field('sub_title');
     </span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent1">
+    
     <nav class="nav-mobile">
+      @php 
+      echo do_shortcode('[wcas-search-form]');
+      @endphp      
       @if (has_nav_menu('mobile_navigation'))
         {!! wp_nav_menu(['theme_location' => 'mobile_navigation', 'menu_class' => 'mobile-nav']) !!}
       @endif
+      <div class="mobile-util-nav">
+        <a class="btn button" href="https://goo.gl/maps/yDgi2Hh8qSw6D7eq7" target="_blank">Get directions</a>
+        <a class="btn button" href="tel:+1-780-489-7717">Call us!</a>
+      </div>
     </nav>
-  </div>
 </header>
 
 @if ($use_custom_header == TRUE && ! is_front_page() && ! is_page('stories'))

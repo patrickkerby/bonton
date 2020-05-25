@@ -389,6 +389,42 @@ body.is-active {
         font-weight: 600;
         padding: 0.5rem 0;
       }
+
+      .dgwt-wcas-search-wrapp {
+        position: absolute;
+        top: 2rem;
+        left: 2rem;
+
+        &::after {
+          content: "Search Products";
+          font-size: 12px;
+          font-weight: 600;
+          width: 2rem;
+          display: flex;
+          line-height: 12px;
+          position: absolute;
+          top: 0;
+          left: 1.75rem;
+        }
+      }
+
+      .mobile-util-nav {
+        position: fixed;
+        left: 0;
+        bottom: 1.5rem;
+        width: 100%;
+        display: flex;
+        padding: 0.5rem 1.5rem;
+
+        a {
+          width: 100%;
+          margin: 0 0.5rem;
+          font-size: 17px;
+          font-family: $font-family-sans-serif;
+          background: none;
+          padding: 0.5rem 1rem;
+        }
+      }
     }
   }
 }
