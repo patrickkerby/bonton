@@ -7,6 +7,10 @@ body.is-active {
   }
 }
 
+.dgwt-wcas-overlay-mobile-on body.is-active {
+  position: unset;
+}
+
 .banner {
   flex-direction: column;
 

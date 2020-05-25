@@ -35,7 +35,7 @@ $sub_title = get_field('sub_title');
 </header>
 
 <header class="mobile-banner d-sm-none">
-  <a href="{!! site_url() !!}" class="logo">Bon Ton Bakery &amp; Pâtisserie</a>
+  <a href="{!! get_home_url() !!}" class="logo">Bon Ton Bakery &amp; Pâtisserie</a>
   <button class="navbar-toggler hamburger hamburger--arrow" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
     <span class="hamburger-box">
       <span class="hamburger-inner"></span>
