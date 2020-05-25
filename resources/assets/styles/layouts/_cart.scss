@@ -285,3 +285,10 @@
     cursor: default;
   }
 }
+
+//Remove woocommerce cart and checkout notifications for coupons.
+//Remove woocommerce checkout notifications for loyalty points redemption 
+.woocommerce-form-coupon-toggle,
+.woocommerce-checkout .wc_points_redeem_earn_points {
+  display: none;
+}

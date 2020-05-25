@@ -56,11 +56,11 @@ $sub_title = get_field('sub_title');
       <h1 class="hero-headline">{!! App::title() !!}</h1>
     </div>
   </header>
-  <div class="intro">
-    @if($sub_title)
+  @if($sub_title)
+    <div class="intro">
       {!! $sub_title !!}
-    @endif
-  </div>
+    </div>
+  @endif
 
 @elseif ($use_custom_header == TRUE && is_page('stories'))
 <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">

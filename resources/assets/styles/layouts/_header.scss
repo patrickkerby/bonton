@@ -466,7 +466,8 @@ body.is-active {
 }
 
 .post-type-archive-product,
-.cart {
+.cart,
+.woocommerce-checkout {
   .intro {
     display: flex;
     justify-content: center;
