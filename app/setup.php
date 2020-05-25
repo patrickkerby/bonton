@@ -159,3 +159,29 @@ if( function_exists('acf_add_options_page') ) {
 	));
 }
 
+// Add instore vs curbside to checkout
+
+// add fields
+add_action( 'woocommerce_after_order_notes', function( $checkout ){
+  
+    woocommerce_form_field( 'pickuplocation', array(
+        'type'          => 'select',
+        'class'         => array('bonton-field', 'form-row-wide'), 
+        'label'         => 'In-store or curbside pickup?',
+        'required'      => true,
+        'options'	=> array( 
+            ''		=> 'Please select',
+            'Curbside'	=> 'Curbside',
+            'In-store'	=> 'In-store'
+            ),
+        ), $checkout->get_value( 'pickuplocation' ) ); 
+});
+ 
+
+// save fields to order meta
+add_action( 'woocommerce_checkout_update_order_meta', function( $order_id ){
+ 
+	if( !empty( $_POST['pickuplocation'] ) )
+		update_post_meta( $order_id, 'pickuplocation', sanitize_text_field( $_POST['pickuplocation'] ) );
+ 
+});
