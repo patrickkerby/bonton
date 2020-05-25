@@ -61,10 +61,13 @@
                     <img class="featured-product" src="{{ $prod_img }}" alt="{{ $item->product->post_title }}" />
                     <div class="carousel-caption">
                       <h4>{{ $item->product->post_title }}</h4>
-                      <p>{!! $item->product->post_excerpt !!}</p>
+                      @if ($item->description_override)
+                        <p>{{ $item->description_override }}</p>
+                      @else
+                        <p>{!! $item->product->post_excerpt !!}</p>
+                      @endif
                       <div class="meta">
-                        <a href="{{ $url }}" class="product-link">More Info</a> 
-                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb"><span>Learn More</span></a>
+                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Learn More</span></a>
                       </div>
                     </div> 
                   </div>                                                       
@@ -92,7 +95,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="{{ $url }}" class="product-link">More Info</a>
+                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Learn More</span></a>
                       </div>
                     </div> 
                   </div>                                                       
