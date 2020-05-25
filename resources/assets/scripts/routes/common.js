@@ -25,17 +25,17 @@ export default {
     // add class to body when modal is triggered
     $(document).ready(function() {
       $(document).on('click', '.inside-thumb', function() {
-        $('body').addClass('modal-open');
+        $('body').addClass('quickview-open');
       });
       // remove class from body when close button is clicked  
       $(document).on('click', '.close-product', function(e) {
-        if (!$(e.target).is('.modal-open'))
-          $('.modal-open').removeClass('modal-open');
+        if (!$(e.target).is('.quickview'))
+          $('.quickview-open').removeClass('quickview-open');
       });
       // remove class from body when you click on the overlay
       $(document).on('click', '.pp_overlay', function(e) {
-        if (!$(e.target).is('.modal-open'))
-          $('.modal-open').removeClass('modal-open');
+        if (!$(e.target).is('.quickview-open'))
+          $('.quickview-open').removeClass('quickview-open');
       });   
       // close the modal when you click on our new button  
       $('.close-product').on('click',function() { $.prettyPhoto.close(); });

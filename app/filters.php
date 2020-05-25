@@ -220,20 +220,16 @@ add_action('acf/validate_save_post', function() {
     ));
 });
 
-// /**
-//  * Save pickup date selection to customer order.
-//  *
-//  * @param WC_Order_Item_Product $item
-//  * @param string                $cart_item_key
-//  * @param array                 $values
-//  * @param WC_Order              $order
-//  */
-// function iconic_add_engraving_text_to_order_items( $item, $cart_item_key, $values, $order ) {
-// 	if ( empty( $values['iconic-engraving'] ) ) {
-// 		return;
-// 	}
+// add data attributes to wp nav item: schedule
+add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
+    //Set the menu ID
+    $menu_link = 2309;
+    // Conditionally match the ID and add the attribute and value
+    if ($item->ID == $menu_link) {
+        $atts['data-toggle'] = 'modal';
+    }
+    //Return the new attribute
+    return $atts;
+        
+}, 10, 3 );
 
-// 	$item->add_meta_data( __( 'Engraving', 'iconic' ), $values['iconic-engraving'] );
-// }
-
-// add_action( 'woocommerce_checkout_create_order_line_item', 'iconic_add_engraving_text_to_order_items', 10, 4 );

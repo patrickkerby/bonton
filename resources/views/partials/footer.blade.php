@@ -26,3 +26,19 @@
 <div class="copyright">
   <p>Copyright © Bon Ton Bakery @php echo date("Y"); @endphp</p>
 </div>
+
+{{-- Global Modals --}}
+<div class="modal fade" id="schedule" tabindex="-1" role="dialog" aria-labelledby="bontonBreadSchedule" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <img src="{{ $acf_options->schedule_chart }}" alt="Bon Ton Bakery Bread Schedule" />
+      </div>
+    </div>
+  </div>
+</div>

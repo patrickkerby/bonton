@@ -1,5 +1,9 @@
 /* stylelint-disable no-descending-specificity */
 //Quick View styles
+.quickview-open {
+  overflow: hidden;
+}
+
 .pp_overlay {
   background: rgba(255, 255, 255, 0.6) !important;
 }
@@ -175,7 +179,7 @@
   }
 }
 
-.modal-open .close-product {
+.quickview-open .close-product {
   display: block;
 }
 /* stylelint-enable no-descending-specificity */
