@@ -14,7 +14,9 @@
           </div>
         </div>
         <div class="col-sm-5">
-          @include('partials.page-header')
+          <div class="page-header">
+            <h1 class="hero-headline">{!! App::title() !!}</h1>
+          </div>
           <h3>{!! $sub_title !!}</h3>
         </div>
       </div>

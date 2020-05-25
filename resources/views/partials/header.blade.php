@@ -50,8 +50,19 @@ $sub_title = get_field('sub_title');
   </div>
 </header>
 
+@if ($use_custom_header == TRUE && ! is_front_page())
+  <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
+    <div class="page-header">
+      <h1 class="hero-headline">{!! App::title() !!}</h1>
+    </div>
+  </header>
+  <div class="intro">
+    @if($sub_title)
+      {!! $sub_title !!}
+    @endif
+  </div>
 
-@if ( is_shop() )
+@elseif ( is_shop() )
   <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay_shop }}), rgba(94,84,71,0.{{ $overlay_shop }})), url('{{ $hero_shop }}');">
     <h2>{!! $shop_title !!}</h2>
   </header>
@@ -71,18 +82,7 @@ $sub_title = get_field('sub_title');
       </div>  
     </header>
 
-  @elseif ($use_custom_header == TRUE)
-    <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
-      <div class="page-header">
-        <h1 class="hero-headline">{!! App::title() !!}</h1>
-      </div>
-    </header>
-    <div class="intro">
-      @if($sub_title)
-        {!! $sub_title !!}
-      @endif
-    </div>
-
+  @elseif ( is_front_page() )
   @else
   {{-- Show no header --}}
 @endif
