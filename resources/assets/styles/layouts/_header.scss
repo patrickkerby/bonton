@@ -388,6 +388,7 @@ body.is-active {
         font-size: 17px;
         font-weight: 600;
         padding: 0.5rem 0;
+        line-height: normal;
       }
 
       .dgwt-wcas-search-wrapp {
@@ -415,6 +416,7 @@ body.is-active {
         width: 100%;
         display: flex;
         padding: 0.5rem 1.5rem;
+        z-index: 99;
 
         a {
           width: 100%;
@@ -422,7 +424,16 @@ body.is-active {
           font-size: 17px;
           font-family: $font-family-sans-serif;
           background: none;
-          padding: 0.5rem 1rem;
+          padding: 0 !important;
+          border: solid 3px $highlight;
+          color: $highlight;
+          align-items: center;
+
+          &:hover,
+          &:focus {
+            background: $highlight;
+            color: #fff;
+          }
         }
       }
     }
