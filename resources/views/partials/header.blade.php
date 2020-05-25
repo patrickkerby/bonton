@@ -50,7 +50,7 @@ $sub_title = get_field('sub_title');
   </div>
 </header>
 
-@if ($use_custom_header == TRUE && ! is_front_page())
+@if ($use_custom_header == TRUE && ! is_front_page() && ! is_page('stories'))
   <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
     <div class="page-header">
       <h1 class="hero-headline">{!! App::title() !!}</h1>
@@ -61,6 +61,16 @@ $sub_title = get_field('sub_title');
       {!! $sub_title !!}
     @endif
   </div>
+
+@elseif ($use_custom_header == TRUE && is_page('stories'))
+<header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
+  <div class="page-header">
+    <h1 class="hero-headline">{!! App::title() !!}</h1>
+    @if($sub_title)
+      {!! $sub_title !!}
+    @endif
+  </div>
+</header>
 
 @elseif ( is_shop() )
   <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay_shop }}), rgba(94,84,71,0.{{ $overlay_shop }})), url('{{ $hero_shop }}');">
