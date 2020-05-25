@@ -19,6 +19,10 @@
 
   .row {
     margin-bottom: 3rem;
+
+    @include media-breakpoint-down(xs) {
+      margin-bottom: 2rem;
+    }
   }
 
   .feature-intro {
@@ -236,6 +240,20 @@
         font-size: 14px;
         font-weight: 600;
       }
+
+      .quick-view-button span {
+        margin: 0;
+        height: auto;
+        width: auto;
+        background: none;
+        border-radius: 0;
+        transform: unset;
+
+        &::before,
+        &::after {
+          display: none;
+        }
+      }
     }
 
     @include media-breakpoint-down(xs) {
@@ -243,7 +261,7 @@
       margin: 0 auto;
       padding: 1rem;
       position: relative;
-      top: -6rem;
+      top: -7rem;
       left: unset;
       right: unset;
     }
