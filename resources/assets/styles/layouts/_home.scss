@@ -182,7 +182,7 @@
 
   .container-fluid.videos {
     background: $cream;
-    margin: 0 -15px 120px -15px;
+    margin: 0 -15px 180px -15px;
     width: calc(100% + 30px);
     padding-bottom: 1px;
     padding-top: 4rem;
@@ -244,12 +244,14 @@
         @include slowfade;
 
         img {
-          filter: grayscale(100%) contrast(1.2) brightness(1.3);
+          filter: grayscale(100%) contrast(1.2);
           object-fit: cover;
-          max-width: 100%;
           width: 100%;
+          height: 100%;
           height: auto;
-          opacity: 0.4;
+          opacity: 0.3;
+
+          @include slowfade;
         }
 
         h3 {
@@ -266,7 +268,8 @@
           background-color: #505050;
 
           img {
-            opacity: 0.5;
+            opacity: 0.4;
+            filter: grayscale(98%) contrast(1.2);
 
             @include slowfade;
           }
