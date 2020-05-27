@@ -1,16 +1,33 @@
 {{--
   Template Name: Home Page
 --}}
-
 @extends('layouts.app')
 @php global $product; @endphp
-
 @section('content')
   @while(have_posts()) @php the_post() @endphp
       <div class="hero-slider row full-width no-gutters">
         <div class="col-sm-7">
           <div class="slider">
-            <img src="{{$background_image}}" />
+            <div id="carouselIndicators" class="carousel slide carousel-fade" data-ride="carousel" data-interval="6000">
+              <ol class="carousel-indicators">
+                @foreach ($background_image as $item)
+                  <li data-target="#carouselIndicators" data-slide-to="{{ $loop->index }}" class="@if ($loop->first)active @endif"></li>
+                @endforeach
+              </ol>
+             <div class="carousel-inner">
+                @foreach ($background_image as $item)
+                  <div class="carousel-item @if ($loop->first)active @endif">
+                    @php
+                      $image = $item->image->ID;
+                      $size = 'large'; // (thumbnail, medium, large, full or custom size)
+                      if( $image ) {
+                          echo wp_get_attachment_image( $image, $size );
+                      }
+                    @endphp
+                  </div>    
+                @endforeach
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-sm-5">
@@ -41,7 +58,7 @@
         </div>
         <div class="row justify-content-center no-gutters">
           <div class="col-sm-11">
-            <div id="featuredProducts1" class="carousel slide row no-gutters" data-ride="carousel" data-interval="4000">
+            <div id="featuredProducts1" class="carousel slide carousel-fade row no-gutters" data-ride="carousel" data-interval="4000">
               <div class="d-none d-sm-block col-sm-2">
                 <ul class="carousel-indicators">
                   @foreach ($featured_products->featured_row_1->product as $item)                                      
@@ -78,7 +95,7 @@
         </div>
         <div class="row justify-content-center no-gutters">
           <div class="col-sm-11">
-            <div id="featuredProducts2" class="carousel slide row no-gutters" data-ride="carousel" data-interval="6000">
+            <div id="featuredProducts2" class="carousel slide carousel-fade row no-gutters" data-ride="carousel" data-interval="6000">
               <div class="carousel-inner col-sm-10">
                 @foreach ($featured_products->featured_row_1->product_2 as $item)                                      
                   <div class="carousel-item @if ($loop->first)active @endif left">                      
