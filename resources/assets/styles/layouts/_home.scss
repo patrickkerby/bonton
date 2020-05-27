@@ -171,11 +171,12 @@
       font-weight: 800;
 
       @include media-breakpoint-up(xl) {
-        padding: 0 3rem 2rem 3rem;
+        padding: 0 2rem 2rem 2rem;
       }
 
       @include media-breakpoint-down(md) {
-        padding: 0 0 2rem 0;
+        font-size: 34px;
+        line-height: 33px;
       }
     }
 
@@ -184,6 +185,11 @@
       line-height: 27px;
       margin: 0 0 1.25rem 0;
       text-align: center;
+
+      @include media-breakpoint-down(sm) {
+        font-size: 16px;
+        line-height: 24px;
+      }
     }
   }
 
@@ -193,6 +199,10 @@
     width: calc(100% + 30px);
     padding-bottom: 1px;
     padding-top: 4rem;
+
+    @include media-breakpoint-down(sm) {
+      margin: 0 -15px 140px -15px;
+    }
 
     &::before {
       content: "...............";
@@ -228,11 +238,20 @@
         line-height: 60px;
         font-weight: bold;
         margin-bottom: 2.5rem;
+
+        @include media-breakpoint-down(sm) {
+          font-size: 44px;
+          line-height: 46px;
+        }
       }
 
       p {
         font-size: 20px;
         line-height: 23px;
+
+        @include media-breakpoint-down(sm) {
+          font-size: 18px;
+        }
       }
     }
 
@@ -251,6 +270,10 @@
         justify-content: center;
         overflow: hidden;
         background-color: #505050;
+
+        @include media-breakpoint-down(sm) {
+          height: 210px;
+        }
 
         @include slowfade;
 
