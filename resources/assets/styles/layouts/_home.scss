@@ -134,7 +134,7 @@
     width: calc(100% + 30px);
 
     @include media-breakpoint-up(lg) {
-      padding: 2rem 13rem;
+      padding: 2rem 9rem;
     }
 
     @include media-breakpoint-down(md) {
