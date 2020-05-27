@@ -37,8 +37,8 @@
         </button>
       </div>
       <div class="modal-body">
-        <img src="{{ $acf_options->schedule_chart }}" alt="Bon Ton Bakery Bread Schedule" />
-        <a class="button btn" href="{{ $acf_options->schedule_chart }}" target="_blank">Dowload Bread Schedule Chart Here</a>
+        <img src="{{ $acf_options->bread_schedule-image }}" alt="Bon Ton Bakery Bread Schedule" />
+        <a class="button btn" href="{{ $acf_options->bread_schedule_download }}" target="_blank">Dowload Bread Schedule Chart Here</a>
       </div>
     </div>
   </div>
