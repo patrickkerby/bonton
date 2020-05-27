@@ -236,23 +236,40 @@
         width: 100%;
         height: 310px;
         display: flex;
-        background: #333;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
+        background-color: #505050;
 
         @include slowfade;
+
+        img {
+          filter: grayscale(100%) contrast(1.2) brightness(1.3);
+          object-fit: cover;
+          max-width: 100%;
+          width: 100%;
+          height: auto;
+          opacity: 0.4;
+        }
 
         h3 {
           color: #fff;
           font-size: 34px;
           margin: 0;
-          padding-left: 3.25rem;
-          background: url("../images/play-icon.svg") no-repeat left center;
+          filter: unset;
+          position: absolute;
+          z-index: 1;
         }
 
         &:hover {
           text-decoration: none;
-          background: #363636;
+          background-color: #505050;
+
+          img {
+            opacity: 0.5;
+
+            @include slowfade;
+          }
 
           h3 {
             color: $highlight;

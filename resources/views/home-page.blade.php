@@ -124,26 +124,14 @@
           </div>
         </div>
         <div class="row justify-content-center thumbs">
-          <div class="col-sm-5 thumb">
-            <a href="/our-story">
-              <h3>Our History</h3>
-            </a>
-          </div>
-          <div class="col-sm-5 thumb">
-            <a href="/sourdough">
-              <h3>Sourdough</h3>
-            </a>
-          </div>
-          <div class="col-sm-5 thumb">
-            <a href="/cakes-and-pastry">
-              <h3>Cake &amp; Pastry</h3>
-            </a>
-          </div>
-          <div class="col-sm-5 thumb">
-            <a href="/diabetes-friendly">
-              <h3>Diabetes Friendly</h3>
-            </a>
-          </div>
+          @foreach ($story_process as $item)
+            <div class="col-sm-5 thumb">
+              <a href="{{ $item->link }}">
+                <h3>{{ $item->title }}</h3>
+                <img src="{{ $item->image }}" />
+              </a>
+            </div>
+          @endforeach
         </div>
       </div>
       <section class="social container-fluid">
