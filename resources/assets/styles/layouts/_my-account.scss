@@ -1,0 +1,23 @@
+.woocommerce form.login,
+.woocommerce form.register {
+  border: solid 3px $cream;
+  border-radius: none;
+}
+
+.woocommerce .woocommerce-form-login .woocommerce-form-login__rememberme span {
+  width: 100%;
+}
+
+.woocommerce-account {
+  .hero h1 {
+    color: #fff;
+  }
+
+  .wrap {
+    padding-top: 4rem;
+  }
+
+  form .form-row label {
+    background: none;
+  }
+}

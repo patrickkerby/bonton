@@ -456,7 +456,8 @@ body.is-active {
   background-position: center center;
 }
 
-.post-type-archive header.hero {
+.post-type-archive header.hero,
+.woocommerce-account header.hero {
   height: 450px;
   display: flex;
   flex-direction: column;
