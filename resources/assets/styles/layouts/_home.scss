@@ -213,6 +213,10 @@
       margin: 3rem auto 0 auto;
       width: 250px;
       justify-content: center;
+
+      &:hover {
+        background: $highlight;
+      }
     }
 
     div.process {
