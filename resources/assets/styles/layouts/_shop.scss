@@ -119,7 +119,8 @@
   }
 }
 
-.woocommerce-checkout {
+.woocommerce-checkout,
+.woocommerce-account {
   form .form-row {
     margin: 0 0 1.75rem 0;
     padding: 0;
@@ -148,7 +149,7 @@
   }
 
   .woocommerce-input-wrapper,
-  .woocommerce-account .woocommerce-form-row {
+  .woocommerce-form-row {
     input,
     textarea {
       border: solid 2px $cream-dark;
