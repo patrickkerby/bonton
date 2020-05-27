@@ -57,7 +57,7 @@ $sub_title = get_field('sub_title');
     </nav>
 </header>
 
-@if ($use_custom_header == TRUE && ! is_front_page() && ! is_page('stories'))
+@if ($use_custom_header == TRUE && ! is_front_page() && ! is_page('stories') && 'product' != get_post_type())
   <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
     <div class="page-header">
       <h1 class="hero-headline">{!! App::title() !!}</h1>
