@@ -127,25 +127,25 @@ add_action( 'woocommerce_before_single_product_summary', 'woocommerce_template_s
  * @snippet       Variable Product Price Range: "From: <del>$$$min_reg_price</del> $$$min_sale_price"
  */
  
-// add_filter( 'woocommerce_variable_price_html', function( $price, $product ) {
+add_filter( 'woocommerce_variable_price_html', function( $price, $product ) {
  
-// // 1. Get min/max regular and sale variation prices
-// $min_var_reg_price = $product->get_variation_regular_price( 'min', true );
-// $min_var_sale_price = $product->get_variation_sale_price( 'min', true );
-// $max_var_reg_price = $product->get_variation_regular_price( 'max', true );
-// $max_var_sale_price = $product->get_variation_sale_price( 'max', true );
+// 1. Get min/max regular and sale variation prices
+$min_var_reg_price = $product->get_variation_regular_price( 'min', true );
+$min_var_sale_price = $product->get_variation_sale_price( 'min', true );
+$max_var_reg_price = $product->get_variation_regular_price( 'max', true );
+$max_var_sale_price = $product->get_variation_sale_price( 'max', true );
  
-// // 2. New $price, unless all variations have exact same prices
-// if ( ! ( $min_var_reg_price == $max_var_reg_price && $min_var_sale_price == $max_var_sale_price ) ) {   
-//    if ( $min_var_sale_price < $min_var_reg_price ) {
-//       $price = sprintf( __( 'From: <del>%1$s</del><ins>%2$s</ins>', 'woocommerce' ), wc_price( $min_var_reg_price ), wc_price( $min_var_sale_price ) );
-//    } else {
-//       $price = sprintf( __( 'From: %1$s', 'woocommerce' ), wc_price( $min_var_reg_price ) );
-//    }
-// }
+// 2. New $price, unless all variations have exact same prices
+if ( ! ( $min_var_reg_price == $max_var_reg_price && $min_var_sale_price == $max_var_sale_price ) ) {   
+   if ( $min_var_sale_price < $min_var_reg_price ) {
+      $price = sprintf( __( 'From: <del>%1$s</del><ins>%2$s</ins>', 'woocommerce' ), wc_price( $min_var_reg_price ), wc_price( $min_var_sale_price ) );
+   } else {
+      $price = sprintf( __( 'From: %1$s', 'woocommerce' ), wc_price( $min_var_reg_price ) );
+   }
+}
  
-// return $price;
-// }, 10, 2 );
+return $price;
+}, 10, 2 );
 
 
 // settings for product modal photo gallery. show bullets rather than thumbs. show prev and next arrows
@@ -164,9 +164,6 @@ add_action('woocommerce_after_shop_loop_item', function() {
 } );
 
 //Remove Price Range
-// add_filter( 'woocommerce_variable_sale_price_html', 'detect_variation_price_format', 10, 2 ); <- add this in. after testing.
-
-
 add_filter( 'woocommerce_variable_price_html', function ( $price, $product ) {
 
     // Main Price
@@ -187,38 +184,38 @@ add_filter( 'woocommerce_variable_price_html', function ( $price, $product ) {
 }, 10, 2 );
 
 // CART LOGIC: use pickup date to 
-add_action('acf/validate_save_post', function() {
-    if(!wp_doing_ajax() || !isset($_POST['_acf_post_id']) || !acf_verify_nonce('acf_form'))
-        return;
+// add_action('acf/validate_save_post', function() {
+//     if(!wp_doing_ajax() || !isset($_POST['_acf_post_id']) || !acf_verify_nonce('acf_form'))
+//         return;
         
-    // Native ACF Form validation (required, minimum/maximum etc...)
-    if($errors = acf_get_validation_errors())
-        wp_send_json_success(array(
-            'valid' 	=> 0,
-            'errors' 	=> $errors,
-        ));
+//     // Native ACF Form validation (required, minimum/maximum etc...)
+//     if($errors = acf_get_validation_errors())
+//         wp_send_json_success(array(
+//             'valid' 	=> 0,
+//             'errors' 	=> $errors,
+//         ));
     
-    // acf_form() arguments are stocked in $_POST['_acf_form']
-    if(!$form = $_POST['_acf_form'])
-        return;
+//     // acf_form() arguments are stocked in $_POST['_acf_form']
+//     if(!$form = $_POST['_acf_form'])
+//         return;
     
-    // Decoding the form arguments via acf_decrypt().
-    $form = json_decode(acf_decrypt($form), true);
+//     // Decoding the form arguments via acf_decrypt().
+//     $form = json_decode(acf_decrypt($form), true);
         
-    // Creating a 'proxy form' for the Legacy ACF Form fields saving
-    // Setting 'return' to null to avoid built-in redirection
-    $proxy = $form;
-    $proxy['return'] = '';
+//     // Creating a 'proxy form' for the Legacy ACF Form fields saving
+//     // Setting 'return' to null to avoid built-in redirection
+//     $proxy = $form;
+//     $proxy['return'] = '';
 
-    // Using native ACF Form submission method
-    acf()->form_front = new acf_form_front();
-    acf()->form_front->submit_form($proxy);
+//     // Using native ACF Form submission method
+//     acf()->form_front = new acf_form_front();
+//     acf()->form_front->submit_form($proxy);
 
-    wp_send_json_success(array(
-        'valid' => 1,
-        'data' 	=> 'Success!',
-    ));
-});
+//     wp_send_json_success(array(
+//         'valid' => 1,
+//         'data' 	=> 'Success!',
+//     ));
+// });
 
 // add data attributes to wp nav item: schedule
 add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
@@ -232,4 +229,3 @@ add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
     return $atts;
         
 }, 10, 3 );
-

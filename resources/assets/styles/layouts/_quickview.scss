@@ -153,6 +153,10 @@
   }
 }
 
+.single_variation_wrap .woocommerce-variation-add-to-cart .single_variation_wrap .single_variation .woocommerce-variation-price {
+  display: none;
+}
+
 .quickview form.cart button.single_add_to_cart_button {
   @include media-breakpoint-down(xs) {
     margin-left: 0 !important;

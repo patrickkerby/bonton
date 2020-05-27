@@ -99,7 +99,6 @@ do_action( 'wc_quick_view_before_single_product' );
 			?>
 			<?php 
 				if($days) {
-					// echo '<span>Please note, this is only available for pick up on' . $days . '</span>';
 					echo '<span class="warning">Please ensure this product is available on your intended pickup date!</span>';
 				}
 			?>
@@ -108,5 +107,6 @@ do_action( 'wc_quick_view_before_single_product' );
 </div>
 
 <?php
-remove_filter( 'woocommerce_add_to_cart_form_action', '__return_empty_string' );
+// remove_filter( 'woocommerce_add_to_cart_form_action', '__return_empty_string' );
 ?>
+

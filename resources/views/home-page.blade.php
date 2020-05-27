@@ -67,7 +67,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Learn More</span></a>
+                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>More Info / Add to Cart</span></a>
                       </div>
                     </div> 
                   </div>                                                       
@@ -95,7 +95,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Learn More</span></a>
+                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Learn More / Add to Cart</span></a>
                       </div>
                     </div> 
                   </div>                                                       

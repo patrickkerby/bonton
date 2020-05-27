@@ -99,6 +99,14 @@
           background: none;
 
           @include slowfade(0.3);
+
+          @include media-breakpoint-down(md) {
+            bottom: 63%;
+          }
+
+          @include media-breakpoint-down(sm) {
+            bottom: 70%;
+          }
         }
 
         img {
@@ -115,6 +123,14 @@
       }
 
       @include slowfade(0.2);
+
+      &.post-1670:hover h2 {
+        bottom: 50%;
+
+        @include media-breakpoint-down(md) {
+          bottom: 40%;
+        }
+      }
     }
   }
 }
