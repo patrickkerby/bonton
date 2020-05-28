@@ -229,3 +229,25 @@ add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
     return $atts;
         
 }, 10, 3 );
+
+// Let's see if we can get these damned sorting options setup right
+
+add_filter( 'woocommerce_catalog_orderby', function( $options ){
+ 
+	$options['title'] = 'Sort alphabetically';
+ 
+	return $options;
+ 
+});
+
+add_filter( 'woocommerce_get_catalog_ordering_args', function ( $args ) {
+ 
+	// Sort alphabetically
+	if ( isset( $_GET['orderby'] ) && 'title' === $_GET['orderby'] ) {
+		$args['orderby'] = 'title';
+		$args['order'] = 'asc';
+	}
+ 
+	return $args;
+ 
+});
