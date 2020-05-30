@@ -17,16 +17,16 @@
   </header>
   <ul class="nav nav-tabs">
     <li class="nav-item">
-      <a class="nav-link @if(is_page('baking')) active @endif" href="/lists/baking">Baking</a>
+      <a class="nav-link @if(is_page('baking')) active @endif" href="/baking">Baking</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link @if(is_page('packing-cooler')) active @endif" href="/lists/packing-cooler">Packing (Cooler)</a>
+      <a class="nav-link @if(is_page('packing-cooler')) active @endif" href="/packing-cooler">Packing (Cooler)</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link @if(is_page('packing-shelf')) active @endif" href="/lists/packing-shelf">Packing (Shelf)</a>
+      <a class="nav-link @if(is_page('packing-shelf')) active @endif" href="/packing-shelf">Packing (Shelf)</a>
     </li>
     <li class="nav-item">
-      <a class="nav-link @if(is_page('pickup')) active @endif" href="/lists/pickup">Pickup</a>
+      <a class="nav-link @if(is_page('pickup')) active @endif" href="/pickup">Pickup</a>
     </li>
   </ul>
   

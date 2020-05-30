@@ -8,8 +8,10 @@
 use Automattic\WooCommerce\Client;
 use Automattic\WooCommerce\HttpClient\HttpClientException;
 
+$site_url = home_url();
+
 $woocommerce = new Client(
-    'https://bonton.workwithrye.ca', // Your store URL
+    $site_url, // Your store URL
     'ck_a89cb8cd00b36072147bb5da86a500e16dc283d6', // Your consumer key
     'cs_23e8504fe5f51b21b7385f1bc2e9c5b58f919d16', // Your consumer secret
     [

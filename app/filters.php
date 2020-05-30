@@ -251,3 +251,32 @@ add_filter( 'woocommerce_get_catalog_ordering_args', function ( $args ) {
 	return $args;
  
 });
+
+
+/**
+ * Get pickup date from Cart ACF input and save to session
+ */
+add_action('acf/save_post', function( $post_id ) {
+	// Get newly saved values.
+	$values = get_fields( $post_id );
+	// Check the new value of a specific field.
+	$pickupdate = get_field('pickup_date', $post_id);
+	$pickuptimeslot = get_field('timeslot', $post_id);
+	WC()->session->set('pickup_date', $pickupdate);
+	WC()->session->set('pickup_timeslot', $pickuptimeslot);
+	global $day_of_week;
+	list($day_of_week)=explode(',', $pickupdate);
+});
+
+/**
+ * Save pickup date and timeslot to WooCommerce order (from session)
+ */
+add_action('woocommerce_checkout_update_order_meta', 'Roots\Bedrock\add_pickup_to_order');
+function add_pickup_to_order($order_id) {
+	$pickup_date 		= WC()->session->get('pickup_date');
+	$pickup_timeslot 	= WC()->session->get('pickup_timeslot');
+	$order = wc_get_order( $order_id );
+	$order->update_meta_data( 'pickup_date', $pickup_date );
+	$order->update_meta_data( 'pickup_timeslot', $pickup_timeslot );
+	$order->save();
+}

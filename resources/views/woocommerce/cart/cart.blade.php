@@ -17,13 +17,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-// $post_id = the_ID();
+$post_id = the_ID();
 do_action( 'acf/save_post', $post_id );
 $day_of_week = $GLOBALS['day_of_week'];
 
 do_action('acf/validate_save_post');
 
 do_action( 'woocommerce_before_cart' ); 
+
 
 ?>
 	<div class="row justify-content-center">
@@ -183,10 +184,10 @@ do_action( 'woocommerce_before_cart' );
 									<td colspan="5">{!! $availability_msg !!}</td>
 								</tr>
 								@php static $conflict = TRUE; @endphp
-							@endif
-							
+							@else
+								@php static $conflict = FALSE; @endphp
+							@endif							
 							<?php
-							
 						}
 					}
 					?>
