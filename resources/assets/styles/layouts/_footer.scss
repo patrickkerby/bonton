@@ -85,17 +85,12 @@ footer.container-fluid {
       font-size: 17px;
       line-height: 20px;
       margin: 0 0 0.75rem 0;
-      width: 329px;
+      width: auto;
       display: flex;
-      justify-content: space-between;
-
-      @include media-breakpoint-down(md) {
-        width: 275px;
-      }
 
       span {
         color: $highlight;
-        width: 100px;
+        margin-left: 0.5rem;
 
         @include media-breakpoint-down(sm) {
           text-align: right;
