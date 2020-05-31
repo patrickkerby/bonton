@@ -87,7 +87,7 @@ do_action( 'woocommerce_before_cart' );
 									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
 								}
 								else {
-									$availability_msg = '';
+									$availability_msg = "";
 									$availability_status = "available";
 								}
 
@@ -183,9 +183,9 @@ do_action( 'woocommerce_before_cart' );
 								<tr class="not-available">
 									<td colspan="5">{!! $availability_msg !!}</td>
 								</tr>
-								@php static $conflict = TRUE; @endphp
+								@php static $conflict = true; @endphp
 							@else
-								@php static $conflict = FALSE; @endphp
+
 							@endif							
 							<?php
 						}
@@ -221,7 +221,7 @@ do_action( 'woocommerce_before_cart' );
 
 	<?php do_action( 'woocommerce_before_cart_collaterals' ); ?>
 
-	<div class="cart-collaterals @if($conflict) conflict @endif col-sm-12">
+	<div class="cart-collaterals @isset($conflict) conflict @endisset col-sm-12">
 		<?php
 			/**
 			 * Cart collaterals hook.

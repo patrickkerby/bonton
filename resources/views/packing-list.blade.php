@@ -94,14 +94,38 @@ $woocommerce = new Client(
       $phone = $details->billing->phone;
       $phone_formatted = substr($phone, -10, -7) . "-" . substr($phone, -7, -4) . "-" . substr($phone, -4); 
       $order_id = $details->id;
+      $meta = $details->meta_data;
+    
+      $data = (array) $meta;
+    
+      $approved_array = array(
+        'pickuplocation',
+        'pickup_date',
+        'pickup_timeslot'
+      );
+      $order_meta_arr = array(); // new list to store data that we can pull from 
 
-    @endphp
+      foreach ($meta as $order_meta) {
+        if (!in_array($order_meta->key, $approved_array)) {
+              continue;
+          }
+          $order_meta_arr[$order_meta->key] = $order_meta->value;
+      }
+      
+      if (isset($order_meta_arr['pickup_date'])) {
+        echo $order_meta_arr['pickup_date']; 
+      }
+    @endphp     
+
       <tr class="pack {{ $details->status }}">
         <td class="id">#{{ $daily_order_number }}</td>
         <td> 
           <strong>{{ $details->billing->last_name }}, {{ $details->billing->first_name }}</strong>
           <p>{{ $phone_formatted }}</p>
+          <p>{{ $order_meta_arr['pickuplocation'] }}</p>
+          <p>{{ $order_meta_arr['pickup_timeslot'] }}</p>
           <span class="notes">{{ $details->customer_note }}</span>
+
         </td>
         <td class="details_table">
           <table>
