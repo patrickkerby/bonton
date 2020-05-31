@@ -122,6 +122,8 @@ remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_ad
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );              // Get rid of sku and categories on product modal
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
 add_action( 'woocommerce_before_single_product_summary', 'woocommerce_template_single_title', 30 );
+remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+
 
 /**
  * @snippet       Variable Product Price Range: "From: <del>$$$min_reg_price</del> $$$min_sale_price"
@@ -182,40 +184,6 @@ add_filter( 'woocommerce_variable_price_html', function ( $price, $product ) {
     }
     return $price;
 }, 10, 2 );
-
-// CART LOGIC: use pickup date to 
-// add_action('acf/validate_save_post', function() {
-//     if(!wp_doing_ajax() || !isset($_POST['_acf_post_id']) || !acf_verify_nonce('acf_form'))
-//         return;
-        
-//     // Native ACF Form validation (required, minimum/maximum etc...)
-//     if($errors = acf_get_validation_errors())
-//         wp_send_json_success(array(
-//             'valid' 	=> 0,
-//             'errors' 	=> $errors,
-//         ));
-    
-//     // acf_form() arguments are stocked in $_POST['_acf_form']
-//     if(!$form = $_POST['_acf_form'])
-//         return;
-    
-//     // Decoding the form arguments via acf_decrypt().
-//     $form = json_decode(acf_decrypt($form), true);
-        
-//     // Creating a 'proxy form' for the Legacy ACF Form fields saving
-//     // Setting 'return' to null to avoid built-in redirection
-//     $proxy = $form;
-//     $proxy['return'] = '';
-
-//     // Using native ACF Form submission method
-//     acf()->form_front = new acf_form_front();
-//     acf()->form_front->submit_form($proxy);
-
-//     wp_send_json_success(array(
-//         'valid' => 1,
-//         'data' 	=> 'Success!',
-//     ));
-// });
 
 // add data attributes to wp nav item: schedule
 add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {

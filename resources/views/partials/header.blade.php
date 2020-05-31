@@ -94,17 +94,7 @@ $sub_title = get_field('sub_title');
     </div>
   @endif
 
-  @elseif ( is_single() && 'product' != get_post_type() )
-    <header class="hero" style="background-image: linear-gradient(rgba(94,84,71,0.{{ $overlay }}), rgba(94,84,71,0.{{ $overlay }})), url('{{ $hero }}');">
-      <div class="page-header">
-        <h1 class="hero-headline">{!! App::title() !!}</h1>
-        @if($sub_title)
-          {!! $sub_title !!}
-        @endif
-      </div>  
-    </header>
-
-  @elseif ( is_front_page() )
-  @else
+@elseif ( is_front_page() )
+@else
   {{-- Show no header --}}
 @endif
