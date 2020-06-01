@@ -33,7 +33,7 @@ class App extends Controller
 
     protected $acf = true;
 
-    public function acf()
+    public function acfsage()
     {
         add_filter('sober/controller/acf/array', function () {
             return true;

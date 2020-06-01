@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$post_id = the_ID();
+$post_id = get_the_ID();
 do_action( 'acf/save_post', $post_id );
 $day_of_week = $GLOBALS['day_of_week'];
 

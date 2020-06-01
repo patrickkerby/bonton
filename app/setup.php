@@ -177,7 +177,6 @@ add_action( 'woocommerce_after_order_notes', function( $checkout ){
         ), $checkout->get_value( 'pickuplocation' ) ); 
 });
  
-
 // save fields to order meta
 add_action( 'woocommerce_checkout_update_order_meta', function( $order_id ){
  

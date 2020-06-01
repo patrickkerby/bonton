@@ -5,23 +5,54 @@
 @extends('layouts.lists')
 
 @php
-use Automattic\WooCommerce\Client;
-use Automattic\WooCommerce\HttpClient\HttpClientException;
+$post_id = get_the_ID();
+  do_action( 'acf/save_post', $post_id );
 
-$site_url = home_url();
+      
+  use Automattic\WooCommerce\Client;
+  use Automattic\WooCommerce\HttpClient\HttpClientException;
 
-$woocommerce = new Client(
-        $site_url, // Your store URL
-				'ck_a89cb8cd00b36072147bb5da86a500e16dc283d6', // Your consumer key
-				'cs_23e8504fe5f51b21b7385f1bc2e9c5b58f919d16', // Your consumer secret
-				[
-						'wp_api' => true, // Enable the WP REST API integration
-						'version' => 'wc/v3',
-						'verify_ssl' => false
-				]
-		);
+  $site_url = home_url();
+  $date_selector_date = get_field('pickup_date');
+
+  $woocommerce = new Client(
+      $site_url, // Your store URL
+      'ck_a89cb8cd00b36072147bb5da86a500e16dc283d6', // Your consumer key
+      'cs_23e8504fe5f51b21b7385f1bc2e9c5b58f919d16', // Your consumer secret
+      [
+          'wp_api' => true, // Enable the WP REST API integration
+          'version' => 'wc/v3',
+          'verify_ssl' => false
+      ]
+  );
 
   $results = $woocommerce->get('orders', array( 'status' => 'processing'));
+  $filtered_orders = array();
+
+   // Get date of each order, create array of only those arrays with meta value that matches the ACF variable
+   foreach ( $results as $daily_results ) {    
+    $order_id = $daily_results->id;
+    $meta = $daily_results->meta_data;
+      
+    $approved_array = array(
+      'pickuplocation',
+      'pickup_date',
+      'pickup_timeslot'
+    );
+
+    $order_meta_arr = array(); // new list to store data that we can pull from 
+
+    foreach ($meta as $order_meta) {
+      if (!in_array($order_meta->key, $approved_array)) {
+            continue;
+        }
+        $order_meta_arr[$order_meta->key] = $order_meta->value;
+    }
+    
+    if ($order_meta_arr['pickup_date'] === $date_selector_date) {
+      $filtered_orders[] = $daily_results;
+    }    
+  }
 
   // All products
     $products = $woocommerce->get('products');
@@ -75,6 +106,20 @@ $woocommerce = new Client(
 @endphp
 @section('content')
   <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-sm-10">
+        @php
+        acf_form(array(
+          'submit_value' => __('Choose Date', 'acf'),
+          'fields' => array(
+              'pickup_date',
+          ),
+          'return' => '%post_url%',
+          'updated_message' => false,
+        ));
+        @endphp
+      </div>
+    </div>
     <div class="row">
       <div class="col-sm-12">
         <table id="lists" class="display" data-order='[[ 1, "asc" ]]'>
@@ -88,7 +133,7 @@ $woocommerce = new Client(
             </tr>
           </thead>
           <tbody>  
-            @foreach ($results as $details )
+            @foreach ($filtered_orders as $details )
               @php 
               $daily_order_number++;
               $phone = $details->billing->phone;

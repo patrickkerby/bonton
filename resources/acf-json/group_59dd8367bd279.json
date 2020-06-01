@@ -138,13 +138,6 @@
                 "operator": "!=",
                 "value": "product"
             }
-        ],
-        [
-            {
-                "param": "taxonomy",
-                "operator": "==",
-                "value": "all"
-            }
         ]
     ],
     "menu_order": 0,
@@ -159,5 +152,5 @@
     ],
     "active": 1,
     "description": "",
-    "modified": 1590608222
+    "modified": 1590992453
 }

@@ -5,38 +5,57 @@
 @extends('layouts.lists')
 
 @php
+$post_id = get_the_ID();
+do_action( 'acf/save_post', $post_id );
+
 use Automattic\WooCommerce\Client;
 use Automattic\WooCommerce\HttpClient\HttpClientException;
 
 $site_url = home_url();
+$date_selector_date = get_field('pickup_date');
 
-$woocommerce = new Client(
-        $site_url, // Your store URL
-				'ck_a89cb8cd00b36072147bb5da86a500e16dc283d6', // Your consumer key
-				'cs_23e8504fe5f51b21b7385f1bc2e9c5b58f919d16', // Your consumer secret
-				[
-						'wp_api' => true, // Enable the WP REST API integration
-						'version' => 'wc/v3',
-						'verify_ssl' => false
-				]
-		);
+  $woocommerce = new Client(
+      $site_url, // Your store URL
+      'ck_a89cb8cd00b36072147bb5da86a500e16dc283d6', // Your consumer key
+      'cs_23e8504fe5f51b21b7385f1bc2e9c5b58f919d16', // Your consumer secret
+      [
+          'wp_api' => true, // Enable the WP REST API integration
+          'version' => 'wc/v3',
+          'verify_ssl' => false
+      ]
+  );
 
-  $query = [
-      'date_min' => '2020-04-15',
-      'date_max' => '2020-04-15'
-  ];
-  $sales = $woocommerce->get('reports/top_sellers', $query);
+  $results = $woocommerce->get('orders', array( 'status' => array('processing')));  
+  $filtered_orders = array();
 
-  $order_query = [
-    'status' => 'processing',
-    'after' => '2020-04-10T00:00:00',
-    'before' => '2020-09-23T23:59:59',
-    'per_page'=> '100'
-  ];
+  // Get date of each order, create array of only those arrays with meta value that matches the ACF variable
+  foreach ( $results as $daily_results ) {    
+    $order_id = $daily_results->id;
+    $meta = $daily_results->meta_data;
+      
+    $approved_array = array(
+      'pickuplocation',
+      'pickup_date',
+      'pickup_timeslot'
+    );
+
+    $order_meta_arr = array(); // new list to store data that we can pull from 
+
+    foreach ($meta as $order_meta) {
+      if (!in_array($order_meta->key, $approved_array)) {
+            continue;
+        }
+        $order_meta_arr[$order_meta->key] = $order_meta->value;
+    }
+    
+    if ($order_meta_arr['pickup_date'] === $date_selector_date) {
+      $filtered_orders[] = $daily_results;
+    }    
+  }
   
-  $results = $woocommerce->get('orders', $order_query);
   
-  foreach($results as $details) {
+  
+  foreach($filtered_orders as $details) {
 
     foreach($details->line_items as $item) {
 
@@ -69,7 +88,6 @@ $woocommerce = new Client(
       }
     }
   }
-
 
   // extract the values name and quantity, compare for matches, sum up matched, then output unique with total sums as new array
   $aSortedArray = array();
@@ -107,6 +125,20 @@ $woocommerce = new Client(
   @section('content')
 
   <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-sm-10">
+        @php
+        acf_form(array(
+          'submit_value' => __('Choose Date', 'acf'),
+          'fields' => array(
+              'pickup_date',
+          ),
+          'return' => '%post_url%',
+          'updated_message' => false,
+        ));
+        @endphp
+      </div>
+    </div>
   <div class="row no-gutters">
     <table id="lists" class="display">
       <thead>

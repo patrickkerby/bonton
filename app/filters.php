@@ -111,6 +111,13 @@ add_filter( 'woocommerce_product_tabs', function ( $tabs ) {
 	return $tabs;
 }, 11);
 
+
+if (!is_woocommerce() && !is_cart() && !is_checkout()) {
+    remove_action('wp_enqueue_scripts', ['load_scripts']);
+    remove_action('wp_print_scripts', ['localize_printed_scripts'], 5);
+    remove_action('wp_print_footer_scripts', ['localize_printed_scripts'], 5);
+}
+
 //Setup for thumbnails
 remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
 remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10 );    // Strip out the default linking so we can control the quickview
@@ -123,7 +130,6 @@ remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_singl
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
 add_action( 'woocommerce_before_single_product_summary', 'woocommerce_template_single_title', 30 );
 remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
-
 
 /**
  * @snippet       Variable Product Price Range: "From: <del>$$$min_reg_price</del> $$$min_sale_price"
