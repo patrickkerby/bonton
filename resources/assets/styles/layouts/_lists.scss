@@ -4,26 +4,72 @@
   margin: 0;
 
   &.admin-bar {
-    padding-top: 1.25rem;
+    #wpadminbar {
+      display: none;
+    }
+  }
+
+  .wrap {
+    padding: 4rem 2rem;
   }
 
   .nav {
-    margin: 1rem 1rem 3rem 1rem;
-    width: 65%;
+    border: none;
+    justify-content: flex-end;
+
+    li {
+      border: none;
+
+      a {
+        background: $highlight;
+        color: #fff;
+        border: none;
+        border-radius: 0;
+        font-weight: 600;
+
+        @include slowfade;
+
+        &.active,
+        &:hover {
+          background: #42b989;
+          color: #fff;
+
+          @include slowfade;
+        }
+      }
+    }
   }
 
   #lists_wrapper {
     width: 100%;
   }
 
-  #lists_filter {
-    position: fixed;
-    top: 0;
-    right: 1rem;
+  h5 button {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: $font-family-sans-serif;
+    padding: 0 0.25rem;
+    margin-top: -15px;
+    border: solid 2px $highlight;
+    line-height: 17px;
   }
 
-  &.admin-bar #lists_filter {
-    top: 3rem;
+  #dateSelect {
+    position: absolute;
+    z-index: 999;
+    width: 100%;
+    top: 4rem;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.15);
+  }
+
+  #lists_filter label {
+    display: flex;
+    flex-direction: row;
+    margin: 1rem 0;
+
+    input {
+      margin-left: 0.5rem;
+    }
   }
 
   .meta {
@@ -82,6 +128,7 @@
     // min-width: 11rem;
     display: flex;
     font-weight: 700;
+    line-height: 14px;
     margin: 5px 0;
   }
 

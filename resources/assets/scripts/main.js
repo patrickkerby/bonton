@@ -27,6 +27,7 @@ import aboutUs from './routes/about';
 import pickupList from './routes/pickupList';
 import packingList from './routes/packingList';
 import bakingList from './routes/packingList';
+import cart from './routes/cart';
 
 /** Populate Router instance with DOM routes */
 const routes = new Router({
@@ -42,6 +43,8 @@ const routes = new Router({
   packingList,
   // List pages for baking, packing, pickup
   bakingList,
+  // Cart page
+  cart,
 });
 
 // Load Events

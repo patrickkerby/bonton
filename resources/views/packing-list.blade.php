@@ -72,80 +72,76 @@
 @endphp
 
 @section('content')
-<div class="container">
-  <div class="row justify-content-center">
-
-  </div>
   <div class="row no-gutters">
-    <h2>{{ $date_selector_date }}</h2>
-    <table id="lists" class="display">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Timeslot</th>
-          <th>Customer</th>
-          <th>Order Details</th>
-        </tr>
-      </thead>
-      <tbody>
-          @foreach ($filtered_orders as $details )
-          @php 
-            $daily_order_number++;
-            $phone = $details->get_billing_phone();
-            $order_id = $details->get_id();
-            $first_name = $details->get_billing_first_name();
-            $last_name = $details->get_billing_last_name();
-            $status = $details->get_status();
-            $customer_note = $details->get_customer_note();
-            $timeslot = $details->get_meta( 'pickup_timeslot', true );
-            $location = $details->get_meta( 'pickuplocation', true );
-          @endphp     
+    <div class="col-12">      
+      <table id="lists" class="display">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Timeslot</th>
+            <th>Customer</th>
+            <th>Order Details</th>
+          </tr>
+        </thead>
+        <tbody>
+            @foreach ($filtered_orders as $details )
+            @php 
+              $daily_order_number++;
+              $phone = $details->get_billing_phone();
+              $order_id = $details->get_id();
+              $first_name = $details->get_billing_first_name();
+              $last_name = $details->get_billing_last_name();
+              $status = $details->get_status();
+              $customer_note = $details->get_customer_note();
+              $timeslot = $details->get_meta( 'pickup_timeslot', true );
+              $location = $details->get_meta( 'pickuplocation', true );
+            @endphp     
 
-            <tr class="pack {{ $status }}">
-              <td class="id">#{{ $daily_order_number }}</td>
-              <td class="timeslot"><p>{{ $timeslot }}</p></td>
-              <td> 
-                <strong>{{ $last_name }}, {{ $first_name }}</strong>
-                <p>{{ $phone }}</p>
-                <p class="location">{{ $location }}</p>          
-                <span class="notes">{{ $customer_note }}</span>
-              </td>
-              <td class="details_table">
-                <table>
-                  @foreach ($details->get_items() as $item_id => $item)
-                    @php 
-                      $prod_id = $item->get_product_id(); 
-                      $prod_name = $item->get_name();
-                      $prod_quantity = $item->get_quantity();              
-                      $sliced_meta = $item->get_meta( 'Sliced Option', true );
-                      $cooler_override = $item->get_meta( '_cooler', true );
-                      $product_meta_objects = $item->get_meta_data();              
-                    
-                    @endphp
-                                                        
-                    @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
-                      <tr>
-                        <td width="10%"><span class="qty">{{ $prod_quantity }} </span></td>
-                        <td width="40%"><span class="prod_name">{{ $prod_name }}</span></td>
-                        <td width="50%">
-                          @foreach ( $product_meta_objects as $meta )
-                            <span class="@php print_r($meta->key); @endphp meta"> @php print_r($meta->value);@endphp</span>
-                          @endforeach
-                        </td>               
-                      </tr>            
-                    @else
-                      @php $response = "<h6>More items in ". $other_list . " List!</h6>"; @endphp
-                    @endif                        
-                  @endforeach
-                </table>
-                @isset($response)
-                  {!! $response !!}    
-                @endisset        
-              </td>
-            </tr>
-          @endforeach
-      </tbody>
-    </table>
+              <tr class="pack {{ $status }}">
+                <td class="id">#{{ $daily_order_number }}</td>
+                <td class="timeslot"><p>{{ $timeslot }}</p></td>
+                <td> 
+                  <strong>{{ $last_name }}, {{ $first_name }}</strong>
+                  <p>{{ $phone }}</p>
+                  <p class="location">{{ $location }}</p>          
+                  <span class="notes">{{ $customer_note }}</span>
+                </td>
+                <td class="details_table">
+                  <table>
+                    @foreach ($details->get_items() as $item_id => $item)
+                      @php 
+                        $prod_id = $item->get_product_id(); 
+                        $prod_name = $item->get_name();
+                        $prod_quantity = $item->get_quantity();              
+                        $sliced_meta = $item->get_meta( 'Sliced Option', true );
+                        $cooler_override = $item->get_meta( '_cooler', true );
+                        $product_meta_objects = $item->get_meta_data();              
+                      
+                      @endphp
+                                                          
+                      @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
+                        <tr>
+                          <td width="10%"><span class="qty">{{ $prod_quantity }} </span></td>
+                          <td width="40%"><span class="prod_name">{{ $prod_name }}</span></td>
+                          <td width="50%">
+                            @foreach ( $product_meta_objects as $meta )
+                              <span class="@php print_r($meta->key); @endphp meta"> @php print_r($meta->value);@endphp</span>
+                            @endforeach
+                          </td>               
+                        </tr>            
+                      @else
+                        @php $response = "<h6>More items in ". $other_list . " List!</h6>"; @endphp
+                      @endif                        
+                    @endforeach
+                  </table>
+                  @isset($response)
+                    {!! $response !!}    
+                  @endisset        
+                </td>
+              </tr>
+            @endforeach
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
 @endsection
