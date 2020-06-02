@@ -1,0 +1,41 @@
+{
+    "key": "group_5ed58beb2eaf6",
+    "title": "List Generator Date Selector",
+    "fields": [
+        {
+            "key": "field_5ed58beb62add",
+            "label": "Pickup Date",
+            "name": "list_date",
+            "type": "date_picker",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "F j, Y",
+            "return_format": "l, F j, Y",
+            "first_day": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_parent",
+                "operator": "==",
+                "value": "789"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": 1,
+    "description": "",
+    "modified": 1591061269
+}

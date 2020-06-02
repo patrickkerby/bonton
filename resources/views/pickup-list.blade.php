@@ -5,7 +5,7 @@
 @extends('layouts.lists')
 
 @php
-$post_id = get_the_ID();
+  $post_id = get_the_ID();
   do_action( 'acf/save_post', $post_id );
 
       

@@ -6,28 +6,33 @@
 
 @endphp
 
-<header class="banner">
-  <div class="container">
-    <nav class="nav-primary">
-      {{-- @if (has_nav_menu('list_navigation'))
-        {!! wp_nav_menu(['theme_location' => 'primary_navigation', 'menu_class' => 'nav']) !!}
-      @endif --}}
-    </nav>
+<header class="row justify-content-center">
+  <div class="col-sm-7">
+    <ul class="nav nav-tabs">
+      <li class="nav-item">
+        <a class="nav-link @if(is_page('baking')) active @endif" href="/lists/baking">Baking</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link @if(is_page('packing-cooler')) active @endif" href="/lists/packing-cooler">Packing (Cooler)</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link @if(is_page('packing-shelf')) active @endif" href="/lists/packing-shelf">Packing (Shelf)</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link @if(is_page('pickup')) active @endif" href="/lists/pickup">Pickup</a>
+      </li>
+    </ul>
+  </div>
+  <div class="col-sm-5">
+    @php
+    acf_form(array(
+      'submit_value' => __('Choose Date', ''),
+      'fields' => array(
+          'list_date',
+      ),
+      'return' => '%post_url%',
+      'updated_message' => false,
+    ));
+    @endphp
   </div>
 </header>
-<header class="hero" style="background-image: linear-gradient(rgba(45,51,55,0.{{ $overlay }}), rgba(45,51,55,0.{{ $overlay }})), url('{{ $hero }}');">
-</header>
-<ul class="nav nav-tabs">
-  <li class="nav-item">
-    <a class="nav-link @if(is_page('baking')) active @endif" href="/lists/baking">Baking</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link @if(is_page('packing-cooler')) active @endif" href="/lists/packing-cooler">Packing (Cooler)</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link @if(is_page('packing-shelf')) active @endif" href="/lists/packing-shelf">Packing (Shelf)</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link @if(is_page('pickup')) active @endif" href="/lists/pickup">Pickup</a>
-  </li>
-</ul>

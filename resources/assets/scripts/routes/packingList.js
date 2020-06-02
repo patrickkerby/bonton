@@ -10,12 +10,12 @@ export default {
         {
           'paging': false,
           'info': false,
-          'order': [[ 0, 'desc' ], [ 1, 'desc' ]],
-          'columnDefs': [ {
+          'order': [[ 0, 'asc' ]],
+          'columnDefs': [{
             'targets': [0,1,2], /* column index */
             'orderable': false, /* true or false */
-         }],
-        }     
+          }],
+        }  
       );      
     });
   },

@@ -14,9 +14,11 @@
           a.appendChild(r);
       })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
   </script>
-  @php wp_head() @endphp
   @if ( is_cart() )
     @php acf_form_head() @endphp
   @endif
+  
+  @php wp_head() @endphp
+
 
 </head>

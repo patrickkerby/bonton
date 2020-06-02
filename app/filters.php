@@ -111,13 +111,6 @@ add_filter( 'woocommerce_product_tabs', function ( $tabs ) {
 	return $tabs;
 }, 11);
 
-
-if (!is_woocommerce() && !is_cart() && !is_checkout()) {
-    remove_action('wp_enqueue_scripts', ['load_scripts']);
-    remove_action('wp_print_scripts', ['localize_printed_scripts'], 5);
-    remove_action('wp_print_footer_scripts', ['localize_printed_scripts'], 5);
-}
-
 //Setup for thumbnails
 remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
 remove_action( 'woocommerce_before_shop_loop_item', 'woocommerce_template_loop_product_link_open', 10 );    // Strip out the default linking so we can control the quickview
@@ -129,7 +122,11 @@ remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_ad
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_meta', 40 );              // Get rid of sku and categories on product modal
 remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
 add_action( 'woocommerce_before_single_product_summary', 'woocommerce_template_single_title', 30 );
+/**
+ * Remove related products output
+ */
 remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_related_products', 20 );
+
 
 /**
  * @snippet       Variable Product Price Range: "From: <del>$$$min_reg_price</del> $$$min_sale_price"
@@ -225,32 +222,3 @@ add_filter( 'woocommerce_get_catalog_ordering_args', function ( $args ) {
 	return $args;
  
 });
-
-
-/**
- * Get pickup date from Cart ACF input and save to session
- */
-add_action('acf/save_post', function( $post_id ) {
-	// Get newly saved values.
-	$values = get_fields( $post_id );
-	// Check the new value of a specific field.
-	$pickupdate = get_field('pickup_date', $post_id);
-	$pickuptimeslot = get_field('timeslot', $post_id);
-	WC()->session->set('pickup_date', $pickupdate);
-	WC()->session->set('pickup_timeslot', $pickuptimeslot);
-	global $day_of_week;
-	list($day_of_week)=explode(',', $pickupdate);
-});
-
-/**
- * Save pickup date and timeslot to WooCommerce order (from session)
- */
-add_action('woocommerce_checkout_update_order_meta', 'App\add_pickup_to_order');
-function add_pickup_to_order($order_id) {
-	$pickup_date 		= WC()->session->get('pickup_date');
-	$pickup_timeslot 	= WC()->session->get('pickup_timeslot');
-	$order = wc_get_order( $order_id );
-	$order->update_meta_data( 'pickup_date', $pickup_date );
-	$order->update_meta_data( 'pickup_timeslot', $pickup_timeslot );
-	$order->save();
-}

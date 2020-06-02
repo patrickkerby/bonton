@@ -52,13 +52,6 @@
                 "operator": "==",
                 "value": "20"
             }
-        ],
-        [
-            {
-                "param": "page_parent",
-                "operator": "==",
-                "value": "789"
-            }
         ]
     ],
     "menu_order": 0,
@@ -69,5 +62,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1590959017
+    "modified": 1591061239
 }
