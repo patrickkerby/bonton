@@ -9,6 +9,10 @@
     }
   }
 
+  header.lists-header {
+    padding: 0 2rem;
+  }
+
   .wrap {
     padding: 4rem 2rem;
   }
@@ -31,7 +35,7 @@
 
         &.active,
         &:hover {
-          background: #42b989;
+          background: darken($highlight, 10%);
           color: #fff;
 
           @include slowfade;
@@ -44,14 +48,21 @@
     width: 100%;
   }
 
-  h5 button {
-    font-size: 11px;
-    font-weight: 700;
-    font-family: $font-family-sans-serif;
-    padding: 0 0.25rem;
-    margin-top: -15px;
-    border: solid 2px $highlight;
-    line-height: 17px;
+  h5 {
+    border-top: solid 2px $cream;
+    padding-top: 0.75rem;
+
+    button {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: $font-family-sans-serif;
+      padding: 0 0.25rem;
+      margin-top: -15px;
+      border: solid 2px $highlight;
+      line-height: 14px;
+      height: 18px;
+      margin-left: 0.25rem;
+    }
   }
 
   #dateSelect {
@@ -73,16 +84,21 @@
   }
 
   .meta {
-    text-transform: uppercase;
+    text-transform: capitalize;
     text-align: left;
     padding-left: 0.5rem;
     font-size: 0.875rem;
     font-weight: 600;
+    display: flex;
+    line-height: 16px;
+    margin: 0 0 0.5rem 0;
 
     &::before {
       font-weight: 900;
       font-size: 11px;
       opacity: 0.4;
+      text-transform: uppercase;
+      margin-right: 0.5rem;
     }
   }
 
@@ -95,7 +111,8 @@
     font-family: monospace;
   }
 
-  .pa_variety::before {
+  .pa_variety::before,
+  .variety::before {
     content: "Type: ";
   }
 
@@ -107,25 +124,21 @@
     content: "Size: ";
   }
 
-  .sliced::before {
-    content: "Size: ";
+  .Sliced::before {
+    content: "Note: ";
   }
 
   span.qty {
-    font-size: 12px;
+    font-size: 14px;
     font-weight: 700;
-    color: #666;
-    background: #f5f5f5;
+    color: #42b989;
     display: flex;
     justify-content: center;
-    min-width: 18px;
     height: 19px;
-    line-height: 18px;
-    margin-right: 5px;
+    line-height: 21px;
   }
 
   span.prod_name {
-    // min-width: 11rem;
     display: flex;
     font-weight: 700;
     line-height: 14px;
@@ -134,100 +147,176 @@
 
   table {
     width: 100%;
+
+    h5,
+    h6,
+    p,
+    strong {
+      margin: 0;
+    }
+
+    strong {
+      font-size: 18px;
+      line-height: 18px;
+      display: inline-flex;
+    }
   }
 
   thead {
-    background: #333;
+    background: darken($highlight, 5%);
 
     th {
       color: #fff;
       padding: 0.5rem 1rem;
+
+      &.products {
+        padding: 0.5rem 0;
+      }
+
+      span {
+        display: inline-flex;
+
+        &.qty_header {
+          width: 9%;
+        }
+
+        &.product {
+          width: 43%;
+        }
+
+        &.details {
+          width: 40%;
+        }
+      }
     }
   }
 
   tr {
-    border-top: solid 2px #eee;
+    border-top: solid 2px $cream;
 
-    td,
-    th {
+    td {
       vertical-align: top;
-      padding: 0.25rem 1rem 0.25rem 1rem;
+      padding: 1rem;
 
-      h5,
-      h6,
-      p,
-      strong {
-        margin: 0;
+      tr {
+        border-top: dashed 2px darken($cream, 5%);
+
+        td {
+          padding: 0.45rem 0;
+        }
+
+        &:first-child {
+          border: none;
+
+          td {
+            padding-top: 0;
+          }
+        }
+
+        &:last-child {
+          td {
+            padding-bottom: 0;
+          }
+        }
       }
 
-      strong {
-        font-size: 18px;
-        line-height: 18px;
-        display: inline-flex;
-      }
-    }
-
-    td.phone,
-    td.name {
-      white-space: pre;
-    }
-
-    td.location {
-      text-transform: capitalize;
-    }
-
-    td.id {
-      text-align: center;
-    }
-
-    td.notes {
-      font-size: 12px;
-      line-height: 14px;
-      vertical-align: middle;
-      font-family: monospace;
-    }
-
-    td.details_table {
-      vertical-align: middle;
-
-      h6 {
-        text-align: center;
-        background: #efefef;
-        padding: 0.5rem 2rem;
-        display: inline-flex;
-        border-radius: 18px;
-        margin: 1rem 0;
+      &.phone,
+      &.name {
+        white-space: pre;
       }
 
-      ._WCPA_order_meta_data {
-        display: none;
+      &.location {
+        .timeslot {
+          text-transform: capitalize;
+          font-size: 14px;
+          color: $charcoal;
+          font-weight: 500;
+          background: $cream;
+          border-radius: 100%;
+          border-radius: 16px;
+          text-align: left;
+          line-height: 24px;
+          padding-left: 1.85rem;
+          padding-right: 2rem;
+          position: relative;
+          display: flex;
+          max-width: 105px;
+
+          &.In-store::before {
+            content: "";
+            width: 15px;
+            height: 11px;
+            position: absolute;
+            left: 9px;
+            top: 6px;
+            background: url("../images/instore.svg") no-repeat center center;
+          }
+
+          &.Curbside::before {
+            content: "";
+            width: 15px;
+            height: 11px;
+            position: absolute;
+            left: 11px;
+            top: 6px;
+            background: url("../images/curbside.svg") no-repeat center center;
+          }
+        }
+
+        .order_location {
+          font-size: 10px;
+          font-weight: 900;
+          color: $highlight;
+          border: solid 2px $highlight;
+          border-radius: 100%;
+          width: 17px;
+          height: 17px;
+          display: inline-flex;
+          justify-content: center;
+          margin: 0.5rem 0 0 0.5rem;
+          line-height: 13px;
+        }
       }
-    }
 
-    &:first-child {
-      border: none;
-    }
-
-    &.pack td {
-      padding: 1rem 0;
-
-      tr td {
-        padding: 0;
+      &.notes {
+        font-size: 12px;
+        line-height: 14px;
         vertical-align: middle;
+        font-family: monospace;
+      }
+
+      &.details_table {
+        vertical-align: middle;
+        padding-left: 0;
+
+        td.qty_cell {
+          width: 10%;
+        }
+
+        td.prod_name_cell {
+          width: 40%;
+        }
+
+        td.details_cell {
+          width: 50%;
+        }
+
+        ._WCPA_order_meta_data {
+          display: none;
+        }
       }
     }
 
-    &.packed,
-    &.completed {
-      background: #53c999;
+    &.packed {
       border-top: solid 2px #48bd8e;
+      background: $highlight;
       transition: all 0.3s ease-in-out;
 
       * {
         color: #fff;
       }
 
-      tr {
+      td tr {
         border-top: solid 2px #48bd8e;
 
         &:first-child {

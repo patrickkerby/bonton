@@ -6,7 +6,7 @@
 
 @endphp
 
-<header class="container">
+<header class="container-fluid lists-header">
   <div class="row justify-content-center">
     <div class="col-sm-5">
       @if(is_page('baking'))
@@ -26,6 +26,7 @@
       </h5>
       <div class="collapse" id="dateSelect">
         <div class="card card-body">
+          <a class="" type="button" data-toggle="collapse" data-target="#dateSelect" aria-expanded="true" aria-controls="collapseExample">Close</a>
           @php
           acf_form(array(
             'submit_value' => __('Choose Date', ''),

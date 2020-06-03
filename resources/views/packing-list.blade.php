@@ -78,9 +78,13 @@
         <thead>
           <tr>
             <th>ID</th>
-            <th>Timeslot</th>
+            <th>Pick-up</th>
             <th>Customer</th>
-            <th>Order Details</th>
+            <th class="products">
+              <span class="qty_header">Qty.</span>
+              <span class="product">Product</span>
+              <span class="details">Details</span>
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -99,12 +103,21 @@
 
               <tr class="pack {{ $status }}">
                 <td class="id">#{{ $daily_order_number }}</td>
-                <td class="timeslot"><p>{{ $timeslot }}</p></td>
+                <td class="location">
+                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>                  
+                  @isset($location_shelf)
+                    {!! $location_shelf !!}    
+                  @endisset
+                  @isset($location_cooler)
+                    {!! $location_cooler !!}    
+                  @endisset  
+                </td>
                 <td> 
                   <strong>{{ $last_name }}, {{ $first_name }}</strong>
-                  <p>{{ $phone }}</p>
-                  <p class="location">{{ $location }}</p>          
-                  <span class="notes">{{ $customer_note }}</span>
+                  <p>{{ $phone }}</p>                    
+                  @if ($customer_note)        
+                    <span class="notes">{{ $customer_note }}</span>
+                  @endif
                 </td>
                 <td class="details_table">
                   <table>
@@ -121,22 +134,23 @@
                                                           
                       @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
                         <tr>
-                          <td width="10%"><span class="qty">{{ $prod_quantity }} </span></td>
-                          <td width="40%"><span class="prod_name">{{ $prod_name }}</span></td>
-                          <td width="50%">
+                          <td class="qty_cell"><span class="qty">{{ $prod_quantity }} </span></td>
+                          <td class="prod_name_cell"><span class="prod_name">{{ $prod_name }}</span></td>
+                          <td class="details_cell">
                             @foreach ( $product_meta_objects as $meta )
                               <span class="@php print_r($meta->key); @endphp meta"> @php print_r($meta->value);@endphp</span>
                             @endforeach
                           </td>               
-                        </tr>            
-                      @else
-                        @php $response = "<h6>More items in ". $other_list . " List!</h6>"; @endphp
-                      @endif                        
+                        </tr> 
+                        @php $location_shelf = '<span class="order_location">S</span>'; @endphp
+                      @endif
+
+                      @if(in_array($prod_id, $cooler_array))
+                        @php $location_cooler = '<span class="order_location">C</span>'; @endphp
+                      @endif
                     @endforeach
                   </table>
-                  @isset($response)
-                    {!! $response !!}    
-                  @endisset        
+                         
                 </td>
               </tr>
             @endforeach
