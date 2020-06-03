@@ -105,12 +105,28 @@
                 <td class="id">#{{ $daily_order_number }}</td>
                 <td class="location">
                   <p class="timeslot {{ $location }}">{{ $timeslot }}</p>                  
-                  @isset($location_shelf)
-                    {!! $location_shelf !!}    
-                  @endisset
-                  @isset($location_cooler)
-                    {!! $location_cooler !!}    
-                  @endisset  
+                  
+                  {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
+                  @php $responses = array(); @endphp
+                  @foreach ($details->get_items() as $item_id => $item)
+                    @php 
+                      $prod_id = $item->get_product_id(); 
+                      $cooler_override = $item->get_meta( '_cooler', true );
+                                        
+                      if(in_array($prod_id, $cooler_array)) {
+                        $responses[] = '<span class="order_location">C</span>';    
+                      } 
+                      // Add elseif for freezer list        
+                      else {  
+                        $responses[] = '<span class="order_location">S</span>';
+                      }                    
+                    @endphp
+                  @endforeach
+                  @php
+                    $responses_unique = array_unique($responses);
+                    $order_location = implode("", $responses_unique);
+                  @endphp
+                  {!! $order_location !!}
                 </td>
                 <td> 
                   <strong>{{ $last_name }}, {{ $first_name }}</strong>
@@ -142,11 +158,6 @@
                             @endforeach
                           </td>               
                         </tr> 
-                        @php $location_shelf = '<span class="order_location">S</span>'; @endphp
-                      @endif
-
-                      @if(in_array($prod_id, $cooler_array))
-                        @php $location_cooler = '<span class="order_location">C</span>'; @endphp
                       @endif
                     @endforeach
                   </table>
