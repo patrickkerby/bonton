@@ -8,118 +8,60 @@
   $post_id = get_the_ID();
   do_action( 'acf/save_post', $post_id );
 
-      
-  use Automattic\WooCommerce\Client;
-  use Automattic\WooCommerce\HttpClient\HttpClientException;
+  $date_selector_date = get_field('list_date');
 
-  $site_url = home_url();
-  $date_selector_date = get_field('pickup_date');
+// Get order data!
+  $query = new WC_Order_Query( array(  
+      'limit' => -1,
+      // 'orderby' => 'name',
+      // 'order' => 'asc',
+      'status' => 'processing',
+  ) );
+  $results = $query->get_orders();
 
-  $woocommerce = new Client(
-      $site_url, // Your store URL
-      'ck_a89cb8cd00b36072147bb5da86a500e16dc283d6', // Your consumer key
-      'cs_23e8504fe5f51b21b7385f1bc2e9c5b58f919d16', // Your consumer secret
-      [
-          'wp_api' => true, // Enable the WP REST API integration
-          'version' => 'wc/v3',
-          'verify_ssl' => false
-      ]
-  );
-
-  $results = $woocommerce->get('orders', array( 'status' => 'processing'));
+//Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();
 
-   // Get date of each order, create array of only those arrays with meta value that matches the ACF variable
-   foreach ( $results as $daily_results ) {    
-    $order_id = $daily_results->id;
-    $meta = $daily_results->meta_data;
-      
-    $approved_array = array(
-      'pickuplocation',
-      'pickup_date',
-      'pickup_timeslot'
-    );
-
-    $order_meta_arr = array(); // new list to store data that we can pull from 
-
-    foreach ($meta as $order_meta) {
-      if (!in_array($order_meta->key, $approved_array)) {
-            continue;
-        }
-        $order_meta_arr[$order_meta->key] = $order_meta->value;
-    }
-    
-    if ($order_meta_arr['pickup_date'] === $date_selector_date) {
+  foreach ( $results as $daily_results ) {    
+    $order_id = $daily_results->get_id();
+    $order_pickup_date = $daily_results->get_meta('pickup_date');
+          
+    if ($order_pickup_date === $date_selector_date) {
       $filtered_orders[] = $daily_results;
-    }    
+    }
   }
 
-  // All products
-    $products = $woocommerce->get('products');
+//THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
+//THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
-  // Cooler Products (Full objects)
-    $products_cooler = $woocommerce->get('products', array('status' => 'publish', 'category'=>'22,53,51', 'per_page'=> '100'));
-  
-  // Cooler Product ID Array
-    $prefix = $cooler_array = '';
-    foreach ($products_cooler as $cooler_item) 
-    {
-      $cooler_ids = $cooler_item->id;
-      $cooler_array .= $prefix . '' . $cooler_ids . '';
-      $prefix = ', ';
-    }
-    $cooler_array=explode(",",$cooler_array);
+    $shelf_list = array( '91, 83, 52, 104, 13, 105, 103, 135, 94, 102, 106, 54, 10, 67' );
+    $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'patisserie', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'gluten-free-baked-goods', 'preserves-spreads-honey', 'sauces-dressings');
+    
+    $shelf_args = array(
+      'status' => 'publish',
+      'category' => $shelf_list_slugs,
+      'limit' => -1,
+      'return' => 'ids'
+      // 'exclude' => array(  )   Add array of products that have meta 'cooler'
+    );
+    $shelf_array = wc_get_products( $shelf_args );
+    
+    $cooler_list = '22,53,51,104,107';
+    $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries');
 
-  // Shelf Products (Full objects)
-    $shelf_categories = $woocommerce->get('products/categories', array('exclude'=>'22,53,51')); //get category ids so we can make a new list with the cooler excluded (because api doesn't have "category_exclude" on product level)
-    $prefix = $shelf_list = ''; // prevent trailing commas
-    foreach ($shelf_categories as $shelf_category)
-    {
-      $shelf_category_ids = $shelf_category->id;
-      $shelf_list .= $prefix . '' . $shelf_category_ids . ''; 
-      $prefix = ', ';
-    }
-    $products_shelf = $woocommerce->get('products', array('status' => 'publish', 'category'=>''.$shelf_list.'', 'per_page'=> '100'));
-  // Shelf Product ID Array
-    $prefix = $shelf_array = '';
-    foreach ($products_shelf as $shelf_item) 
-    {
-      $shelf_ids = $shelf_item->id;
-      $shelf_array .= $prefix . '' . $shelf_ids . '';
-      $prefix = ', ';
-    }
-    $shelf_array=explode(",",$shelf_array);
+    $cooler_args = array(
+      'status' => 'publish',
+      'category' => $cooler_list_slugs,
+      'limit' => -1,
+      'return' => 'ids'
+    );
+    $cooler_array = wc_get_products( $cooler_args );
 
-  // Set current list selection based on ACF field
-    if($list_type === "shelf")
-    {
-      $pickup_list_selection = $shelf_array;
-      $other_list = "Cooler";
-    }
-    else
-    {
-      $pickup_list_selection = $cooler_array;
-      $other_list = "Shelf";
-    }
     $daily_order_number = 100;
-
 @endphp
+
 @section('content')
   <div class="container">
-    <div class="row justify-content-center">
-      <div class="col-sm-10">
-        @php
-        acf_form(array(
-          'submit_value' => __('Choose Date', 'acf'),
-          'fields' => array(
-              'pickup_date',
-          ),
-          'return' => '%post_url%',
-          'updated_message' => false,
-        ));
-        @endphp
-      </div>
-    </div>
     <div class="row">
       <div class="col-sm-12">
         <table id="lists" class="display" data-order='[[ 1, "asc" ]]'>
@@ -135,35 +77,44 @@
           <tbody>  
             @foreach ($filtered_orders as $details )
               @php 
-              $daily_order_number++;
-              $phone = $details->billing->phone;
-              $phone_formatted = substr($phone, -10, -7) . "-" . substr($phone, -7, -4) . "-" . substr($phone, -4); @endphp
+                $daily_order_number++;
+                $phone = $details->get_billing_phone();
+                $order_id = $details->get_id();
+                $first_name = $details->get_billing_first_name();
+                $last_name = $details->get_billing_last_name();
+                $status = $details->get_status();
+                $customer_note = $details->get_customer_note();
+                $timeslot = $details->get_meta( 'pickup_timeslot', true );
+                $location = $details->get_meta( 'pickuplocation', true );
+              @endphp
               <tr>
-                <td> #{{ $daily_order_number }}</td>
-                <td class="name"><strong>{{ $details->billing->last_name }}, {{ $details->billing->first_name }}</strong></td>
-                <td class="phone">{{ $phone_formatted }}</td>
-                <td class="location">
+                <td>{{ $daily_order_number }}</td>
+                <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
+                <td class="phone">{{ $phone }}</td>
+                <td class="location">                  
+                  {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
+                  @php $responses = array(); @endphp
+                  @foreach ($details->get_items() as $item_id => $item)
+                    @php 
+                      $prod_id = $item->get_product_id(); 
+                      $cooler_override = $item->get_meta( '_cooler', true );
+                                        
+                      if(in_array($prod_id, $cooler_array)) {
+                        $responses[] = '<span class="order_location">C</span>';    
+                      } 
+                      // Add elseif for freezer list        
+                      else {  
+                        $responses[] = '<span class="order_location">S</span>';
+                      }                    
+                    @endphp
+                  @endforeach
                   @php
-                  // Check to see if the products associated with the order are shelf or cooler.     
-                  $responses = array();
-                  foreach($details->line_items as $item) {
-                  
-                    $prod_id = $item->product_id; 
-
-                    if(in_array($prod_id, $cooler_array)) {
-                      $responses[] = "Cooler";    
-                    }               
-                    else { 
-                      $responses[] = "Shelf";
-                    }                    
-                  }
-                  $responses_unique = array_unique($responses);
-                  $order_location = implode(" & ", $responses_unique);
-
-                @endphp
-                {{ $order_location }}
+                    $responses_unique = array_unique($responses);
+                    $order_location = implode("", $responses_unique);
+                  @endphp
+                  {!! $order_location !!}
                 </td>
-                <td class="notes">{{ $details->customer_note }}</td>
+                <td class="notes">{{ $customer_note }}</td>
               </tr>        
             @endforeach
           </tbody>
