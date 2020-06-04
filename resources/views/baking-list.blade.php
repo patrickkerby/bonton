@@ -6,7 +6,7 @@
 
 @php
   $post_id = get_the_ID();
-  do_action( 'acf/save_post', $post_id );
+  // do_action( 'acf/save_post', $post_id );
 
   $date_selector_date = get_field('list_date');
 

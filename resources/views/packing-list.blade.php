@@ -6,7 +6,7 @@
 
 @php
   $post_id = get_the_ID();
-  do_action( 'acf/save_post', $post_id );
+  // do_action( 'acf/save_post', $post_id );
 
   $date_selector_date = get_field('list_date');
 
@@ -140,8 +140,13 @@
                   <table>
                     @foreach ($details->get_items() as $item_id => $item)
                       @php 
+
                         $prod_id = $item->get_product_id(); 
-                        $prod_name = $item->get_name();
+
+                        $product_raw = wc_get_product($prod_id);
+                        $prod_name = $product_raw->get_name();
+                        
+                        // $prod_name = $item->get_name();
                         $prod_quantity = $item->get_quantity();              
                         $sliced_meta = $item->get_meta( 'Sliced Option', true );
                         $cooler_override = $item->get_meta( '_cooler', true );
