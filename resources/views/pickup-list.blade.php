@@ -61,65 +61,63 @@
 @endphp
 
 @section('content')
-  <div class="container">
-    <div class="row">
-      <div class="col-sm-12">
-        <table id="lists" class="display" data-order='[[ 1, "asc" ]]'>
-          <thead>
+  <div class="row">
+    <div class="col-sm-12">
+      <table id="lists" class="display" data-order='[[ 1, "asc" ]]'>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Location</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>  
+          @foreach ($filtered_orders as $details )
+            @php 
+              $daily_order_number++;
+              $phone = $details->get_billing_phone();
+              $order_id = $details->get_id();
+              $first_name = $details->get_billing_first_name();
+              $last_name = $details->get_billing_last_name();
+              $status = $details->get_status();
+              $customer_note = $details->get_customer_note();
+              $timeslot = $details->get_meta( 'pickup_timeslot', true );
+              $location = $details->get_meta( 'pickuplocation', true );
+            @endphp
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Phone</th>
-              <th>Location</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>  
-            @foreach ($filtered_orders as $details )
-              @php 
-                $daily_order_number++;
-                $phone = $details->get_billing_phone();
-                $order_id = $details->get_id();
-                $first_name = $details->get_billing_first_name();
-                $last_name = $details->get_billing_last_name();
-                $status = $details->get_status();
-                $customer_note = $details->get_customer_note();
-                $timeslot = $details->get_meta( 'pickup_timeslot', true );
-                $location = $details->get_meta( 'pickuplocation', true );
-              @endphp
-              <tr>
-                <td>{{ $daily_order_number }}</td>
-                <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
-                <td class="phone">{{ $phone }}</td>
-                <td class="location">                  
-                  {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
-                  @php $responses = array(); @endphp
-                  @foreach ($details->get_items() as $item_id => $item)
-                    @php 
-                      $prod_id = $item->get_product_id(); 
-                      $cooler_override = $item->get_meta( '_cooler', true );
-                                        
-                      if(in_array($prod_id, $cooler_array)) {
-                        $responses[] = '<span class="order_location">C</span>';    
-                      } 
-                      // Add elseif for freezer list        
-                      else {  
-                        $responses[] = '<span class="order_location">S</span>';
-                      }                    
-                    @endphp
-                  @endforeach
-                  @php
-                    $responses_unique = array_unique($responses);
-                    $order_location = implode("", $responses_unique);
+              <td>{{ $daily_order_number }}</td>
+              <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
+              <td class="phone">{{ $phone }}</td>
+              <td class="location">                  
+                {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
+                @php $responses = array(); @endphp
+                @foreach ($details->get_items() as $item_id => $item)
+                  @php 
+                    $prod_id = $item->get_product_id(); 
+                    $cooler_override = $item->get_meta( '_cooler', true );
+                                      
+                    if(in_array($prod_id, $cooler_array)) {
+                      $responses[] = '<span class="order_location">C</span>';    
+                    } 
+                    // Add elseif for freezer list        
+                    else {  
+                      $responses[] = '<span class="order_location">S</span>';
+                    }                    
                   @endphp
-                  {!! $order_location !!}
-                </td>
-                <td class="notes">{{ $customer_note }}</td>
-              </tr>        
-            @endforeach
-          </tbody>
-        </table>
-      </div>
+                @endforeach
+                @php
+                  $responses_unique = array_unique($responses);
+                  $order_location = implode("", $responses_unique);
+                @endphp
+                {!! $order_location !!}
+              </td>
+              <td class="notes">{{ $customer_note }}</td>
+            </tr>        
+          @endforeach
+        </tbody>
+      </table>
     </div>
   </div>
 @endsection

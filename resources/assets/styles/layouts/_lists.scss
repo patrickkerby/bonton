@@ -3,11 +3,11 @@
 .baking-list {
   margin: 0;
 
-  // &.admin-bar {
-  //   #wpadminbar {
-  //     display: none;
-  //   }
-  // }
+  &.admin-bar {
+    #wpadminbar {
+      display: none;
+    }
+  }
 
   .ui-datepicker {
     width: auto;
