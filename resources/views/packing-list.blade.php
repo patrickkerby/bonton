@@ -35,7 +35,7 @@
 //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
     $shelf_list = array( '91, 83, 52, 104, 13, 105, 103, 135, 94, 102, 106, 54, 10, 67' );
-    $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'patisserie', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'gluten-free-baked-goods', 'preserves-spreads-honey', 'sauces-dressings');
+    $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'gluten-free-baked-goods', 'preserves-spreads-honey', 'sauces-dressings');
     
     $shelf_args = array(
       'status' => 'publish',
@@ -61,12 +61,13 @@
     if($list_type === "shelf")
     {
       $pickup_list_selection = $shelf_array;
-      $other_list = "Cooler";
     }
-    else
+    elseif($list_type === "cooler")
     {
       $pickup_list_selection = $cooler_array;
-      $other_list = "Shelf";
+    }
+    else {
+      $pickup_list_selection = NULL;
     }
     $daily_order_number = 100;
 @endphp
@@ -154,7 +155,7 @@
                           <td class="prod_name_cell"><span class="prod_name">{{ $prod_name }}</span></td>
                           <td class="details_cell">
                             @foreach ( $product_meta_objects as $meta )
-                              <span class="@php print_r($meta->key); @endphp meta"> @php print_r($meta->value);@endphp</span>
+                              <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
                             @endforeach
                           </td>               
                         </tr> 
