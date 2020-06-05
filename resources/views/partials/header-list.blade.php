@@ -40,7 +40,7 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-7">
+    <div class="col-sm-7 .d-print-none">
       <ul class="nav nav-tabs">
         <li class="nav-item">
           <a class="nav-link @if(is_page('baking')) active @endif" href="/lists/baking">Baking</a>
