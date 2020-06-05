@@ -78,10 +78,10 @@
       <table id="lists" class="display">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Pick-up</th>
-            <th>Customer</th>
-            <th class="products">
+            <th width="3%">ID</th>
+            <th width="5%">Pick-up</th>
+            <th width="33%">Customer</th>
+            <th width="61%" class="products">
               <span class="qty_header">Qty.</span>
               <span class="product">Product</span>
               <span class="details">Details</span>
@@ -103,9 +103,9 @@
             @endphp     
 
               <tr class="pack {{ $status }}">
-                <td class="id">#{{ $daily_order_number }}</td>
+                <td class="id"><span class="check"></span></td>
                 <td class="location">
-                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>                  
+                  <span class="id">#{{ $daily_order_number }}</span>
                   
                   {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
                   @php $responses = array(); @endphp
@@ -128,6 +128,7 @@
                     $order_location = implode("", $responses_unique);
                   @endphp
                   {!! $order_location !!}
+                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>                  
                 </td>
                 <td> 
                   <strong>{{ $last_name }}, {{ $first_name }}</strong>
@@ -147,13 +148,12 @@
                         $prod_name = $product_raw->get_name();
                         
                         // $prod_name = $item->get_name();
-                        $prod_quantity = $item->get_quantity();              
+                        $prod_quantity = $item->get_quantity();
                         $sliced_meta = $item->get_meta( 'Sliced Option', true );
                         $cooler_override = $item->get_meta( '_cooler', true );
-                        $product_meta_objects = $item->get_meta_data();              
-                      
+                        $product_meta_objects = $item->get_meta_data();
                       @endphp
-                                                          
+
                       @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
                         <tr>
                           <td class="qty_cell"><span class="qty">{{ $prod_quantity }} </span></td>
@@ -166,8 +166,7 @@
                         </tr> 
                       @endif
                     @endforeach
-                  </table>
-                         
+                  </table>                         
                 </td>
               </tr>
             @endforeach

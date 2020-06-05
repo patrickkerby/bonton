@@ -201,7 +201,7 @@
 
     td {
       vertical-align: top;
-      padding: 1rem;
+      padding: 1rem 0.5rem;
 
       tr {
         border-top: dashed 2px darken($cream, 5%);
@@ -245,7 +245,8 @@
           padding-right: 2rem;
           position: relative;
           display: flex;
-          max-width: 105px;
+          width: 95px;
+          margin: 0.5rem 0 0 -0.4rem;
 
           &.In-store::before {
             content: "";
@@ -278,8 +279,15 @@
           height: 17px;
           display: inline-flex;
           justify-content: center;
-          margin: 0.5rem 0 0 0.5rem;
           line-height: 13px;
+          margin: 0 4px 0 2px;
+          position: relative;
+          top: -2px;
+        }
+
+        span.id {
+          color: $highlight;
+          font-weight: 900;
         }
       }
 
@@ -314,25 +322,30 @@
 
     &.packed {
       border-top: solid 2px #48bd8e;
-      background: $highlight;
+      background: #e9f7f1;
       transition: all 0.3s ease-in-out;
-
-      * {
-        color: #fff;
-      }
-
-      td tr {
-        border-top: solid 2px #48bd8e;
-
-        &:first-child {
-          border: none;
-        }
-      }
-
-      &.packed h6,
-      &.packed span.qty {
-        background: #48bd8e;
-      }
     }
+  }
+
+  tbody tr td span.check {
+    content: "";
+    display: flex;
+    height: 18px;
+    width: 18px;
+    border: solid 2px darken($color: $highlight, $amount: 10%);
+    margin-top: 4px;
+  }
+
+  tbody tr.packed td span.check::before {
+    content: "";
+    display: inline-block;
+    transform: rotate(45deg);
+    height: 14px;
+    width: 8px;
+    border-bottom: 3px solid $highlight;
+    border-right: 3px solid $highlight;
+    position: relative;
+    top: -2px;
+    left: 4px;
   }
 }
