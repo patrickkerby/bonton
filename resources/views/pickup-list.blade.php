@@ -34,6 +34,28 @@
 //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
 //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
+    //Cooler List
+    $cooler_list = '22,53,51,104,107';
+    $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries');
+
+    $cooler_args = array(
+      'status' => 'publish',
+      'category' => $cooler_list_slugs,
+      'limit' => -1,
+      'return' => 'ids'
+    );
+    $cooler_array = wc_get_products( $cooler_args );
+
+    $override_args = array(
+      'status' => 'publish',
+      'cooler' => '1',
+      'return' => 'ids',
+      'limit' => '-1'
+    );
+    $cooler_overrides = wc_get_products( $override_args );
+    $cooler_array = array_merge($cooler_array,$cooler_overrides);
+
+    //Shelf List
     $shelf_list = array( '91, 83, 52, 104, 13, 105, 103, 135, 94, 102, 106, 54, 10, 67' );
     $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'patisserie', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'gluten-free-baked-goods', 'preserves-spreads-honey', 'sauces-dressings');
     
@@ -45,17 +67,6 @@
       // 'exclude' => array(  )   Add array of products that have meta 'cooler'
     );
     $shelf_array = wc_get_products( $shelf_args );
-    
-    $cooler_list = '22,53,51,104,107';
-    $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries');
-
-    $cooler_args = array(
-      'status' => 'publish',
-      'category' => $cooler_list_slugs,
-      'limit' => -1,
-      'return' => 'ids'
-    );
-    $cooler_array = wc_get_products( $cooler_args );
 
     $daily_order_number = 100;
 @endphp

@@ -67,10 +67,6 @@
       'exclude' => $cooler_overrides
     );
     $shelf_array = wc_get_products( $shelf_args );
-    // unset($shelf_array[$cooler_overrides]);
-    // $shelf_array = array_values($shelf_array);
-
-
 
 // Set current list selection based on ACF field
     if($list_type === "shelf")
