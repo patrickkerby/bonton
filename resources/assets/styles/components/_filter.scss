@@ -1,3 +1,4 @@
+/* stylelint-disable no-descending-specificity */
 .woocommerce {
   // Sidebar Filter
   .wpf_submenu li {
@@ -143,6 +144,10 @@
         margin-bottom: 0.55rem;
         padding-bottom: 0;
         margin-right: 0;
+
+        &:first-child {
+          display: unset;
+        }
       }
     }
   }
@@ -225,3 +230,4 @@
     }
   }
 }
+/* stylelint-enable no-descending-specificity */
