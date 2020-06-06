@@ -34,18 +34,7 @@
 //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
 //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
-    $shelf_list = array( '91, 83, 52, 104, 13, 105, 103, 135, 94, 102, 106, 54, 10, 67' );
-    $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'gluten-free-baked-goods', 'preserves-spreads-honey', 'sauces-dressings');
-    
-    $shelf_args = array(
-      'status' => 'publish',
-      'category' => $shelf_list_slugs,
-      'limit' => -1,
-      'return' => 'ids'
-      // 'exclude' => array(  )   Add array of products that have meta 'cooler'
-    );
-    $shelf_array = wc_get_products( $shelf_args );
-    
+    //Cooler List
     $cooler_list = '22,53,51,104,107';
     $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries');
 
@@ -56,6 +45,32 @@
       'return' => 'ids'
     );
     $cooler_array = wc_get_products( $cooler_args );
+
+    $override_args = array(
+      'status' => 'publish',
+      'cooler' => '1',
+      'return' => 'ids',
+      'limit' => '-1'
+    );
+    $cooler_overrides = wc_get_products( $override_args );
+    $cooler_array = array_merge($cooler_array,$cooler_overrides);
+
+    // Shelf List
+    $shelf_list = array( '91, 83, 52, 104, 13, 105, 103, 135, 94, 102, 106, 54, 10, 67' );
+    $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'gluten-free-baked-goods', 'preserves-spreads-honey', 'sauces-dressings');
+    
+    $shelf_args = array(
+      'status' => 'publish',
+      'category' => $shelf_list_slugs,
+      'limit' => -1,
+      'return' => 'ids',
+      'exclude' => $cooler_overrides
+    );
+    $shelf_array = wc_get_products( $shelf_args );
+    // unset($shelf_array[$cooler_overrides]);
+    // $shelf_array = array_values($shelf_array);
+
+
 
 // Set current list selection based on ACF field
     if($list_type === "shelf")
@@ -112,7 +127,6 @@
                   @foreach ($details->get_items() as $item_id => $item)
                     @php 
                       $prod_id = $item->get_product_id(); 
-                      $cooler_override = $item->get_meta( '_cooler', true );
                                         
                       if(in_array($prod_id, $cooler_array)) {
                         $responses[] = '<span class="order_location">C</span>';    
@@ -147,17 +161,20 @@
                         $product_raw = wc_get_product($prod_id);
                         $prod_name = $product_raw->get_name();
                         
-                        // $prod_name = $item->get_name();
                         $prod_quantity = $item->get_quantity();
                         $sliced_meta = $item->get_meta( 'Sliced Option', true );
-                        $cooler_override = $item->get_meta( '_cooler', true );
+                        
                         $product_meta_objects = $item->get_meta_data();
+
                       @endphp
 
                       @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
                         <tr>
                           <td class="qty_cell"><span class="qty">{{ $prod_quantity }} </span></td>
-                          <td class="prod_name_cell"><span class="prod_name">{{ $prod_name }}</span></td>
+                          <td class="prod_name_cell">
+                            <span class="prod_name">{{ $prod_name }}</span>
+                            
+                          </td>
                           <td class="details_cell">
                             @foreach ( $product_meta_objects as $meta )
                               <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>

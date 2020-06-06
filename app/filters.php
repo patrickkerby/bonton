@@ -204,21 +204,40 @@ add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
 // Let's see if we can get these damned sorting options setup right
 
 add_filter( 'woocommerce_catalog_orderby', function( $options ){
- 
 	$options['title'] = 'Sort alphabetically';
- 
 	return $options;
- 
 });
 
 add_filter( 'woocommerce_get_catalog_ordering_args', function ( $args ) {
- 
 	// Sort alphabetically
 	if ( isset( $_GET['orderby'] ) && 'title' === $_GET['orderby'] ) {
 		$args['orderby'] = 'title';
 		$args['order'] = 'asc';
 	}
- 
 	return $args;
- 
 });
+
+
+// function custom_cooler_query( $query, $query_vars ) {
+// 	if ( ! empty( $query_vars['customvar'] ) ) {
+// 		$query['meta_query'][] = array(
+// 			'key' => 'customvar',
+// 			'value' => esc_attr( $query_vars['customvar'] ),
+// 		);
+// 	}
+
+// 	return $query;
+// }
+// add_filter( 'woocommerce_product_data_store_cpt_get_products_query', 'custom_cooler_query', 10, 2 );
+
+
+
+add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $query, $query_vars ) {
+	if ( ! empty( $query_vars['cooler'] ) ) {
+		$query['meta_query'][] = array(
+			'key' => 'cooler',
+			'value' => esc_attr( $query_vars['cooler'] ),
+		);
+	}
+	return $query;
+}, 10, 2 );
