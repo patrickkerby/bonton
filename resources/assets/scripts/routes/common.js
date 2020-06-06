@@ -42,7 +42,14 @@ export default {
       $(document).on('click', '.pp_overlay', function(e) {
         if (!$(e.target).is('.quickview-open'))
           $('.quickview-open').removeClass('quickview-open');
-      });   
+      });
+      // remove class from body when you hit escape
+      $(document).bind('keyup', function(e){ 
+        if(e.which == 27){
+          if (!$(e.target).is('.quickview-open'))
+          $('.quickview-open').removeClass('quickview-open');
+         }
+      });
       // close the modal when you click on our new button  
       $('.close-product').on('click',function() { $.prettyPhoto.close(); });
 
