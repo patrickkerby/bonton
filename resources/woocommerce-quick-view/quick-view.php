@@ -76,7 +76,13 @@ do_action( 'wc_quick_view_before_single_product' );
 					// Ingredients list
 					$ingredients = get_field( "ingredients", $product_id );
 					if ( $ingredients && ! is_wp_error( $ingredients ) ) { 
-						echo '<div class="ingredients">Ingredients: <span>'.$ingredients.'</span></div>';
+						echo '
+						<a class="ingredients" data-toggle="collapse" href="#collapseIngredients" role="button" aria-expanded="false" aria-controls="collapseIngredients">View Ingredients</a>
+						<div class="collapse" id="collapseIngredients">
+							<div class="card card-body">
+							'.$ingredients.'
+							</div>
+						</div>';
 					}
 				?>
 

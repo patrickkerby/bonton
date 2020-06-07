@@ -79,10 +79,30 @@
   }
 }
 
+.sidebar a.ingredients {
+  width: 100%;
+  border-top: solid 2px #ebe9e0;
+  padding: 1.25rem 0 0 1rem;
+  display: flex;
+  font-weight: 500;
+  text-decoration: underline;
+
+  @include media-breakpoint-down(xs) {
+    display: none;
+  }
+}
+
+.sidebar .card {
+  border-radius: 0;
+  border: none;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+  margin: 1rem 0 0 0.5rem;
+  font-size: 14px;
+}
+
 .single-product,
 .pp_woocommerce_quick_view {
-  .sidebar ul,
-  .ingredients {
+  .sidebar ul {
     border-top: solid 2px #ebe9e0;
     padding: 1.25rem 0 0 0;
     font-weight: 600;
