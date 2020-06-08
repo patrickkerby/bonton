@@ -2,9 +2,10 @@
   <meta charset="utf-8">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  {{-- <meta http-equiv="Content-Security-Policy" content="default-src https: 'unsafe-inline' 'unsafe-eval'; worker-src blob: ; child-src blob: ; img-src data: blob: ;"> --}}
   <link rel="stylesheet" href="https://use.typekit.net/wvm4dbv.css">
   <!-- Hotjar Tracking Code for https://bonton.workwithrye.ca -->
-<script>
+{{-- <script>
       (function(h,o,t,j,a,r){
           h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
           h._hjSettings={hjid:1829015,hjsv:6};
@@ -13,7 +14,9 @@
           r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
           a.appendChild(r);
       })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-  </script>
+  </script> --}}
+  <script src='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css' rel='stylesheet' />
   @if ( is_cart() )
     @php acf_form_head() @endphp
   @endif

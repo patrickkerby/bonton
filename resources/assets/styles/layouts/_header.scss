@@ -596,4 +596,41 @@ body.is-active {
   }
 }
 
+.contact {
+  .hero {
+    height: 400px;
+    display: flex;
+    align-items: flex-end;
+
+    h1 {
+      font-size: 63px;
+      font-weight: 600;
+      margin: 0;
+      line-height: 52px;
+    }
+
+    p {
+      font-size: 20px;
+      line-height: 21px;
+      margin-top: 1rem;
+    }
+  }
+
+  .page-header {
+    background: $cream;
+    padding: 1.25rem 3rem;
+    text-align: center;
+    margin: 0 auto -3rem auto;
+    max-width: 80%;
+  }
+
+  .intro {
+    text-align: center;
+    font-size: 25px;
+    line-height: 37px;
+    font-weight: 200;
+    margin: 8rem 0 4rem 0;
+  }
+}
+
 /* stylelint-enable no-descending-specificity */
