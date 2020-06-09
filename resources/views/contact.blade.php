@@ -30,7 +30,7 @@
           map.scrollZoom.disable();
         </script>
       </div>
-      <div class="col-sm-5">
+      <div class="col-sm-5 contact-content">
         @include('partials.content-page')
       </div>
     </div>
