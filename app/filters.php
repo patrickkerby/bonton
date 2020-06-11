@@ -217,21 +217,6 @@ add_filter( 'woocommerce_get_catalog_ordering_args', function ( $args ) {
 	return $args;
 });
 
-
-// function custom_cooler_query( $query, $query_vars ) {
-// 	if ( ! empty( $query_vars['customvar'] ) ) {
-// 		$query['meta_query'][] = array(
-// 			'key' => 'customvar',
-// 			'value' => esc_attr( $query_vars['customvar'] ),
-// 		);
-// 	}
-
-// 	return $query;
-// }
-// add_filter( 'woocommerce_product_data_store_cpt_get_products_query', 'custom_cooler_query', 10, 2 );
-
-
-
 add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $query, $query_vars ) {
 	if ( ! empty( $query_vars['cooler'] ) ) {
 		$query['meta_query'][] = array(

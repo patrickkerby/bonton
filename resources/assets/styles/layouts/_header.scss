@@ -125,7 +125,7 @@ body.is-active {
   ul {
     justify-content: space-around;
     position: relative;
-    z-index: 2;
+    // z-index: 2;
 
     li {
       display: flex;
@@ -155,6 +155,7 @@ body.is-active {
         height: 0;
         display: flex;
         box-shadow: 0 0 19px rgba(61, 49, 49, 0.1);
+        z-index: 8;
 
         @include slowfade();
 
@@ -306,6 +307,83 @@ body.is-active {
 
     ul.sub-menu li a:hover {
       color: $highlight;
+    }
+
+    li.mega ul.sub-menu {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      column-gap: 2rem;
+      height: auto;
+      grid-auto-flow: column;
+      grid-template-rows: 1fr 1fr 1fr;
+      justify-content: center;
+      padding-top: 4rem;
+      padding-bottom: 5rem;
+
+      @include media-breakpoint-up(lg) {
+        grid-template-columns: 28% 28% 28%;
+      }
+
+      @include media-breakpoint-up(xl) {
+        grid-template-columns: 25% 25% 25%;
+      }
+
+      li {
+        padding: 0;
+
+        a {
+          font-size: 20px;
+          font-family: $font-family-sans-serif;
+          text-align: left;
+          padding: 1rem 1rem 1.25rem 1.5rem;
+          width: 100%;
+          display: block;
+          position: relative;
+          overflow: hidden;
+          background: url("../images/chevron.svg") no-repeat left center;
+
+          &::after {
+            content: ".................................";
+            letter-spacing: 4px;
+            font-size: 19px;
+            color: $highlight;
+            margin: 0 auto;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            line-height: 15px;
+          }
+
+          @include media-breakpoint-down(md) {
+            font-size: 18px;
+          }
+        }
+
+        &:nth-child(3n) a::after {
+          display: none;
+        }
+      }
+
+      &::before {
+        content: "Order online, pickup in-store or take advantage of curbside pickup!";
+        position: absolute;
+        bottom: 0;
+        text-align: center;
+        background: #fff;
+        padding: 0.75rem 1.5rem;
+        font-family: $font-family-serif;
+        color: $charcoal;
+        font-size: 19px;
+        display: flex;
+        width: 70%;
+        margin-left: 15%;
+        justify-content: center;
+
+        @include media-breakpoint-down(md) {
+          width: 90%;
+          margin-left: 5%;
+        }
+      }
     }
   }
 }
