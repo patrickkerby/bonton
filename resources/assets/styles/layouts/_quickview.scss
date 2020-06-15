@@ -70,6 +70,11 @@ div.pp_woocommerce_quick_view {
       grid-template-columns: 32% 61%;
       grid-template-rows: auto;
       row-gap: 2rem;
+
+      @include media-breakpoint-down(xs) {
+        display: flex;
+        flex-direction: column;
+      }
     }
 
     .woocommerce-product-gallery {
@@ -110,6 +115,9 @@ div.pp_woocommerce_quick_view {
 
     @include media-breakpoint-down(xs) {
       font-size: 14px;
+      border-top: none;
+      border-bottom: solid 2px #ebe9e0;
+      margin-top: 2rem;
     }
 
     span {
@@ -157,6 +165,10 @@ div.pp_woocommerce_quick_view {
       max-width: 80%;
       line-height: 36px;
       padding: 0.75rem !important;
+    }
+
+    @include media-breakpoint-down(sm) {
+      margin: -4rem auto 0 auto !important;
     }
   }
 
