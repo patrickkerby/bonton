@@ -217,6 +217,7 @@ add_filter( 'woocommerce_get_catalog_ordering_args', function ( $args ) {
 	return $args;
 });
 
+// custom query for cooler lists
 add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $query, $query_vars ) {
 	if ( ! empty( $query_vars['cooler'] ) ) {
 		$query['meta_query'][] = array(
@@ -226,3 +227,57 @@ add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $
 	}
 	return $query;
 }, 10, 2 );
+
+// TAX RULES
+// if category is not Grocery
+// if product is_taxable
+//   get_quantity of each line item
+//     if line item = "1/2 dozen", quantity = quantity * 6
+//     if line item = "Dozen", quantity = quantity * 12
+//       calculate total cart quantity
+//         if total cart quantity > 5, change line-item tax class to 'zero-rate'
+
+add_action( 'woocommerce_before_calculate_totals', 'App\change_cart_items_prices', 10, 1 );
+function change_cart_items_prices( $cart ) {
+
+    if ( is_admin() && ! defined( 'DOING_AJAX' ) )
+        return;
+
+    if ( did_action( 'woocommerce_before_calculate_totals' ) >= 2 )
+        return;
+
+
+    $categories = array(83, 84);
+    $total_item_quantity = 0;
+
+    foreach ( $cart->get_cart() as $cart_item ) {        
+
+        if ( has_term( $categories, 'product_cat', $cart_item['product_id'] )  ){
+            // add conditional for if is_taxable    
+            $attributes = $cart_item['data']->get_attributes();
+            $size = $attributes['pa_package-size'];
+            
+            $quantity = $cart_item['quantity'];
+            
+            if ($size === 'half-dozen') {
+                $quantity = $quantity * 6;                
+            }
+            
+            if ($size === 'dozen') {
+                $quantity = $quantity * 12;
+            }
+
+            $total_item_quantity +=  $quantity;
+        }        
+    }
+    
+    if ( $total_item_quantity > 5 ) {
+
+        foreach ( $cart->get_cart() as $cart_item ) {        
+
+            if ( has_term( $categories, 'product_cat', $cart_item['product_id'] )  ) {
+                $cart_item['data']->set_tax_class( 'zero-rate' );
+            }
+        }
+    }
+}
