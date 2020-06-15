@@ -40,11 +40,8 @@
       <div class="container-fluid intro">
         <img class="illustration" src="{{ $intro->intro_image }}" />
         <div class="row no-gutters justify-content-center">
-          <div class="col-sm-5">
+          <div class="col-sm-8">
             {!! $intro->column_1 !!}
-          </div>
-          <div class="col-sm-5 offset-sm-1">
-            {!! $intro->column_2 !!}
           </div>
         </div>
       </div>
@@ -132,12 +129,11 @@
       <div class="container-fluid videos">
         <div class="row justify-content-center no-gutters">
           <div class="col-sm-8 process">
-            <h2>Our Story &amp;<br>Our Process define us.</h2>
+            <h2>Get to know Bon Ton</h2>
             <div class="row">
-              <p class="col-sm-6">We know every ingredient that goes into our products because they're all made on site by our incredible team who use slow and steady traditional baking techniques. </p>
-              <p class="col-sm-6">We don't use trans  fat at all and keep our ingredient list simple so you can understand and enjoy what you're eating.</p>
+              <p class="col-sm-6">The stories behind every item we craft and every one of our team members who do the work amplifies the significance of what’s on our shelves.</p>
+              <p class="col-sm-6">We want our customers to know what they're eating and how it's made. Take a peek behind the curtain to get to know our products better.</p>
             </div>
-            <a href="/stories" class="button btn">Learn more about us</a>
           </div>
         </div>
         <div class="row justify-content-center thumbs">
