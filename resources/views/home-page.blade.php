@@ -37,17 +37,9 @@
           <h3>{!! $sub_title !!}</h3>
         </div>
       </div>
-      <div class="container-fluid intro">
-        <img class="illustration" src="{{ $intro->intro_image }}" />
-        <div class="row no-gutters justify-content-center">
-          <div class="col-sm-8">
-            {!! $intro->column_1 !!}
-          </div>
-        </div>
-      </div>
       <div class="container-fluid featured-products">
         <div class="row justify-content-center">
-          <div class="col-10 col-sm-6 feature-intro">
+          <div class="col-10 col-sm-8 feature-intro">
             <h2>{{ $featured_products->heading }}</h2>
             <p>{{ $featured_products->sub_heading }}</p>
             <a href="/products" class="button btn">View all products</a>
@@ -81,7 +73,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>More Info / Add to Cart</span></a>
+                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Add to Cart</span></a>
                       </div>
                     </div> 
                   </div>                                                       
@@ -109,7 +101,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Learn More / Add to Cart</span></a>
+                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Add to Cart</span></a>
                       </div>
                     </div> 
                   </div>                                                       
@@ -126,22 +118,22 @@
           </div>
         </div>
       </div>
-      <div class="container-fluid videos">
-        <div class="row justify-content-center no-gutters">
-          <div class="col-sm-8 process">
-            <h2>Get to know Bon Ton</h2>
-            <div class="row">
-              <p class="col-sm-6">The stories behind every item we craft and every one of our team members who do the work amplifies the significance of what’s on our shelves.</p>
-              <p class="col-sm-6">We want our customers to know what they're eating and how it's made. Take a peek behind the curtain to get to know our products better.</p>
-            </div>
+      <div class="container-fluid videos process">
+        <div class="row no-gutters justify-content-center">
+          <img class="illustration" src="{{ $intro->intro_image }}" />
+          <div class="col-sm-8">
+            {!! $intro->column_1 !!}
           </div>
         </div>
         <div class="row justify-content-center thumbs">
           @foreach ($story_process as $item)
             <div class="col-sm-5 thumb">
               <a href="{{ $item->link }}">
-                <h3>{{ $item->title }}</h3>
                 <img src="{{ $item->image }}" />
+                <div>
+                  <h3>{{ $item->title }}</h3>
+                  <span>Read More</span>
+                </div>
               </a>
             </div>
           @endforeach
