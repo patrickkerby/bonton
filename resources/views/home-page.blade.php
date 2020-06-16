@@ -120,8 +120,8 @@
       </div>
       <div class="container-fluid videos process">
         <div class="row no-gutters justify-content-center">
-          <img class="illustration" src="{{ $intro->intro_image }}" />
-          <div class="col-sm-8 col-lg-6">
+          <img class="illustration col-sm-9 col-lg-7" src="{{ $intro->intro_image }}" />
+          <div class="col-sm-9 col-lg-7 col-xl-6">
             {!! $intro->column_1 !!}
           </div>
         </div>
