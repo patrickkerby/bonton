@@ -39,7 +39,7 @@
       </div>
       <div class="container-fluid featured-products">
         <div class="row justify-content-center">
-          <div class="col-10 col-sm-8 feature-intro">
+          <div class="col-10 col-sm-8 col-lg-6 feature-intro">
             <h2>{{ $featured_products->heading }}</h2>
             <p>{{ $featured_products->sub_heading }}</p>
             <a href="/products" class="button btn">View all products</a>
@@ -121,7 +121,7 @@
       <div class="container-fluid videos process">
         <div class="row no-gutters justify-content-center">
           <img class="illustration" src="{{ $intro->intro_image }}" />
-          <div class="col-sm-8">
+          <div class="col-sm-8 col-lg-6">
             {!! $intro->column_1 !!}
           </div>
         </div>
