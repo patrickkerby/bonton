@@ -255,6 +255,10 @@ button.mobile-filter {
 
   &.collapsed {
     display: block;
+
+    @include media-breakpoint-up(sm) {
+      display: none;
+    }
   }
 }
 
