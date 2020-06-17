@@ -525,7 +525,12 @@ body.is-active {
 .wpmenucart-shortcode {
   position: absolute;
   top: 2.25rem;
-  left: 0.5rem;
+  left: 1.25rem;
+
+  .wpmenucart-icon-shopping-cart-0::before {
+    font-size: 19px;
+    margin-right: 0;
+  }
 }
 
 // .banner .nav li {
