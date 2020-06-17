@@ -173,7 +173,7 @@
 
       @include media-breakpoint-down(xs) {
         width: auto;
-        max-width: unset;
+        max-width: 100%;
         height: auto;
       }
     }
