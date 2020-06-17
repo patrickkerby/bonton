@@ -104,6 +104,19 @@ body.is-active {
         }
       }
 
+      .dgwt-wcas-search-icon {
+        width: auto;
+
+        &::after {
+          content: "Search Products";
+          font-size: 14px;
+          font-weight: 500;
+          display: inline-flex;
+          position: relative;
+          top: 2px;
+        }
+      }
+
       &.wpmenucartli {
         margin-left: 1rem;
         padding-right: 1rem;
