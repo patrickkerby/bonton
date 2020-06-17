@@ -133,6 +133,8 @@
     width: calc(100% + 30px);
     padding-bottom: 1px;
     padding-top: 4rem;
+    display: flex;
+    flex-direction: column;
 
     @include media-breakpoint-down(sm) {
       margin: 0 -15px 140px -15px;
