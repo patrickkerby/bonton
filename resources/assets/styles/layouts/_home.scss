@@ -172,6 +172,14 @@
       max-width: 80%;
       width: 774px;
       height: auto;
+      align-self: flex-start;
+      justify-self: flex-start;
+
+      @include media-breakpoint-down(sm) {
+        width: unset;
+        max-width: unset;
+        height: unset;
+      }
     }
 
     h2 {
