@@ -47,6 +47,11 @@
         top: 8px;
         background: $highlight;
         border-radius: 100%;
+
+        @include media-breakpoint-down(xs) {
+          left: 2px;
+          top: 6px;
+        }
       }
     }
   }
@@ -230,6 +235,43 @@
     li:nth-child(2) {
       display: none !important;
     }
+  }
+}
+
+button.mobile-filter {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 4rem;
+  background: $highlight;
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+  font-weight: 600;
+  z-index: 1000;
+  border-radius: 0;
+  display: none;
+
+  &.collapsed {
+    display: block;
+  }
+}
+
+#mobileFilter {
+  position: fixed;
+  overflow-y: scroll;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  padding: 2rem;
+  z-index: 200;
+
+  button {
+    z-index: 1500;
+    display: block;
   }
 }
 /* stylelint-enable no-descending-specificity */
