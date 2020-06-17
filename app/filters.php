@@ -252,7 +252,7 @@ function change_cart_items_prices( $cart ) {
 
     foreach ( $cart->get_cart() as $cart_item ) {        
 
-        if ( has_term( $categories, 'product_cat', $cart_item['product_id'] )  ){
+        if ( has_term( $categories, 'product_cat', $cart_item['product_id'] ) ){
             // add conditional for if is_taxable    
             $attributes = $cart_item['data']->get_attributes();
             $size = $attributes['pa_package-size'];
