@@ -240,6 +240,9 @@ add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $
 add_action( 'woocommerce_before_calculate_totals', 'App\change_cart_items_prices', 10, 1 );
 function change_cart_items_prices( $cart ) {
 
+    if (is_cart())
+        return;
+
     if ( is_admin() && ! defined( 'DOING_AJAX' ) )
         return;
 
