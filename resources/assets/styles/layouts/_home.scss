@@ -169,13 +169,12 @@
       margin: 3rem auto 1rem auto;
       padding-top: 2rem;
       display: block;
-      width: 774px;
-      max-width: 80%;
+      max-width: 774px;
+      width: auto;
       height: auto;
 
       @include media-breakpoint-down(xs) {
-        width: auto;
-        max-width: 100%;
+        max-width: 80%;
         height: auto;
       }
     }
