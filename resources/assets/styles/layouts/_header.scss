@@ -410,7 +410,7 @@ body.is-active {
     position: absolute;
     right: 0.5rem;
     top: 1.5rem;
-    z-index: 20;
+    z-index: 2100;
 
     &:focus {
       outline: none;
@@ -424,7 +424,7 @@ body.is-active {
     top: 0;
     left: 0;
     background: $cream;
-    z-index: 14;
+    z-index: 2000;
 
     &::after {
       content: "";
