@@ -53,9 +53,9 @@
       z-index: 2;
 
       h1.hero-headline {
-        font-size: 7rem;
+        font-size: 6.5rem;
         font-weight: 900;
-        line-height: 7rem;
+        line-height: 6rem;
         margin: 2rem;
 
         --tt-key: hero-headline;
@@ -70,8 +70,8 @@
         }
 
         100% {
-          font-size: 7rem;
-          line-height: 7rem;
+          font-size: 6.5rem;
+          line-height: 6rem;
           margin: 2rem;
         }
       }
