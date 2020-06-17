@@ -53,9 +53,9 @@
       z-index: 2;
 
       h1.hero-headline {
-        font-size: 8rem;
+        font-size: 6.5rem;
         font-weight: 900;
-        line-height: 7.5rem;
+        line-height: 6rem;
         margin: 2rem;
 
         --tt-key: hero-headline;
@@ -70,8 +70,8 @@
         }
 
         100% {
-          font-size: 8rem;
-          line-height: 7.5rem;
+          font-size: 6.5rem;
+          line-height: 6rem;
           margin: 2rem;
         }
       }
@@ -127,76 +127,9 @@
     }
   }
 
-  .intro {
-    margin: 8rem -15px 6rem -15px;
-    padding: 2rem 6rem;
-    background: url(../images/blob.png) no-repeat top center;
-    overflow: visible;
-    width: calc(100% + 30px);
-
-    @include media-breakpoint-up(lg) {
-      padding: 2rem 9rem;
-    }
-
-    @include media-breakpoint-down(md) {
-      margin: 5rem -15px 5rem -15px;
-      padding: 2rem 3rem;
-    }
-
-    @include media-breakpoint-down(sm) {
-      margin: 4rem -15px 4rem -15px;
-      padding: 0 3rem;
-    }
-
-    @include media-breakpoint-down(xs) {
-      margin: 3rem -15px 3rem -15px;
-      padding: 0 5rem;
-
-      div {
-        margin: 0 0 3rem 0;
-      }
-    }
-
-    img.illustration {
-      margin: 0 auto;
-      padding-top: 2rem;
-      display: flex;
-      max-width: 100%;
-    }
-
-    h3 {
-      font-size: 43px;
-      line-height: 39px;
-      text-align: center;
-      padding: 0 0 2rem 0;
-      font-weight: 800;
-
-      @include media-breakpoint-up(xl) {
-        padding: 0 2rem 2rem 2rem;
-      }
-
-      @include media-breakpoint-down(md) {
-        font-size: 34px;
-        line-height: 33px;
-      }
-    }
-
-    p {
-      font-size: 18px;
-      line-height: 27px;
-      margin: 0 0 1.25rem 0;
-      text-align: center;
-
-      @include media-breakpoint-down(sm) {
-        font-size: 16px;
-        line-height: 24px;
-      }
-    }
-  }
-
   .container-fluid.videos {
     background: $cream;
-    margin: 0 -15px 180px -15px;
+    margin: 0 -15px 0 -15px;
     width: calc(100% + 30px);
     padding-bottom: 1px;
     padding-top: 4rem;
@@ -214,7 +147,7 @@
       transform: rotate(-90deg);
       display: flex;
       align-self: center;
-      margin-top: -4rem;
+      margin-top: -20rem;
       justify-content: center;
     }
 
@@ -230,34 +163,40 @@
       }
     }
 
-    div.process {
-      padding: 6rem 0;
+    img.illustration {
+      margin: 3rem auto 1rem auto;
+      padding-top: 2rem;
+      display: flex;
+      width: 774px;
+      max-width: 80%;
+    }
 
-      h2 {
-        text-align: center;
-        font-size: 62px;
-        line-height: 60px;
-        font-weight: bold;
-        margin-bottom: 2.5rem;
+    h2 {
+      text-align: center;
+      font-size: 62px;
+      line-height: 60px;
+      font-weight: bold;
+      margin-bottom: 2.5rem;
 
-        @include media-breakpoint-down(sm) {
-          font-size: 44px;
-          line-height: 46px;
-        }
+      @include media-breakpoint-down(sm) {
+        font-size: 44px;
+        line-height: 46px;
       }
+    }
 
-      p {
-        font-size: 20px;
-        line-height: 23px;
+    p {
+      font-size: 18px;
+      line-height: 24px;
+      text-align: center;
 
-        @include media-breakpoint-down(sm) {
-          font-size: 18px;
-        }
+      @include media-breakpoint-down(sm) {
+        font-size: 18px;
       }
     }
 
     .thumbs {
-      margin-bottom: -80px;
+      margin-top: 4rem;
+      margin-bottom: 4rem;
     }
 
     .thumb {
@@ -265,12 +204,11 @@
 
       a {
         width: 100%;
-        height: 310px;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        justify-content: space-between;
         overflow: hidden;
-        background-color: #505050;
+        flex-direction: column;
+        background: #fff;
 
         @include media-breakpoint-down(sm) {
           height: 210px;
@@ -279,37 +217,56 @@
         @include slowfade;
 
         img {
-          filter: grayscale(100%) contrast(1.2);
           object-fit: cover;
           width: 100%;
-          height: 100%;
-          opacity: 0.3;
+          height: 250px;
 
           @include slowfade;
         }
 
-        h3 {
-          color: #fff;
-          font-size: 34px;
-          margin: 0;
-          filter: unset;
-          position: absolute;
-          z-index: 1;
+        div {
+          width: 80%;
+          margin: -1.5rem auto 0 auto;
+          background: #fff;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          z-index: 2;
+
+          h3 {
+            color: $charcoal;
+            font-size: 31px;
+            margin: 1.5rem 0 0 0;
+            text-align: center;
+          }
+
+          span {
+            margin: 0 auto 1rem auto;
+            text-align: center;
+            display: inline-flex;
+            color: $highlight;
+            font-size: 15px;
+            font-weight: 600;
+
+            &::before,
+            &::after {
+              content: "";
+              border-top: solid 2px $highlight;
+              display: flex;
+              width: 1.25rem;
+              height: 1rem;
+              height: 0.25rem;
+              margin: 0.7rem;
+            }
+          }
         }
 
         &:hover {
           text-decoration: none;
-          background-color: #505050;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 
           img {
-            opacity: 0.4;
-            filter: grayscale(98%) contrast(1.2);
-
-            @include slowfade;
-          }
-
-          h3 {
-            color: $highlight;
+            opacity: 0.8;
 
             @include slowfade;
           }
