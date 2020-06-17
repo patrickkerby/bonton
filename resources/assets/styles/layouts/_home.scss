@@ -170,6 +170,11 @@
       width: 774px;
       max-width: 80%;
       height: auto;
+
+      @include media-breakpoint-down(sm) {
+        width: 80%;
+        height: auto;
+      }
     }
 
     h2 {
@@ -210,10 +215,6 @@
         overflow: hidden;
         flex-direction: column;
         background: #fff;
-
-        @include media-breakpoint-down(sm) {
-          height: 210px;
-        }
 
         @include slowfade;
 
