@@ -271,11 +271,11 @@ p.demo_store,
   position: fixed !important;
   padding: 3rem 0 !important;
   bottom: 0 !important;
-}
 
-.woocommerce-store-notice__dismiss-link {
-  display: flex;
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
+  .woocommerce-store-notice__dismiss-link {
+    display: flex;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+  }
 }
