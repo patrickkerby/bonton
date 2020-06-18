@@ -272,3 +272,10 @@ p.demo_store,
   padding: 3rem 0 !important;
   bottom: 0 !important;
 }
+
+.woocommerce-store-notice__dismiss-link {
+  display: flex;
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+}
