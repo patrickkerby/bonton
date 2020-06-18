@@ -262,7 +262,8 @@ ul.flex-direction-nav {
 }
 
 .woocommerce-store-notice p.demo_store,
-.admin-bar p.demo_store {
+.admin-bar p.demo_store,
+.woocommerce-store-notice {
   background-color: $highlight;
   color: #fff;
   top: unset;
