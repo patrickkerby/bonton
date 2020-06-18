@@ -261,13 +261,14 @@ ul.flex-direction-nav {
   }
 }
 
+.woocommerce-store-notice,
+p.demo_store,
 .woocommerce-store-notice p.demo_store,
-.admin-bar p.demo_store,
-.woocommerce-store-notice {
-  background-color: $highlight;
-  color: #fff;
-  top: unset;
-  position: fixed;
-  padding: 3rem 0;
-  bottom: 0;
+.admin-bar p.demo_store {
+  background-color: $highlight !important;
+  color: #fff !important;
+  top: unset !important;
+  position: fixed !important;
+  padding: 3rem 0 !important;
+  bottom: 0 !important;
 }
