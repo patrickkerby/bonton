@@ -240,9 +240,6 @@ add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $
 add_action( 'woocommerce_before_calculate_totals', 'App\change_cart_items_prices', 10, 1 );
 function change_cart_items_prices( $cart ) {
 
-    if (is_cart())
-        return;
-
     if ( is_admin() && ! defined( 'DOING_AJAX' ) )
         return;
 
@@ -253,33 +250,39 @@ function change_cart_items_prices( $cart ) {
     $categories = array(83, 84);
     $total_item_quantity = 0;
 
-    foreach ( $cart->get_cart() as $cart_item ) {        
-
-        if ( has_term( $categories, 'product_cat', $cart_item['product_id'] ) ){
-            // add conditional for if is_taxable    
-            $attributes = $cart_item['data']->get_attributes();
-            $size = $attributes['pa_package-size'];
-            
-            $quantity = $cart_item['quantity'];
-            
-            if ($size === 'half-dozen') {
-                $quantity = $quantity * 6;                
-            }
-            
-            if ($size === 'dozen') {
-                $quantity = $quantity * 12;
-            }
-
-            $total_item_quantity +=  $quantity;
-        }        
-    }
-    
-    if ( $total_item_quantity > 5 ) {
+    if (is_cart()) {
 
         foreach ( $cart->get_cart() as $cart_item ) {        
 
-            if ( has_term( $categories, 'product_cat', $cart_item['product_id'] )  ) {
-                $cart_item['data']->set_tax_class( 'zero-rate' );
+            if ( has_term( $categories, 'product_cat', $cart_item['product_id'] ) ){
+                // add conditional for if is_taxable    
+                $attributes = $cart_item['data']->get_attributes();
+                $quantity = $cart_item['quantity'];
+
+                if (isset($attributes['pa_package-size'])) {
+
+                $size = $attributes['pa_package-size'];
+
+                    if ($size === 'half-dozen') {
+                        $quantity = $quantity * 6;                
+                    }
+                    
+                    if ($size === 'dozen') {
+                        $quantity = $quantity * 12;
+                    }
+                }
+
+                $total_item_quantity +=  $quantity;
+            }        
+        }
+        
+        if ( $total_item_quantity > 5 ) {
+
+            foreach ( $cart->get_cart() as $cart_item ) {        
+
+                if ( has_term( $categories, 'product_cat', $cart_item['product_id'] )  ) {
+                    $cart_item['data']->set_tax_class( 'zero-rate' );
+                }
             }
         }
     }

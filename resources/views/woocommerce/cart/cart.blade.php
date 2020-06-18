@@ -91,7 +91,15 @@ do_action( 'woocommerce_before_cart' );
 									$availability_status = "available";
 								}
 
+								//Check if requires long fermentation lead time
+								if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
+									$long_fermentation = True;
+								}
+								else {
+									$long_fermentation = False;
+								}
 							?>
+						
 						<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
 							<td class="product-remove">
 								<?php
@@ -116,7 +124,8 @@ do_action( 'woocommerce_before_cart' );
 									echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', sprintf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $_product->get_name() ), $cart_item, $cart_item_key ) );
 								}
 
-								do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key );
+								do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key );								
+
 								@endphp
 							</td>
 						</tr>
@@ -234,3 +243,30 @@ do_action( 'woocommerce_before_cart' );
 	</div>
 
 <?php do_action( 'woocommerce_after_cart' ); ?>
+<script>
+//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
+	var longFermentation = <?php echo(json_encode($long_fermentation)); ?>;
+
+	jQuery(function($) {
+	    $(document).ready(function() {
+
+      if(longFermentation === true){
+        var time = 57;
+      }
+      else {
+        time = 33;
+      }      
+        //Restrict pickup date picker to allow next day and future only
+        let $datepicker = $( '#acf-field_5eb050868b169 + .hasDatepicker' );        
+        
+        $datepicker.datepicker( 'option', {
+          'minDate': new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
+          beforeShowDay: function(date) {
+            var day = date.getDay();
+            return [(day != 0 && day != 1), ''];
+          },
+        });
+
+		});
+	});
+</script>
