@@ -23,6 +23,8 @@ export default {
     $( '.wpf_submenu label' ).click(function() {
       $('.checked').removeClass('checked')
       $( this ).addClass( 'checked' );
+      $('.wpf_submenu input').attr('checked',false).checkboxradio('refresh');  
+
     });
 
     // The following is to control the background overflow on body while a product modal is opened.
