@@ -260,3 +260,13 @@ ul.flex-direction-nav {
     display: inline-flex;
   }
 }
+
+.woocommerce-store-notice p.demo_store,
+.admin-bar p.demo_store {
+  background-color: $highlight;
+  color: #fff;
+  top: unset;
+  position: fixed;
+  padding: 3rem 0;
+  bottom: 0;
+}
