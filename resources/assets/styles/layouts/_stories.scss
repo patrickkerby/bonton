@@ -9,6 +9,11 @@ body.stories {
       font-weight: 600;
       margin: 0;
       line-height: 52px;
+
+      @include media-breakpoint-down(xs) {
+        font-size: 40px;
+        line-height: 42px;
+      }
     }
 
     p {
@@ -32,6 +37,10 @@ body.stories {
     line-height: 37px;
     font-weight: 200;
     margin: 8rem 0 4rem 0;
+
+    @include media-breakpoint-down(xs) {
+      margin: 6rem 0 4rem 0;
+    }
   }
 
   .story {
@@ -58,8 +67,8 @@ body.stories {
     }
 
     h3 {
-      font-size: 110px;
-      line-height: 100px;
+      font-size: 90px;
+      line-height: 90px;
       font-weight: 600;
       margin: 0;
       background: #fff;
@@ -67,11 +76,11 @@ body.stories {
       padding: 1.5rem 0;
 
       @include media-breakpoint-down(xs) {
-        margin: -15rem 0 0 0;
+        margin: -4rem 0 0 0;
         padding: 1.75rem 0;
         background: #fff;
-        font-size: 80px;
-        line-height: 70px;
+        font-size: 60px;
+        line-height: 58px;
       }
 
       --tt-key: story-headline;
@@ -85,13 +94,13 @@ body.stories {
       }
 
       75% {
-        font-size: 80px;
-        line-height: 70px;
+        font-size: 64px;
+        line-height: 58px;
       }
 
       100% {
-        font-size: 110px;
-        line-height: 100px;
+        font-size: 90px;
+        line-height: 86px;
       }
     }
 
@@ -126,7 +135,7 @@ body.stories {
 
       h3 {
         @include media-breakpoint-down(xs) {
-          margin: -15rem 0 0 0;
+          margin: -4rem 0 0 0;
           padding: 1.75rem 0;
           background: #fff;
           justify-content: flex-start;
