@@ -134,7 +134,7 @@
                                     "key": "field_5eee71b6ec5e8",
                                     "label": "Link",
                                     "name": "link",
-                                    "type": "url",
+                                    "type": "text",
                                     "instructions": "",
                                     "required": 0,
                                     "conditional_logic": 0,
@@ -144,7 +144,10 @@
                                         "id": ""
                                     },
                                     "default_value": "",
-                                    "placeholder": ""
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": ""
                                 },
                                 {
                                     "key": "field_5eee7501ec5e9",
@@ -231,7 +234,7 @@
                                     "key": "field_5eee767a7885d",
                                     "label": "Link",
                                     "name": "link",
-                                    "type": "url",
+                                    "type": "text",
                                     "instructions": "",
                                     "required": 0,
                                     "conditional_logic": 0,
@@ -241,7 +244,10 @@
                                         "id": ""
                                     },
                                     "default_value": "",
-                                    "placeholder": ""
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": "",
+                                    "maxlength": ""
                                 },
                                 {
                                     "key": "field_5eee764d7885b",
@@ -429,5 +435,5 @@
     "hide_on_screen": "",
     "active": 1,
     "description": "",
-    "modified": 1592686233
+    "modified": 1592690838
 }
