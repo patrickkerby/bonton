@@ -142,13 +142,12 @@ $max_var_sale_price = $product->get_variation_sale_price( 'max', true );
  
 // 2. New $price, unless all variations have exact same prices
 if ( ! ( $min_var_reg_price == $max_var_reg_price && $min_var_sale_price == $max_var_sale_price ) ) {   
-   if ( $min_var_sale_price < $min_var_reg_price ) {
-      $price = sprintf( __( 'From: <del>%1$s</del><ins>%2$s</ins>', 'woocommerce' ), wc_price( $min_var_reg_price ), wc_price( $min_var_sale_price ) );
-   } else {
-      $price = sprintf( __( 'From: %1$s', 'woocommerce' ), wc_price( $min_var_reg_price ) );
-   }
+    if ( $min_var_sale_price < $min_var_reg_price ) {
+        $price = sprintf( __( 'From: <del>%1$s</del><ins>%2$s</ins>', 'woocommerce' ), wc_price( $min_var_reg_price ), wc_price( $min_var_sale_price ) );
+    } else {
+        $price = sprintf( __( 'From: %1$s', 'woocommerce' ), wc_price( $min_var_reg_price ) );
+    }
 }
- 
 return $price;
 }, 10, 2 );
 
@@ -202,7 +201,6 @@ add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
 }, 10, 3 );
 
 // Let's see if we can get these damned sorting options setup right
-
 add_filter( 'woocommerce_catalog_orderby', function( $options ){
 	$options['title'] = 'Sort alphabetically';
 	return $options;
@@ -246,12 +244,10 @@ function change_cart_items_prices( $cart ) {
     if ( did_action( 'woocommerce_before_calculate_totals' ) >= 2 )
         return;
 
-
     $categories = array(83, 84);
     $total_item_quantity = 0;
 
     if (is_cart()) {
-
         foreach ( $cart->get_cart() as $cart_item ) {        
 
             if ( has_term( $categories, 'product_cat', $cart_item['product_id'] ) ){
@@ -261,29 +257,38 @@ function change_cart_items_prices( $cart ) {
 
                 if (isset($attributes['pa_package-size'])) {
 
-                $size = $attributes['pa_package-size'];
-
+                    $size = $attributes['pa_package-size'];
+                    
                     if ($size === 'half-dozen') {
                         $quantity = $quantity * 6;                
-                    }
-                    
+                    }                    
                     if ($size === 'dozen') {
                         $quantity = $quantity * 12;
                     }
                 }
-
                 $total_item_quantity +=  $quantity;
             }        
         }
         
         if ( $total_item_quantity > 5 ) {
-
             foreach ( $cart->get_cart() as $cart_item ) {        
-
                 if ( has_term( $categories, 'product_cat', $cart_item['product_id'] )  ) {
                     $cart_item['data']->set_tax_class( 'zero-rate' );
                 }
             }
         }
     }
+}
+
+/**
+ * Save pickup date and timeslot to WooCommerce order (from session)
+ */
+add_action('woocommerce_checkout_update_order_meta', 'App\add_pickup_to_order');
+function add_pickup_to_order($order_id) {
+	$pickup_date 		= WC()->session->get('pickup_date');
+	$pickup_timeslot 	= WC()->session->get('pickup_timeslot');
+	$order = wc_get_order( $order_id );
+	$order->update_meta_data( 'pickup_date', $pickup_date );
+	$order->update_meta_data( 'pickup_timeslot', $pickup_timeslot );
+	$order->save();
 }

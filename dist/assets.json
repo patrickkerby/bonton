@@ -24,7 +24,13 @@
   "images/social-bg.jpg": "images/social-bg_058d6ded.jpg",
   "images/twitter-brands.svg": "images/twitter-brands_6620c8ae.svg",
   "vendor/ajax-loader.gif": "vendor/ajax-loader_c5cd7f53.gif",
-  "scripts/customizer.js": "scripts/customizer_9e491d13.js",
-  "styles/main.css": "styles/main_9e491d13.css",
-  "scripts/main.js": "scripts/main_9e491d13.js"
+  "vendor/ui-icons_444444_256x240.png": "vendor/ui-icons_444444_256x240_f4ebe485.png",
+  "vendor/ui-icons_555555_256x240.png": "vendor/ui-icons_555555_256x240_d70c49a1.png",
+  "vendor/ui-icons_777620_256x240.png": "vendor/ui-icons_777620_256x240_03c85664.png",
+  "vendor/ui-icons_777777_256x240.png": "vendor/ui-icons_777777_256x240_6d28e77d.png",
+  "vendor/ui-icons_cc0000_256x240.png": "vendor/ui-icons_cc0000_256x240_bd6996f9.png",
+  "vendor/ui-icons_ffffff_256x240.png": "vendor/ui-icons_ffffff_256x240_e33c878c.png",
+  "scripts/customizer.js": "scripts/customizer_50cabd3a.js",
+  "styles/main.css": "styles/main_50cabd3a.css",
+  "scripts/main.js": "scripts/main_50cabd3a.js"
 }

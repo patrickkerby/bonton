@@ -1,4 +1,4 @@
-<?php
+@php
 /**
  * Cart Page
  *
@@ -17,31 +17,84 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$post_id = get_the_ID();
-do_action( 'acf/save_post', $post_id );
-$day_of_week = $GLOBALS['day_of_week'];
+	$post_id = get_the_ID();
+	do_action( 'woocommerce_before_cart' ); 
 
-do_action('acf/validate_save_post');
+	if ( isset($_POST['date']))  {
+		$pickupdate = $_POST['date'];
+		$pickuptimeslot = $_POST['timeslot'];
 
-do_action( 'woocommerce_before_cart' ); 
+		WC()->session->set('pickup_date', $pickupdate);
+		WC()->session->set('pickup_timeslot', $pickuptimeslot);
+		
+		global $day_of_week;		
+		list($day_of_week)=explode(',', $pickupdate); // Simplify to just the day of week
+	}
+	else {
+		$pickupdate = "";
+		$day_of_week = "Friday";
+	}
+
+	$session_pickup_date = WC()->session->get('pickup_date');
+	$session_timeslot = WC()->session->get('pickup_timeslot');
+
+	if ( !isset($session_pickup_date)) {
+		$session_pickup_date = "Choose Date";
+	}
+
+@endphp
 
 
-?>
 	<div class="row justify-content-center">
-		<div class="col-md-4">
-		@php
-			acf_form(array(
-				'submit_value' => __('Save', 'acf'),
-				'fields' => array(
-						'pickup_date',
-						'timeslot'
-				),
-				'return' => '%post_url%',
-				'updated_message' => false,
-			));
-		@endphp
-		</div>
+		<div class='col-sm-4'>
+			<form method="post" class="acf-form">
+				<div class="acf-fields acf-form-fields -top">
+					<div class="acf-field acf-field-date-picker">
+						<div class="acf-label">
+							<label for="date">Choose pick up date</label>
+						</div>
+						<div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
+							<input type='text' name="date" id="datepicker" placeholder="{{ $session_pickup_date }}" value="{{ $session_pickup_date }}" autocomplete="off" />
+							<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+							</span>
+						</div>
+					</div>
+					<div class="acf-field acf-field-radio" data-name="timeslot" data-type="radio">
+						<div class="acf-label">
+							<label>Timeslot</label>
+						</div>
+						<div class="acf-input">      
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="timeslot" id="morning" value="morning">
+								<label class="form-check-label" for="morning">
+									9am - 11am
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="timeslot" id="midday" value="midday" checked>
+								<label class="form-check-label" for="midday">
+									11am - 2pm
+								</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="radio" name="timeslot" id="afternoon" value="afternoon">
+								<label class="form-check-label" for="afternoon">
+									2pm - 5pm
+								</label>
+							</div>
+						</div>
+					</div>
 
+					<div class="acf-form-submit">
+						<input type="submit" class="acf-button button button-primary button-large" value="Save">
+						<span class="acf-spinner"></span>
+					</div>
+				</div>
+			</form>
+		
+		</div>
+	
 		<div class="col-md-8">
 		<form class="woocommerce-cart-form" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
 			<?php do_action( 'woocommerce_before_cart_table' ); ?>
@@ -244,29 +297,35 @@ do_action( 'woocommerce_before_cart' );
 
 <?php do_action( 'woocommerce_after_cart' ); ?>
 <script>
-//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
+	//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
 	var longFermentation = <?php echo(json_encode($long_fermentation)); ?>;
 
 	jQuery(function($) {
 	    $(document).ready(function() {
-
+		
       if(longFermentation === true){
         var time = 57;
       }
       else {
         time = 33;
       }      
-        //Restrict pickup date picker to allow next day and future only
-        let $datepicker = $( '#acf-field_5eb050868b169 + .hasDatepicker' );        
-        
-        $datepicker.datepicker( 'option', {
-          'minDate': new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
+			
+			$( function() {
+				$( "#datepicker" ).datepicker(  {
+					'minDate': new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
+					showOtherMonths: true,
+					selectOtherMonths: true,
           beforeShowDay: function(date) {
             var day = date.getDay();
             return [(day != 0 && day != 1), ''];
           },
-        });
+				});
 
+				$( "#datepicker" ).datepicker( "option", "defaultDate", +2 );
+				$( "#datepicker" ).datepicker( "option", "dateFormat", "DD, MM d, yy" );
+				$( "#datepicker" ).datepicker( "option", "showButtonPanel", true );
+			
+			});
 		});
 	});
 </script>
