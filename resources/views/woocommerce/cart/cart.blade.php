@@ -72,7 +72,7 @@ defined( 'ABSPATH' ) || exit;
 								</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="timeslot" id="midday" value="midday" checked>
+								<input class="form-check-input" type="radio" name="timeslot" id="midday" value="midday">
 								<label class="form-check-label" for="midday">
 									11am - 2pm
 								</label>

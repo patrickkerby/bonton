@@ -6,7 +6,7 @@
 @section('content')
   @while(have_posts()) @php the_post() @endphp
       <div class="hero-slider row full-width no-gutters">
-        <div class="col-sm-7">
+        <div class="col-sm-8">
           <div class="slider">
             <div id="carouselIndicators" class="carousel slide carousel-fade" data-ride="carousel" data-interval="6000">
               <ol class="carousel-indicators">
@@ -30,7 +30,7 @@
             </div>
           </div>
         </div>
-        <div class="col-sm-5">
+        <div class="col-sm-4">
           <div class="page-header">
             <h1 class="hero-headline">{!! App::title() !!}</h1>
           </div>
@@ -73,7 +73,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Add to Cart</span></a>
+                        <a href="{{ $item->link }}" title="" class="product-link"><span>{{ $item->link_text }}</span></a>
                       </div>
                     </div> 
                   </div>                                                       
@@ -101,7 +101,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="#" title="{{ $item->product->post_title }}" data-product_id="{{ $post_id }}" class="quick-view-button inside-thumb product-link"><span>Add to Cart</span></a>
+                        <a href="{{ $item->link }}" title="" class="product-link"><span>{{ $item->link_text }}</span></a>
                       </div>
                     </div> 
                   </div>                                                       
