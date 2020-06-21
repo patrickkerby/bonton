@@ -302,7 +302,7 @@ defined( 'ABSPATH' ) || exit;
 
 	jQuery(function($) {
 	    $(document).ready(function() {
-		
+
       if(longFermentation === true){
         var time = 57;
       }
@@ -310,21 +310,25 @@ defined( 'ABSPATH' ) || exit;
         time = 33;
       }      
 			
+			var array = ["2020-06-30","2020-07-01"];
+
 			$( function() {
 				$( "#datepicker" ).datepicker(  {
 					'minDate': new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
 					showOtherMonths: true,
 					selectOtherMonths: true,
           beforeShowDay: function(date) {
-            var day = date.getDay();
-            return [(day != 0 && day != 1), ''];
-          },
+						var day = date.getDay();
+						var string = jQuery.datepicker.formatDate('yy-mm-dd', date);						
+						return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
+					}
 				});
 
 				$( "#datepicker" ).datepicker( "option", "defaultDate", +2 );
 				$( "#datepicker" ).datepicker( "option", "dateFormat", "DD, MM d, yy" );
 				$( "#datepicker" ).datepicker( "option", "showButtonPanel", true );
-			
+
+
 			});
 		});
 	});
