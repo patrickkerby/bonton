@@ -267,15 +267,31 @@ p.demo_store,
 .admin-bar p.demo_store {
   background-color: $highlight !important;
   color: #fff !important;
+  font-size: 1.15rem;
   top: unset !important;
   position: fixed !important;
-  padding: 3rem 0 !important;
+  padding: 3rem 4rem !important;
+  margin: 2rem;
   bottom: 0 !important;
+  width: calc(100% - 4rem);
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+    margin: 10px;
+    border: solid 2px #fff;
+  }
 
   .woocommerce-store-notice__dismiss-link {
     display: flex;
     position: absolute;
-    right: 1rem;
-    top: 1rem;
+    right: 2rem;
+    top: 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 500;
   }
 }
