@@ -18,6 +18,7 @@
   "images/instagram-brands.svg": "images/instagram-brands_e75317fa.svg",
   "images/instore.svg": "images/instore_a01b3c4c.svg",
   "images/map.svg": "images/map_4ea4c2d3.svg",
+  "images/newsletter.svg": "images/newsletter_3d6e61f9.svg",
   "images/play-icon.svg": "images/play-icon_f047d857.svg",
   "images/product-arrow.svg": "images/product-arrow_2c408cf8.svg",
   "images/schedule.svg": "images/schedule_f44a11d5.svg",
@@ -30,7 +31,7 @@
   "vendor/ui-icons_777777_256x240.png": "vendor/ui-icons_777777_256x240_6d28e77d.png",
   "vendor/ui-icons_cc0000_256x240.png": "vendor/ui-icons_cc0000_256x240_bd6996f9.png",
   "vendor/ui-icons_ffffff_256x240.png": "vendor/ui-icons_ffffff_256x240_e33c878c.png",
-  "scripts/customizer.js": "scripts/customizer_246e3da5.js",
-  "styles/main.css": "styles/main_246e3da5.css",
-  "scripts/main.js": "scripts/main_246e3da5.js"
+  "scripts/customizer.js": "scripts/customizer_e4aa9c5c.js",
+  "styles/main.css": "styles/main_e4aa9c5c.css",
+  "scripts/main.js": "scripts/main_e4aa9c5c.js"
 }
