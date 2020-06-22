@@ -29,6 +29,7 @@ defined( 'ABSPATH' ) || exit;
 		
 		global $day_of_week;		
 		list($day_of_week)=explode(',', $pickupdate); // Simplify to just the day of week
+
 	}
 	else {
 		$pickupdate = "";
@@ -40,6 +41,22 @@ defined( 'ABSPATH' ) || exit;
 
 	if ( !isset($session_pickup_date)) {
 		$session_pickup_date = "Choose Date";
+	}
+
+	$morning_selected = "";
+	$midday_selected = "";
+	$afternoon_selected = "";
+
+	if ( isset($session_timeslot)) {
+		if ( $session_timeslot === 'morning') {
+			$morning_selected = "checked";
+		}
+		elseif ( $session_timeslot === 'midday') {
+			$midday_selected = "checked";
+		}
+		elseif ( $session_timeslot === 'afternoon') {
+			$afternoon_selected = "checked";
+		}
 	}
 
 @endphp
@@ -66,19 +83,19 @@ defined( 'ABSPATH' ) || exit;
 						</div>
 						<div class="acf-input">      
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="timeslot" id="morning" value="morning">
+								<input class="form-check-input" type="radio" name="timeslot" id="morning" value="morning" {{ $morning_selected }}>
 								<label class="form-check-label" for="morning">
 									9am - 11am
 								</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="timeslot" id="midday" value="midday">
+								<input class="form-check-input" type="radio" name="timeslot" id="midday" value="midday" {{ $midday_selected }}>
 								<label class="form-check-label" for="midday">
 									11am - 2pm
 								</label>
 							</div>
 							<div class="form-check">
-								<input class="form-check-input" type="radio" name="timeslot" id="afternoon" value="afternoon">
+								<input class="form-check-input" type="radio" name="timeslot" id="afternoon" value="afternoon" {{ $afternoon_selected }}>
 								<label class="form-check-label" for="afternoon">
 									2pm - 5pm
 								</label>
