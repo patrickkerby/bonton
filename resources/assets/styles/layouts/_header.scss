@@ -229,11 +229,13 @@ body.is-active {
       }
 
       i {
-        width: 0.7vmin;
-        height: 0.7vmin;
+        width: 6px;
+        height: 6px;
         box-sizing: border-box;
         position: absolute;
         right: 0;
+        top: 50%;
+        bottom: 50%;
         transform: rotate(135deg);
         margin: auto 0;
 
@@ -241,7 +243,7 @@ body.is-active {
           content: "";
           width: 100%;
           height: 100%;
-          border-width: 0.2vmin 0.2vmin 0 0;
+          border-width: 2px 2px 0 0;
           border-style: solid;
           border-color: $charcoal;
           transition: 0.2s ease;
