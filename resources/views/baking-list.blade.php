@@ -10,6 +10,21 @@
 
   $date_selector_date = get_field('list_date');
 
+  function itemQuantity($package_size) {
+    if($package_size === "Dozen"){
+      return 12;
+    } 
+    elseif($package_size === "1/2 Dozen"){
+      return 6;
+    } 
+    elseif($package_size === "6 Pack"){
+      return 6;
+    } 
+    else{
+      return 1;
+    }
+  }
+
 // Get order data!
   $query = new WC_Order_Query( array(  
       'limit' => -1,
@@ -48,15 +63,31 @@
       $variation_categories = $product_raw->get_categories();
       $variation_categories_name = $variation_categories->name;
 
-      print_r($variation_categories_name);
+      $variation_attributes = $product->get_attributes();
+      $option = $product->get_attribute( 'variety' );
+      $package_size = $product->get_attribute( 'package-size' );
+      $product_size = $product->get_attribute( 'size' );
 
-      if (empty($variation_id)) {        
-        $prod[] = array('name' => $prod_name, 'quantity' => $prod_quantity, 'category' => $categories); 
+      // if (empty($variation_id)) {        
+      //   $prod[] = array('name' => $prod_name, 'quantity' => $prod_quantity, 'package_size' => "Single", 'category' => $categories); 
+      // }
+
+      if (!empty($variation_id)) {  
+        if (!empty($option) && !empty($product_size)) {
+          $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'package_size' => $package_size, 'quantity' => $prod_quantity, 'category' => $variation_categories); 
+        }
+        elseif (!empty($option) && empty($product_size)) {
+          $prod[] = array('name' => $prod_name ." - " .$option , 'package_size' => $package_size, 'quantity' => $prod_quantity, 'category' => $variation_categories); 
+        }
+        elseif (!empty($product_size) && empty($option)) {
+          $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'package_size' => $package_size, 'quantity' => $prod_quantity, 'category' => $variation_categories); 
+        }
+        else {
+          $prod[] = array('name' => $prod_name , 'package_size' => $package_size, 'quantity' => $prod_quantity, 'category' => $variation_categories); 
+        }
       }
       else {
-        $variation_attributes = $product->get_attributes();
-        $option = $product->get_attribute( 'variety' );
-        $prod[] = array('name' => $prod_name ." - " .$option , 'quantity' => $prod_quantity, 'category' => $variation_categories); 
+        $prod[] = array('name' => $prod_name, 'quantity' => $prod_quantity, 'package_size' => "Single", 'category' => $categories); 
       }
     }
   }
@@ -74,24 +105,13 @@
     if(!$bSet) {
       $aSortedArray[] = array(
         'name' => $aArray['name'], 
+        'package_size' => $aArray['package_size'],
         'quantity' => $aArray['quantity'],
         'category' => $aArray['category']
         );
     }
   }
 
-  // Item quantity (ex: 1/2 dozen buns would be 6 buns)
-  function itemQuantity($name) {
-    if(strpos($name, "- Dozen") !== false){
-      return 12;
-    } 
-    elseif(strpos($name, "1/2 Dozen") !== false){
-      return 6;
-    }
-    else{
-      return 1;
-    }
-  }
 @endphp
 
 @section('content')
@@ -103,6 +123,7 @@
           <tr>
             <th>Product</th>
             <th>Category</th>
+            <th>Size</th>
             <th>Pkg. Quantity</th>
             <th>Total Items</th>
           </tr>
@@ -112,13 +133,22 @@
             @php 
               $name = $item['name'];
               $category = $item['category'];
-              $quantity = $item['quantity'];                      
-              $item_quantity = call_user_func('itemQuantity', $name);
-              $total_items = $item_quantity * $quantity;  
+              $quantity = $item['quantity'];
+              $package_size = $item['package_size'];
+
+              if (isset($package_size)) {
+                $item_quantity = call_user_func('itemQuantity', $package_size);
+                $total_items = $item_quantity * $quantity;  
+              }
+              else {
+                $item_quantity = $quantity;
+                $total_items = $quantity;  
+              }
             @endphp
             <tr>
               <td>{{ $name }}</td>
               <td>{!! $category !!}</td>
+              <td>{{ $package_size }}</td>
               <td>{{ $quantity }}</td>
               <td>{{ $total_items }}</td>
             </tr>
