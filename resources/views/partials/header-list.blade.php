@@ -20,7 +20,7 @@
       @endif
       <h5>
         {{ $date_selector_date }} 
-        <button class="btn .d-print-none" type="button" data-toggle="collapse" data-target="#dateSelect" aria-expanded="false" aria-controls="collapseExample">
+        <button class="btn d-print-none" type="button" data-toggle="collapse" data-target="#dateSelect" aria-expanded="false" aria-controls="collapseExample">
           Edit
         </button>
       </h5>
@@ -40,19 +40,19 @@
         </div>
       </div>
     </div>
-    <div class="col-sm-7 .d-print-none">
-      <ul class="nav nav-tabs .d-print-none">
-        <li class="nav-item .d-print-none">
-          <a class="nav-link @if(is_page('baking')) active @endif .d-print-none" href="/lists/baking">Baking</a>
+    <div class="col-sm-7 d-print-none">
+      <ul class="nav nav-tabs d-print-none">
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('baking')) active @endif d-print-none" href="/lists/baking">Baking</a>
         </li>
-        <li class="nav-item .d-print-none">
-          <a class="nav-link @if(is_page('packing-cooler')) active @endif .d-print-none" href="/lists/packing-cooler">Packing (Cooler)</a>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('packing-cooler')) active @endif d-print-none" href="/lists/packing-cooler">Packing (Cooler)</a>
         </li>
-        <li class="nav-item .d-print-none">
-          <a class="nav-link @if(is_page('packing-shelf')) active @endif .d-print-none" href="/lists/packing-shelf">Packing (Shelf)</a>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('packing-shelf')) active @endif d-print-none" href="/lists/packing-shelf">Packing (Shelf)</a>
         </li>
-        <li class="nav-item .d-print-none">
-          <a class="nav-link @if(is_page('pickup')) active @endif .d-print-none" href="/lists/pickup">Pickup</a>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('pickup')) active @endif d-print-none" href="/lists/pickup">Pickup</a>
         </li>
       </ul>
     </div>
