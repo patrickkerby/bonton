@@ -348,4 +348,10 @@
     top: -2px;
     left: 4px;
   }
+
+  @media only print {
+    #lists_filter {
+      display: none;
+    }
+  }
 }

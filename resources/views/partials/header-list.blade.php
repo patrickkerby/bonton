@@ -20,7 +20,7 @@
       @endif
       <h5>
         {{ $date_selector_date }} 
-        <button class="btn" type="button" data-toggle="collapse" data-target="#dateSelect" aria-expanded="false" aria-controls="collapseExample">
+        <button class="btn .d-print-none" type="button" data-toggle="collapse" data-target="#dateSelect" aria-expanded="false" aria-controls="collapseExample">
           Edit
         </button>
       </h5>
