@@ -114,9 +114,11 @@
             @endphp     
 
               <tr class="pack {{ $status }}">
-                <td class="id"><span class="check"></span></td>
-                <td class="location">
+                <td class="id">
+                  <span class="check"></span>
                   <span class="id">#{{ $daily_order_number }}</span>
+                </td>
+                <td class="location">
                   
                   {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
                   @php $responses = array(); @endphp

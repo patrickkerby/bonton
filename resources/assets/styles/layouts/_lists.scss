@@ -230,6 +230,11 @@
         white-space: pre;
       }
 
+      span.id {
+        color: $highlight;
+        font-weight: 900;
+      }
+
       &.location {
         .timeslot {
           text-transform: capitalize;
@@ -283,11 +288,6 @@
           margin: 0 4px 0 2px;
           position: relative;
           top: -2px;
-        }
-
-        span.id {
-          color: $highlight;
-          font-weight: 900;
         }
       }
 
