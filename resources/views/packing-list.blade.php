@@ -57,8 +57,6 @@
 // Create filtered list of orders based on the date selected on list page.
 // Also filter list based on whether Cooler or Shelf is selected on the list page.
   $filtered_orders = array();
-  $filtered_cooler_orders = array();
-  $filtered_shelf_orders = array();
 
   foreach ( $results as $daily_results ) {    
     $order_id = $daily_results->get_id();
@@ -66,29 +64,16 @@
 
     // filter orders by shelf vs. cooler
     if ($order_pickup_date === $date_selector_date) {
-      foreach ($daily_results->get_items() as $item_id => $item) {
-        $prod_id = $item->get_product_id(); 
-                          
-        if(in_array($prod_id, $cooler_array) && $order_pickup_date === $date_selector_date) {
-          $filtered_cooler_orders[] = $daily_results;
-        } 
-        if(in_array($prod_id, $shelf_array) && $order_pickup_date === $date_selector_date) {
-          $filtered_shelf_orders[] = $daily_results;
-        }     
-      }
+      $filtered_orders[] = $daily_results;
     }
   }
-  $filtered_shelf_orders = array_unique($filtered_shelf_orders);
-  $filtered_cooler_orders = array_unique($filtered_cooler_orders);
 
 // Set current list selection based on ACF field
 if ($list_type === "shelf") {
     $pickup_list_selection = $shelf_array;
-    $filtered_orders = $filtered_shelf_orders;
   }
   elseif($list_type === "cooler") {
     $pickup_list_selection = $cooler_array;
-    $filtered_orders = $filtered_cooler_orders;
   }
   else {
     $pickup_list_selection = NULL;
@@ -107,7 +92,7 @@ if ($list_type === "shelf") {
 @section('content')
   <div class="row no-gutters">
     <div class="col-12">      
-      <table id="lists" class="display">
+      <table id="lists" class="display {{ $list_type }}">
         <thead>
           <tr>
             <th width="3%">ID</th>
@@ -135,25 +120,29 @@ if ($list_type === "shelf") {
                 
               // Check to see if the products associated with the order are shelf or cooler.
               $list_check = array();
+              $list_class = array();
               
               foreach ($details->get_items() as $item_id => $item) {
                 $prod_id = $item->get_product_id(); 
                                   
                 if(in_array($prod_id, $cooler_array)) {
                   $list_check[] = '<span class="order_location cooler">C</span>';
-                  $cooler_check = true;
+                  $list_class[] = 'cooler';
                 } 
                 // Add elseif for freezer list        
                 elseif(in_array($prod_id, $shelf_array)) {  
                   $list_check[] = '<span class="order_location shelf">S</span>';
-                  $shelf_check = true;
+                  $list_class[] = 'shelf';
                 }                   
               }
               $list_check_unique = array_unique($list_check);
               $order_location = implode("", $list_check_unique);
+              
+              $list_class_unique = array_unique($list_class);
+              $list_class_marker = implode(" ", $list_class_unique);
             @endphp
 
-            <tr class="pack {{ $status }}">
+            <tr class="pack {{ $status }} {{ $list_class_marker }}">
               <td class="id">
                 <span class="check"></span>
                 <span class="id">#{{ $daily_order_number }}</span>
