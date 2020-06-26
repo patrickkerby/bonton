@@ -288,6 +288,16 @@
           margin: 0 4px 0 2px;
           position: relative;
           top: -2px;
+
+          &.cooler {
+            color: #48abe6;
+            border: solid 2px #48abe6;
+          }
+
+          &.shelf {
+            color: #e65748;
+            border: solid 2px #e65748;
+          }
         }
       }
 

@@ -139,11 +139,11 @@ array_multisort($sorted_orders, SORT_DESC, $filtered_orders);
                       $prod_id = $item->get_product_id(); 
                                         
                       if(in_array($prod_id, $cooler_array)) {
-                        $responses[] = '<span class="order_location">C</span>';    
+                        $responses[] = '<span class="order_location cooler">C</span>';    
                       } 
                       // Add elseif for freezer list        
                       else {  
-                        $responses[] = '<span class="order_location">S</span>';
+                        $responses[] = '<span class="order_location shelf">S</span>';
                       }                    
                     @endphp
                   @endforeach
