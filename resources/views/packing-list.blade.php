@@ -31,6 +31,17 @@
     }
   }
 
+// Sort the packing list by timeslot
+$sorted_orders = array(); 
+foreach ($filtered_orders as $order) {
+  $timeslot = $order->get_meta( 'pickup_timeslot', true );
+  $sorted_orders[] = $timeslot; //any object field
+}
+
+array_multisort($sorted_orders, SORT_DESC, $filtered_orders);
+
+
+
 //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
 //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
@@ -119,7 +130,8 @@
                   <span class="id">#{{ $daily_order_number }}</span>
                 </td>
                 <td class="location">
-                  
+                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>                  
+
                   {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
                   @php $responses = array(); @endphp
                   @foreach ($details->get_items() as $item_id => $item)
@@ -140,7 +152,6 @@
                     $order_location = implode("", $responses_unique);
                   @endphp
                   {!! $order_location !!}
-                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>                  
                 </td>
                 <td> 
                   <strong>{{ $last_name }}, {{ $first_name }}</strong>

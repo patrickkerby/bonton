@@ -12,8 +12,8 @@ export default {
           'info': false,
           'order': [[ 0, 'asc' ]],
           'columnDefs': [{
-            'targets': [0,1,2], /* column index */
-            'orderable': false, /* true or false */
+            'targets': [0,1,3], /* column index */
+            'orderable': true, /* true or false */
           }],
         }  
       );      
