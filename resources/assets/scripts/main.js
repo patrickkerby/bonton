@@ -26,7 +26,7 @@ import home from './routes/home';
 import aboutUs from './routes/about';
 import pickupList from './routes/pickupList';
 import packingList from './routes/packingList';
-import bakingList from './routes/packingList';
+import bakingList from './routes/bakingList';
 import cart from './routes/cart';
 
 /** Populate Router instance with DOM routes */

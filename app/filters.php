@@ -187,6 +187,22 @@ add_filter( 'woocommerce_variable_price_html', function ( $price, $product ) {
     return $price;
 }, 10, 2 );
 
+//Remove parent categories from baking list
+add_filter( 'get_the_terms', function ( $terms, $post_id, $taxonomy ){
+    // HERE below define your excluded product categories Term IDs in this array
+    $category_ids = array( 83,84,94 );
+
+    if( ! is_page('baking') ) // Only single product pages
+        return $terms;
+
+    foreach( $terms as $key => $term ){
+        if( in_array( $term->term_id, $category_ids ) ){
+            unset($terms[$key]); // If term is found we remove it
+        }
+    }
+    return $terms;
+}, 20, 3 );
+
 // add data attributes to wp nav item: schedule
 add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
     //Set the menu ID

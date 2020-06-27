@@ -50,22 +50,21 @@
 
     foreach ($details->get_items() as $item_id => $item) {
 
+
       $prod_id = $item->get_product_id(); 
       $prod_quantity = $item->get_quantity();
 
       $variation_id = $item->get_variation_id(); 
 
-      $product_raw = get_product($prod_id);
-      $product = $item->get_product($prod_id);
-      $prod_name = $product_raw->get_name();
+      
+      // $product_raw = get_product($prod_id);
+      $product = $item->get_product();
+      $prod_name = $item->get_name();
 
       $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
 
-      $categories = $product->get_categories();
-      $variation_categories = $product_raw->get_categories();
-      $variation_categories_name = $variation_categories->name;
+      $categories = wc_get_product_category_list($prod_id);
 
-      $variation_attributes = $product->get_attributes();
       $option = $product->get_attribute( 'variety' );
       $package_size = $product->get_attribute( 'package-size' );
       $product_size = $product->get_attribute( 'size' );
@@ -75,16 +74,16 @@
 
       if (!empty($variation_id)) {  
         if (!empty($option) && !empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $variation_categories); 
+          $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories); 
         }
         elseif (!empty($option) && empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $variation_categories); 
+          $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories); 
         }
         elseif (!empty($product_size) && empty($option)) {
-          $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $variation_categories); 
+          $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories); 
         }
         else {
-          $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $variation_categories); 
+          $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories); 
         }
       }
       else {
