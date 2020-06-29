@@ -10,7 +10,7 @@ export default {
         {
           'paging': false,
           'info': false,
-          'order': [[ 0, 'asc' ]],
+          // 'order': [[ 0, 'asc' ]],
           'columnDefs': [{
             'targets': [0,1,2], /* column index */
             'orderable': false, /* true or false */
