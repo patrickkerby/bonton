@@ -31,7 +31,8 @@
   "vendor/ui-icons_777777_256x240.png": "vendor/ui-icons_777777_256x240_6d28e77d.png",
   "vendor/ui-icons_cc0000_256x240.png": "vendor/ui-icons_cc0000_256x240_bd6996f9.png",
   "vendor/ui-icons_ffffff_256x240.png": "vendor/ui-icons_ffffff_256x240_e33c878c.png",
-  "scripts/customizer.js": "scripts/customizer_1614b2e3.js",
-  "styles/main.css": "styles/main_1614b2e3.css",
-  "scripts/main.js": "scripts/main_1614b2e3.js"
+  "scripts/customizer.js": "scripts/customizer_3122c0e1.js",
+  "scripts/lists.js": "scripts/lists_3122c0e1.js",
+  "styles/main.css": "styles/main_3122c0e1.css",
+  "scripts/main.js": "scripts/main_3122c0e1.js"
 }

@@ -6,6 +6,9 @@
     ],
     "customizer": [
       "./scripts/customizer.js"
+    ],
+    "lists": [
+      "./scripts/lists.js"
     ]
   },
   "publicPath": "/app/themes/bonton",
