@@ -119,7 +119,7 @@
                   <span class="id">#{{ $daily_order_number }}</span>
                 </td>
                 <td class="location">
-                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>                  
+                  
                   {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
                   @php $responses = array(); @endphp
                   @foreach ($details->get_items() as $item_id => $item)
@@ -140,6 +140,7 @@
                     $order_location = implode("", $responses_unique);
                   @endphp
                   {!! $order_location !!}
+                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>                  
                 </td>
                 <td> 
                   <strong>{{ $last_name }}, {{ $first_name }}</strong>
