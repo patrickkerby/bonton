@@ -18,7 +18,7 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('sage/home.css', asset_path('styles/home.css'), false, null);
     }
     
-    if (is_woocommerce()) {
+    if (is_woocommerce() && is_page(array( 'cart', 'checkout' ))) {
         wp_enqueue_style('sage/woo.css', asset_path('styles/woo.css'), false, null);
     }
 
