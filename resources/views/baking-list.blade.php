@@ -58,12 +58,10 @@
       $product_raw = get_product($prod_id);
       $product = $item->get_product($prod_id);
       $prod_name = $product_raw->get_name();
-<<<<<<< HEAD
-=======
+
 
       $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
->>>>>>> parent of 6dbed63... remove parent cats from baking list
-
+      
       $categories = $product->get_categories();
       $variation_categories = $product_raw->get_categories();
       $variation_categories_name = $variation_categories->name;
