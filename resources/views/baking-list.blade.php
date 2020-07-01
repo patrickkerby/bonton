@@ -60,8 +60,6 @@
       $prod_name = $product_raw->get_name();
 
 
-      $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
-      
       $categories = $product->get_categories();
       $variation_categories = $product_raw->get_categories();
       $variation_categories_name = $variation_categories->name;
