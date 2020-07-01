@@ -135,10 +135,6 @@
       padding-bottom: 25px;
       margin-bottom: 25px;
 
-      &:first-child {
-        display: none;
-      }
-
       &:last-of-type {
         border: none;
         padding-bottom: 0;
@@ -150,6 +146,7 @@
         margin-bottom: 0.55rem;
         padding-bottom: 0;
         margin-right: 0;
+        margin-left: 0;
 
         &:first-child {
           display: unset;

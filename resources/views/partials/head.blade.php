@@ -3,7 +3,6 @@
   <meta http-equiv="x-ua-compatible" content="ie=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   {{-- <meta http-equiv="Content-Security-Policy" content="default-src https: 'unsafe-inline' 'unsafe-eval'; worker-src blob: ; child-src blob: ; img-src data: blob: ;"> --}}
-  <link rel="stylesheet" href="https://use.typekit.net/wvm4dbv.css">
   <!-- Hotjar Tracking Code for https://bonton.workwithrye.ca -->
 {{-- <script>
       (function(h,o,t,j,a,r){
@@ -24,6 +23,6 @@
   @endif
   
   @php wp_head() @endphp
-
+  <link rel="stylesheet" rel="preload" href="https://use.typekit.net/wvm4dbv.css" crossorigin>
 
 </head>
