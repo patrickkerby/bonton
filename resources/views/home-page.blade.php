@@ -60,11 +60,10 @@
                   <div class="carousel-item @if ($loop->first) active @endif">                      
                     @php
                       $post_id = $item->product->ID;
-                      $prod_img = get_the_post_thumbnail_url($post_id);
-                      $url = get_permalink( $post_id );
-                    @endphp                  
-
-                    <img class="featured-product" src="{{ $prod_img }}" alt="{{ $item->product->post_title }}" />
+                      $prod_img = get_post_thumbnail_id($post_id);
+                      $size = 'large'; // (thumbnail, medium, large, full or custom size)
+                      echo wp_get_attachment_image( $prod_img, $size, "", array( "class" => "featured-product" ) );                  
+                    @endphp                 
                     <div class="carousel-caption">
                       <h4>{{ $item->product->post_title }}</h4>
                       @if ($item->description_override)
@@ -90,9 +89,10 @@
                   <div class="carousel-item @if ($loop->first)active @endif left">                      
                     @php
                       $post_id = $item->product->ID;
-                      $prod_img = get_the_post_thumbnail_url($post_id);
-                    @endphp                  
-                    <img class="featured-product" src="{{ $prod_img }}" alt="{{ $item->product->post_title }}" />
+                      $prod_img = get_post_thumbnail_id($post_id);
+                      $size = 'large'; // (thumbnail, medium, large, full or custom size)
+                      echo wp_get_attachment_image( $prod_img, $size, "", array( "class" => "featured-product" ) );                  
+                    @endphp
                     <div class="carousel-caption left">
                       <h4>{{ $item->product->post_title }}</h4>
                       @if ($item->description_override)
@@ -131,7 +131,13 @@
           @foreach ($story_process as $item)
             <div class="col-sm-5 thumb">
               <a href="{{ $item->link }}">
-                <img alt="Read more about: {{ $item->title }}" src="{{ $item->image }}" />
+                {{-- <img alt="Read more about: {{ $item->title }}" src="{{ $item->image }}" /> --}}
+                @php 
+                  $image = $item->image;
+                  $size = 'medium'; // (thumbnail, medium, large, full or custom size)
+                  echo wp_get_attachment_image( $image, $size );                  
+                @endphp
+
                 <div>
                   <h3>{{ $item->title }}</h3>
                   <span>Read More</span>
