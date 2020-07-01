@@ -31,6 +31,17 @@
     }
   }
 
+  // Sort the packing list by timeslot
+  $sorted_orders = array(); 
+  foreach ($filtered_orders as $order) {
+    $timeslot = $order->get_meta( 'pickup_timeslot', true );
+    
+    $sorted_orders[] = $timeslot; //any object field
+  }
+
+  array_multisort($sorted_orders, SORT_DESC, $filtered_orders);
+
+
 //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
 //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
@@ -74,12 +85,13 @@
 @section('content')
   <div class="row">
     <div class="col-sm-12">
-      <table id="lists" class="display" data-order='[[ 1, "asc" ]]'>
+      <table id="lists" class="display">
         <thead>
           <tr>
             <th>ID</th>
             <th>Name</th>
             <th>Phone</th>
+            <th>Pickup</th>
             <th>Location</th>
             <th>Notes</th>
           </tr>
@@ -101,7 +113,10 @@
               <td>{{ $daily_order_number }}</td>
               <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
               <td class="phone">{{ $phone }}</td>
-              <td class="location">                  
+              <td class="location">
+                <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
+              </td>
+              <td class="location">
                 {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
                 @php $responses = array(); @endphp
                 @foreach ($details->get_items() as $item_id => $item)
@@ -110,11 +125,11 @@
                     $cooler_override = $item->get_meta( '_cooler', true );
                                       
                     if(in_array($prod_id, $cooler_array)) {
-                      $responses[] = '<span class="order_location">C</span>';    
+                      $responses[] = '<span class="order_location cooler">C</span>';    
                     } 
                     // Add elseif for freezer list        
                     else {  
-                      $responses[] = '<span class="order_location">S</span>';
+                      $responses[] = '<span class="order_location shelf">S</span>';
                     }                    
                   @endphp
                 @endforeach
