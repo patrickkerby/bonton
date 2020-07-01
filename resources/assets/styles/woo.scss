@@ -1,0 +1,20 @@
+@import "common/variables";
+
+/** Import everything from autoload */
+@import "./autoload/**/*";
+
+/**
+ * Import npm dependencies
+ *
+ * Prefix your imports with `~` to grab from node_modules/
+ * @see https://github.com/webpack-contrib/sass-loader#imports
+ */
+// @import "~some-node-module";
+
+/** Import theme styles */
+@import "components/filter";
+@import "layouts/shop";
+@import "layouts/cart";
+@import "layouts/quickview";
+@import "layouts/singleproduct";
+@import "layouts/my-account";

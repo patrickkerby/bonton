@@ -9,6 +9,12 @@
     ],
     "lists": [
       "./scripts/lists.js"
+    ],
+    "home": [
+      "./styles/home.scss"
+    ],
+    "woo": [
+      "./styles/woo.scss"
     ]
   },
   "publicPath": "/app/themes/bonton",
