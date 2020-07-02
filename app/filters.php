@@ -308,3 +308,35 @@ function add_pickup_to_order($order_id) {
 	$order->update_meta_data( 'pickup_timeslot', $pickup_timeslot );
 	$order->save();
 }
+
+/*
+ * ADD PICKUP DETAILS TO EMAILS
+ * @param $order_obj Order Object
+ * @param $sent_to_admin If this email is for administrator or for a customer
+ * @param $plain_text HTML or Plain text (can be configured in WooCommerce > Settings > Emails)
+ */
+
+add_action( 'woocommerce_email_order_meta', function ( $order_obj, $sent_to_admin, $plain_text ){
+ 
+	// ok, if it is the gift order, get all the other fields
+	$pickup_date = get_post_meta( $order_obj->get_order_number(), 'pickup_date', true );
+	$timeslot = get_post_meta( $order_obj->get_order_number(), 'pickup_timeslot', true ); 
+ 
+	// ok, we will add the separate version for plaintext emails
+	if ( $plain_text === false ) {
+ 
+		// you shouldn't have to worry about inline styles, WooCommerce adds them itself depending on the theme you use
+		echo '<h2>Pickup Details (Important!)</h2>
+		<ul>
+		<li><strong>Pickup Date:</strong> ' . $pickup_date . '</li>
+		<li><strong>Pickup Time:</strong> ' . $timeslot . '</li>
+		</ul>';
+ 
+	} else {
+ 
+		echo "PICKUP DETAILS\n
+		Pickup Date: $pickup_date
+		Pickup Time: $timeslot;;	
+ 
+	}
+}, 10, 3 );
