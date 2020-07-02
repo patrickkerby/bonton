@@ -322,17 +322,17 @@ function add_pickup_to_order($order_id) {
 add_filter( 'woocommerce_email_order_meta_fields', 'App\custom_woocommerce_email_order_pickupdate', 10, 3 );
 
 function custom_woocommerce_email_order_pickupdate( $fields, $sent_to_admin, $order ) {
-    $fields['meta_key'] = array(
+    $fields['pickup_date'] = array(
         'label' => __( 'Pickup Date' ),
         'value' => get_post_meta( $order->id, 'pickup_date', true ),
     );
     return $fields;
 }
 
-add_filter( 'woocommerce_email_order_meta_fields', 'App\custom_woocommerce_email_order_timeslot', 10, 4 );
+add_filter( 'woocommerce_email_order_meta_fields', 'App\custom_woocommerce_email_order_timeslot', 10, 3 );
 
 function custom_woocommerce_email_order_timeslot( $fields, $sent_to_admin, $order ) {
-    $fields['meta_key'] = array(
+    $fields['pickup_timeslot'] = array(
         'label' => __( 'Pickup Timeslot' ),
         'value' => get_post_meta( $order->id, 'pickup_timeslot', true ),
     );
