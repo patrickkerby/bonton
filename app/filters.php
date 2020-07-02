@@ -316,26 +316,17 @@ function add_pickup_to_order($order_id) {
  * @param $plain_text HTML or Plain text (can be configured in WooCommerce > Settings > Emails)
  */
 
-add_action( 'woocommerce_email_order_meta', function ( $order_obj, $sent_to_admin, $plain_text ){
- 
-	// ok, if it is the gift order, get all the other fields
-	$pickup_date = get_post_meta( $order_obj->get_order_number(), 'pickup_date', true );
-	$timeslot = get_post_meta( $order_obj->get_order_number(), 'pickup_timeslot', true ); 
- 
-	// ok, we will add the separate version for plaintext emails
-	if ( $plain_text === false ) {
- 
-		// you shouldn't have to worry about inline styles, WooCommerce adds them itself depending on the theme you use
-		echo '<h2>Pickup Details (Important!)</h2>
-		<ul>
-		<li><strong>Pickup Date:</strong> ' . $pickup_date . '</li>
-		<li><strong>Pickup Time:</strong> ' . $timeslot . '</li>
-		</ul>';
- 
-	} else {
- 
-		echo "PICKUP DETAILS\n
-		Pickup Date: $pickup_date
-		Pickup Time: $timeslot";	
-	}
-}, 10, 3 );
+/**
+ * Add a custom field (in an order) to the emails
+ */
+add_filter( 'woocommerce_email_order_meta_fields', 'App\custom_woocommerce_email_order_meta_fields', 10, 3 );
+
+function custom_woocommerce_email_order_meta_fields( $fields, $sent_to_admin, $order ) {
+    $fields['meta_key'] = array(
+        'label' => __( 'Pickup Date' ),
+        'value' => get_post_meta( $order->id, 'pickup_date', true ),
+        'label' => __( 'Pickup Timeslot' ),
+        'value' => get_post_meta( $order->id, 'pickup_timeslot', true ),
+    );
+    return $fields;
+}
