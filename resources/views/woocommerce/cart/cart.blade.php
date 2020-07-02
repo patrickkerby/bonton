@@ -324,9 +324,9 @@ defined( 'ABSPATH' ) || exit;
         var time = 57;
       }
       else {
-        time = 33;
-      }      
-			
+        var time = 33;
+			}   
+						
 			var array = ["2020-06-30","2020-07-01"];
 
 			$( function() {
