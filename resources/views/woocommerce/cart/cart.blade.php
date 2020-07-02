@@ -41,6 +41,9 @@ defined( 'ABSPATH' ) || exit;
 
 	if ( !isset($session_pickup_date)) {
 		$session_pickup_date = "Choose Date";
+		
+		static $conflict = true;
+
 	}
 
 	$morning_selected = "";
@@ -104,7 +107,7 @@ defined( 'ABSPATH' ) || exit;
 					</div>
 
 					<div class="acf-form-submit">
-						<input type="submit" class="acf-button button button-primary button-large" value="Save">
+						<input type="submit" class="acf-button button button-primary button-large" value="Confirm date to continue">
 						<span class="acf-spinner"></span>
 					</div>
 				</div>
