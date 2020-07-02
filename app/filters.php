@@ -336,7 +336,6 @@ add_action( 'woocommerce_email_order_meta', function ( $order_obj, $sent_to_admi
  
 		echo "PICKUP DETAILS\n
 		Pickup Date: $pickup_date
-		Pickup Time: $timeslot;;	
- 
+		Pickup Time: $timeslot";	
 	}
 }, 10, 3 );
