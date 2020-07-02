@@ -329,7 +329,7 @@ function custom_woocommerce_email_order_pickupdate( $fields, $sent_to_admin, $or
     return $fields;
 }
 
-add_filter( 'woocommerce_email_order_meta_fields', 'App\custom_woocommerce_email_order_timeslot', 10, 3 );
+add_filter( 'woocommerce_email_order_meta_fields', 'App\custom_woocommerce_email_order_timeslot', 10, 4 );
 
 function custom_woocommerce_email_order_timeslot( $fields, $sent_to_admin, $order ) {
     $fields['meta_key'] = array(
