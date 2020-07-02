@@ -327,7 +327,7 @@ defined( 'ABSPATH' ) || exit;
         var time = 33;
 			}   
 						
-			var array = ["2020-06-30","2020-07-01"];
+			// var array = ["2020-06-30","2020-07-01"];
 
 			$( function() {
 				$( "#datepicker" ).datepicker(  {
@@ -336,12 +336,13 @@ defined( 'ABSPATH' ) || exit;
 					selectOtherMonths: true,
           beforeShowDay: function(date) {
 						var day = date.getDay();
-						var string = jQuery.datepicker.formatDate('yy-mm-dd', date);						
-						return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
+						var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+						return [(day != 0 && day != 1), ''];
+						// return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
 					}
 				});
 
-				$( "#datepicker" ).datepicker( "option", "defaultDate", +2 );
+				// $( "#datepicker" ).datepicker( "option", "defaultDate", +2 );
 				$( "#datepicker" ).datepicker( "option", "dateFormat", "DD, MM d, yy" );
 				$( "#datepicker" ).datepicker( "option", "showButtonPanel", true );
 
