@@ -307,3 +307,7 @@ ul.woocommerce-thankyou-order-details li {
 .woocommerce-table__line-item .wc-item-meta li {
   display: flex;
 }
+
+.cart .woocommerce-notices-wrapper {
+  display: none;
+}
