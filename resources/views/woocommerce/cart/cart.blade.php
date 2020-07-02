@@ -68,7 +68,7 @@ defined( 'ABSPATH' ) || exit;
 	<div class="row justify-content-center">
 		<div class='col-sm-4'>
 			<form method="post" class="acf-form">
-				<div class="acf-fields acf-form-fields -top">
+				<div class="">
 					<div class="acf-field acf-field-date-picker">
 						<div class="acf-label">
 							<label for="date">Choose pick up date</label>
