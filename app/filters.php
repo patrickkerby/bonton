@@ -316,25 +316,38 @@ function add_pickup_to_order($order_id) {
  * @param $plain_text HTML or Plain text (can be configured in WooCommerce > Settings > Emails)
  */
 
-/**
- * Add a custom field (in an order) to the emails
+
+
+
+add_action( 'woocommerce_email_order_meta', 'App\bonton_add_email_order_meta', 10, 3 );
+/*
+ * @param $order_obj Order Object
+ * @param $sent_to_admin If this email is for administrator or for a customer
+ * @param $plain_text HTML or Plain text (can be configured in WooCommerce > Settings > Emails)
  */
-add_filter( 'woocommerce_email_order_meta_fields', 'App\custom_woocommerce_email_order_pickupdate', 10, 3 );
+function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
+ 
 
-function custom_woocommerce_email_order_pickupdate( $fields, $sent_to_admin, $order ) {
-    $fields['pickup_date'] = array(
-        'label' => __( 'Pickup Date' ),
-        'value' => get_post_meta( $order->id, 'pickup_date', true ),
-    );
-    return $fields;
-}
-
-add_filter( 'woocommerce_email_order_meta_fields', 'App\custom_woocommerce_email_order_timeslot', 10, 3 );
-
-function custom_woocommerce_email_order_timeslot( $fields, $sent_to_admin, $order ) {
-    $fields['pickup_timeslot'] = array(
-        'label' => __( 'Pickup Timeslot' ),
-        'value' => get_post_meta( $order->id, 'pickup_timeslot', true ),
-    );
-    return $fields;
+	$date = get_post_meta( $order_obj->get_order_number(), 'pickup_date', true );
+	$timeslot = get_post_meta( $order_obj->get_order_number(), 'pickup_timeslot', true );
+ 
+ 
+	// ok, we will add the separate version for plaintext emails
+	if ( $plain_text === false ) {
+ 
+		// you shouldn't have to worry about inline styles, WooCommerce adds them itself depending on the theme you use
+		echo '<h2>Important: Pickup Details</h2>
+		<ul>
+		<li><strong>Pickup Date:</strong> ' . $date . '</li>
+		<li><strong>Pickup Timeslot:</strong> ' . $timeslot . '</li>
+		</ul>';
+ 
+	} else {
+ 
+		echo "Important: Pickup Details\n
+		Pickup Date: $date
+		Pickup Timeslot: $timeslot";	
+ 
+	}
+ 
 }
