@@ -183,6 +183,12 @@ div.pp_woocommerce_quick_view {
       font-size: 14px;
     }
   }
+
+  .woocommerce div.product form.cart {
+    @include media-breakpoint-down(xs) {
+      margin-bottom: 4rem;
+    }
+  }
 }
 
 .single_variation_wrap .woocommerce-variation-add-to-cart .single_variation_wrap .single_variation .woocommerce-variation-price {
