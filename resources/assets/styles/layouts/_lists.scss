@@ -197,14 +197,14 @@
   }
 
   tr {
-    border-top: solid 2px $cream;
+    border-top: solid 2px #d2d2d2;
 
     td {
       vertical-align: top;
       padding: 1rem 0.5rem;
 
       tr {
-        border-top: dashed 2px #d2d2d2;
+        border-top: dashed 2px darken($cream, 5%);
 
         td {
           padding: 0.45rem 0;
