@@ -168,9 +168,7 @@ defined( 'ABSPATH' ) || exit;
 								if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
 									$long_fermentation = True;
 								}
-								else {
-									$long_fermentation = False;
-								}
+								
 							?>
 						
 						<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
