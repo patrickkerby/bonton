@@ -90,6 +90,7 @@
           <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Order #</th>
             <th>Phone</th>
             <th>Pickup</th>
             <th>Location</th>
@@ -108,12 +109,14 @@
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
               $location = $details->get_meta( 'pickuplocation', true );
+              $order_number = $details->get_id();
             @endphp
             <tr>
               <td>{{ $daily_order_number }}</td>
               <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
+              <td>{{ $order_number }}</td>
               <td class="phone">{{ $phone }}</td>
-              <td class="location">
+              <td class="location"> 
                 <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
               </td>
               <td class="location">
