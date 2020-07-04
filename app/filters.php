@@ -317,16 +317,8 @@ function add_pickup_to_order($order_id) {
  */
 
 
-
-
 add_action( 'woocommerce_email_order_meta', 'App\bonton_add_email_order_meta', 10, 3 );
-/*
- * @param $order_obj Order Object
- * @param $sent_to_admin If this email is for administrator or for a customer
- * @param $plain_text HTML or Plain text (can be configured in WooCommerce > Settings > Emails)
- */
 function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
- 
 
 	$date = get_post_meta( $order_obj->get_order_number(), 'pickup_date', true );
 	$timeslot = get_post_meta( $order_obj->get_order_number(), 'pickup_timeslot', true );

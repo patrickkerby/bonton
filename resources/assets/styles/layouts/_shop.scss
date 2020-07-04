@@ -42,12 +42,15 @@
         margin: 0;
         padding: 0;
         opacity: 1;
+        left: 0;
+        position: absolute;
       }
 
       h2.woocommerce-loop-product__title {
         display: inline-flex;
+        justify-content: center;
         position: absolute;
-        bottom: 2.5rem;
+        bottom: 3rem;
         background: #343534;
         font-size: 20px;
         font-weight: 500;
@@ -55,7 +58,10 @@
         color: #fff;
         padding: 1rem 1.25rem;
         text-align: center;
-        max-width: 80%;
+        width: 80%;
+        left: 0;
+        right: 0;
+        margin: auto;
       }
 
       .inside-thumb.quick-view-button {
