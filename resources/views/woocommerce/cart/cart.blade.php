@@ -19,6 +19,7 @@ defined( 'ABSPATH' ) || exit;
 
 	$post_id = get_the_ID();
 	do_action( 'woocommerce_before_cart' ); 
+	$long_fermentation = "";
 
 	if ( isset($_POST['date']))  {
 		$pickupdate = $_POST['date'];

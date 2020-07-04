@@ -77,6 +77,7 @@
   },
   "dependencies": {
     "bootstrap": "v4.3.1",
+    "custom-event-polyfill": "^1.0.7",
     "datatables": "^1.10.18",
     "datatables.net": "^1.10.20",
     "datatables.net-bs4": "^1.10.20",
