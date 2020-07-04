@@ -13,6 +13,8 @@
   }
 
   ul.products {
+    width: 100%;
+
     li.product {
       display: flex;
       justify-content: center;
@@ -43,7 +45,7 @@
         padding: 0;
         opacity: 1;
         left: 0;
-        // position: absolute;
+        position: absolute;
       }
 
       h2.woocommerce-loop-product__title {

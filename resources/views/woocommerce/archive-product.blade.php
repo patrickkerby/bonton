@@ -24,7 +24,6 @@ the readme will list any important changes.
 
   @if(woocommerce_product_loop())
     <section class="row no-gutters justify-content-center">
-      <div>
         @php
           woocommerce_product_loop_start();
         @endphp
@@ -47,7 +46,6 @@ the readme will list any important changes.
         @php
           do_action('woocommerce_no_products_found');
         @endphp
-      </div>
     </section>
   @endif
 
