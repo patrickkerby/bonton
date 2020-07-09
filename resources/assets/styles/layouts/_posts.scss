@@ -68,10 +68,20 @@
     object-fit: cover;
   }
 
+  .content-row h4 {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
   .content-row p {
     font-size: 18px;
     line-height: 33px;
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .content-row ul li {
+    margin-bottom: 0.75rem;
   }
 
   .content-row {
