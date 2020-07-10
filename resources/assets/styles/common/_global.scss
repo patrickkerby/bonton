@@ -286,6 +286,11 @@ p.demo_store,
     border: solid 2px #fff;
   }
 
+  a.link {
+    position: relative;
+    z-index: 3;
+  }
+
   .woocommerce-store-notice__dismiss-link {
     display: flex;
     position: absolute;

@@ -251,7 +251,7 @@ add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $
 //       calculate total cart quantity
 //         if total cart quantity > 5, change line-item tax class to 'zero-rate'
 
-add_action( 'woocommerce_before_calculate_totals', 'App\change_cart_items_prices', 10, 1 );
+add_action( 'woocommerce_before_calculate_totals', 'App\change_cart_items_prices', 20, 1 );
 function change_cart_items_prices( $cart ) {
 
     if ( is_admin() && ! defined( 'DOING_AJAX' ) )
