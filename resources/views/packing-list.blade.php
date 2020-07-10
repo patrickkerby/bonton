@@ -117,6 +117,7 @@ if ($list_type === "shelf") {
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
               $location = $details->get_meta( 'pickuplocation', true );
+              $order_number = $details->get_id();
                 
               // Check to see if the products associated with the order are shelf or cooler.
               $list_check = array();
@@ -152,7 +153,7 @@ if ($list_type === "shelf") {
                 {!! $order_location !!}
               </td>
               <td> 
-                <strong>{{ $last_name }}, {{ $first_name }}</strong>
+                <strong>{{ $last_name }}, {{ $first_name }} (#{{ $order_number }})</strong>
                 <p>{{ $phone }}</p>                    
                 @if ($customer_note)        
                   <span class="notes">{{ $customer_note }}</span>
