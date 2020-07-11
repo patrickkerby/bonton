@@ -310,58 +310,6 @@ function zero_tax_items_based_on_invoice_choice( $cart ) {
     }
 }
 
-
-
-
-
-
-
-
-// add_action( 'woocommerce_before_calculate_totals', 'App\change_cart_items_prices', 10, 1 );
-// function change_cart_items_prices( $cart ) {
-
-//     if ( is_admin() && ! defined( 'DOING_AJAX' ) )
-//         return;
-
-//     if ( did_action( 'woocommerce_before_calculate_totals' ) >= 2 )
-//         return;
-
-//     $categories = array(83, 84);
-//     $total_item_quantity = 0;
-
-//     if (is_cart()) {
-//         foreach ( $cart->get_cart() as $cart_item ) {        
-
-//             if ( has_term( $categories, 'product_cat', $cart_item['product_id'] ) ){
-//                 // add conditional for if is_taxable    
-//                 $attributes = $cart_item['data']->get_attributes();
-//                 $quantity = $cart_item['quantity'];
-
-//                 if (isset($attributes['pa_package-size'])) {
-
-//                     $size = $attributes['pa_package-size'];
-                    
-//                     if ($size === 'half-dozen') {
-//                         $quantity = $quantity * 6;                
-//                     }                    
-//                     if ($size === 'dozen') {
-//                         $quantity = $quantity * 12;
-//                     }
-//                 }
-//                 $total_item_quantity +=  $quantity;
-//             }        
-//         }
-        
-//         if ( $total_item_quantity > 5 ) {
-//             foreach ( $cart->get_cart() as $cart_item ) {        
-//                 if ( has_term( $categories, 'product_cat', $cart_item['product_id'] )  ) {
-//                     $cart_item['data']->set_tax_class( 'zero-rate' );
-//                 }
-//             }
-//         }
-//     }
-// }
-
 /**
  * Save pickup date and timeslot to WooCommerce order (from session)
  */
