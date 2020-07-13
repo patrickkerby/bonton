@@ -330,7 +330,6 @@ function add_pickup_to_order($order_id) {
  * @param $plain_text HTML or Plain text (can be configured in WooCommerce > Settings > Emails)
  */
 
-
 add_action( 'woocommerce_email_order_meta', 'App\bonton_add_email_order_meta', 10, 3 );
 function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 
@@ -355,5 +354,5 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 		Pickup Timeslot: $timeslot";	
  
 	}
- 
+
 }
