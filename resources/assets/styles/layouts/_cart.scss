@@ -158,6 +158,12 @@ ul.woocommerce-thankyou-order-details li {
 
       @include slowfade;
     }
+
+    @include media-breakpoint-down(md) {
+      padding: 0.5rem 1rem !important;
+      line-height: normal !important;
+      height: auto !important;
+    }
   }
 }
 
@@ -295,6 +301,14 @@ ul.woocommerce-thankyou-order-details li {
     pointer-events: none;
     cursor: default;
   }
+}
+
+//Long fermentation notice (only shows if LF product is in cart
+.lf_notice {
+  background: $highlight;
+  color: #fff;
+  padding: 2rem;
+  font-weight: 500;
 }
 
 //Remove woocommerce cart and checkout notifications for coupons.
