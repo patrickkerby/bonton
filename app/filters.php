@@ -286,8 +286,6 @@ function zero_tax_items_based_on_invoice_choice( $cart ) {
                     }
                     if ($size === '6-pack') {
                         $quantity = $quantity * 6;
-                        print_r($quantity);
-
                     }                    
                     if ($size === 'dozen') {
                         $quantity = $quantity * 12;
