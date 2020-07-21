@@ -34,7 +34,7 @@ defined( 'ABSPATH' ) || exit;
 	}
 	else {
 		$pickupdate = "";
-		$day_of_week = "Friday";
+		$day_of_week = "";
 	}
 
 	$session_pickup_date = WC()->session->get('pickup_date');
