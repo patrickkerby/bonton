@@ -102,7 +102,7 @@ defined( 'ABSPATH' ) || exit;
 								}
 								$days_available = explode(", ",$days_available);
 								
-								if(isset($day_of_week) && !in_array($day_of_week, $days_available)){
+								if(isset($session_pickup_date) && !in_array($day_of_week, $days_available)){
 									$availability_status = "not-available";
 									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
 								}
@@ -360,7 +360,6 @@ defined( 'ABSPATH' ) || exit;
 
 				if(presetDate){
 					$('#datepicker').datepicker('setDate', presetDate);
-
 				}
 			});
 		});
