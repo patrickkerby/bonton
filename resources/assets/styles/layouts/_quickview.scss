@@ -189,6 +189,10 @@ div.pp_woocommerce_quick_view {
       margin-bottom: 4rem;
     }
   }
+
+  .woocommerce div.product form.cart .variations select {
+    width: 100%;
+  }
 }
 
 .single_variation_wrap .woocommerce-variation-add-to-cart .single_variation_wrap .single_variation .woocommerce-variation-price {
