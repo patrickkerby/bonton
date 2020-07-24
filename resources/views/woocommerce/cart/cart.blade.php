@@ -20,6 +20,7 @@ defined( 'ABSPATH' ) || exit;
 	$post_id = get_the_ID();
 	do_action( 'woocommerce_before_cart' ); 
 	$long_fermentation = "";
+	$long_fermentation_in_cart ="";
 
 	if ( isset($_POST['date']))  { // Save post data to session. Only use session data from here on in.
 		$pickupdate = $_POST['date'];
@@ -317,10 +318,19 @@ defined( 'ABSPATH' ) || exit;
 <?php do_action( 'woocommerce_after_cart' ); ?>
 <script>
 	//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
-	var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>;
+
+	
 	
 	jQuery(function($) {
+
+		var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>;   
+	
+	$('body').on('updated_cart_totals',function() {
+		var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>;   
+	});
+
 		$(document).ready(function() {
+			
 			var presetDate = <?php echo(json_encode($session_pickup_date)); ?>;
 
       if(longFermentation === true){
