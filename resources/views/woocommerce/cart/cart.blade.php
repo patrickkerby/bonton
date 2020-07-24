@@ -21,30 +21,22 @@ defined( 'ABSPATH' ) || exit;
 	do_action( 'woocommerce_before_cart' ); 
 	$long_fermentation = "";
 
-	if ( isset($_POST['date']))  {
+	if ( isset($_POST['date']))  { // Save post data to session. Only use session data from here on in.
 		$pickupdate = $_POST['date'];
 		$pickuptimeslot = $_POST['timeslot'];
 
 		WC()->session->set('pickup_date', $pickupdate);
 		WC()->session->set('pickup_timeslot', $pickuptimeslot);
-		
-		global $day_of_week;		
-		list($day_of_week)=explode(',', $pickupdate); // Simplify to just the day of week
-
-	}
-	else {
-		$pickupdate = "";
-		$day_of_week = "";
 	}
 
 	$session_pickup_date = WC()->session->get('pickup_date');
 	$session_timeslot = WC()->session->get('pickup_timeslot');
 
-	if ( !isset($session_pickup_date)) {
-		$session_pickup_date = "Choose Date";
-		
-		static $conflict = true;
+	// global $day_of_week;		
+	list($day_of_week)=explode(',', $session_pickup_date); // Simplify to just the day of week
 
+	if ( !isset($session_pickup_date)) {		
+		static $conflict = true;
 	}
 
 	$morning_selected = "";
@@ -85,43 +77,45 @@ defined( 'ABSPATH' ) || exit;
 
 						<?php
 						foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+							$long_fermentation = "";
+
 							$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 							$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
 
 							if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 								$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
-								?>
+							?>
 
-								<?php
+							<?php
 								// Check availability
 								$availability = get_field('availability', $product_id );
 
 								$prefix = $days_available = '';
 								if (is_array($availability) || is_object($availability)) {
 										
-										foreach ($availability as $term) {
-												$days = $term->name;
-												$days_available .= $prefix . '' . $days . '';
-												$prefix = ', ';
-										}
+									foreach ($availability as $term) {
+											$days = $term->name;
+											$days_available .= $prefix . '' . $days . '';
+											$prefix = ', ';
 									}
-									$days_available = explode(", ",$days_available);
+								}
+								$days_available = explode(", ",$days_available);
+								
+								if(isset($day_of_week) && !in_array($day_of_week, $days_available)){
+									$availability_status = "not-available";
+									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
+								}
+								else {
+									$availability_msg = "";
+									$availability_status = "available";
+								}
 
-									if(!in_array($day_of_week, $days_available)){
-										$availability_status = "not-available";
-										$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
-									}
-									else {
-										$availability_msg = "";
-										$availability_status = "available";
-									}
-
-									//Check if requires long fermentation lead time
-									if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
-										$long_fermentation = True;
-									}
-									
-								?>
+								//Check if requires long fermentation lead time
+								if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
+									$long_fermentation = "yes";
+									$long_fermentation_in_cart = True;
+								}		
+							?>
 							
 							<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
 								<td class="product-remove">
@@ -174,7 +168,10 @@ defined( 'ABSPATH' ) || exit;
 												$days = implode(', ', $days_available);
 												echo '<span class="availability"><strong>Availability: </strong>' . $days . '</span>';
 										}
-									?>				
+									?>
+									@if($long_fermentation === 'yes')
+										<span class="availability"><strong>*Note:</strong> Not available for next-day pickup</span>										
+									@endif				
 									</td>
 
 									<td class="product-price" data-title="<?php esc_attr_e( 'Price', 'woocommerce' ); ?>">
@@ -216,9 +213,8 @@ defined( 'ABSPATH' ) || exit;
 										<td colspan="5">{!! $availability_msg !!}</td>
 									</tr>
 									@php static $conflict = true; @endphp
-								@else
+								@endif
 
-								@endif							
 								<?php
 							}
 						}
@@ -258,7 +254,7 @@ defined( 'ABSPATH' ) || exit;
 							<label for="date">Choose pick up date</label>
 						</div>
 						<div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
-							<input type='text' name="date" id="datepicker" placeholder="{{ $session_pickup_date }}" value="{{ $session_pickup_date }}" autocomplete="off" />
+							<input type='text' name="date" id="datepicker" value="{{ $session_pickup_date }}" autocomplete="off" />
 							<span class="input-group-addon">
 									<span class="glyphicon glyphicon-calendar"></span>
 							</span>
@@ -296,9 +292,9 @@ defined( 'ABSPATH' ) || exit;
 					</div>
 				</div>
 			</form>
-				@if ( $long_fermentation == True)
+				@if ( $long_fermentation_in_cart == True)
 					<div class="lf_notice"> 
-						<strong>Note:</strong> Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
+						<strong>Why can't I choose tomorrow?</strong> <br>Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
 					</div>
 				@endif
 		</div>
@@ -321,10 +317,11 @@ defined( 'ABSPATH' ) || exit;
 <?php do_action( 'woocommerce_after_cart' ); ?>
 <script>
 	//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
-	var longFermentation = <?php echo(json_encode($long_fermentation)); ?>;
-
+	var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>;
+	
 	jQuery(function($) {
-	    $(document).ready(function() {
+		$(document).ready(function() {
+			var presetDate = <?php echo(json_encode($session_pickup_date)); ?>;
 
       if(longFermentation === true){
         var time = 57;
@@ -351,6 +348,11 @@ defined( 'ABSPATH' ) || exit;
 				// $( "#datepicker" ).datepicker( "option", "defaultDate", +2 );
 				$( "#datepicker" ).datepicker( "option", "dateFormat", "DD, MM d, yy" );
 				$( "#datepicker" ).datepicker( "option", "showButtonPanel", true );
+
+				if(presetDate){
+					$('#datepicker').datepicker('setDate', presetDate);
+
+				}
 			});
 		});
 	});
