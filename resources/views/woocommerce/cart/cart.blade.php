@@ -319,16 +319,15 @@ defined( 'ABSPATH' ) || exit;
 <script>
 	//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
 
-	
-	
+
 	jQuery(function($) {
 
+		$('body').on('updated_cart_totals',function() {
+			location.reload(); // uncomment this line to refresh the page.
+		});	
+		
 		var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>;   
-	
-	$('body').on('updated_cart_totals',function() {
-		var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>;   
-	});
-
+		
 		$(document).ready(function() {
 			
 			var presetDate = <?php echo(json_encode($session_pickup_date)); ?>;
