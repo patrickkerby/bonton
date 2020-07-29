@@ -30,7 +30,7 @@ $image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $item->get_prod
 <li>
 	<?php do_action( 'woocommerce_widget_product_item_start', $args ); ?>
 
-	<a href="<?php echo esc_url( $product->get_permalink() ); ?>" class="background-image: url({{ $image_url[0] }});">
+	<a href="<?php echo esc_url( $product->get_permalink() ); ?>" id="<?php $product->get_id() ?>" class="background-image: url({{ $image_url[0] }});">
 		<span class="product-title"><?php echo wp_kses_post( $product->get_name() ); ?></span>
 	</a>
 
