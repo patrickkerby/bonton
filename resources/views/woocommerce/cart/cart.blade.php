@@ -246,6 +246,21 @@ defined( 'ABSPATH' ) || exit;
 				</table>
 				<?php do_action( 'woocommerce_after_cart_table' ); ?>
 			</form>
+			<?php do_action( 'woocommerce_before_cart_collaterals' ); ?>
+
+				<div class="cart-collaterals @isset($conflict) conflict @endisset col-sm-12">
+					<?php
+						/**
+						* Cart collaterals hook.
+						*
+						* @hooked woocommerce_cross_sell_display
+						* @hooked woocommerce_cart_totals - 10
+						*/
+						do_action( 'woocommerce_cart_collaterals' );
+					?>
+				</div>
+
+		<?php do_action( 'woocommerce_after_cart' ); ?>
 		</div>
 		<div class='col-sm-4 order-first'>
 			<form method="post" class="acf-form">
@@ -305,21 +320,7 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 
 	</div>
-		<?php do_action( 'woocommerce_before_cart_collaterals' ); ?>
-
-		<div class="cart-collaterals @isset($conflict) conflict @endisset col-sm-12">
-			<?php
-				/**
-				 * Cart collaterals hook.
-				 *
-				 * @hooked woocommerce_cross_sell_display
-				 * @hooked woocommerce_cart_totals - 10
-				 */
-				do_action( 'woocommerce_cart_collaterals' );
-			?>
-		</div>
-
-<?php do_action( 'woocommerce_after_cart' ); ?>
+		
 <script>
 	//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
 
