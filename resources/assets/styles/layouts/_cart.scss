@@ -138,6 +138,16 @@ ul.woocommerce-thankyou-order-details li {
     }
   }
 
+  .acf-field-date-picker {
+    margin: 0 0 1rem 0;
+  }
+
+  .acf-field-date-picker .acf-label label {
+    height: auto;
+    line-height: normal;
+    margin-bottom: 1rem;
+  }
+
   .acf-form-submit {
     display: flex;
     justify-content: left;
