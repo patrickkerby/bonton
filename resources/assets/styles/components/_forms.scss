@@ -21,3 +21,14 @@
 form select {
   font-size: 16px !important;
 }
+
+// Datepicker
+.ui-button.ui-state-active:hover,
+.ui-button:active,
+.ui-state-active,
+.ui-widget-content .ui-state-active,
+.ui-widget-header .ui-state-active,
+a.ui-button:active {
+  background: $highlight;
+  border: 1px solid darken($color: $highlight, $amount: 10);
+}

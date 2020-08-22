@@ -255,7 +255,11 @@ defined( 'ABSPATH' ) || exit;
 							<label for="date">Choose pick up date</label>
 						</div>
 						<div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
-							<input type='text' name="date" id="datepicker" value="{{ $session_pickup_date }}" autocomplete="off" />
+							<div class="datepicker" id="datepicker">
+								{{-- <input type='text' name="date" id="datepicker" value="{{ $session_pickup_date }}" autocomplete="off" /> --}}
+								<input type='hidden' name="date" id="dateInput" value="{{ $session_pickup_date }}" />
+							</div>
+							
 							<span class="input-group-addon">
 									<span class="glyphicon glyphicon-calendar"></span>
 							</span>
@@ -340,27 +344,32 @@ defined( 'ABSPATH' ) || exit;
 			}   
 						
 			// var array = ["2020-06-30","2020-07-01"];
-
+			
 			$( function() {
-				$( "#datepicker" ).datepicker(  {
+				
+				$("#datepicker").datepicker({
+					onSelect: function(dateText, inst) { 
+							var dateAsString = dateText; //the first parameter of this function
+							var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method																				
+							console.log(dateAsString);
+							$(dateInput).val(dateAsString);
+					},
 					'minDate': new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
-					showOtherMonths: true,
-					selectOtherMonths: true,
-          beforeShowDay: function(date) {
+					beforeShowDay: function(date) {
 						var day = date.getDay();
 						var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
 						return [(day != 0 && day != 1), ''];
 						// return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
-					}
+					}					
 				});
-
-				// $( "#datepicker" ).datepicker( "option", "defaultDate", +2 );
+				
 				$( "#datepicker" ).datepicker( "option", "dateFormat", "DD, MM d, yy" );
 				$( "#datepicker" ).datepicker( "option", "showButtonPanel", true );
 
 				if(presetDate){
 					$('#datepicker').datepicker('setDate', presetDate);
 				}
+
 			});
 		});
 	});
