@@ -262,7 +262,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php do_action( 'woocommerce_after_cart' ); ?>
 		</div>
-		<div class='col-sm-4 order-first'>
+		<div class='col-md-4 order-first'>
 			<form method="post" class="acf-form">
 				<div class="">
 					<div class="acf-field acf-field-date-picker">

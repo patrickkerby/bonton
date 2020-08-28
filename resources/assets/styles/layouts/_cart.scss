@@ -140,6 +140,10 @@ ul.woocommerce-thankyou-order-details li {
 
   .acf-field-date-picker {
     margin: 0 0 1rem 0;
+
+    .input {
+      overflow: visible;
+    }
   }
 
   .acf-field-date-picker .acf-label label {
