@@ -23,7 +23,8 @@ export default {
     $( '.wpf_submenu label' ).click(function() {
       $('.checked').removeClass('checked')
       $( this ).addClass( 'checked' );
-      $('.wpf_submenu input').prop('checked',false).checkboxradio('refresh');  
+      $('.wpf_submenu input').prop('checked',false);
+      //.checkboxradio('refresh')  add this to end of line 26. maybe.
 
     });
 
