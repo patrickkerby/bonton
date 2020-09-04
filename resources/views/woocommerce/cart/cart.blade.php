@@ -267,7 +267,7 @@ defined( 'ABSPATH' ) || exit;
 				<div class="">
 					<div class="acf-field acf-field-date-picker">
 						<div class="acf-label">
-							<label for="date">Choose pick up date</label>
+							<label for="date">Confirm your pickup date:</label>
 						</div>
 						<div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
 							<div class="datepicker" id="datepicker">
