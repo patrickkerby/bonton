@@ -339,7 +339,8 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 	if ( $plain_text === false ) {
  
 		// you shouldn't have to worry about inline styles, WooCommerce adds them itself depending on the theme you use
-		echo '<h2>Important: Pickup Details</h2>
+        echo '<h2>Important: Pickup Details</h2>
+        <p>(Format: Thursday, September 12, 2020)</p>
 		<ul>
 		<li><strong>Pickup Date:</strong> ' . $date . '</li>
 		<li><strong>Pickup Timeslot:</strong> ' . $timeslot . '</li>

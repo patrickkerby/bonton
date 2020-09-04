@@ -26,21 +26,29 @@ defined( 'ABSPATH' ) || exit;
 		$pickupdate = $_POST['date'];
 		$pickuptimeslot = $_POST['timeslot'];
 
-		WC()->session->set('pickup_date', $pickupdate);
+		$session_pickup_date_calendar = date("l, F j, Y", strtotime($pickupdate));
+
+		var_dump($pickupdate);
+		var_dump($session_pickup_date_calendar);
+
+		WC()->session->set('pickup_date', $session_pickup_date_calendar);
+		WC()->session->set('pickup_date_numeric', $pickupdate);
 		WC()->session->set('pickup_timeslot', $pickuptimeslot);
 	}
 
 	$session_pickup_date = WC()->session->get('pickup_date');
+	$session_pickup_date_numeric = WC()->session->get('pickup_date_numeric');
 	$session_timeslot = WC()->session->get('pickup_timeslot');
+
 
 	//Convert date format
 	// $session_pickup_date = date("l, F, j", strtotime($session_pickup_date));
-	$session_pickup_date_calendar = date("l, F, j", strtotime($session_pickup_date));
+	// $session_pickup_date_calendar = date("l, F, j, Y", strtotime($session_pickup_date));
 
 	// global $day_of_week;		
-	list($day_of_week)=explode(',', $session_pickup_date_calendar); // Simplify to just the day of week
+	list($day_of_week)=explode(',', $session_pickup_date); // Simplify to just the day of week
 
-	if ( !isset($session_pickup_date_calendar)) {		
+	if ( !isset($session_pickup_date)) {		
 		static $conflict = true;
 	}
 
@@ -106,7 +114,7 @@ defined( 'ABSPATH' ) || exit;
 								}
 								$days_available = explode(", ",$days_available);
 								
-								if(isset($session_pickup_date_calendar) && !in_array($day_of_week, $days_available)){
+								if(isset($session_pickup_date) && !in_array($day_of_week, $days_available)){
 									$availability_status = "not-available";
 									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
 								}
@@ -339,7 +347,7 @@ defined( 'ABSPATH' ) || exit;
 		
 		$(document).ready(function() {
 			
-			var presetDate = <?php echo(json_encode($session_pickup_date)); ?>;
+			var presetDate = <?php echo(json_encode($session_pickup_date_numeric)); ?>;
 
       if(longFermentation === true){
         var time = 57;
