@@ -352,7 +352,6 @@ defined( 'ABSPATH' ) || exit;
 					onSelect: function(dateText, inst) { 
 							var dateAsString = dateText; //the first parameter of this function
 							var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method																				
-							console.log(dateAsString);
 							$(dateInput).val(dateAsString);
 					},
 					'minDate': new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
@@ -360,17 +359,16 @@ defined( 'ABSPATH' ) || exit;
 						var day = date.getDay();
 						var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
 						return [(day != 0 && day != 1), ''];
-						// return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
-					}					
-				});
+					// 	// return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
+					}		
+				}).find(".ui-state-active").removeClass("ui-state-active");
 				
-				$( "#datepicker" ).datepicker( "option", "dateFormat", "DD, MM d, yy" );
-				$( "#datepicker" ).datepicker( "option", "showButtonPanel", true );
+				// $( "#datepicker" ).datepicker( "option", "dateFormat", "DD, MM d, yy" );
+				// $( "#datepicker" ).datepicker( "option", "showButtonPanel", false );
 
 				if(presetDate){
 					$('#datepicker').datepicker('setDate', presetDate);
 				}
-
 			});
 		});
 	});
