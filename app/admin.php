@@ -45,11 +45,11 @@ function bonton_pickup_meta( $order ){  ?>
         </div>
         <div class="edit_address"><?php
  
-
 			woocommerce_wp_text_input( array(
 				'id' => 'pickup_date',
 				'label' => 'Pickup Date:',
 				'value' => $date,
+				'description' => '(Format: Thursday, September 12, 2020)',
 				'wrapper_class' => 'form-field-wide'
 			) );
  
