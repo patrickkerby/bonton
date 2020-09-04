@@ -233,11 +233,11 @@
     width: 38px;
   }
 
-  // span.select2-container ul.select2-results__options {
-  //   li:nth-child(2) {
-  //     display: none !important;
-  //   }
-  // }
+  span.select2-container ul.select2-results__options {
+    li:nth-child(2) {
+      display: none !important;
+    }
+  }
 }
 
 button.mobile-filter {
