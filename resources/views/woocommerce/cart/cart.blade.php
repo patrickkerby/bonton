@@ -33,10 +33,14 @@ defined( 'ABSPATH' ) || exit;
 	$session_pickup_date = WC()->session->get('pickup_date');
 	$session_timeslot = WC()->session->get('pickup_timeslot');
 
-	// global $day_of_week;		
-	list($day_of_week)=explode(',', $session_pickup_date); // Simplify to just the day of week
+	//Convert date format
+	// $session_pickup_date = date("l, F, j", strtotime($session_pickup_date));
+	$session_pickup_date_calendar = date("l, F, j", strtotime($session_pickup_date));
 
-	if ( !isset($session_pickup_date)) {		
+	// global $day_of_week;		
+	list($day_of_week)=explode(',', $session_pickup_date_calendar); // Simplify to just the day of week
+
+	if ( !isset($session_pickup_date_calendar)) {		
 		static $conflict = true;
 	}
 
@@ -102,7 +106,7 @@ defined( 'ABSPATH' ) || exit;
 								}
 								$days_available = explode(", ",$days_available);
 								
-								if(isset($session_pickup_date) && !in_array($day_of_week, $days_available)){
+								if(isset($session_pickup_date_calendar) && !in_array($day_of_week, $days_available)){
 									$availability_status = "not-available";
 									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
 								}
