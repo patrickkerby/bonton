@@ -20,8 +20,8 @@
 //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
 //Cooler List
-  $cooler_list = '22,53,51,107';
-  $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries');
+  $cooler_list = '22,53,51,107,103';
+  $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries', 'gluten-free-baked-goods');
 
   $cooler_args = array(
     'status' => 'publish',
@@ -42,8 +42,8 @@
   $cooler_array = array_merge($cooler_array,$cooler_overrides);
 
 // Shelf List
-  $shelf_list = array( '91, 83, 52, 104, 13, 105, 103, 135, 94, 102, 106, 54, 10, 67, 285, 289' );
-  $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'gluten-free-baked-goods', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients');
+  $shelf_list = array( '91, 83, 52, 104, 13, 105, 135, 94, 102, 106, 54, 10, 67, 285, 289' );
+  $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients');
 
   $shelf_args = array(
     'status' => 'publish',
