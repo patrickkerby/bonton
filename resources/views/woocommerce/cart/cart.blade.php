@@ -128,6 +128,19 @@ defined( 'ABSPATH' ) || exit;
 									$long_fermentation = "yes";
 									$long_fermentation_in_cart = True;
 								}		
+
+								//Pickup Restriction!!
+
+								$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+								$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
+
+								if ($pickup_restriction_data) {
+									$pickup_restriction = $pickup_restriction_data;
+								}
+								
+								if ($pickup_restriction_end_data) {
+									$pickup_restriction_end = $pickup_restriction_end_data;
+								}
 							?>
 							
 							<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
@@ -343,7 +356,9 @@ defined( 'ABSPATH' ) || exit;
 			location.reload(); // uncomment this line to refresh the page.
 		});	
 		
-		var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>;   
+		var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>; 
+		var pickupRestriction = <?php echo(json_encode($pickup_restriction)); ?>;  
+		var pickupRestrictionEnd = <?php echo(json_encode($pickup_restriction_end)); ?>;  
 		
 		$(document).ready(function() {
 			
@@ -355,7 +370,22 @@ defined( 'ABSPATH' ) || exit;
       else {
         var time = 33;
 			}   
+
+			if(pickupRestriction == null){
+				var minDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) );
+				// minDate = '09/09/2020';
+			} 
+			else {
+				var minDate = pickupRestriction;
+			}
+
+			if(pickupRestrictionEnd == null){
+				var maxDate = '01/01/2030';
+			} else {
+				var maxDate = pickupRestrictionEnd;
+			}
 						
+
 			// var array = ["2020-06-30","2020-07-01"];
 			
 			$( function() {
@@ -366,7 +396,12 @@ defined( 'ABSPATH' ) || exit;
 							var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method																				
 							$(dateInput).val(dateAsString);
 					},
-					'minDate': new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
+					// 'minDate': new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
+
+					minDate: minDate,
+					maxDate: maxDate,
+					dateFormat: 'dd/mm/yy',
+
 					beforeShowDay: function(date) {
 						var day = date.getDay();
 						var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
