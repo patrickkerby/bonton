@@ -135,11 +135,17 @@ defined( 'ABSPATH' ) || exit;
 								$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
 
 								if ($pickup_restriction_data) {
-									$pickup_restriction = $pickup_restriction_data;
+									$pickup_restriction_check = true;
+								}
+								else {
+									$pickup_restriction_check = false;
 								}
 								
 								if ($pickup_restriction_end_data) {
-									$pickup_restriction_end = $pickup_restriction_end_data;
+									$pickup_restriction_end_check = true;
+								}
+								else {
+									$pickup_restriction_end_check = false;
 								}
 							?>
 							
@@ -356,10 +362,6 @@ defined( 'ABSPATH' ) || exit;
 			location.reload(); // uncomment this line to refresh the page.
 		});	
 		
-		var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>; 
-		var pickupRestriction = <?php echo(json_encode($pickup_restriction)); ?>;  
-		var pickupRestrictionEnd = <?php echo(json_encode($pickup_restriction_end)); ?>;  
-		
 		$(document).ready(function() {
 			
 			var presetDate = <?php echo(json_encode($session_pickup_date_numeric)); ?>;
@@ -369,13 +371,32 @@ defined( 'ABSPATH' ) || exit;
       }
       else {
         var time = 33;
-			}   
+			}
 
+			var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>; 	
+			var pickupRestrictionCheck = <?php echo(json_encode($pickup_restriction_check)); ?>;  		
+			var pickupRestrictionEndCheck = <?php echo(json_encode($pickup_restriction_end_check)); ?>;  		
+			var pickupRestriction = <?php echo(json_encode($pickup_restriction_data)); ?>;  
+			var pickupRestrictionEnd = <?php echo(json_encode($pickup_restriction_end_data)); ?>;  
+			// var standardFormulaMinDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) );
+
+		
+	// Products with restricted availability dates. If product with resctrictions exists, use their min and max dates. 
+	// If the minDate for the restricted product is set for a day earlier than our caluclated current day + lead time, then ignore the restricted minDate, and use our standard formula
+		// connvert date format for comparison's sake
+		var standardFormulaMinDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
+    		yr      = standardFormulaMinDate.getFullYear(),
+    		month 	= standardFormulaMinDate.getMonth() + 1,
+    		day    	= standardFormulaMinDate.getDate(),
+    		standardFormulaMinDate = day + '/' + month + '/' + yr;
+		
+			if(pickupRestriction < standardFormulaMinDate) {
+				var pickupRestriction = standardFormulaMinDate;
+			}
+			
 			if(pickupRestriction == null){
-				var minDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) );
-				// minDate = '09/09/2020';
-			} 
-			else {
+				var minDate = standardFormulaMinDate;
+			} else {
 				var minDate = pickupRestriction;
 			}
 
@@ -385,7 +406,6 @@ defined( 'ABSPATH' ) || exit;
 				var maxDate = pickupRestrictionEnd;
 			}
 						
-
 			// var array = ["2020-06-30","2020-07-01"];
 			
 			$( function() {
@@ -415,7 +435,7 @@ defined( 'ABSPATH' ) || exit;
 
 				if(presetDate){
 					$('#datepicker').datepicker('setDate', presetDate);
-				}
+				}				
 			});
 		});
 	});
