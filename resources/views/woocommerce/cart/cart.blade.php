@@ -26,27 +26,26 @@ defined( 'ABSPATH' ) || exit;
 		$pickupdate = $_POST['date'];
 		$pickuptimeslot = $_POST['timeslot'];
 
-		$session_pickup_date_calendar = date("l, F j, Y", strtotime($pickupdate));
+		//Format the date in a few different ways.
+		// 1 - We pass a php variable back to js in order to prepopulate the calendar with session data it needs dd-mm-yyyy
+		// 2 - We need a version in mm/dd/yy that will convert via PHP to a version spelled out to compare product availability ex: "Tuesday"
+		$date = str_replace('/', '-', $pickupdate);
+		$pickupdate_standard_format = date('d-m-Y', strtotime($date)); //formatted to go into the jquery datepicker as a preset date
+		$pickupdate_calendar = date('l, F j, Y', strtotime($date));
 
-		var_dump($pickupdate);
-		var_dump($session_pickup_date_calendar);
-
-		WC()->session->set('pickup_date', $session_pickup_date_calendar);
-		WC()->session->set('pickup_date_numeric', $pickupdate);
+		WC()->session->set('pickup_date', $pickupdate);
+		WC()->session->set('pickup_date_calendar', $pickupdate_calendar);
 		WC()->session->set('pickup_timeslot', $pickuptimeslot);
+		// WC()->session->set('pickup_preset', $pickupdate_standard_format);
 	}
 
 	$session_pickup_date = WC()->session->get('pickup_date');
-	$session_pickup_date_numeric = WC()->session->get('pickup_date_numeric');
+	$session_pickup_date_calendar = WC()->session->get('pickup_date_calendar');
+	// $session_pickup_date_preset = WC()->session->get('pickup_preset');
 	$session_timeslot = WC()->session->get('pickup_timeslot');
 
-
-	//Convert date format
-	// $session_pickup_date = date("l, F, j", strtotime($session_pickup_date));
-	// $session_pickup_date_calendar = date("l, F, j, Y", strtotime($session_pickup_date));
-
 	// global $day_of_week;		
-	list($day_of_week)=explode(',', $session_pickup_date); // Simplify to just the day of week
+	list($day_of_week)=explode(',', $session_pickup_date_calendar); // Simplify to just the day of week
 
 	if ( !isset($session_pickup_date)) {		
 		static $conflict = true;
@@ -114,21 +113,7 @@ defined( 'ABSPATH' ) || exit;
 								}
 								$days_available = explode(", ",$days_available);
 								
-								if(isset($session_pickup_date) && !in_array($day_of_week, $days_available)){
-									$availability_status = "not-available";
-									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
-								}
-								else {
-									$availability_msg = "";
-									$availability_status = "available";
-								}
-
-								//Check if requires long fermentation lead time
-								if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
-									$long_fermentation = "yes";
-									$long_fermentation_in_cart = True;
-								}		
-
+								
 								//Pickup Restriction!!
 
 								$pickup_restriction_data = get_field('restricted_pickup', $product_id);
@@ -147,6 +132,31 @@ defined( 'ABSPATH' ) || exit;
 								else {
 									$pickup_restriction_end_check = false;
 								}
+
+								// Prevent cart from proceeding with old session data selected. Force a new date selection according to restrictions
+								// Except if the previously chosen date is within the restricted range, then leave it as is.
+								if ($pickup_restriction_data) {
+									if ($session_pickup_date < $pickup_restriction_data || $session_pickup_date > $pickup_restriction_end_data){
+										static $conflict = true;
+									}
+								}
+
+								//Is the product available on the day selected? 
+								if(isset($session_pickup_date_calendar) && !in_array($day_of_week, $days_available)){
+									$availability_status = "not-available";
+									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
+								}
+								else {
+									$availability_msg = "";
+									$availability_status = "available";
+								}
+
+								//Check if requires long fermentation lead time
+								if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
+									$long_fermentation = "yes";
+									$long_fermentation_in_cart = True;
+								}		
+
 							?>
 							
 							<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
@@ -351,10 +361,8 @@ defined( 'ABSPATH' ) || exit;
 		</div>
 
 	</div>
-		
+	
 <script>
-	//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
-
 
 	jQuery(function($) {
 
@@ -364,7 +372,8 @@ defined( 'ABSPATH' ) || exit;
 		
 		$(document).ready(function() {
 			
-			var presetDate = <?php echo(json_encode($session_pickup_date_numeric)); ?>;
+		//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
+		var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>; 	
 
       if(longFermentation === true){
         var time = 57;
@@ -373,30 +382,25 @@ defined( 'ABSPATH' ) || exit;
         var time = 33;
 			}
 
-			var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>; 	
-			var pickupRestrictionCheck = <?php echo(json_encode($pickup_restriction_check)); ?>;  		
-			var pickupRestrictionEndCheck = <?php echo(json_encode($pickup_restriction_end_check)); ?>;  		
-			var pickupRestriction = <?php echo(json_encode($pickup_restriction_data)); ?>;  
-			var pickupRestrictionEnd = <?php echo(json_encode($pickup_restriction_end_data)); ?>;  
-			// var standardFormulaMinDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) );
+		var pickup_restriction_check = <?php echo(json_encode($pickup_restriction_check)); ?>;
+		var pickupRestriction = <?php echo(json_encode($pickup_restriction_data)); ?>;  
+		var pickupRestrictionEnd = <?php echo(json_encode($pickup_restriction_end_data)); ?>;  
+		
+		// Products with restricted availability dates. If product with resctrictions exists, use their min and max dates. 
+		// If the minDate for the restricted product is set for a day earlier than our caluclated current day + lead time, then ignore the restricted minDate, and use our standard formula
+		// convert date format for comparison's sake
+		var standardFormulaMinDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) );
 
-		
-	// Products with restricted availability dates. If product with resctrictions exists, use their min and max dates. 
-	// If the minDate for the restricted product is set for a day earlier than our caluclated current day + lead time, then ignore the restricted minDate, and use our standard formula
-		// connvert date format for comparison's sake
-		var standardFormulaMinDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
-    		yr      = standardFormulaMinDate.getFullYear(),
-    		month 	= standardFormulaMinDate.getMonth() + 1,
-    		day    	= standardFormulaMinDate.getDate(),
-    		standardFormulaMinDate = day + '/' + month + '/' + yr;
-		
-			if(pickupRestriction < standardFormulaMinDate) {
-				var pickupRestriction = standardFormulaMinDate;
-			}
-			
 			if(pickupRestriction == null){
 				var minDate = standardFormulaMinDate;
-			} else {
+			} 
+			else if(pickupRestriction < standardFormulaMinDate) {				
+				var minDate = standardFormulaMinDate;
+			} 
+			else if(pickupRestriction > standardFormulaMinDate) {
+				var minDate = pickupRestriction;
+			}
+			else {
 				var minDate = pickupRestriction;
 			}
 
@@ -405,7 +409,8 @@ defined( 'ABSPATH' ) || exit;
 			} else {
 				var maxDate = pickupRestrictionEnd;
 			}
-						
+
+			// The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
 			// var array = ["2020-06-30","2020-07-01"];
 			
 			$( function() {
@@ -416,7 +421,6 @@ defined( 'ABSPATH' ) || exit;
 							var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method																				
 							$(dateInput).val(dateAsString);
 					},
-					// 'minDate': new Date(((new Date).getTime() + time * 60 * 60 * 1000) ),
 
 					minDate: minDate,
 					maxDate: maxDate,
@@ -426,16 +430,31 @@ defined( 'ABSPATH' ) || exit;
 						var day = date.getDay();
 						var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
 						return [(day != 0 && day != 1), ''];
-					// 	// return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
+						// The following line should be enabled to make use of array on line 414
+						// return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
 					}		
 				}).find(".ui-state-active").removeClass("ui-state-active");
 				
-				// $( "#datepicker" ).datepicker( "option", "dateFormat", "DD, MM d, yy" );
+				// $( "#datepicker" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
 				// $( "#datepicker" ).datepicker( "option", "showButtonPanel", false );
 
+				var presetDate = <?php echo(json_encode($session_pickup_date)); ?>;
+
+				if(pickup_restriction_check == true) {
+					if(presetDate < minDate) {
+						var presetDate = null;
+					}
+					else if(presetDate > maxDate) {
+						var presetDate = null;
+					}
+					else {
+						var presetDate = <?php echo(json_encode($session_pickup_date)); ?>;
+					}
+				}
+			
 				if(presetDate){
 					$('#datepicker').datepicker('setDate', presetDate);
-				}				
+				}		
 			});
 		});
 	});
