@@ -64,6 +64,7 @@ defined( 'ABSPATH' ) || exit;
 					<?php esc_html_e( 'Total:', 'woocommerce' ); ?>
 					<strong><?php echo $order->get_formatted_order_total(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></strong>
 				</li>
+				
 
 				<?php if ( $order->get_payment_method_title() ) : ?>
 					<li class="woocommerce-order-overview__payment-method method">
@@ -74,7 +75,7 @@ defined( 'ABSPATH' ) || exit;
 
 				<li class="pickup">
 					<?php 
-						$pickup_date = WC()->session->get('pickup_date'); 
+						$pickup_date = WC()->session->get('pickup_date_calendar'); 
 						$pickup_timeslot 	= WC()->session->get('pickup_timeslot');
 					?>
 					Pickup date: <strong><?php echo $pickup_date; ?> - <?php echo $pickup_timeslot; ?></strong>

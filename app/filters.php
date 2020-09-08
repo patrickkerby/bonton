@@ -313,7 +313,7 @@ function zero_tax_items_based_on_invoice_choice( $cart ) {
  */
 add_action('woocommerce_checkout_update_order_meta', 'App\add_pickup_to_order');
 function add_pickup_to_order($order_id) {
-	$pickup_date 		= WC()->session->get('pickup_date');
+	$pickup_date 		= WC()->session->get('pickup_date_calendar');
 	$pickup_timeslot 	= WC()->session->get('pickup_timeslot');
 	$order = wc_get_order( $order_id );
 	$order->update_meta_data( 'pickup_date', $pickup_date );
