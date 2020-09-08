@@ -36,13 +36,14 @@ defined( 'ABSPATH' ) || exit;
 		WC()->session->set('pickup_date', $pickupdate);
 		WC()->session->set('pickup_date_calendar', $pickupdate_calendar);
 		WC()->session->set('pickup_timeslot', $pickuptimeslot);
-		// WC()->session->set('pickup_preset', $pickupdate_standard_format);
 	}
 
 	$session_pickup_date = WC()->session->get('pickup_date');
 	$session_pickup_date_calendar = WC()->session->get('pickup_date_calendar');
-	// $session_pickup_date_preset = WC()->session->get('pickup_preset');
 	$session_timeslot = WC()->session->get('pickup_timeslot');
+
+	$pickup_restriction_data = "";
+	$pickup_restriction_end_data = "";
 
 	// global $day_of_week;		
 	list($day_of_week)=explode(',', $session_pickup_date_calendar); // Simplify to just the day of week
@@ -116,29 +117,15 @@ defined( 'ABSPATH' ) || exit;
 								
 								//Pickup Restriction!!
 
-								$pickup_restriction_data = get_field('restricted_pickup', $product_id);
-								$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
+								$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
+								$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
 
-								if ($pickup_restriction_data) {
-									$pickup_restriction_check = true;
-								}
-								else {
-									$pickup_restriction_check = false;
-								}
-								
-								if ($pickup_restriction_end_data) {
-									$pickup_restriction_end_check = true;
-								}
-								else {
-									$pickup_restriction_end_check = false;
-								}
 
-								// Prevent cart from proceeding with old session data selected. Force a new date selection according to restrictions
-								// Except if the previously chosen date is within the restricted range, then leave it as is.
-								if ($pickup_restriction_data) {
-									if ($session_pickup_date < $pickup_restriction_data || $session_pickup_date > $pickup_restriction_end_data){
-										static $conflict = true;
-									}
+								if(isset($pickup_restriction_data_check)) {
+									$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+								}
+								if(isset($pickup_restriction_end_data_check)) {
+									$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
 								}
 
 								//Is the product available on the day selected? 
@@ -257,7 +244,36 @@ defined( 'ABSPATH' ) || exit;
 									@php static $conflict = true; @endphp
 								@endif
 
+								@php
+										
+								if ($pickup_restriction_data) {
+									$pickup_restriction_check = true;
+									$restricted_in_cart = true;									
+								}
+								else {
+									$pickup_restriction_check = false;
+									$restricted_in_cart = false;									
+								}
+								
+								if ($pickup_restriction_end_data) {
+									$pickup_restriction_end_check = true;
+								}
+								else {
+									$pickup_restriction_end_check = false;
+								}
+
+								// Prevent cart from proceeding with old session data selected. Force a new date selection according to restrictions
+								// Except if the previously chosen date is within the restricted range, then leave it as is.
+								if ($pickup_restriction_data) {
+									if ($session_pickup_date < $pickup_restriction_data || $session_pickup_date > $pickup_restriction_end_data){
+										static $conflict = true;							
+									}
+								}
+
+								@endphp
+
 								<?php
+								
 							}
 						}
 						?>
@@ -356,8 +372,13 @@ defined( 'ABSPATH' ) || exit;
 				@if ( $long_fermentation_in_cart == True)
 					<div class="lf_notice"> 
 						<strong>Why can't I choose tomorrow?</strong> <br>Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
-					</div>
+					</div><br>
 				@endif
+				@if ( $restricted_in_cart == True)
+				<div class="lf_notice"> 
+					<strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
+				</div>
+			@endif
 		</div>
 
 	</div>
@@ -385,6 +406,10 @@ defined( 'ABSPATH' ) || exit;
 		var pickup_restriction_check = <?php echo(json_encode($pickup_restriction_check)); ?>;
 		var pickupRestriction = <?php echo(json_encode($pickup_restriction_data)); ?>;  
 		var pickupRestrictionEnd = <?php echo(json_encode($pickup_restriction_end_data)); ?>;  
+
+		console.log(pickup_restriction_check);
+		console.log(pickupRestriction);
+		console.log(pickupRestrictionEnd);
 		
 		// Products with restricted availability dates. If product with resctrictions exists, use their min and max dates. 
 		// If the minDate for the restricted product is set for a day earlier than our caluclated current day + lead time, then ignore the restricted minDate, and use our standard formula
@@ -455,6 +480,11 @@ defined( 'ABSPATH' ) || exit;
 				if(presetDate){
 					$('#datepicker').datepicker('setDate', presetDate);
 				}		
+
+				console.log(presetDate);
+				console.log(minDate);
+				console.log(maxDate);
+
 			});
 		});
 	});
