@@ -48,7 +48,7 @@ defined( 'ABSPATH' ) || exit;
 	// global $day_of_week;		
 	list($day_of_week)=explode(',', $session_pickup_date_calendar); // Simplify to just the day of week
 
-	if ( !isset($session_pickup_date)) {		
+	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
 		static $conflict = true;
 	}
 
@@ -406,10 +406,6 @@ defined( 'ABSPATH' ) || exit;
 		var pickup_restriction_check = <?php echo(json_encode($pickup_restriction_check)); ?>;
 		var pickupRestriction = <?php echo(json_encode($pickup_restriction_data)); ?>;  
 		var pickupRestrictionEnd = <?php echo(json_encode($pickup_restriction_end_data)); ?>;  
-
-		console.log(pickup_restriction_check);
-		console.log(pickupRestriction);
-		console.log(pickupRestrictionEnd);
 		
 		// Products with restricted availability dates. If product with resctrictions exists, use their min and max dates. 
 		// If the minDate for the restricted product is set for a day earlier than our caluclated current day + lead time, then ignore the restricted minDate, and use our standard formula
