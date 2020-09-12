@@ -19,31 +19,31 @@
 //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
 //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
-//Cooler List
-  $cooler_list = '22,53,51,107,103';
-  $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries', 'gluten-free-baked-goods');
 
-// Shelf List
-  $shelf_list = array( '91, 83, 52, 104, 13, 105, 135, 94, 102, 106, 54, 10, 67, 285, 289' );
-  $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients');
-
-
-  //Product pages give an option to override the natural category and assign the product as cooler. Add to cooler array:
+//Product pages give an option to override the natural category and assign the product as cooler. Add to cooler array:
   $cooler_override_args = array(
     'status' => 'publish',
     'cooler' => '1',
     'return' => 'ids',
     'limit' => '-1'
   );
-  $cooler_overrides = wc_get_products( $cooler_override_args );
 
-  //Product pages give an option to override the natural category and assign the product as shelf. Add to shelf array:
-  $shelf_override_args = array(
+//Product pages give an option to override the natural category and assign the product as shelf. Add to shelf array:
+   $shelf_override_args = array(
     'status' => 'publish',
     'shelf' => '1',
     'return' => 'ids',
     'limit' => '-1'
   );
+
+//Cooler List
+  $cooler_list = '22,53,51,107,103';
+  $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries', 'gluten-free-baked-goods');
+
+  $shelf_list = array( '91, 83, 52, 104, 13, 105, 135, 94, 102, 106, 54, 10, 67, 285, 289' );
+  $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients');
+
+  $cooler_overrides = wc_get_products( $cooler_override_args );
   $shelf_overrides = wc_get_products( $shelf_override_args );
 
   $cooler_args = array(
@@ -53,8 +53,6 @@
     'return' => 'ids',
     'exclude' => $shelf_overrides
   );
-  $cooler_array = wc_get_products( $cooler_args );
-  $cooler_array = array_merge($cooler_array,$cooler_overrides);
 
   $shelf_args = array(
     'status' => 'publish',
@@ -63,6 +61,10 @@
     'return' => 'ids',
     'exclude' => $cooler_overrides
   );
+
+  $cooler_array = wc_get_products( $cooler_args );
+  $cooler_array = array_merge($cooler_array,$cooler_overrides);
+  
   $shelf_array = wc_get_products( $shelf_args );
   $shelf_array = array_merge($shelf_array,$shelf_overrides);
 
