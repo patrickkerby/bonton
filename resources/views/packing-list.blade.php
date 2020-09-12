@@ -19,8 +19,8 @@
 //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
 //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
-
 //Product pages give an option to override the natural category and assign the product as cooler. Add to cooler array:
+// ***IMPORTANT: for these to work, there is a custom filter in filters.php
   $cooler_override_args = array(
     'status' => 'publish',
     'cooler' => '1',
@@ -28,7 +28,6 @@
     'limit' => '-1'
   );
 
-//Product pages give an option to override the natural category and assign the product as shelf. Add to shelf array:
    $shelf_override_args = array(
     'status' => 'publish',
     'shelf' => '1',
@@ -37,7 +36,7 @@
   );
 
 //Cooler List
-  $cooler_list = '22,53,51,107,103';
+  $cooler_list = array( '22, 53, 51, 107, 103' );
   $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries', 'gluten-free-baked-goods');
 
   $shelf_list = array( '91, 83, 52, 104, 13, 105, 135, 94, 102, 106, 54, 10, 67, 285, 289' );
@@ -63,10 +62,12 @@
   );
 
   $cooler_array = wc_get_products( $cooler_args );
+
   $cooler_array = array_merge($cooler_array,$cooler_overrides);
-  
+
   $shelf_array = wc_get_products( $shelf_args );
   $shelf_array = array_merge($shelf_array,$shelf_overrides);
+
 
 // Create filtered list of orders based on the date selected on list page.
 // Also filter list based on whether Cooler or Shelf is selected on the list page.

@@ -46,11 +46,11 @@
   //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
   //Cooler List
-  $cooler_list = '22,53,51,107,103';
+  $cooler_list = array(  '22', '53', '51','107','103' );
     $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries', 'gluten-free-baked-goods');
 
   // Shelf List
-    $shelf_list = array( '91, 83, 52, 104, 13, 105, 135, 94, 102, 106, 54, 10, 67, 285, 289' );
+    $shelf_list = array( 91, 83, 52, 104, 13, 105, 135, 94, 102, 106, 54, 10, 67, 285, 289 );
     $shelf_list_slugs = array('buns-pretzels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients');
 
 
