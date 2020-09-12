@@ -64,8 +64,25 @@
         },
         {
             "key": "field_5f5165cc85dc7",
-            "label": "Restrict to specific Pickup Dates?",
-            "name": "pickup_restriction",
+            "label": "Restricted Pickup Dates (Start Date)",
+            "name": "restricted_pickup",
+            "type": "date_picker",
+            "instructions": "Select which date(s) this product is available to be picked up.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "display_format": "d\/m\/Y",
+            "return_format": "d\/m\/Y",
+            "first_day": 1
+        },
+        {
+            "key": "field_5f5d114bcae85",
+            "label": "Restricted Pickup Dates (End Date)",
+            "name": "restricted_pickup_end",
             "type": "date_picker",
             "instructions": "Select which date(s) this product is available to be picked up.",
             "required": 0,
@@ -97,5 +114,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1599879476
+    "modified": 1599935024
 }
