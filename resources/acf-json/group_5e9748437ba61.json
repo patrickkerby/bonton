@@ -44,11 +44,11 @@
             "ui_off_text": ""
         },
         {
-            "key": "field_5f5172c7bc0e8",
-            "label": "Restricted Pickup Dates (Start Date)",
-            "name": "restricted_pickup",
-            "type": "date_picker",
-            "instructions": "",
+            "key": "field_5f5c391b6562c",
+            "label": "Shelf Storage?",
+            "name": "shelf",
+            "type": "true_false",
+            "instructions": "Is this product stored for pickup in the shelf?",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -56,16 +56,18 @@
                 "class": "",
                 "id": ""
             },
-            "display_format": "d\/m\/Y",
-            "return_format": "d\/m\/Y",
-            "first_day": 1
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
         },
         {
-            "key": "field_5f5172f2bc0e9",
-            "label": "Restricted Pickup Dates (End Date)",
-            "name": "restricted_pickup_end",
+            "key": "field_5f5165cc85dc7",
+            "label": "Restrict to specific Pickup Dates?",
+            "name": "pickup_restriction",
             "type": "date_picker",
-            "instructions": "",
+            "instructions": "Select which date(s) this product is available to be picked up.",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
@@ -95,5 +97,5 @@
     "hide_on_screen": "",
     "active": true,
     "description": "",
-    "modified": 1599173397
+    "modified": 1599879476
 }
