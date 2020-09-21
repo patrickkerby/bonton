@@ -23,6 +23,7 @@ module.exports = {
   },
   'plugins': [
     'import',
+    'exclude-php-tags',
   ],
   'settings': {
     'import/core-modules': [],

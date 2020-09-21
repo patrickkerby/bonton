@@ -2,6 +2,8 @@ export default {
   init() {
     $.noConflict();
 
+
+
     $('.hamburger').click(function() {
       $(this).toggleClass('is-active');
       $('.navbar-collapse').toggleClass('is-active');

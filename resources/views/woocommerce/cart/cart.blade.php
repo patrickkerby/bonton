@@ -380,108 +380,34 @@ defined( 'ABSPATH' ) || exit;
 				</div>
 			@endif
 		</div>
-
 	</div>
-	
+	<div id="pickup-details" style="display: none;">
+		<div id="pickup_restriction_check">@php echo htmlspecialchars($pickup_restriction_check); @endphp</div>
+		<div id="pickup_restriction_data">@php echo htmlspecialchars($pickup_restriction_data); @endphp</div>
+		<div id="pickup_restriction_end_data">@php echo htmlspecialchars($pickup_restriction_end_data); @endphp</div>
+		<div id="session_pickup_date">@php echo htmlspecialchars($session_pickup_date); @endphp</div>
+		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
+	</div>
+
+
 <script>
+	// var pickup_restriction_check_target = document.getElementById("pickup_restriction_check");
+	// var pickup_restriction_check = pickup_restriction_check_target.textContent;
 
-	jQuery(function($) {
+	// var pickupRestrictionTarget = document.getElementById("pickup_restriction_data");
+	// var pickupRestriction = pickupRestrictionTarget.textContent;
 
-		$('body').on('updated_cart_totals',function() {
-			location.reload(); // uncomment this line to refresh the page.
-		});	
-		
-		$(document).ready(function() {
-			
-		//get variable from php. Do we need extra lead time due to long fermentation products in the cart?
-		var longFermentation = <?php echo(json_encode($long_fermentation_in_cart)); ?>; 	
+	// var pickupRestrictionEndTarget = document.getElementById("pickup_restriction_end_data");
+	// var pickupRestrictionEnd = pickupRestrictionEndTarget.textContent;
 
-      if(longFermentation === true){
-        var time = 57;
-      }
-      else {
-        var time = 33;
-			}
+	// var presetDateTarget = document.getElementById("session_pickup_date");
+	// var presetDate = presetDateTarget.textContent;
 
-		var pickup_restriction_check = <?php echo(json_encode($pickup_restriction_check)); ?>;
-		var pickupRestriction = <?php echo(json_encode($pickup_restriction_data)); ?>;  
-		var pickupRestrictionEnd = <?php echo(json_encode($pickup_restriction_end_data)); ?>;  
-		
-		// Products with restricted availability dates. If product with resctrictions exists, use their min and max dates. 
-		// If the minDate for the restricted product is set for a day earlier than our caluclated current day + lead time, then ignore the restricted minDate, and use our standard formula
-		// convert date format for comparison's sake
-		var standardFormulaMinDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) );
+	// var longFermentationTarget = document.getElementById("long_fermentation_in_cart");
+	// var longFermentation = longFermentationTarget.textContent;
 
-			if(pickupRestriction == null){
-				var minDate = standardFormulaMinDate;
-			} 
-			else if(pickupRestriction < standardFormulaMinDate) {				
-				var minDate = standardFormulaMinDate;
-			} 
-			else if(pickupRestriction > standardFormulaMinDate) {
-				var minDate = pickupRestriction;
-			}
-			else {
-				var minDate = pickupRestriction;
-			}
 
-			if(pickupRestrictionEnd == null){
-				var maxDate = '01/01/2030';
-			} else {
-				var maxDate = pickupRestrictionEnd;
-			}
-
-			// The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
-			// var array = ["2020-06-30","2020-07-01"];
-			
-			$( function() {
-				
-				$("#datepicker").datepicker({
-					onSelect: function(dateText, inst) { 
-							var dateAsString = dateText; //the first parameter of this function
-							var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method																				
-							$(dateInput).val(dateAsString);
-					},
-
-					minDate: minDate,
-					maxDate: maxDate,
-					dateFormat: 'dd/mm/yy',
-
-					beforeShowDay: function(date) {
-						var day = date.getDay();
-						var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-						return [(day != 0 && day != 1), ''];
-						// The following line should be enabled to make use of array on line 414
-						// return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
-					}		
-				}).find(".ui-state-active").removeClass("ui-state-active");
-				
-				// $( "#datepicker" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
-				// $( "#datepicker" ).datepicker( "option", "showButtonPanel", false );
-
-				var presetDate = <?php echo(json_encode($session_pickup_date)); ?>;
-
-				if(pickup_restriction_check == true) {
-					if(presetDate < minDate) {
-						var presetDate = null;
-					}
-					else if(presetDate > maxDate) {
-						var presetDate = null;
-					}
-					else {
-						var presetDate = <?php echo(json_encode($session_pickup_date)); ?>;
-					}
-				}
-			
-				if(presetDate){
-					$('#datepicker').datepicker('setDate', presetDate);
-				}		
-
-				console.log(presetDate);
-				console.log(minDate);
-				console.log(maxDate);
-
-			});
-		});
-	});
 </script>
+
+
+
