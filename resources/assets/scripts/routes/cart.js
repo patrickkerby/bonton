@@ -28,12 +28,12 @@ export default {
       var presetDate = presetDateTarget.textContent;
       var presetDateFormatted = dayjs(presetDate);
 
+      console.log(presetDateFormatted);
     }
 
     var longFermentationTarget = document.getElementById('long_fermentation_in_cart');
     var longFermentation = longFermentationTarget.textContent;
     
-
     jQuery(function($) {
 
       $('body').on('updated_cart_totals',function() {
@@ -108,10 +108,9 @@ export default {
             },		
           }).find('.ui-state-active').removeClass('ui-state-active');
           
+          // the following two lines are legacy. not sure that they'll be needed again.
           // $( "#datepicker" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
           // $( "#datepicker" ).datepicker( "option", "showButtonPanel", false );
-  
-          // console.log('Preset Date (straight from php): ' + presetDate);
           
           if(pickup_restriction_check == true && presetDate != null) {
             const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');
@@ -120,26 +119,13 @@ export default {
               presetDate = null;
             }
             else {
-              // presetDate = '<?php echo(json_encode($session_pickup_date)); ?>;'
+              //
             }
           }
         
           if(presetDate != null && presetDate != '' ){
             $('#datepicker').datepicker('setDate', presetDate);
           }		
-  
-          console.log('Min Date: ' + minDate);
-          console.log('Min Date dayjs: ' + minDateFormatted);
-          console.log('dayjs minDate formatted: ' + minDateFormatted.format());
-
-          // console.log('Max Date: ' + maxDate);
-      
-          // console.log('dayjs minDate: ' + minDateFormatted.format());
-          // console.log('dayjs maxDate: ' + maxDateFormatted.format());
-          console.log('dayjs preset: ' + presetDateFormatted.format());
-          console.log('dayjs preset: ' + presetDateFormatted);
-          console.log('dayjs preset: ' + presetDate);
-  
 
         });
       });
