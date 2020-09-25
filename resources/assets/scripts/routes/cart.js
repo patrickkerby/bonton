@@ -34,6 +34,8 @@ export default {
     var longFermentationTarget = document.getElementById('long_fermentation_in_cart');
     var longFermentation = longFermentationTarget.textContent;
     
+    console.log(longFermentation);
+
     jQuery(function($) {
 
       $('body').on('updated_cart_totals',function() {
@@ -44,13 +46,14 @@ export default {
 
         //get variable from php. Do we need extra lead time due to long fermentation products in the cart?
   
-          if(longFermentation === true){
+          if(longFermentation == 1){
             var time = 57;
           }
           else {
             time = 33;
           }        
         
+          console.log('time variable = ' + time);
         // Products with restricted availability dates. If product with resctrictions exists, use their min and max dates. 
         // If the minDate for the restricted product is set for a day earlier than our caluclated current day + lead time, then ignore the restricted minDate, and use our standard formula
         // convert date format for comparison's sake
