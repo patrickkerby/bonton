@@ -17,7 +17,7 @@ export default {
   
     var pickupRestrictionTarget = document.getElementById('pickup_restriction_data');
     var pickupRestriction = pickupRestrictionTarget.textContent;
-    var pickupRestrictionFormatted = dayjs(pickupRestriction);
+    var pickupRestrictionFormatted = dayjs(pickupRestriction, 'DD/MM/YYYY');
 
     var pickupRestrictionEndTarget = document.getElementById('pickup_restriction_end_data');
     var pickupRestrictionEnd = pickupRestrictionEndTarget.textContent;
@@ -60,16 +60,24 @@ export default {
         if(pickupRestriction == null || pickupRestriction == ''){
           var minDate = standardFormulaMinDate;
         } 
-        
+
+        console.log('standardFormulaMinDateFormatted: ' + standardFormulaMinDateFormatted);
+        console.log('pickuprestrictionformatted: ' + pickupRestrictionFormatted);
+
         if(pickup_restriction_check == true) {
           if(pickupRestrictionFormatted.isBefore(standardFormulaMinDateFormatted)) {				
             minDate = standardFormulaMinDate;
+            console.log('current PRODUCT');
+
           } 
           else if(pickupRestrictionFormatted.isAfter(standardFormulaMinDateFormatted)) {
             minDate = pickupRestriction;
+            console.log('FUTURE PRODUCT');
           }
           else {
             minDate = pickupRestriction;
+            console.log('Regular PRODUCT');
+
           }
 
           if(pickupRestrictionEnd == null){
@@ -81,6 +89,8 @@ export default {
 
         const minDateFormatted = dayjs(minDate, 'DD/MM/YYYY');
         const maxDateFormatted = dayjs(maxDate, 'DD/MM/YYYY');
+
+        console.log(pickupRestriction);
 
         // The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
         // var array = ["2020-06-30","2020-07-01"];
