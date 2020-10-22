@@ -75,3 +75,34 @@ function save_general_details( $ord_id ){
 	update_post_meta( $ord_id, 'pickup_timeslot', wc_clean( $_POST[ 'pickup_timeslot' ] ) );
 	// wc_clean() and wc_sanitize_textarea() are WooCommerce sanitization functions
 }
+
+
+/**
+ * @snippet       Add Column to Orders Table (e.g. Billing Country) - WooCommerce
+ * @how-to        Get CustomizeWoo.com FREE
+ * @sourcecode    https://businessbloomer.com/?p=78723
+ * @author        Rodolfo Melogli
+ * @compatible    WooCommerce 3.4.5
+ */
+ 
+add_filter( 'manage_edit-shop_order_columns', 'App\bbloomer_add_new_order_admin_list_column' );
+ 
+function bbloomer_add_new_order_admin_list_column( $columns ) {
+    $columns['pickup_date'] = 'Pickup Date';
+    return $columns;
+}
+ 
+add_action( 'manage_shop_order_posts_custom_column', 'App\bbloomer_add_new_order_admin_list_column_content' );
+ 
+function bbloomer_add_new_order_admin_list_column_content( $column ) {
+   
+    global $post;
+ 
+    if ( 'pickup_date' === $column ) {
+ 
+				$order = wc_get_order( $post->ID );
+				$date = get_post_meta( $order->get_id(), 'pickup_date', true );
+        echo $date;
+      
+    }
+}
