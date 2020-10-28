@@ -5,9 +5,9 @@
     @php do_action('get_header') @endphp
     @include('partials.header')
 
-    <div class="wrap container-fluid" role="document">
+    <div class="container-fluid" role="document">
       @if (App\display_sidebar())
-        <main class="main row justify-content-center">
+        <main class="wrap main row justify-content-center">
           <button class="navbar-toggler mobile-filter collapsed" type="button" data-toggle="collapse" data-target="#mobileFilter" aria-controls="mobile-filter" aria-expanded="false" aria-label="Toggle navigation">Filter Products</button>
           <div id="mobileFilter" class="sidebar sidebar-mobile collapse">
             <button class="navbar-toggler mobile-filter" type="button" data-toggle="collapse" data-target="#mobileFilter" aria-controls="mobile-filter" aria-expanded="false" aria-label="Toggle navigation">Close</button>

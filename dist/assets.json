@@ -15,6 +15,7 @@
   "images/curbside.svg": "images/curbside_1155a85f.svg",
   "images/envelope.svg": "images/envelope_d76574fb.svg",
   "images/facebook-f-brands.svg": "images/facebook-f-brands_53757d93.svg",
+  "images/gifts-solid.svg": "images/gifts-solid_6b6fe044.svg",
   "images/instagram-brands.svg": "images/instagram-brands_e75317fa.svg",
   "images/instore.svg": "images/instore_a01b3c4c.svg",
   "images/map.svg": "images/map_4ea4c2d3.svg",
@@ -31,12 +32,12 @@
   "vendor/ui-icons_777777_256x240.png": "vendor/ui-icons_777777_256x240_6d28e77d.png",
   "vendor/ui-icons_cc0000_256x240.png": "vendor/ui-icons_cc0000_256x240_bd6996f9.png",
   "vendor/ui-icons_ffffff_256x240.png": "vendor/ui-icons_ffffff_256x240_e33c878c.png",
-  "scripts/customizer.js": "scripts/customizer_61829d80.js",
-  "styles/home.css": "styles/home_61829d80.css",
-  "scripts/home.js": "scripts/home_61829d80.js",
-  "scripts/lists.js": "scripts/lists_61829d80.js",
-  "styles/main.css": "styles/main_61829d80.css",
-  "scripts/main.js": "scripts/main_61829d80.js",
-  "styles/woo.css": "styles/woo_61829d80.css",
-  "scripts/woo.js": "scripts/woo_61829d80.js"
+  "scripts/customizer.js": "scripts/customizer_f7437faa.js",
+  "styles/home.css": "styles/home_f7437faa.css",
+  "scripts/home.js": "scripts/home_f7437faa.js",
+  "scripts/lists.js": "scripts/lists_f7437faa.js",
+  "styles/main.css": "styles/main_f7437faa.css",
+  "scripts/main.js": "scripts/main_f7437faa.js",
+  "styles/woo.css": "styles/woo_f7437faa.css",
+  "scripts/woo.js": "scripts/woo_f7437faa.js"
 }

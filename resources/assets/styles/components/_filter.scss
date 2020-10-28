@@ -1,5 +1,38 @@
 /* stylelint-disable no-descending-specificity */
 .woocommerce {
+  // Featured Collections: widget is a text widget, with custom html.
+  .collection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    background: $highlight;
+    color: #fff;
+    font-weight: 800;
+    text-align: center;
+    width: 100%;
+    padding: 1rem;
+
+    span {
+      display: flex;
+      width: 2rem;
+      height: 2rem;
+      margin-right: 0.3rem;
+      background: url("../images/gifts-solid.svg") left center no-repeat;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: calc(100% - 8px);
+      height: calc(100% - 8px);
+      margin: 4px;
+      border: dotted 2px #fff;
+    }
+  }
+
   // Sidebar Filter
   .wpf_submenu li {
     position: relative;
