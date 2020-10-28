@@ -96,7 +96,7 @@ export default {
         console.log(pickupRestriction);
 
         // The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
-        // var array = ["2020-06-30","2020-07-01"];
+        var vacationDays = ['2020-11-10','2020-11-11'];
 
         $( function() {
           
@@ -114,10 +114,10 @@ export default {
   
             beforeShowDay: function(date) {
               var day = date.getDay();
-              // var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-              return [(day != 0 && day != 1), ''];
+              // return [(day != 0 && day != 1), ''];
               // The following line should be enabled to make use of array on line 414
-              // return [(day != 0 && day != 1 && array.indexOf(string) == -1), ''];
+              var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+              return [(day != 0 && day != 1 && vacationDays.indexOf(string) == -1), ''];
             },		
           }).find('.ui-state-active').removeClass('ui-state-active');
           
