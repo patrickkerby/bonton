@@ -17,10 +17,15 @@
 
 defined( 'ABSPATH' ) || exit;
 
-	$post_id = get_the_ID();
+	$post_id = get_the_ID();	
 	do_action( 'woocommerce_before_cart' ); 
 	$long_fermentation = "";
-	$long_fermentation_in_cart ="";
+	$long_fermentation_in_cart = "";
+	$giftcertificate_only_item_in_cart = false;
+	$cart_count = 0;
+	$gc_cart_count = 0;
+	$conflict = false;
+
 
 	if ( isset($_POST['date']))  { // Save post data to session. Only use session data from here on in.
 		$pickupdate = $_POST['date'];
@@ -49,7 +54,7 @@ defined( 'ABSPATH' ) || exit;
 	list($day_of_week)=explode(',', $session_pickup_date_calendar); // Simplify to just the day of week
 
 	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
-		static $conflict = true;
+		$conflict = true;
 	}
 
 	$morning_selected = "";
@@ -69,7 +74,6 @@ defined( 'ABSPATH' ) || exit;
 	}
 
 @endphp
-
 
 	<div class="row justify-content-center">	
 		<div class="col-md-8">
@@ -91,6 +95,8 @@ defined( 'ABSPATH' ) || exit;
 						<?php
 						foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 							$long_fermentation = "";
+							$giftcertificate_in_cart = false;
+							$cart_count++;
 
 							$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 							$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
@@ -114,12 +120,10 @@ defined( 'ABSPATH' ) || exit;
 								}
 								$days_available = explode(", ",$days_available);
 								
-								
 								//Pickup Restriction!!
 
 								$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
 								$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
-
 
 								if(isset($pickup_restriction_data_check)) {
 									$pickup_restriction_data = get_field('restricted_pickup', $product_id);
@@ -142,10 +146,15 @@ defined( 'ABSPATH' ) || exit;
 								if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
 									$long_fermentation = "yes";
 									$long_fermentation_in_cart = True;
-								}		
+								}
+
+								//Check if product is gift certificate
+								if ( $product_id == 5317) {
+									$giftcertificate_in_cart = true;
+									$gc_cart_count++;
+								}
 
 							?>
-							
 							<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
 								<td class="product-remove">
 									<?php
@@ -241,7 +250,6 @@ defined( 'ABSPATH' ) || exit;
 									<tr class="not-available">
 										<td colspan="5">{!! $availability_msg !!}</td>
 									</tr>
-									@php static $conflict = true; @endphp
 								@endif
 
 								@php
@@ -266,17 +274,25 @@ defined( 'ABSPATH' ) || exit;
 								// Except if the previously chosen date is within the restricted range, then leave it as is.
 								if ($pickup_restriction_data) {
 									if ($session_pickup_date < $pickup_restriction_data || $session_pickup_date > $pickup_restriction_end_data){
-										static $conflict = true;							
+										$conflict = true;							
 									}
-								}
-
-								@endphp
-
-								<?php
-								
+								}	
 							}
 						}
-						?>
+						
+							// Conflict check for number of items in the cart. this is needed incase someone puts multiple GC products into the cart.								
+							$cart_count = $cart_count - $gc_cart_count;
+
+							if ( $giftcertificate_in_cart && $cart_count < 1) {
+								$giftcertificate_only_item_in_cart = true;
+								$conflict = false;
+							}
+
+							if ($availability_msg) {
+									$conflict = true;
+							}
+							
+						@endphp
 
 						<?php do_action( 'woocommerce_cart_contents' ); ?>
 
@@ -305,7 +321,7 @@ defined( 'ABSPATH' ) || exit;
 			</form>
 			<?php do_action( 'woocommerce_before_cart_collaterals' ); ?>
 
-				<div class="cart-collaterals @isset($conflict) conflict @endisset col-sm-12">
+				<div class="cart-collaterals @if($conflict === true) conflict @endif col-sm-12">
 					<?php
 						/**
 						* Cart collaterals hook.
@@ -319,67 +335,70 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php do_action( 'woocommerce_after_cart' ); ?>
 		</div>
-		<div class='col-md-4 order-first'>
-			<form method="post" class="acf-form">
-				<div class="">
-					<div class="acf-field acf-field-date-picker">
-						<div class="acf-label">
-							<label for="date">Confirm your pickup date:</label>
-						</div>
-						<div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
-							<div class="datepicker" id="datepicker">
-								{{-- <input type='text' name="date" id="datepicker" value="{{ $session_pickup_date }}" autocomplete="off" /> --}}
-								<input type='hidden' name="date" id="dateInput" value="{{ $session_pickup_date }}" />
-							</div>
-							
-							<span class="input-group-addon">
-									<span class="glyphicon glyphicon-calendar"></span>
-							</span>
-						</div>
-					</div>
-					<div class="acf-field acf-field-radio" data-name="timeslot" data-type="radio">
-						<div class="acf-label">
-							<label>Timeslot</label>
-						</div>
-						<div class="acf-input">      
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="timeslot" id="morning" value="morning" {{ $morning_selected }}>
-								<label class="form-check-label" for="morning">
-									9am - 11am
-								</label>
-							</div>
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="timeslot" id="midday" value="midday" {{ $midday_selected }}>
-								<label class="form-check-label" for="midday">
-									11am - 2pm
-								</label>
-							</div>
-							<div class="form-check">
-								<input class="form-check-input" type="radio" name="timeslot" id="afternoon" value="afternoon" {{ $afternoon_selected }}>
-								<label class="form-check-label" for="afternoon">
-									2pm - 5pm
-								</label>
-							</div>
-						</div>
-					</div>
+		@unless($giftcertificate_only_item_in_cart == true)
 
-					<div class="acf-form-submit">
-						<input type="submit" class="acf-button button button-primary button-large" value="Confirm date to continue">
-						<span class="acf-spinner"></span>
+			<div class='col-md-4 order-first'>
+				<form method="post" class="acf-form">
+					<div class="">
+						<div class="acf-field acf-field-date-picker">
+							<div class="acf-label">
+								<label for="date">Confirm your pickup date:</label>
+							</div>
+							<div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
+								<div class="datepicker" id="datepicker">
+									{{-- <input type='text' name="date" id="datepicker" value="{{ $session_pickup_date }}" autocomplete="off" /> --}}
+									<input type='hidden' name="date" id="dateInput" value="{{ $session_pickup_date }}" />
+								</div>
+								
+								<span class="input-group-addon">
+										<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+						<div class="acf-field acf-field-radio" data-name="timeslot" data-type="radio">
+							<div class="acf-label">
+								<label>Timeslot</label>
+							</div>
+							<div class="acf-input">      
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="timeslot" id="morning" value="morning" {{ $morning_selected }}>
+									<label class="form-check-label" for="morning">
+										9am - 11am
+									</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="timeslot" id="midday" value="midday" {{ $midday_selected }}>
+									<label class="form-check-label" for="midday">
+										11am - 2pm
+									</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="timeslot" id="afternoon" value="afternoon" {{ $afternoon_selected }}>
+									<label class="form-check-label" for="afternoon">
+										2pm - 5pm
+									</label>
+								</div>
+							</div>
+						</div>
+
+						<div class="acf-form-submit">
+							<input type="submit" class="acf-button button button-primary button-large" value="Confirm date to continue">
+							<span class="acf-spinner"></span>
+						</div>
 					</div>
-				</div>
-			</form>
-				@if ( $long_fermentation_in_cart == True)
+				</form>
+					@if ( $long_fermentation_in_cart == True)
+						<div class="lf_notice"> 
+							<strong>Why can't I choose tomorrow?</strong> <br>Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
+						</div><br>
+					@endif
+					@if ( $restricted_in_cart == True)
 					<div class="lf_notice"> 
-						<strong>Why can't I choose tomorrow?</strong> <br>Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
-					</div><br>
+						<strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
+					</div>
 				@endif
-				@if ( $restricted_in_cart == True)
-				<div class="lf_notice"> 
-					<strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
-				</div>
-			@endif
-		</div>
+			</div>
+		@endunless
 	</div>
 	<div id="pickup-details" style="display: none;">
 		<div id="pickup_restriction_check">@php echo htmlspecialchars($pickup_restriction_check); @endphp</div>
@@ -388,7 +407,6 @@ defined( 'ABSPATH' ) || exit;
 		<div id="session_pickup_date">@php echo htmlspecialchars($session_pickup_date); @endphp</div>
 		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
 	</div>
-
 
 <script>
 	// var pickup_restriction_check_target = document.getElementById("pickup_restriction_check");
@@ -405,9 +423,4 @@ defined( 'ABSPATH' ) || exit;
 
 	// var longFermentationTarget = document.getElementById("long_fermentation_in_cart");
 	// var longFermentation = longFermentationTarget.textContent;
-
-
 </script>
-
-
-
