@@ -246,7 +246,7 @@ font-display:auto;font-style:normal;font-weight:500;
 							<?php } ?>
 
 							<p style="font-size: 12px; width: 250px; line-height: 15px; margin-top: 20px; padding-top: 20px;">
-								<br><br>This email address must be used in the billing address when checking out. 
+								<br><br>This Gift Certificate is valid for online use only. Visit www.bonton.ca to redeem.
 							</p>
 							</a>
 						</div>
