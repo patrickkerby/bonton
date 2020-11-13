@@ -55,15 +55,17 @@
       $prod_quantity = $item->get_quantity();
 
       $variation_id = $item->get_variation_id(); 
-
       
       // $product_raw = get_product($prod_id);
       $product = $item->get_product();
       $prod_name = $item->get_name();
 
-      $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
-
+      // $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
+          
       $categories = wc_get_product_category_list($prod_id);
+
+      $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
+      $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
 
       $option = $product->get_attribute( 'variety' );
       $package_size = $product->get_attribute( 'package-size' );
@@ -74,20 +76,20 @@
 
       if (!empty($variation_id)) {  
         if (!empty($option) && !empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories); 
+          $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
         }
         elseif (!empty($option) && empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories); 
+          $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
         }
         elseif (!empty($product_size) && empty($option)) {
-          $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories); 
+          $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
         }
         else {
-          $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories); 
+          $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
         }
       }
       else {
-        $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories); 
+        $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
       }
     }
   }
@@ -107,7 +109,8 @@
       $aSortedArray[] = array(
         'name' => $aArray['name'], 
         'total_quantity' => $aArray['total_quantity'],
-        'category' => $aArray['category']
+        'category' => $aArray['category'],
+        'category_parent' => $aArray['category_parent'],
         );
     }
   }
@@ -131,11 +134,17 @@
             @php 
               $name = $item['name'];
               $category = $item['category'];
+              $category_parent = $item['category_parent'];
               $total_quantity = $item['total_quantity'];
             @endphp
             <tr>
               <td>{{ $name }}</td>
-              <td>{!! $category !!}</td>
+              <td>
+                @if ($category_parent == 94)
+                  <a href="#">Grocery, </a>
+                @endif
+                {!! $category !!}
+              </td>
               <td>{{ $total_quantity }}</td>
             </tr>
           @endforeach
