@@ -140,7 +140,8 @@
             <tr>
               <td>{{ $name }}</td>
               <td>
-                @if ($category_parent == 94)
+                @if (strpos($category_parent, '94') !== false)
+
                   <a href="#">Grocery, </a>
                 @endif
                 {!! $category !!}
