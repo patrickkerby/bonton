@@ -34,7 +34,7 @@ section.comments {
 }
 
 .comment-content {
-  padding: 1.5rem;
+  padding: 1.5rem 1.5rem 0.5rem 1.5rem;
 }
 
 .comment-metadata {
@@ -49,4 +49,12 @@ li.comment {
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: solid #eee 2px;
+}
+
+a.comment-reply-link {
+  font-size: 14px;
+  text-transform: uppercase;
+  font-weight: 799;
+  padding: 0.125rem 0.5rem;
+  border: solid 2px $highlight;
 }
