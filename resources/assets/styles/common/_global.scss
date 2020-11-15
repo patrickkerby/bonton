@@ -35,7 +35,32 @@ a {
   border-radius: none;
 }
 
-.btn {
+.form-submit input[type=submit] {
+  border: solid 3px $highlight;
+  background: none;
+  font-size: 18px;
+  font-weight: 500;
+  border-radius: 0;
+  color: $highlight;
+  display: inline;
+  padding: 0.35rem 1rem 0.5rem 1rem;
+
+  @include slowfade;
+
+  &:hover {
+    color: #fff;
+    background: $highlight;
+
+    @include slowfade;
+  }
+}
+
+.btn,
+#respond input[type=submit],
+#respond .form-submit input,
+#respond .form-submit input#comment-submit,
+#respond .comment-form-fields input[type=submit],
+#commentform #submit {
   border: solid 3px $highlight;
   background: none;
   font-size: 18px;
