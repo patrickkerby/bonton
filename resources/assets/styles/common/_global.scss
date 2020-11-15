@@ -326,3 +326,18 @@ p.demo_store,
     z-index: 2;
   }
 }
+
+.landing-topbar {
+  padding: 1rem;
+}
+
+.arrow-left {
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-right: 6px solid $highlight;
+  margin-right: 0.75rem;
+  display: inline-block;
+  margin-bottom: -1px;
+}

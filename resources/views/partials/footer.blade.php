@@ -1,5 +1,6 @@
 <footer class="container-fluid">
-  <div class="row">
+  <div class="row justify-content-center">
+  @if ($landing_page == FALSE)
     <div class="col-sm-6 col-md-4 order-first">
       <div class="hours">
         <ul>
@@ -11,6 +12,7 @@
       <span class="phone">{{ $acf_options->phone }}</span>
       <address>{{ $acf_options->address }}</address>
     </div>
+    
     <div class="col-md-4 order-last order-md-2">
       <img src="@asset('images/bonton-logo-no-border.svg')" />
     </div>
@@ -21,6 +23,8 @@
         @endif
       </nav>
     </div>
+  @endif
+
   </div>
 </footer>
 <div class="copyright">
