@@ -3,11 +3,11 @@
   @include('partials.head')
   <body @php body_class() @endphp>
     @php do_action('get_header') @endphp
-    @if($landing_page)
+    @isset($landing_page)
       @include('partials.header-landing')
     @else
-      {{-- @include('partials.header') --}}
-    @endif
+      @include('partials.header')
+    @endisset
 
     <div class="wrap container" role="document">
       <main class="main row justify-content-center">

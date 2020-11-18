@@ -1,4 +1,4 @@
-@php
+<?php
 /**
  * The template for displaying product widget entries.
  *
@@ -25,7 +25,7 @@ if ( ! is_a( $product, 'WC_Product' ) ) {
 }
 $image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $item->get_product_id() ), 'single-post-thumbnail' );
 
-@endphp
+?>
 
 <li>
 	<?php do_action( 'woocommerce_widget_product_item_start', $args ); ?>
@@ -38,7 +38,7 @@ $image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $item->get_prod
 		<?php echo wc_get_rating_html( $product->get_average_rating() ); // PHPCS:Ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php endif; ?>
 
-	<!-- < ?php echo $product->get_price_html(); // PHPCS:Ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> -->
+	<?php echo $product->get_price_html(); // PHPCS:Ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 
 	<?php do_action( 'woocommerce_widget_product_item_end', $args ); ?>
 </li>

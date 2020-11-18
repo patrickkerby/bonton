@@ -22,7 +22,7 @@
                           echo wp_get_attachment_image( $image, $size );
                       }
                     @endphp --}}
-                      <img src="{{ $item['image']['sizes']['large'] }}" />
+                      <img src="{{ $item['image']['sizes']['full'] }}" />
                   </div>    
                 @endforeach
               </div>

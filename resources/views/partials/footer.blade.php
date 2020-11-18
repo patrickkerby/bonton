@@ -1,6 +1,6 @@
 <footer class="container-fluid">
   <div class="row justify-content-center">
-  @if ($landing_page == FALSE)
+  @unless (isset($landing_page))
     <div class="col-sm-6 col-md-4 order-first">
       <div class="hours">
         <ul>
@@ -23,7 +23,7 @@
         @endif
       </nav>
     </div>
-  @endif
+  @endunless
 
   </div>
 </footer>

@@ -4,11 +4,11 @@
   <body @php body_class() @endphp>
   @php if ( function_exists( 'gtm4wp_the_gtm_tag' ) ) { gtm4wp_the_gtm_tag(); } @endphp
     @php do_action('get_header') @endphp
-      @if($landing_page)
+      @isset($landing_page)
         @include('partials.header-landing')
       @else
         @include('partials.header')
-      @endif
+      @endisset
 
     <div class="wrap {{ $container }}" role="document">
       <div class="content">
