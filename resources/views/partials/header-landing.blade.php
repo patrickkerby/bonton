@@ -20,7 +20,6 @@ $sub_title = get_field('sub_title');
   <a href="https://bonton.ca"><span class="arrow-left"></span>www.bonton.ca</a>
 </div>
 
-@isset($use_custom_header)
 
 <div class="hero-slider row full-width no-gutters">
   <div class="col-sm-8">
@@ -55,5 +54,4 @@ $sub_title = get_field('sub_title');
   </div>
 </div>
 
-@endisset
 
