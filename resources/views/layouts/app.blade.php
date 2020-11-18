@@ -4,7 +4,7 @@
   <body @php body_class() @endphp>
   @php if ( function_exists( 'gtm4wp_the_gtm_tag' ) ) { gtm4wp_the_gtm_tag(); } @endphp
     @php do_action('get_header') @endphp
-      @if(isset($landing_page))
+      @if($landing_page)
         @include('partials.header-landing')
       @else
         @include('partials.header')
