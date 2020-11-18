@@ -2,7 +2,7 @@
 <div class="landing-topbar">
   <a href="https://bonton.ca"><span class="arrow-left"></span>www.bonton.ca</a>
 </div>
-
+@code
     <div class="landing">
       <div class="hero-slider row full-width no-gutters">
         <div class="col-sm-8">
