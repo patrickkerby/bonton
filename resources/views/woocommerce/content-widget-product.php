@@ -38,7 +38,7 @@ $image_url = wp_get_attachment_image_src( get_post_thumbnail_id( $item->get_prod
 		<?php echo wc_get_rating_html( $product->get_average_rating() ); // PHPCS:Ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php endif; ?>
 
-	<?php echo $product->get_price_html(); // PHPCS:Ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+	<!-- < ?php echo $product->get_price_html(); // PHPCS:Ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?> -->
 
 	<?php do_action( 'woocommerce_widget_product_item_end', $args ); ?>
 </li>
