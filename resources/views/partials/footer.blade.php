@@ -1,6 +1,6 @@
 <footer class="container-fluid">
   <div class="row justify-content-center">
-  @unless (isset($landing_page))
+  @if ( ! isset($landing_page))
     <div class="col-sm-6 col-md-4 order-first">
       <div class="hours">
         <ul>
