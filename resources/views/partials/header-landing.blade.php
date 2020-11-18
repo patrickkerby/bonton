@@ -2,7 +2,6 @@
 <div class="landing-topbar">
   <a href="https://bonton.ca"><span class="arrow-left"></span>www.bonton.ca</a>
 </div>
-@code
     <div class="landing">
       <div class="hero-slider row full-width no-gutters">
         <div class="col-sm-8">
@@ -16,14 +15,14 @@
              <div class="carousel-inner">
                 @foreach ($background_image as $item)
                   <div class="carousel-item @if ($loop->first)active @endif">
-                    @php
+                    {{-- @php
                       $image = $item->image->ID;
                       $size = 'large'; // (thumbnail, medium, large, full or custom size)
                       if( $image ) {
                           echo wp_get_attachment_image( $image, $size );
                       }
-                    @endphp
-                      {{ $item['image']['sizes']['large'] }}
+                    @endphp --}}
+                      <img src="{{ $item['image']['sizes']['large'] }}" />
                   </div>    
                 @endforeach
               </div>
