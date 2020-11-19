@@ -775,6 +775,10 @@ body.is-active {
     .carousel-item {
       height: 100%;
     }
+
+    .carousel-indicators {
+      display: none !important;
+    }
   }
 
   .page-header {
