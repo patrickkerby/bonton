@@ -35,4 +35,24 @@ if (post_password_required()) {
   @endif
 
   @php comment_form() @endphp
+
+  <p><a href="#" data-toggle="modal" data-target="#message">Click here to send a private message</a></p>
 </section>
+
+<!-- Modal -->
+<div class="modal fade" id="message" tabindex="-1" role="dialog" aria-labelledby="message" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle">Submit a Private Message</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{-- @php gravity_form( 1, false, false, false, '', true, 12 ); @endphp --}}
+        @php echo do_shortcode('[gravityform id=1 title=false description=false]'); @endphp
+      </div>
+    </div>
+  </div>
+</div>
