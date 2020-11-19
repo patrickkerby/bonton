@@ -23,7 +23,7 @@
                       }
                     @endphp --}}
                       <img src="{{ $item['image']['sizes']['large'] }}" />
-                  </div>    
+                  </div>
                 @endforeach
               </div>
             </div>

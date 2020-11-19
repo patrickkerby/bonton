@@ -365,3 +365,14 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 	}
 
 }
+
+add_filter('comment_notification_recipients', 'override_comment_notice_repicient', 10, 2);
+function override_comment_notice_repicient($emails, $comment_id) {  
+    $admins = get_users( array(
+        'role__in'     => array('administrator'),
+    ) );
+    foreach ( $admins as $user ) {
+        $emails[] =  $user->user_email;
+    }
+    return ($emails);
+}
