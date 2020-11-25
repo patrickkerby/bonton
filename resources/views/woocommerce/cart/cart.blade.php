@@ -277,22 +277,27 @@ defined( 'ABSPATH' ) || exit;
 										$conflict = true;							
 									}
 								}	
+
+								// This check MUST occur in the loop. Otherwise, it won't catch
+								if ($availability_msg == TRUE) {
+									$conflict = true;
+								}
 							}
 						}
 						
-							// Conflict check for number of items in the cart. this is needed incase someone puts multiple GC products into the cart.								
-							$cart_count = $cart_count - $gc_cart_count;
+						// Conflict check for number of items in the cart. this is needed incase someone puts multiple GC products into the cart.								
+						$cart_count = $cart_count - $gc_cart_count;
 
-							if ( $giftcertificate_in_cart && $cart_count < 1) {
-								$giftcertificate_only_item_in_cart = true;
-								$conflict = false;
-							}
+						if ( $giftcertificate_in_cart && $cart_count < 1) {
+							$giftcertificate_only_item_in_cart = true;
+							$conflict = false;
+						}
 
-							if ($availability_msg) {
-									$conflict = true;
-							}
-							
-						@endphp
+						if ($availability_msg == TRUE) {
+								$conflict = true;
+						}
+
+					@endphp
 
 						<?php do_action( 'woocommerce_cart_contents' ); ?>
 
