@@ -412,20 +412,3 @@ defined( 'ABSPATH' ) || exit;
 		<div id="session_pickup_date">@php echo htmlspecialchars($session_pickup_date); @endphp</div>
 		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
 	</div>
-
-<script>
-	// var pickup_restriction_check_target = document.getElementById("pickup_restriction_check");
-	// var pickup_restriction_check = pickup_restriction_check_target.textContent;
-
-	// var pickupRestrictionTarget = document.getElementById("pickup_restriction_data");
-	// var pickupRestriction = pickupRestrictionTarget.textContent;
-
-	// var pickupRestrictionEndTarget = document.getElementById("pickup_restriction_end_data");
-	// var pickupRestrictionEnd = pickupRestrictionEndTarget.textContent;
-
-	// var presetDateTarget = document.getElementById("session_pickup_date");
-	// var presetDate = presetDateTarget.textContent;
-
-	// var longFermentationTarget = document.getElementById("long_fermentation_in_cart");
-	// var longFermentation = longFermentationTarget.textContent;
-</script>

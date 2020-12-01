@@ -34,7 +34,7 @@ export default {
     var longFermentationTarget = document.getElementById('long_fermentation_in_cart');
     var longFermentation = longFermentationTarget.textContent;
     
-    console.log(longFermentation);
+    console.log('Long Fermentation = ' + longFermentation);
 
     jQuery(function($) {
 
@@ -96,16 +96,18 @@ export default {
         console.log(pickupRestriction);
 
         // The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
-        var vacationDays = ['2020-11-10','2020-11-11'];
+        var vacationDays = ['2020-11-10','2020-11-11','2020-12-25','2020-12-26','2020-12-29','2020-12-30','2020-12-31','2021-01-01','2021-01-02','2021-01-05','2021-01-06'];
+        var enableDays = ['2020-12-21'];
+
 
         $( function() {
           
           $('#datepicker').datepicker({
             onSelect: function(dateText) { 
                 var dateAsString = dateText; //the first parameter of this function
-                var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method																				
+                // var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method																				
                 $('#dateInput').val(dateAsString);
-                console.log(dateAsObject);
+                // console.log(dateAsObject);
             },
   
             minDate: minDate,
@@ -113,18 +115,28 @@ export default {
             dateFormat: 'dd/mm/yy',
   
             beforeShowDay: function(date) {
-              var day = date.getDay();
-              // return [(day != 0 && day != 1), ''];
-              // The following line should be enabled to make use of array on line 414
+              var day = date.getDay();              
               var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-              return [(day != 0 && day != 1 && vacationDays.indexOf(string) == -1), ''];
+              
+              // enable days listed in enableDays above
+              if(enableDays.indexOf(string) != -1){
+                return [true, ''];
+              }   
+              // Disable all other Saturdays and Sundays           
+              if (day == 0 || day == 1){
+                return [false];
+              }
+              // Disable any holiday dates listed in vacationDays variable above            
+              if(vacationDays.indexOf(string) != -1){
+                return [false];
+              }
+              else{
+                return [true];
+              }
             },		
           }).find('.ui-state-active').removeClass('ui-state-active');
-          
-          // the following two lines are legacy. not sure that they'll be needed again.
-          // $( "#datepicker" ).datepicker( "option", "dateFormat", "dd/mm/yy" );
-          // $( "#datepicker" ).datepicker( "option", "showButtonPanel", false );
-          
+                        
+          //Check for pickup restrictions, and either preserve or kill the preset Date
           if(pickup_restriction_check == true && presetDate != null) {
             const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');
 
@@ -135,7 +147,8 @@ export default {
               //
             }
           }
-        
+
+          // set preset date if it exists (in cache, etc.) 
           if(presetDate != null && presetDate != '' ){
             $('#datepicker').datepicker('setDate', presetDate);
           }		
