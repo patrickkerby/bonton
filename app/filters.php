@@ -345,7 +345,6 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 	$date = get_post_meta( $order_obj->get_order_number(), 'pickup_date', true );
 	$timeslot = get_post_meta( $order_obj->get_order_number(), 'pickup_timeslot', true );
  
- 
 	// ok, we will add the separate version for plaintext emails
 	if ( $plain_text === false ) {
  
@@ -361,18 +360,101 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 		echo "Important: Pickup Details\n
 		Pickup Date: $date
 		Pickup Timeslot: $timeslot";	
- 
 	}
-
 }
 
-add_filter('comment_notification_recipients', 'override_comment_notice_repicient', 10, 2);
-function override_comment_notice_repicient($emails, $comment_id) {  
-    $admins = get_users( array(
-        'role__in'     => array('administrator'),
-    ) );
-    foreach ( $admins as $user ) {
-        $emails[] =  $user->user_email;
+
+// BULK PRICING FOR BAKED YEASTED ITEMS
+// if category is Bread (52), Bagels (10), Sweet Buns (91)
+//   get_quantity of each line item
+//     if line item = "1/2 dozen", quantity = quantity * 1
+//     if line item = "Dozen", quantity = quantity * 2
+//       calculate total cart quantity
+//         if total cart quantity > 5 && < 10, apply discount of 15% to products within categories
+//         if total cart quantity > 10, apply discount of 25% to products within categories
+
+// Your product categories settings
+function get_my_bulk_terms(){
+    return array( 10, 52, 91 );
+}
+
+add_action( 'woocommerce_before_calculate_totals', 'App\bulk_holiday_pricing', 30, 10 );
+function bulk_holiday_pricing( $cart ) {
+    if ( is_admin() && ! defined( 'DOING_AJAX' ) )
+        return;
+
+    if ( did_action( 'woocommerce_before_calculate_totals' ) >= 2 )
+        return;
+
+    $total_item_quantity = 0;
+
+    $excluded_products = array( 899, 963, 1087, 1119, 1164, 1988, 1158, 1168, 1177);
+
+    // Loop through cart items
+    foreach ( $cart->get_cart() as $cart_item ) {
+        if( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) && ! in_array( $cart_item['product_id'], $excluded_products)){
+            $attributes = $cart_item['data']->get_attributes();            
+            $quantity = $cart_item['quantity'];
+            $product = wc_get_product( $cart_item['product_id'] );
+
+            if (isset($attributes['pa_package-size'])) {
+
+                $size = $attributes['pa_package-size'];
+                
+                if ($size === 'single') {
+                    $quantity = $quantity * 0.166666666667;                
+                }
+                elseif ($size === 'half-dozen') {
+                    $quantity = $quantity * 1;                
+                }
+                elseif ($size === '6-pack') {
+                    $quantity = $quantity * 1;
+                }                    
+                elseif ($size === 'dozen') {
+                    $quantity = $quantity * 2;
+                }
+                else {
+                    $quantity = $quantity * 1;
+                }
+            }                
+            $total_item_quantity +=  $quantity;
+        }
     }
-    return ($emails);
+    $bulk_discount = "0";
+
+    // Set price with 15% discount, for items within set categories only (bread, bagels, sweet buns)
+    if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
+        $bulk_discount_savings_total = 0;
+        foreach ( $cart->get_cart() as $cart_item ) {      
+            // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
+            if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
+                $product = $cart_item['data'];
+                $price = $product->get_price();
+                $cart_item['data']->set_price( $price * 0.85 );
+
+                $bulk_discount_savings = $price * 0.15;
+                $bulk_discount_savings_total += $bulk_discount_savings++;
+            }
+        }
+        echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
+    }
+    // Set price with 25% discount, for items within set categories only (bread, bagels, sweet buns)
+    elseif ( $total_item_quantity >= 10  ) {
+        $bulk_discount_savings_total = 0;
+        foreach ( $cart->get_cart() as $cart_item ) {      
+            // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
+            if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
+                $product = $cart_item['data'];
+                $price = $product->get_price();
+                $cart_item['data']->set_price( $price * 0.75);
+
+                $bulk_discount_savings = $price * 0.25;
+                $bulk_discount_savings_total += $bulk_discount_savings++;
+            }
+        }
+        echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
+    }
+    else {
+        //continue on as you do
+    }   
 }

@@ -339,3 +339,20 @@ ul.woocommerce-thankyou-order-details li {
 .cart .woocommerce-notices-wrapper {
   display: none;
 }
+
+//Bulk discounts
+.bulk_discounts {
+  background: #f8f7f2;
+  position: absolute;
+  right: 1rem;
+  padding: 0.25rem 1rem;
+  top: -0.75rem;
+  font-size: 15px;
+  font-weight: 500;
+  height: 2rem;
+  line-height: 1.5rem;
+
+  span {
+    color: $highlight;
+  }
+}
