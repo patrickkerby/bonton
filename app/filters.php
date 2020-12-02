@@ -450,11 +450,12 @@ function bulk_holiday_pricing( $cart ) {
                     // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
                     if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
                         $product = $cart_item['data'];
+                        $quantity = $cart_item['quantity'];
                         $price = $product->get_price();
                         $cart_item['data']->set_price( $price * 0.85 );
 
-                        $bulk_discount_savings = $price * 0.15;
-                        $bulk_discount_savings_total += $bulk_discount_savings++;
+                        $bulk_discount_savings = $price * 0.15 * $quantity;
+                        $bulk_discount_savings_total += $bulk_discount_savings;
                     }
                 }
                 echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
@@ -466,14 +467,17 @@ function bulk_holiday_pricing( $cart ) {
                     // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
                     if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
                         $product = $cart_item['data'];
+                        $quantity = $cart_item['quantity'];
                         $price = $product->get_price();
                         $cart_item['data']->set_price( $price * 0.75);
 
-                        $bulk_discount_savings = $price * 0.25;
+                        $bulk_discount_savings = $price * 0.25 * $quantity;
                         $bulk_discount_savings_total += $bulk_discount_savings++;
                     }
                 }
-                echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
+                if (is_cart()) {
+                    echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
+                }
             }
             else {
                 //continue on as you do
