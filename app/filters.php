@@ -439,8 +439,8 @@ function bulk_holiday_pricing( $cart ) {
 
         $date = str_replace('/', '-', $pickupdate);
         $pickupdate_time = date('Y-m-d', strtotime($date));
-        $start_date = '2020-12-15';
-        $cutoff_date = '2020-12-19';
+        $start_date = '2020-12-14';
+        $cutoff_date = '2020-12-20';
 
         if ($pickupdate_time > $start_date && $pickupdate_time < $cutoff_date) {
         
