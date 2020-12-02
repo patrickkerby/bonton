@@ -459,7 +459,9 @@ function bulk_holiday_pricing( $cart ) {
                         $bulk_discount_savings_total += $bulk_discount_savings;
                     }
                 }
-                echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
+                if (is_cart()) {
+                    echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
+                }
             }
             // Set price with 25% discount, for items within set categories only (bread, bagels, sweet buns)
             elseif ( $total_item_quantity >= 10  ) {
