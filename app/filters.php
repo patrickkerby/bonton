@@ -439,14 +439,15 @@ function bulk_holiday_pricing( $cart ) {
 
         $date = str_replace('/', '-', $pickupdate);
         $pickupdate_time = date('Y-m-d', strtotime($date));
-        $cutoff_date = '2020-12-21';
+        $start_date = '2020-12-15';
+        $cutoff_date = '2020-12-19';
 
-        if ($pickupdate_time < $cutoff_date) {
+        if ($pickupdate_time > $start_date && $pickupdate_time < $cutoff_date) {
         
             // Set price with 15% discount, for items within set categories only (bread, bagels, sweet buns)
             if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
                 $bulk_discount_savings_total = 0;
-                foreach ( $cart->get_cart() as $cart_item ) {      
+                foreach ( $cart->get_cart() as $cart_item ) {
                     // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
                     if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
                         $product = $cart_item['data'];
