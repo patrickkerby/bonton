@@ -356,3 +356,14 @@ ul.woocommerce-thankyou-order-details li {
     color: $highlight;
   }
 }
+
+.woocommerce-error,
+.woocommerce-info,
+.woocommerce-message {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  margin: 0;
+  z-index: 1;
+}
