@@ -420,41 +420,64 @@ function bulk_holiday_pricing( $cart ) {
             $total_item_quantity +=  $quantity;
         }
     }
-    $bulk_discount = "0";
-
-    // Set price with 15% discount, for items within set categories only (bread, bagels, sweet buns)
-    if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
-        $bulk_discount_savings_total = 0;
-        foreach ( $cart->get_cart() as $cart_item ) {      
-            // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
-            if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
-                $product = $cart_item['data'];
-                $price = $product->get_price();
-                $cart_item['data']->set_price( $price * 0.85 );
-
-                $bulk_discount_savings = $price * 0.15;
-                $bulk_discount_savings_total += $bulk_discount_savings++;
-            }
+    
+    // Check for a selected pickup date, either through POST or in the session data. Set single pickupdate variable, regardless of where it comes from
+    /// Convert date from dd/mm/yyyy to Y-m-d so we can compare properly
+    //// Compare selected pickup date to hardcoded cutoff date
+    ///// If pickup date is before cutoff date, continue with bulk pricing functionality
+    
+    $session_pickup_date = WC()->session->get('pickup_date');
+    
+    if ( isset($_POST['date']) || isset($session_pickup_date))  { 
+        
+		if ( isset($_POST['date'])) {
+            $pickupdate = $_POST['date'];
         }
-        echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
-    }
-    // Set price with 25% discount, for items within set categories only (bread, bagels, sweet buns)
-    elseif ( $total_item_quantity >= 10  ) {
-        $bulk_discount_savings_total = 0;
-        foreach ( $cart->get_cart() as $cart_item ) {      
-            // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
-            if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
-                $product = $cart_item['data'];
-                $price = $product->get_price();
-                $cart_item['data']->set_price( $price * 0.75);
-
-                $bulk_discount_savings = $price * 0.25;
-                $bulk_discount_savings_total += $bulk_discount_savings++;
-            }
+        else {
+            $pickupdate = $session_pickup_date;
         }
-        echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
+
+        $date = str_replace('/', '-', $pickupdate);
+        $pickupdate_time = date('Y-m-d', strtotime($date));
+        $cutoff_date = '2020-12-21';
+
+        if ($pickupdate_time < $cutoff_date) {
+        
+            // Set price with 15% discount, for items within set categories only (bread, bagels, sweet buns)
+            if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
+                $bulk_discount_savings_total = 0;
+                foreach ( $cart->get_cart() as $cart_item ) {      
+                    // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
+                    if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
+                        $product = $cart_item['data'];
+                        $price = $product->get_price();
+                        $cart_item['data']->set_price( $price * 0.85 );
+
+                        $bulk_discount_savings = $price * 0.15;
+                        $bulk_discount_savings_total += $bulk_discount_savings++;
+                    }
+                }
+                echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
+            }
+            // Set price with 25% discount, for items within set categories only (bread, bagels, sweet buns)
+            elseif ( $total_item_quantity >= 10  ) {
+                $bulk_discount_savings_total = 0;
+                foreach ( $cart->get_cart() as $cart_item ) {      
+                    // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
+                    if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
+                        $product = $cart_item['data'];
+                        $price = $product->get_price();
+                        $cart_item['data']->set_price( $price * 0.75);
+
+                        $bulk_discount_savings = $price * 0.25;
+                        $bulk_discount_savings_total += $bulk_discount_savings++;
+                    }
+                }
+                echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
+            }
+            else {
+                //continue on as you do
+            } 
+        }
     }
-    else {
-        //continue on as you do
-    }   
 }
