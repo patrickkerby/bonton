@@ -156,7 +156,7 @@ foreach ($date_range as $day) {
 
     
     
-<div class="container">
+<div class="container-fluid">
   <div class="row no-gutters">
 
     
@@ -178,7 +178,7 @@ foreach ($date_range as $day) {
           $totalQuantity = 0;
         @endphp
         <tr>
-          <td>{{ $product }}</td>
+          <td style="min-width: 350px;">{{ $product }}</td>
           @foreach ($dailyProducts as $key => $value)
               @if (array_key_exists($product, $value))
                 @php
@@ -186,7 +186,7 @@ foreach ($date_range as $day) {
                 @endphp 
             @endif
           @endforeach
-          <td>{!! $category !!}</td>
+          <td style="min-width: 220px; font-size: 14px;">{!! $category !!}</td>
 
           @foreach ($dailyProducts as $key => $value)
 
