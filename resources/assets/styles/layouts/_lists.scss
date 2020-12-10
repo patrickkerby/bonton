@@ -1,17 +1,15 @@
+/* stylelint-disable no-descending-specificity */
 .pickup-list,
 .packing-list,
-.baking-list {
+.baking-list,
+.inventory-list {
   margin: 0;
   padding-top: 3rem;
 
   &.admin-bar {
     #wpadminbar {
-      display: none;
+      display: unset;
     }
-  }
-
-  .ui-datepicker {
-    width: auto;
   }
 
   header.lists-header {
@@ -364,6 +362,24 @@
       display: none;
     }
   }
+
+  .ui-datepicker {
+    width: auto;
+  }
+
+  .ui-datepicker tr td {
+    padding: 1px !important;
+  }
+
+  .ui-datepicker th {
+    padding: 0.7em 0.3em;
+  }
+
+  .ui-datepicker td span,
+  .ui-datepicker td a {
+    font-size: 16px;
+    padding: 0.4rem;
+  }
 }
 
 table.cooler {
@@ -385,3 +401,5 @@ table.shelf {
     display: table-row;
   }
 }
+
+/* stylelint-enable no-descending-specificity */

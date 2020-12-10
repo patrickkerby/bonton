@@ -50,20 +50,15 @@
 
     foreach ($details->get_items() as $item_id => $item) {
 
-
       $prod_id = $item->get_product_id(); 
       $prod_quantity = $item->get_quantity();
-
       $variation_id = $item->get_variation_id(); 
-      
-      // $product_raw = get_product($prod_id);
       $product = $item->get_product();
       $prod_name = $item->get_name();
 
       // $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
           
       $categories = wc_get_product_category_list($prod_id);
-
       $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
       $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
 

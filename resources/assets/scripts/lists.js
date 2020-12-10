@@ -16,7 +16,9 @@ import 'datatables.net-searchpanes-bs4';
 import Router from './util/Router';
 import pickupList from './routes/pickupList';
 import packingList from './routes/packingList';
-import bakingList from './routes/packingList';
+import bakingList from './routes/bakingList';
+import inventoryList from './routes/inventoryList';
+
 
 /** Populate Router instance with DOM routes */
 const routes = new Router({
@@ -26,6 +28,8 @@ const routes = new Router({
   packingList,
   // List pages for baking, packing, pickup
   bakingList,
+  // List pages for baking, packing, pickup
+  inventoryList,
 });
 
 // Load Events

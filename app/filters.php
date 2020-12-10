@@ -488,3 +488,21 @@ function bulk_holiday_pricing( $cart ) {
         }
     }
 }
+
+/**
+ * Handle a custom 'customvar' query var to get orders with the 'customvar' meta.
+ * @param array $query - Args for WP_Query.
+ * @param array $query_vars - Query vars from WC_Order_Query.
+ * @return array modified $query
+ */
+function handle_custom_query_var( $query, $query_vars ) {
+	if ( ! empty( $query_vars['pickup_date'] ) ) {
+		$query['meta_query'][] = array(
+			'key' => 'pickup_date',
+			'value' => esc_attr( $query_vars['pickup_date'] ),
+		);
+	}
+
+	return $query;
+}
+add_filter( 'woocommerce_order_data_store_cpt_get_orders_query', 'App\handle_custom_query_var', 10, 2 );
