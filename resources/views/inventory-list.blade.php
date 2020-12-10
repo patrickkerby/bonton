@@ -94,20 +94,20 @@ foreach ($date_range as $day) {
 
       if (!empty($variation_id)) {  
         if (!empty($option) && !empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'day' => $order_pickup_date); 
+          $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
         }
         elseif (!empty($option) && empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'day' => $order_pickup_date); 
+          $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
         }
         elseif (!empty($product_size) && empty($option)) {
-          $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'day' => $order_pickup_date); 
+          $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
         }
         else {
-          $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'day' => $order_pickup_date); 
+          $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
         }
       }
       else {
-        $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'day' => $order_pickup_date); 
+        $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
       }
     }
   }
@@ -143,16 +143,7 @@ foreach ($date_range as $day) {
 
 @endphp
 
-  
-  {{-- @foreach ($uniqueListedProducts as $item)
-    <div>
-      <strong>{{ $item }}</strong>
-      
-    </div>          
-  @endforeach --}}
-
-    
-    
+       
 <div class="container-fluid">
   <div class="row no-gutters">
 
