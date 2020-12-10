@@ -138,7 +138,7 @@ foreach ($date_range as $day) {
   $listedProducts = array_column($productsPerDay, 'name');
   $uniqueListedProducts = array_unique($listedProducts);
 
-  print("<pre>".print_r($dailyProducts,true)."</pre>");
+  print("<pre>".print_r($prod,true)."</pre>");
   // print("<pre>".print_r($uniqueListedProducts,true)."</pre>");
 
 @endphp
