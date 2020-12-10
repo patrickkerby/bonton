@@ -64,7 +64,8 @@ foreach ($date_range as $day) {
   $filtered_orders = wc_get_orders( 
   array( 
     'pickup_date' => $day,
-    'status' => 'processing'
+    'status' => 'processing',
+    'limit' => -1
     ) );
 
   foreach($filtered_orders as $details) {
