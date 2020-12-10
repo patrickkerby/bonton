@@ -46,6 +46,12 @@
     elseif($package_size == "6 Pack"){
       return 6;
     } 
+    elseif($package_size == "Bag of 10"){
+      return 10;
+    } 
+    elseif($package_size == "Pack of 8"){
+      return 10;
+    } 
     else{
       return 1;
     }
