@@ -37,13 +37,13 @@
   
 
   function itemQuantity($package_size) {
-    if($package_size === "Dozen"){
+    if($package_size == "Dozen"){
       return 12;
     } 
-    elseif($package_size === "1/2 Dozen"){
+    elseif($package_size == "1/2 Dozen"){
       return 6;
     } 
-    elseif($package_size === "6 Pack"){
+    elseif($package_size == "6 Pack"){
       return 6;
     } 
     else{
@@ -71,6 +71,7 @@ foreach ($date_range as $day) {
     $order_pickup_date = $details->get_meta('pickup_date');
         
     foreach ($details->get_items() as $item_id => $item) {
+      print("<pre>".print_r($item,true)."</pre>");
 
       $prod_id = $item->get_product_id(); 
       $prod_quantity = $item->get_quantity();
@@ -138,7 +139,7 @@ foreach ($date_range as $day) {
   $listedProducts = array_column($productsPerDay, 'name');
   $uniqueListedProducts = array_unique($listedProducts);
 
-  print("<pre>".print_r($prod,true)."</pre>");
+  // print("<pre>".print_r($prod,true)."</pre>");
   // print("<pre>".print_r($uniqueListedProducts,true)."</pre>");
 
 @endphp
