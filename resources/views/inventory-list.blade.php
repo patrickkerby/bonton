@@ -69,9 +69,9 @@ foreach ($date_range as $day) {
 
   foreach($filtered_orders as $details) {
     $order_pickup_date = $details->get_meta('pickup_date');
+    print("<pre>".print_r($order_pickup_date,true)."</pre>");
         
     foreach ($details->get_items() as $item_id => $item) {
-      print("<pre>".print_r($item,true)."</pre>");
 
       $prod_id = $item->get_product_id(); 
       $prod_quantity = $item->get_quantity();
