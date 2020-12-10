@@ -50,7 +50,7 @@
       return 10;
     } 
     elseif($package_size == "Pack of 8"){
-      return 10;
+      return 8;
     } 
     else{
       return 1;
