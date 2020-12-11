@@ -147,6 +147,13 @@ div.pp_woocommerce_quick_view {
     }
   }
 
+  .sidebar .notice {
+    background: $highlight;
+    padding: 1rem;
+    color: #fff;
+    margin-top: 2rem;
+  }
+
   h1 {
     position: relative;
     background: #f8f7f2;

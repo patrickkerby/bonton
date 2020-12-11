@@ -118,8 +118,8 @@ defined( 'ABSPATH' ) || exit;
 											$prefix = ', ';
 									}
 								}
-								$days_available = explode(", ",$days_available);
-								
+								$days_available = explode(", ",$days_available);															
+
 								//Pickup Restriction!!
 
 								$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
@@ -131,12 +131,15 @@ defined( 'ABSPATH' ) || exit;
 								if(isset($pickup_restriction_end_data_check)) {
 									$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
 								}
+								if(isset($pickup_restriction_data_check)) {
+									$restriction_msg = '<span class="restricted_notice">Only available '. $pickup_restriction_data . ' to ' . $pickup_restriction_end_data . '</span>';
+								}								
 
 								//Is the product available on the day selected? 
 								if(isset($session_pickup_date_calendar) && !in_array($day_of_week, $days_available)){
 									$availability_status = "not-available";
 									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
-								}
+								}								
 								else {
 									$availability_msg = "";
 									$availability_status = "available";
@@ -200,7 +203,7 @@ defined( 'ABSPATH' ) || exit;
 
 									<?php
 										if (in_array('Everyday', $days_available)) {
-											echo '<span class="availability"><strong>Availability: </strong> Everyday!</span>';
+											echo '<span class="availability"><strong>Availability: </strong> All week!</span>';
 										}
 										else {
 												$days = implode(', ', $days_available);
@@ -209,7 +212,13 @@ defined( 'ABSPATH' ) || exit;
 									?>
 									@if($long_fermentation === 'yes')
 										<span class="availability"><strong>*Note:</strong> Not available for next-day pickup</span>										
-									@endif				
+									@endif
+									
+									@if($pickup_restriction_data_check)
+									{!! $restriction_msg !!}
+									@endif
+									
+									
 									</td>
 
 									<td class="product-price" data-title="<?php esc_attr_e( 'Price', 'woocommerce' ); ?>">
@@ -275,8 +284,8 @@ defined( 'ABSPATH' ) || exit;
 								if ($pickup_restriction_data) {
 									if ($session_pickup_date < $pickup_restriction_data || $session_pickup_date > $pickup_restriction_end_data){
 										$conflict = true;							
-									}
-								}	
+									}	
+								}
 
 								// This check MUST occur in the loop. Otherwise, it won't catch
 								if ($availability_msg == TRUE) {

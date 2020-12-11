@@ -84,7 +84,26 @@ do_action( 'wc_quick_view_before_single_product' );
 							</div>
 						</div>';
 					}
+				
+					//Is the product restricted?
+					$pickup_restriction_data = "";
+					$pickup_restriction_end_data = "";
+
+					$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
+					$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
+
+					if(isset($pickup_restriction_data_check)) {
+						$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+					}
+					if(isset($pickup_restriction_end_data_check)) {
+						$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
+					}
+
+					if ($pickup_restriction_data) {
+						echo '<div class="notice"><strong>Please note!</strong> This product is only available from '. $pickup_restriction_data . ' to 	' . $pickup_restriction_end_data. '</div>';
+					}
 				?>
+
 
 		</div>
 		<div class="summary entry-summary">

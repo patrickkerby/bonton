@@ -231,6 +231,16 @@ ul.woocommerce-thankyou-order-details li {
     }
   }
 
+  .restricted_notice {
+    font-size: 15px;
+    color: #fff;
+    background: $highlight;
+    padding: 0.15rem 0.75rem;
+    margin: 0.55rem 0 0 0;
+    display: inline-flex;
+    border-radius: 5px;
+  }
+
   .not-available {
     td {
       border: none !important;

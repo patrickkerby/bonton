@@ -71,7 +71,7 @@ if ( post_password_required() ) {
 							$days = implode(', ', $days_available);
 							echo '<li>Available: <span>'.$days .'</span></li>';
 					}
-					
+
 					// get product_tags of the current product
 					$current_tags = get_the_terms( $product_id, 'product_tag' );
 					if ( $current_tags && ! is_wp_error( $current_tags ) ) { 
@@ -90,7 +90,28 @@ if ( post_password_required() ) {
 					if ( $ingredients && ! is_wp_error( $ingredients ) ) { 
 						echo '<div class="ingredients">Ingredients: <span>'.$ingredients.'</span></div>';
 					}
+				
+					
+					//Is the product restricted?
+					$pickup_restriction_data = "";
+					$pickup_restriction_end_data = "";
+
+					$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
+					$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
+
+					if(isset($pickup_restriction_data_check)) {
+						$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+					}
+					if(isset($pickup_restriction_end_data_check)) {
+						$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
+					}
+
+					if ($pickup_restriction_data) {
+						echo '<div class="notice">Please note! This product is only available from '. $pickup_restriction_data . ' to 	' . $pickup_restriction_end_data. '</div>';
+					}
 				?>
+
+				
 
 		</div>
 	<div class="summary entry-summary">
