@@ -108,6 +108,7 @@
             <th>Pickup</th>
             <th>Location</th>
             <th>Notes</th>
+            <th>Email Address</th>
           </tr>
         </thead>
         <tbody>  
@@ -115,6 +116,7 @@
             @php 
               $daily_order_number++;
               $phone = $details->get_billing_phone();
+              $email = $details->get_billing_email();
               $order_id = $details->get_id();
               $first_name = $details->get_billing_first_name();
               $last_name = $details->get_billing_last_name();
@@ -156,6 +158,7 @@
                 {!! $order_location !!}
               </td>
               <td class="notes">{{ $customer_note }}</td>
+              <td>{{ $email }}</td>
             </tr>        
           @endforeach
         </tbody>
