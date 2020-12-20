@@ -35,10 +35,13 @@ if (post_password_required()) {
   @endif
 
   @php comment_form() @endphp
-
-  <p><a href="#" data-toggle="modal" data-target="#message">Click here to send a private message</a></p>
+  
+  @if (isset($landing_page) && $landing_page == TRUE)
+    <p><a href="#" data-toggle="modal" data-target="#message">Click here to send a private message</a></p>
+  @endif
 </section>
 
+@if (isset($landing_page) && $landing_page == TRUE)
 <!-- Modal -->
 <div class="modal fade" id="message" tabindex="-1" role="dialog" aria-labelledby="message" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
@@ -56,3 +59,4 @@ if (post_password_required()) {
     </div>
   </div>
 </div>
+@endif
