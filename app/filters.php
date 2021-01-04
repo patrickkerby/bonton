@@ -444,7 +444,7 @@ function bulk_holiday_pricing( $cart ) {
 
         if ($pickupdate_time > $start_date && $pickupdate_time < $cutoff_date) {
         
-            // Set price with 5% discount, for items within set categories only (bread, bagels, sweet buns)
+            // Set price with 10% discount, for items within set categories only (bread, bagels, sweet buns)
             if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
                 $bulk_discount_savings_total = 0;
                 foreach ( $cart->get_cart() as $cart_item ) {
@@ -453,9 +453,9 @@ function bulk_holiday_pricing( $cart ) {
                         $product = $cart_item['data'];
                         $quantity = $cart_item['quantity'];
                         $price = $product->get_price();
-                        $cart_item['data']->set_price( $price * 0.95 );
+                        $cart_item['data']->set_price( $price * 0.90 );
 
-                        $bulk_discount_savings = $price * 0.05 * $quantity;
+                        $bulk_discount_savings = $price * 0.1 * $quantity;
                         $bulk_discount_savings_total += $bulk_discount_savings;
                     }
                 }
@@ -463,7 +463,7 @@ function bulk_holiday_pricing( $cart ) {
                     echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
                 }
             }
-            // Set price with 10% discount, for items within set categories only (bread, bagels, sweet buns)
+            // Set price with 20% discount, for items within set categories only (bread, bagels, sweet buns)
             elseif ( $total_item_quantity >= 10  ) {
                 $bulk_discount_savings_total = 0;
                 foreach ( $cart->get_cart() as $cart_item ) {      
@@ -472,9 +472,9 @@ function bulk_holiday_pricing( $cart ) {
                         $product = $cart_item['data'];
                         $quantity = $cart_item['quantity'];
                         $price = $product->get_price();
-                        $cart_item['data']->set_price( $price * 0.90);
+                        $cart_item['data']->set_price( $price * 0.80);
 
-                        $bulk_discount_savings = $price * 0.10 * $quantity;
+                        $bulk_discount_savings = $price * 0.20 * $quantity;
                         $bulk_discount_savings_total += $bulk_discount_savings++;
                     }
                 }
