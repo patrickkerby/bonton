@@ -440,11 +440,11 @@ function bulk_holiday_pricing( $cart ) {
         $date = str_replace('/', '-', $pickupdate);
         $pickupdate_time = date('Y-m-d', strtotime($date));
         $start_date = '2020-12-14';
-        $cutoff_date = '2020-12-20';
+        $cutoff_date = '2030-12-20';
 
         if ($pickupdate_time > $start_date && $pickupdate_time < $cutoff_date) {
         
-            // Set price with 15% discount, for items within set categories only (bread, bagels, sweet buns)
+            // Set price with 5% discount, for items within set categories only (bread, bagels, sweet buns)
             if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
                 $bulk_discount_savings_total = 0;
                 foreach ( $cart->get_cart() as $cart_item ) {
@@ -453,9 +453,9 @@ function bulk_holiday_pricing( $cart ) {
                         $product = $cart_item['data'];
                         $quantity = $cart_item['quantity'];
                         $price = $product->get_price();
-                        $cart_item['data']->set_price( $price * 0.85 );
+                        $cart_item['data']->set_price( $price * 0.95 );
 
-                        $bulk_discount_savings = $price * 0.15 * $quantity;
+                        $bulk_discount_savings = $price * 0.05 * $quantity;
                         $bulk_discount_savings_total += $bulk_discount_savings;
                     }
                 }
@@ -463,7 +463,7 @@ function bulk_holiday_pricing( $cart ) {
                     echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
                 }
             }
-            // Set price with 25% discount, for items within set categories only (bread, bagels, sweet buns)
+            // Set price with 10% discount, for items within set categories only (bread, bagels, sweet buns)
             elseif ( $total_item_quantity >= 10  ) {
                 $bulk_discount_savings_total = 0;
                 foreach ( $cart->get_cart() as $cart_item ) {      
@@ -472,9 +472,9 @@ function bulk_holiday_pricing( $cart ) {
                         $product = $cart_item['data'];
                         $quantity = $cart_item['quantity'];
                         $price = $product->get_price();
-                        $cart_item['data']->set_price( $price * 0.75);
+                        $cart_item['data']->set_price( $price * 0.90);
 
-                        $bulk_discount_savings = $price * 0.25 * $quantity;
+                        $bulk_discount_savings = $price * 0.10 * $quantity;
                         $bulk_discount_savings_total += $bulk_discount_savings++;
                     }
                 }
@@ -490,7 +490,7 @@ function bulk_holiday_pricing( $cart ) {
 }
 
 /**
- * Handle a custom 'customvar' query var to get orders with the 'customvar' meta.
+ * Handle a custom 'customvar' query var to get orders with the 'customvar' meta. This is used in the inventory list pages to filter the orders query
  * @param array $query - Args for WP_Query.
  * @param array $query_vars - Query vars from WC_Order_Query.
  * @return array modified $query
