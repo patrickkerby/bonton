@@ -20,11 +20,11 @@
 		// 2 - We need a version in mm/dd/yy that will convert via PHP to a version spelled out to compare product availability ex: "Tuesday"
 		// $date1 = str_replace('/', '-', $date1);
 		$date1_std = date('m-d-Y', strtotime($date1)); //formatted to go into the jquery datepicker as a preset date
-		$date1_cal = date('l, F j, Y', strtotime($date1));
+		$date1_cal = date('l, F j, Y', strtotime($date1_std));
 		$date2_cal = date('l, F j, Y', strtotime($date2));
 
     $range = new DatePeriod(
-     new DateTime($date1_std),
+     new DateTime($date1_cal),
      new DateInterval('P1D'),
      new DateTime($date2_cal)
     );
