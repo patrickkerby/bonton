@@ -24,7 +24,7 @@
 		$date2_cal = date('l, F j, Y', strtotime($date2));
 
     $range = new DatePeriod(
-     new DateTime($date1_cal),
+     new DateTime($date1_std),
      new DateInterval('P1D'),
      new DateTime($date2_cal)
     );

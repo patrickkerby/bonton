@@ -26,6 +26,7 @@ export default {
               defaultDate: '+1w',
               changeMonth: true,
               numberOfMonths: 2,
+              dateFormat: 'dd/mm/yy',
             })
             .on( 'change', function() {
               to.datepicker( 'option', 'minDate', getDate( this ) );
