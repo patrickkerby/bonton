@@ -388,6 +388,17 @@ function bulk_holiday_pricing( $cart ) {
 
     $total_item_quantity = 0;
 
+    //Excluded Products:
+    // 899 = Pretzels
+    // 963 = Egg Bread
+    // 1087 = Olive Flutes
+    // 1119 = Amandine Croissant
+    // 1164 = Rugelach
+    // 1988 = Fig & Pistachio Rugelach
+    // 1158 = Cranberry, Almond, Marmalade Rugelach
+    // 1168 = Kouign-Amann
+    // 1177 = Canelé de Bordeaux
+
     $excluded_products = array( 899, 963, 1087, 1119, 1164, 1988, 1158, 1168, 1177);
 
     // Loop through cart items
@@ -449,7 +460,7 @@ function bulk_holiday_pricing( $cart ) {
                 $bulk_discount_savings_total = 0;
                 foreach ( $cart->get_cart() as $cart_item ) {
                     // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
-                    if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
+                    if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) && ! in_array( $cart_item['product_id'], $excluded_products) ) {
                         $product = $cart_item['data'];
                         $quantity = $cart_item['quantity'];
                         $price = $product->get_price();
@@ -468,7 +479,7 @@ function bulk_holiday_pricing( $cart ) {
                 $bulk_discount_savings_total = 0;
                 foreach ( $cart->get_cart() as $cart_item ) {      
                     // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
-                    if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) ) {
+                    if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) && ! in_array( $cart_item['product_id'], $excluded_products) ) {
                         $product = $cart_item['data'];
                         $quantity = $cart_item['quantity'];
                         $price = $product->get_price();
