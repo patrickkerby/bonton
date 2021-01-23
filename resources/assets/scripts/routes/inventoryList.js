@@ -20,13 +20,13 @@ export default {
       ); 
       
       $( function() {
-        var dateFormat = 'dd/mm/yy',
+        var 
           from = $( '#from' )
             .datepicker({
               defaultDate: '+1w',
               changeMonth: true,
               numberOfMonths: 2,
-              dateFormat: 'dd/mm/yy',
+              // dateFormat: 'dd/mm/yy',
             })
             .on( 'change', function() {
               to.datepicker( 'option', 'minDate', getDate( this ) );
@@ -35,6 +35,7 @@ export default {
             defaultDate: '+1w',
             changeMonth: true,
             numberOfMonths: 2,
+            // dateFormat: 'dd/mm/yy',
           })
           .on( 'change', function() {
             from.datepicker( 'option', 'maxDate', getDate( this ) );
@@ -43,7 +44,7 @@ export default {
         function getDate( element ) {
           var date;
           try {
-            date = $.datepicker.parseDate( dateFormat, element.value );
+            date = $.datepicker.parseDate( element.value );
           } catch( error ) {
             date = null;
           }

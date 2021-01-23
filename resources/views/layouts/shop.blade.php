@@ -15,6 +15,9 @@
           </div>  
           <div class="sidebar typetura d-none d-sm-block col-sm-4 col-lg-3">
             @include('partials.sidebar')
+            {{-- <div class="promotion">
+              <h3>Loyalty Points</h3>
+            </div> --}}
           </div>
           <div class="content col-sm-8 col-lg-9">
             @php dynamic_sidebar('sidebar-shop') @endphp

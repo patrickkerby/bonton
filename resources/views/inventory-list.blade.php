@@ -20,19 +20,21 @@
 		// 2 - We need a version in mm/dd/yy that will convert via PHP to a version spelled out to compare product availability ex: "Tuesday"
 		// $date1 = str_replace('/', '-', $date1);
 		$date1_std = date('m-d-Y', strtotime($date1)); //formatted to go into the jquery datepicker as a preset date
-		$date1_cal = date('l, F j, Y', strtotime($date1_std));
+		$date2_std = date('m-d-Y', strtotime($date2)); //formatted to go into the jquery datepicker as a preset date
+		$date1_cal = date('l, F j, Y', strtotime($date1));
 		$date2_cal = date('l, F j, Y', strtotime($date2));
 
     $range = new DatePeriod(
-     new DateTime($date1_cal),
+     new DateTime($date1),
      new DateInterval('P1D'),
-     new DateTime($date2_cal)
+     new DateTime($date2)
     );
 
     $range_selected = array();
     foreach ($range as $key => $value) {
       $range_selected[] = $value->format('l, F j, Y');       
     }
+    
   }
   
 
@@ -62,157 +64,169 @@
     $date_range = $range_selected;
   }
   else {
-    $date_range = array();
+    // $date_range = array();
+    $date_range = false;
   }
+  
 
-foreach ($date_range as $day) {
-  // This uses a custom filter that allows us to query the customvar 'pickup_date' rather than looping through all processing orders and date matching.
-  $filtered_orders = wc_get_orders( 
-  array( 
-    'pickup_date' => $day,
-    'status' => 'processing',
-    'limit' => -1
-    ) );
 
-  foreach($filtered_orders as $details) {
-    $order_pickup_date = $details->get_meta('pickup_date');
-        
-    foreach ($details->get_items() as $item_id => $item) {
+if($date_range == true) {
+  foreach ($date_range as $day) {
 
-      $prod_id = $item->get_product_id(); 
-      $prod_quantity = $item->get_quantity();
-      $variation_id = $item->get_variation_id(); 
-      $product = $item->get_product();
-      $prod_name = $item->get_name();
-
-      // $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
+    // This uses a custom filter that allows us to query the customvar 'pickup_date' rather than looping through all processing orders and date matching.
+    $filtered_orders = wc_get_orders( 
+    array( 
+      'pickup_date' => $day,
+      'status' => 'processing',
+      'limit' => -1
+      ) );
+  
+    foreach($filtered_orders as $details) {
+      $order_pickup_date = $details->get_meta('pickup_date');
           
-      $categories = wc_get_product_category_list($prod_id);
+      foreach ($details->get_items() as $item_id => $item) {
 
-      $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
-      $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
+        $prod_id = $item->get_product_id(); 
+        $prod_quantity = $item->get_quantity();
+        $variation_id = $item->get_variation_id(); 
+        $product = $item->get_product();
+        $prod_name = $item->get_name();
 
-      $option = $product->get_attribute( 'variety' );
-      $package_size = $product->get_attribute( 'package-size' );
-      $product_size = $product->get_attribute( 'size' );
+        // $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
+            
+        $categories = wc_get_product_category_list($prod_id);
 
-      $item_quantity = call_user_func('itemQuantity', $package_size);
-      $quantity = $item_quantity * $prod_quantity;  
+        $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
+        $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
 
-      if (!empty($variation_id)) {  
-        if (!empty($option) && !empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
-        }
-        elseif (!empty($option) && empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
-        }
-        elseif (!empty($product_size) && empty($option)) {
-          $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+        $option = $product->get_attribute( 'variety' );
+        $package_size = $product->get_attribute( 'package-size' );
+        $product_size = $product->get_attribute( 'size' );
+
+        $item_quantity = call_user_func('itemQuantity', $package_size);
+        $quantity = $item_quantity * $prod_quantity;  
+
+        if (!empty($variation_id)) {  
+          if (!empty($option) && !empty($product_size)) {
+            $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+          }
+          elseif (!empty($option) && empty($product_size)) {
+            $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+          }
+          elseif (!empty($product_size) && empty($option)) {
+            $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+          }
+          else {
+            $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+          }
         }
         else {
-          $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+          $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
         }
-      }
-      else {
-        $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
       }
     }
   }
-}
-  
-// Reduce the products array down so that any duplicates per day are combined with their totals summed
-  $filteredProducts = array();
-  $productsPerDay = array_reduce(
-      $prod,
-      function($filteredProducts, $value) {
-          $key = $value['name']." - ".$value['day'];
-          if (!isset($filteredProducts[$key])) {
-              $filteredProducts[$key] = $value;
-          } else {
-              $filteredProducts[$key]['total_quantity'] += $value['total_quantity'];              
-          }
-          return $filteredProducts;
-      },
-      $filteredProducts
-  );
 
-// Reorganize the filteredProducts array to be grouped by date
-  foreach($productsPerDay as $value){
-   $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category']);
+  if (isset($prod)) {  
+  // Reduce the products array down so that any duplicates per day are combined with their totals summed
+    $filteredProducts = array();
+    $productsPerDay = array_reduce(
+        $prod,
+        function($filteredProducts, $value) {
+            $key = $value['name']." - ".$value['day'];
+            if (!isset($filteredProducts[$key])) {
+                $filteredProducts[$key] = $value;
+            } else {
+                $filteredProducts[$key]['total_quantity'] += $value['total_quantity'];              
+            }
+            return $filteredProducts;
+        },
+        $filteredProducts
+    );
+
+  // Reorganize the filteredProducts array to be grouped by date
+    foreach($productsPerDay as $value){
+    $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category']);
+    }
+
+  // Array of ALL products ordered in time range
+    $listedProducts = array_column($productsPerDay, 'name');
+    $uniqueListedProducts = array_unique($listedProducts);
+
+    // print("<pre>".print_r($prod,true)."</pre>");
+    // print("<pre>".print_r($uniqueListedProducts,true)."</pre>");
   }
+ @endphp
 
-// Array of ALL products ordered in time range
-  $listedProducts = array_column($productsPerDay, 'name');
-  $uniqueListedProducts = array_unique($listedProducts);
+        
+  <div class="container-fluid">
+    <div class="row no-gutters">
 
-  // print("<pre>".print_r($prod,true)."</pre>");
-  // print("<pre>".print_r($uniqueListedProducts,true)."</pre>");
+      
+      <table id="lists" class="display">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Category</th>
+            @isset($dailyProducts)
+              @foreach ($dailyProducts as $key => $value)
+                <th>{{ $key }}</th>
+              @endforeach
+            @endisset
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @isset($uniqueListedProducts)
+            @foreach ($uniqueListedProducts as $product)
+            @php
+              $totalQuantity = 0;
+            @endphp
+            <tr>
+              <td style="min-width: 350px;">{{ $product }}</td>
+              @foreach ($dailyProducts as $key => $value)
+                  @if (array_key_exists($product, $value))
+                    @php
+                        $category = $value[$product]['category'];
+                    @endphp 
+                @endif
+              @endforeach
+              <td style="min-width: 220px; font-size: 14px;">{!! $category !!}</td>
 
-@endphp
+              @foreach ($dailyProducts as $key => $value)
 
-       
-<div class="container-fluid">
-  <div class="row no-gutters">
+                  @if(array_key_exists($product, $value))
+                  
+                    @foreach ($value as $k => $v)
 
-    
-    <table id="lists" class="display">
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Category</th>
-          @foreach ($dailyProducts as $key => $value)
-            <th>{{ $key }}</th>
-          @endforeach
-          <th>Total</th>
-        </tr>
-      </thead>
-      <tbody>
-          
-        @foreach ($uniqueListedProducts as $product)
-        @php
-          $totalQuantity = 0;
-        @endphp
-        <tr>
-          <td style="min-width: 350px;">{{ $product }}</td>
-          @foreach ($dailyProducts as $key => $value)
-              @if (array_key_exists($product, $value))
-                @php
-                    $category = $value[$product]['category'];
-                @endphp 
-            @endif
-          @endforeach
-          <td style="min-width: 220px; font-size: 14px;">{!! $category !!}</td>
+                      @if ($k == $product)
 
-          @foreach ($dailyProducts as $key => $value)
+                      @php
+                        $totalQuantity += $v['quantity'];
+                      @endphp
 
-              @if(array_key_exists($product, $value))
-              
-                @foreach ($value as $k => $v)
+                      <td>
+                        {{ $v['quantity'] }}
+                      </td>
+                      @endif
 
-                  @if ($k == $product)
+                    @endforeach
 
-                  @php
-                    $totalQuantity += $v['quantity'];
-                  @endphp
-
-                  <td>
-                    {{ $v['quantity'] }}
-                  </td>
+                  @else              
+                    <td>0</td>
                   @endif
-
-                @endforeach
-
-              @else              
-                <td>0</td>
-              @endif
-          @endforeach
-          <td>
-            {{ $totalQuantity }}
-          </td>
-        </tr>
-        @endforeach
-      </tbody>
-    </table>
+              @endforeach
+              <td>
+                {{ $totalQuantity }}
+              </td>
+            </tr>
+            @endforeach
+          @endisset
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
+  @php
+} // this closes the if statement that checks for a date range
+@endphp
 @endsection
