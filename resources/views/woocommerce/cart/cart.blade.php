@@ -282,7 +282,16 @@ defined( 'ABSPATH' ) || exit;
 								// Prevent cart from proceeding with old session data selected. Force a new date selection according to restrictions
 								// Except if the previously chosen date is within the restricted range, then leave it as is.
 								if ($pickup_restriction_data) {
-									if ($session_pickup_date < $pickup_restriction_data || $session_pickup_date > $pickup_restriction_end_data){
+									//convert dates to european format for comparison sake
+									$session_pickup_date_compare = str_replace('/', '-', $session_pickup_date);
+									$pickup_restriction_data_compare = str_replace('/', '-', $pickup_restriction_data);
+									$pickup_restriction_end_data_compare = str_replace('/', '-', $pickup_restriction_end_data);
+
+									$session_pickup_date_compare = strtotime($session_pickup_date_compare);
+									$pickup_restriction_data_compare = strtotime($pickup_restriction_data_compare);
+									$pickup_restriction_end_data_compare = strtotime($pickup_restriction_end_data_compare);
+
+									if ($session_pickup_date_compare < $pickup_restriction_data_compare || $session_pickup_date_compare > $pickup_restriction_end_data_compare){
 										$conflict = true;							
 									}	
 								}
@@ -419,5 +428,8 @@ defined( 'ABSPATH' ) || exit;
 		<div id="pickup_restriction_data">@php echo htmlspecialchars($pickup_restriction_data); @endphp</div>
 		<div id="pickup_restriction_end_data">@php echo htmlspecialchars($pickup_restriction_end_data); @endphp</div>
 		<div id="session_pickup_date">@php echo htmlspecialchars($session_pickup_date); @endphp</div>
+		<div id="pickup_restriction_data_compare">@php var_dump($pickup_restriction_data_compare); @endphp</div>
+		<div id="pickup_restriction_end_data_compare">@php var_dump($pickup_restriction_end_data_compare); @endphp</div>
+		<div id="session_pickup_date_compare">@php var_dump($session_pickup_date_compare); @endphp</div>
 		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
 	</div>

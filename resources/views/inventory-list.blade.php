@@ -33,10 +33,8 @@
     $range_selected = array();
     foreach ($range as $key => $value) {
       $range_selected[] = $value->format('l, F j, Y');       
-    }
-    
+    } 
   }
-  
 
   function itemQuantity($package_size) {
     if($package_size == "Dozen"){
