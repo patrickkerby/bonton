@@ -391,10 +391,10 @@ function bulk_pricing( $cart ) {
     
     $total_item_quantity = 0;
 
-    $excluded_products = array( 899, 963, 1087, 1119, 1164, 1988, 1158, 1168, 1177); // @TODO hook up to ACF
+    $excluded_products = array( 899, 963, 1087, 1119, 1164, 1988, 1158, 1168, 1177, 2098, 8703, 8516); // @TODO hook up to ACF
     //Excluded Products Legend:
-    // 899 = Pretzels
-    // 963 = Egg Bread
+    // 899  = Pretzels
+    // 963  = Egg Bread
     // 1087 = Olive Flutes
     // 1119 = Amandine Croissant
     // 1164 = Rugelach
@@ -402,6 +402,10 @@ function bulk_pricing( $cart ) {
     // 1158 = Cranberry, Almond, Marmalade Rugelach
     // 1168 = Kouign-Amann
     // 1177 = Canelé de Bordeaux
+    // 2098 = Hot Cross Buns
+    // 8703 = White Chocolate & Blueberry Filled Croissant
+    // 8516 = Strawberry Mascarpone Croissant 
+
     
     $seasonal_pricing_activated = false; // @TODO Hook this up to ACF fiels.
     $regular_discount_small = 0.9; // @TODO hook up to ACF
