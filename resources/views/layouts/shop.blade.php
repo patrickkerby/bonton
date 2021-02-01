@@ -18,7 +18,7 @@
             <div class="callout loyalty">
               <h3>Loyalty Points</h3>
               <p>Create an account to receive & redeem loyalty points on every purchase!</p>
-              <a data-toggle="tooltip" data-placement="top" title="You may also sign in or register during checkout" class="button" href="/my-account/">Register / Sign up</a>
+              <a data-toggle="tooltip" data-placement="top" title="You may also sign in or register during checkout" class="button" href="/my-account/">Register / Sign in</a>
             </div>
           </div>
           <div class="content col-sm-8 col-lg-9">
