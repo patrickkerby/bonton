@@ -15,9 +15,11 @@
           </div>  
           <div class="sidebar typetura d-none d-sm-block col-sm-4 col-lg-3">
             @include('partials.sidebar')
-            {{-- <div class="promotion">
+            <div class="callout loyalty">
               <h3>Loyalty Points</h3>
-            </div> --}}
+              <p>Create an account to receive & redeem loyalty points on every purchase!</p>
+              <a data-toggle="tooltip" data-placement="top" title="You may also sign in or register during checkout" class="button" href="/my-account/">Register / Sign up</a>
+            </div>
           </div>
           <div class="content col-sm-8 col-lg-9">
             @php dynamic_sidebar('sidebar-shop') @endphp

@@ -21,6 +21,11 @@ export default {
       $( this ).toggleClass( 'packed' );
     });
 
+    //Initialise popovers
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+
     //fake the radio buttons for product filter
     $( '.wpf_submenu label' ).click(function() {
       $('.checked').removeClass('checked')

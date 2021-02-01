@@ -33,6 +33,51 @@
     }
   }
 
+  // Shop Promo Cards
+  .callout {
+    background: $cream;
+    padding: 2.75rem 1.5rem;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-top: 2.5rem;
+
+    h3 {
+      font-size: 2.6rem;
+      line-height: 2.4rem;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+
+      &::after {
+        content: ".....";
+        letter-spacing: 4px;
+        line-height: 3px;
+        font-size: 18px;
+        color: $highlight;
+        margin-top: 0.75rem;
+      }
+    }
+
+    p {
+      font-size: 0.92rem;
+      margin: 0.5rem;
+    }
+
+    a {
+      margin-top: 1rem;
+      width: 100%;
+      padding: 0 !important;
+
+      &:hover {
+        background-color: darken($color: $highlight, $amount: 8);
+        color: #fff;
+      }
+    }
+  }
+
   // Sidebar Filter
   .wpf_submenu li {
     position: relative;
