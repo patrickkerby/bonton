@@ -599,8 +599,7 @@ function after_checkout_validation( $posted ) {
         $post3pm = true;
 	}
     
-    // if ($post3pm = true && $pickup_date <= $tomorrow || $pickup_date == $today) {
-    if ($post3pm = true) {
+    if ($post3pm = true && $pickup_date <= $tomorrow || $pickup_date == $today) {
         wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
     }
 
