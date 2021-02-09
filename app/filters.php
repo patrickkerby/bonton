@@ -591,15 +591,25 @@ add_filter( 'woocommerce_order_data_store_cpt_get_orders_query', 'App\handle_cus
 add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validation');
 
 function after_checkout_validation( $posted ) {
-    $today = date('d/m/Y');
-	$tomorrow = date("d/m/Y", strtotime('tomorrow'));
+    date_default_timezone_set('MST');
+	$today = date('d/m/Y');
+	$currenthour = date('H');
+	$cutoffhour = '15:00';
+    $cutoff = date('H', strtotime($cutoffhour));
+    $tomorrow = date("d/m/Y", strtotime('tomorrow'));
     $pickup_date 		= WC()->session->get('pickup_date_calendar');
 
-	if (date('H') > 15) {
+	if ($currenthour > $cutoff) {
         $post3pm = true;
-	}
+      }
+      elseif ($currenthour < $cutoff) {
+        $post3pm = false;
+      }
+      else {
+          //
+      }
     
-    if ($post3pm = true && $pickup_date <= $tomorrow || $pickup_date == $today) {
+    if ($post3pm == true && $pickup_date <= $tomorrow || $pickup_date == $today) {
         wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
     }
 
