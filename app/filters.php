@@ -585,3 +585,29 @@ function handle_custom_query_var( $query, $query_vars ) {
 	return $query;
 }
 add_filter( 'woocommerce_order_data_store_cpt_get_orders_query', 'App\handle_custom_query_var', 10, 2 );
+
+
+// Validate session pickup date on place order
+add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validation');
+
+function after_checkout_validation( $posted ) {
+    $today = date('d/m/Y');
+	$tomorrow = date("d/m/Y", strtotime('tomorrow'));
+    $pickup_date 		= WC()->session->get('pickup_date_calendar');
+
+	if (date('H') > 15) {
+        $post3pm = true;
+	}
+    
+    // if ($post3pm = true && $pickup_date <= $tomorrow || $pickup_date == $today) {
+    if ($post3pm = true) {
+        wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
+    }
+
+    // do all your logics here...
+    // adding wc_add_notice with a second parameter of "error" will stop the form...
+    // wc_add_notice( __( "OMG! You're not human!", 'woocommerce' ), 'error' );
+
+    
+
+}

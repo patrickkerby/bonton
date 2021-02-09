@@ -307,7 +307,7 @@ defined( 'ABSPATH' ) || exit;
 								}
 
 								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
-								if ($post3pm = true && $session_pickup_date <= $tomorrow) {
+								if ($post3pm = true && $session_pickup_date <= $tomorrow || $session_pickup_date == $today) {
 									$session_pickup_date = null;	
 									$conflict = true;								
 								}
