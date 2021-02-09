@@ -143,8 +143,20 @@ export default {
 
           // set preset date if it exists (in cache, etc.) 
           if(presetDate != null && presetDate != '' ){
-            $('#datepicker').datepicker('setDate', presetDate);
+            console.log('preset date: ' + presetDate);
+              const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');
+              console.log('preset date formatted: ' + presetDateFormatted);
+              console.log('standardFormulaMinDateFormatted: ' + standardFormulaMinDateFormatted);
+
+            if(presetDateFormatted > standardFormulaMinDateFormatted) {
+              $('#datepicker').datepicker('setDate', presetDate);
+            }
+            else {
+              // do nothing
+            }
           }		
+
+
         });
       });
     });

@@ -433,3 +433,4 @@ defined( 'ABSPATH' ) || exit;
 		<div id="session_pickup_date_compare">@php var_dump($session_pickup_date_compare); @endphp</div>
 		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
 	</div>
+	
