@@ -308,12 +308,12 @@ defined( 'ABSPATH' ) || exit;
 
 								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
 								if ($post3pm = true && $session_pickup_date <= $tomorrow) {
-									$session_pickup_date = null;									
+									$session_pickup_date = null;	
+									$conflict = true;								
 								}
 								else {
 									//
 								}
-
 
 								// This check MUST occur in the loop. Otherwise, it won't catch
 								if ($availability_msg == TRUE) {
