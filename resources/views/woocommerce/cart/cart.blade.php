@@ -25,6 +25,13 @@ defined( 'ABSPATH' ) || exit;
 	$cart_count = 0;
 	$gc_cart_count = 0;
 	$conflict = false;
+	date_default_timezone_set('MST');
+	$today = date('d/m/Y');
+	$tomorrow = date("d/m/Y", strtotime('tomorrow'));
+
+	if (date('H') > 15) {
+  	$post3pm = true;
+	}
 
 
 	if ( isset($_POST['date']))  { // Save post data to session. Only use session data from here on in.
@@ -46,6 +53,11 @@ defined( 'ABSPATH' ) || exit;
 	$session_pickup_date = WC()->session->get('pickup_date');
 	$session_pickup_date_calendar = WC()->session->get('pickup_date_calendar');
 	$session_timeslot = WC()->session->get('pickup_timeslot');
+
+	if ( isset($session_pickup_date)) {
+		$session_pickup_date_compare = str_replace('/', '-', $session_pickup_date);
+		$session_pickup_date_compare = strtotime($session_pickup_date_compare);
+	}
 
 	$pickup_restriction_data = "";
 	$pickup_restriction_end_data = "";
@@ -72,9 +84,7 @@ defined( 'ABSPATH' ) || exit;
 			$afternoon_selected = "checked";
 		}
 	}
-
 @endphp
-
 	<div class="row justify-content-center">	
 		<div class="col-md-8">
 			<form class="woocommerce-cart-form" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
@@ -295,6 +305,15 @@ defined( 'ABSPATH' ) || exit;
 										$conflict = true;							
 									}	
 								}
+
+								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
+								if ($post3pm = true && $session_pickup_date <= $tomorrow) {
+									$session_pickup_date = null;									
+								}
+								else {
+									//
+								}
+
 
 								// This check MUST occur in the loop. Otherwise, it won't catch
 								if ($availability_msg == TRUE) {

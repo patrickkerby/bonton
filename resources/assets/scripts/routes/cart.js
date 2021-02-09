@@ -62,8 +62,8 @@ export default {
         // convert date format for comparison's sake
         
         // var standardFormulaMinDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) );
-        var standardFormulaMinDate = dayjs().add(time, 'hour').tz('America/Edmonton').format('DD/MM/YYYY H:mm:ss');
-        var standardFormulaMinDateFormatted = dayjs(standardFormulaMinDate);
+        var standardFormulaMinDate = dayjs().add(time, 'hour').format('DD/MM/YYYY H:mm:ss');
+        var standardFormulaMinDateFormatted = dayjs(standardFormulaMinDate, 'DD/MM/YYYY');
         
         if(pickupRestriction == null || pickupRestriction == ''){
           var minDate = standardFormulaMinDate;
@@ -87,7 +87,7 @@ export default {
           }
         }
 
-        const minDateFormatted = dayjs(minDate);
+        const minDateFormatted = dayjs(minDate, 'DD/MM/YYYY');
         const maxDateFormatted = dayjs(maxDate, 'DD/MM/YYYY');
 
         // The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
@@ -131,8 +131,9 @@ export default {
 
           //Check for pickup restrictions, and either preserve or kill the preset Date
           if(pickup_restriction_check == true && presetDate != null) {
+            
             const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');
-
+            
             if(presetDateFormatted.isBefore(minDateFormatted) || presetDateFormatted.isAfter(maxDateFormatted)) {
               presetDate = null;
             }
@@ -143,20 +144,16 @@ export default {
 
           // set preset date if it exists (in cache, etc.) 
           if(presetDate != null && presetDate != '' ){
-            console.log('preset date: ' + presetDate);
-              const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');
-              console.log('preset date formatted: ' + presetDateFormatted);
-              console.log('standardFormulaMinDateFormatted: ' + standardFormulaMinDateFormatted);
+            
+            const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');                            
 
             if(presetDateFormatted > standardFormulaMinDateFormatted) {
               $('#datepicker').datepicker('setDate', presetDate);
             }
             else {
-              // do nothing
+              $('#datepicker').datepicker('setDate', standardFormulaMinDate);
             }
           }		
-
-
         });
       });
     });

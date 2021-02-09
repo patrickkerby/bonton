@@ -28,9 +28,7 @@ form select {
 .ui-state-active,
 .ui-widget-content .ui-state-active,
 .ui-widget-header .ui-state-active,
-a.ui-button:active,
-td.ui-datepicker-current-day a {
-  background: $highlight !important;
-  border: 1px solid darken($color: $highlight, $amount: 10) !important;
-  color: #fff !important;
+a.ui-button:active {
+  background: $highlight;
+  border: 1px solid darken($color: $highlight, $amount: 10);
 }
