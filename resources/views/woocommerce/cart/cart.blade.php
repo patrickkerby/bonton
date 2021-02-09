@@ -27,10 +27,19 @@ defined( 'ABSPATH' ) || exit;
 	$conflict = false;
 	date_default_timezone_set('MST');
 	$today = date('d/m/Y');
+	$currenthour = date('H');
+	$cutoffhour = '15:00';
+	$cutoff = date('H', strtotime($cutoffhour));
 	$tomorrow = date("d/m/Y", strtotime('tomorrow'));
 
-	if (date('H') > 15) {
+	if ($currenthour > $cutoff) {
   	$post3pm = true;
+	}
+	elseif ($currenthour < $cutoff) {
+  	$post3pm = false;
+	}
+	else {
+		//
 	}
 
 
@@ -307,14 +316,13 @@ defined( 'ABSPATH' ) || exit;
 								}
 
 								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
-								if ($post3pm = true && $session_pickup_date <= $tomorrow || $session_pickup_date == $today) {
+								if ($post3pm == true && $session_pickup_date <= $tomorrow || $session_pickup_date == $today) {
 									$session_pickup_date = null;	
 									$conflict = true;								
 								}
 								else {
 									//
 								}
-
 								// This check MUST occur in the loop. Otherwise, it won't catch
 								if ($availability_msg == TRUE) {
 									$conflict = true;
