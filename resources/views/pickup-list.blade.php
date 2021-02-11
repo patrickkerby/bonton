@@ -108,6 +108,7 @@
             <th>Pickup</th>
             <th>Location</th>
             <th>Notes</th>
+            <td>Email</td>
           </tr>
         </thead>
         <tbody>  
@@ -157,6 +158,7 @@
                 {!! $order_location !!}
               </td>
               <td class="notes">{{ $customer_note }}</td>
+              <td>{{ $email }}</td>
             </tr>        
           @endforeach
         </tbody>
