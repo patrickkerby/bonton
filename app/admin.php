@@ -36,7 +36,7 @@ function bonton_pickup_meta( $order ){  ?>
 			/*
 			 * get all the meta data values we need
 			 */ 
-			$date = get_post_meta( $order->get_id(), 'pickup_date_calendar', true );
+			$date = get_post_meta( $order->get_id(), 'pickup_date', true );
 			$timeslot = get_post_meta( $order->get_id(), 'pickup_timeslot', true );                    
         ?>
         <div class="address">
@@ -71,7 +71,7 @@ function bonton_pickup_meta( $order ){  ?>
 add_action( 'woocommerce_process_shop_order_meta', 'App\save_general_details' );
  
 function save_general_details( $ord_id ){
-	update_post_meta( $ord_id, 'pickup_date', wc_clean( $_POST[ 'pickup_date_calendar' ] ) );
+	update_post_meta( $ord_id, 'pickup_date', wc_clean( $_POST[ 'pickup_date' ] ) );
 	update_post_meta( $ord_id, 'pickup_timeslot', wc_clean( $_POST[ 'pickup_timeslot' ] ) );
 	// wc_clean() and wc_sanitize_textarea() are WooCommerce sanitization functions
 }
@@ -101,7 +101,7 @@ function bbloomer_add_new_order_admin_list_column_content( $column ) {
     if ( 'pickup_date' === $column ) {
  
 				$order = wc_get_order( $post->ID );
-				$date = get_post_meta( $order->get_id(), 'pickup_date_calendar', true );
+				$date = get_post_meta( $order->get_id(), 'pickup_date', true );
         echo $date;
       
     }
