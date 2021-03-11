@@ -61,6 +61,8 @@ defined( 'ABSPATH' ) || exit;
 
 	$pickup_restriction_data = "";
 	$pickup_restriction_end_data = "";
+	$restricted_start_date = "";
+	$restricted_end_date = "";
 	
 	$pickup_day_of_week = $session_pickup_date->format('l');
 
@@ -431,7 +433,7 @@ defined( 'ABSPATH' ) || exit;
 	</div>
 
 	<div id="pickup-details" style="display: none;">
-		<div id="pickup_restriction_data">@if($restricted_start_date)@php echo htmlspecialchars($restricted_start_date->format('d/m/Y')); @endphp@endif</div>			
+		<div id="pickup_restriction_data">@if($restricted_start_date) YO! @php echo htmlspecialchars($restricted_start_date->format('d/m/Y')); @endphp@endif</div>			
 		<div id="pickup_restriction_end_data">@if($restricted_end_date)@php echo htmlspecialchars($restricted_end_date->format('d/m/Y')); @endphp@endif</div>		
 		<div id="session_pickup_date">@php echo htmlspecialchars($session_pickup_date->format('d/m/Y')); @endphp</div>
 		<div id="session_pickup_date_object">@php var_dump($session_pickup_date); @endphp</div>
