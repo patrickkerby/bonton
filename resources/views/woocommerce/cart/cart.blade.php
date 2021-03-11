@@ -51,7 +51,7 @@ defined( 'ABSPATH' ) || exit;
 		$pickuptimeslot = $_POST['timeslot'];
 
 		$pickupdate = DateTime::createFromFormat($dateformat, $pickupdate);
-		$pickup_date_formatted = $pickup_date->format('d/m/Y');
+		$pickup_date_formatted = $pickupdate->format('d/m/Y');
 
 
 		WC()->session->set('pickup_date', $pickupdate);
