@@ -112,6 +112,7 @@ defined( 'ABSPATH' ) || exit;
 						<?php do_action( 'woocommerce_before_cart_contents' ); ?>
 
 						<?php
+
 						foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 							$long_fermentation = "";
 							$giftcertificate_in_cart = false;
@@ -144,13 +145,13 @@ defined( 'ABSPATH' ) || exit;
 								$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
 								$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
 
-								if(isset($pickup_restriction_data_check)) {
+								if($pickup_restriction_data_check) {
 									$pickup_restriction_data = get_field('restricted_pickup', $product_id);
 								}
-								if(isset($pickup_restriction_end_data_check)) {
+								if($pickup_restriction_end_data_check) {
 									$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
 								}
-								if(isset($pickup_restriction_data_check)) {
+								if($pickup_restriction_data_check) {
 									$restriction_msg = '<span class="restricted_notice">Only available '. $pickup_restriction_data . ' to ' . $pickup_restriction_end_data . '</span>';
 								}								
 
