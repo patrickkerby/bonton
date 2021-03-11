@@ -52,10 +52,11 @@ defined( 'ABSPATH' ) || exit;
 
 		$pickupdate = DateTime::createFromFormat($dateformat, $pickupdate);
 		$pickup_date_formatted = $pickupdate->format('d/m/Y');
-
+		$pickup_date_calendar = $pickupdate->format('l, F j, Y');
 
 		WC()->session->set('pickup_date', $pickupdate);
 		WC()->session->set('pickup_date_formatted', $pickup_date_formatted);
+		WC()->session->set('pickup_date_calendar', $pickup_date_calendar);
 		WC()->session->set('pickup_timeslot', $pickuptimeslot);
 	}
 
