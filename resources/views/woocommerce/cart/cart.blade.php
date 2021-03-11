@@ -25,12 +25,15 @@ defined( 'ABSPATH' ) || exit;
 	$cart_count = 0;
 	$gc_cart_count = 0;
 	$conflict = false;
+
+	$dateformat = "d/m/Y";
 	date_default_timezone_set('MST');
-	$today = date('d/m/Y');
 	$currenthour = date('H');
 	$cutoffhour = '15:00';
-	$cutoff = date('H', strtotime($cutoffhour));
-	$tomorrow = date("d/m/Y", strtotime('tomorrow'));
+	$cutoff = date('H', strtotime($cutoffhour));	
+	$tomorrow = new DateTime('tomorrow');
+	$today = new DateTime('today');
+	
 
 	if ($currenthour > $cutoff) {
   	$post3pm = true;
@@ -47,32 +50,19 @@ defined( 'ABSPATH' ) || exit;
 		$pickupdate = $_POST['date'];
 		$pickuptimeslot = $_POST['timeslot'];
 
-		//Format the date in a few different ways.
-		// 1 - We pass a php variable back to js in order to prepopulate the calendar with session data it needs dd-mm-yyyy
-		// 2 - We need a version in mm/dd/yy that will convert via PHP to a version spelled out to compare product availability ex: "Tuesday"
-		$date = str_replace('/', '-', $pickupdate);
-		$pickupdate_standard_format = date('d-m-Y', strtotime($date)); //formatted to go into the jquery datepicker as a preset date
-		$pickupdate_calendar = date('l, F j, Y', strtotime($date));
-
+		$pickupdate = DateTime::createFromFormat($dateformat, $pickupdate);
+		
 		WC()->session->set('pickup_date', $pickupdate);
-		WC()->session->set('pickup_date_calendar', $pickupdate_calendar);
 		WC()->session->set('pickup_timeslot', $pickuptimeslot);
 	}
 
 	$session_pickup_date = WC()->session->get('pickup_date');
-	$session_pickup_date_calendar = WC()->session->get('pickup_date_calendar');
 	$session_timeslot = WC()->session->get('pickup_timeslot');
-
-	if ( isset($session_pickup_date)) {
-		$session_pickup_date_compare = str_replace('/', '-', $session_pickup_date);
-		$session_pickup_date_compare = strtotime($session_pickup_date_compare);
-	}
 
 	$pickup_restriction_data = "";
 	$pickup_restriction_end_data = "";
-
-	// global $day_of_week;		
-	list($day_of_week)=explode(',', $session_pickup_date_calendar); // Simplify to just the day of week
+	
+	$pickup_day_of_week = $session_pickup_date->format('l');
 
 	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
 		$conflict = true;
@@ -142,21 +132,18 @@ defined( 'ABSPATH' ) || exit;
 
 								//Pickup Restriction!!
 
-								$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
-								$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
+								$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+								$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
+								
 
-								if($pickup_restriction_data_check) {
-									$pickup_restriction_data = get_field('restricted_pickup', $product_id);
-								}
-								if($pickup_restriction_end_data_check) {
-									$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
-								}
-								if($pickup_restriction_data_check) {
-									$restriction_msg = '<span class="restricted_notice">Only available '. $pickup_restriction_data . ' to ' . $pickup_restriction_end_data . '</span>';
+								if($pickup_restriction_data) {
+									$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
+									$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
+									$restriction_msg = '<span class="restricted_notice">Only available '. $restricted_start_date->format('D, M j') . ' to ' . $restricted_end_date->format('D, M j') . '</span>';
 								}								
 
 								//Is the product available on the day selected? 
-								if(isset($session_pickup_date_calendar) && !in_array($day_of_week, $days_available)){
+								if(isset($session_pickup_date) && !in_array($pickup_day_of_week, $days_available)){
 									$availability_status = "not-available";
 									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
 								}								
@@ -234,11 +221,10 @@ defined( 'ABSPATH' ) || exit;
 										<span class="availability"><strong>*Note:</strong> Not available for next-day pickup</span>										
 									@endif
 									
-									@if($pickup_restriction_data_check)
+									@if($pickup_restriction_data)
 									{!! $restriction_msg !!}
 									@endif
-									
-									
+																		
 									</td>
 
 									<td class="product-price" data-title="<?php esc_attr_e( 'Price', 'woocommerce' ); ?>">
@@ -301,25 +287,17 @@ defined( 'ABSPATH' ) || exit;
 
 								// Prevent cart from proceeding with old session data selected. Force a new date selection according to restrictions
 								// Except if the previously chosen date is within the restricted range, then leave it as is.
+								
 								if ($pickup_restriction_data) {
-									//convert dates to european format for comparison sake
-									$session_pickup_date_compare = str_replace('/', '-', $session_pickup_date);
-									$pickup_restriction_data_compare = str_replace('/', '-', $pickup_restriction_data);
-									$pickup_restriction_end_data_compare = str_replace('/', '-', $pickup_restriction_end_data);
-
-									$session_pickup_date_compare = strtotime($session_pickup_date_compare);
-									$pickup_restriction_data_compare = strtotime($pickup_restriction_data_compare);
-									$pickup_restriction_end_data_compare = strtotime($pickup_restriction_end_data_compare);
-
-									if ($session_pickup_date_compare < $pickup_restriction_data_compare || $session_pickup_date_compare > $pickup_restriction_end_data_compare){
-										$conflict = true;							
+									if ($session_pickup_date < $restricted_start_date || $session_pickup_date > $restricted_end_date){
+										$conflict = true;
 									}	
 								}
 
 								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
 								if ($post3pm == true && $session_pickup_date <= $tomorrow || $session_pickup_date == $today) {
 									$session_pickup_date = null;	
-									$conflict = true;								
+									$conflict = true;		
 								}
 								else {
 									//
@@ -451,14 +429,16 @@ defined( 'ABSPATH' ) || exit;
 			</div>
 		@endunless
 	</div>
+
 	<div id="pickup-details" style="display: none;">
-		<div id="pickup_restriction_check">@php echo htmlspecialchars($pickup_restriction_check); @endphp</div>
-		<div id="pickup_restriction_data">@php echo htmlspecialchars($pickup_restriction_data); @endphp</div>
-		<div id="pickup_restriction_end_data">@php echo htmlspecialchars($pickup_restriction_end_data); @endphp</div>
-		<div id="session_pickup_date">@php echo htmlspecialchars($session_pickup_date); @endphp</div>
-		<div id="pickup_restriction_data_compare">@php var_dump($pickup_restriction_data_compare); @endphp</div>
-		<div id="pickup_restriction_end_data_compare">@php var_dump($pickup_restriction_end_data_compare); @endphp</div>
-		<div id="session_pickup_date_compare">@php var_dump($session_pickup_date_compare); @endphp</div>
+		<div id="pickup_restriction_data">@if($restricted_start_date)@php echo htmlspecialchars($restricted_start_date->format('d/m/Y')); @endphp@endif</div>			
+		<div id="pickup_restriction_end_data">@if($restricted_end_date)@php echo htmlspecialchars($restricted_end_date->format('d/m/Y')); @endphp@endif</div>		
+		<div id="session_pickup_date">@php echo htmlspecialchars($session_pickup_date->format('d/m/Y')); @endphp</div>
+		<div id="session_pickup_date_object">@php var_dump($session_pickup_date); @endphp</div>
 		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
 	</div>
-	
+
+	@php 	
+		
+
+@endphp

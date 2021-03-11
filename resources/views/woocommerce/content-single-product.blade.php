@@ -91,7 +91,8 @@ if ( post_password_required() ) {
 						echo '<div class="ingredients">Ingredients: <span>'.$ingredients.'</span></div>';
 					}
 				
-					
+					$dateformat = "d/m/Y";
+
 					//Is the product restricted?
 					$pickup_restriction_data = "";
 					$pickup_restriction_end_data = "";
@@ -107,7 +108,9 @@ if ( post_password_required() ) {
 					}
 
 					if ($pickup_restriction_data) {
-						echo '<div class="notice">Please note! This product is only available from '. $pickup_restriction_data . ' to 	' . $pickup_restriction_end_data. '</div>';
+						$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
+						$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
+						echo '<div class="notice">Please note! This product is only available from '. $restricted_start_date->format('D, M j') . ' to 	' . $restricted_end_date->format('D, M j') . '</div>';
 					}
 				?>
 

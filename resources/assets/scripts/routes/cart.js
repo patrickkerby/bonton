@@ -20,12 +20,14 @@ export default {
     dayjs.tz.setDefault('America/Edmonton');
 
     //get variables from cart PHP
-    var pickup_restriction_check_target = document.getElementById('pickup_restriction_check');
-    var pickup_restriction_check = pickup_restriction_check_target.textContent;
   
     var pickupRestrictionTarget = document.getElementById('pickup_restriction_data');
     var pickupRestriction = pickupRestrictionTarget.textContent;
     var pickupRestrictionFormatted = dayjs(pickupRestriction, 'DD/MM/YYYY');
+
+    if (pickupRestriction) {
+      var pickup_restriction_check = true;
+    }
 
     var pickupRestrictionEndTarget = document.getElementById('pickup_restriction_end_data');
     var pickupRestrictionEnd = pickupRestrictionEndTarget.textContent;
