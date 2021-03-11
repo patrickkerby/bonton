@@ -303,13 +303,13 @@ defined( 'ABSPATH' ) || exit;
 								// Except if the previously chosen date is within the restricted range, then leave it as is.
 								
 								if ($pickup_restriction_data) {
-									if ($session_pickup_date < $restricted_start_date || $session_pickup_date > $restricted_end_date){
+									if ($session_date_object < $restricted_start_date || $session_date_object > $restricted_end_date){
 										$conflict = true;
 									}	
 								}
 
 								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
-								if ($post3pm == true && $session_pickup_date <= $tomorrow || $session_pickup_date == $today) {
+								if ($post3pm == true && $session_date_object <= $tomorrow || $session_date_object == $today) {
 									$session_pickup_date = null;	
 									$conflict = true;		
 								}
