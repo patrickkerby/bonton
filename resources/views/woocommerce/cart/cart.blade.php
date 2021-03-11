@@ -68,7 +68,7 @@ defined( 'ABSPATH' ) || exit;
 		$session_pickup_date = DateTime::createFromFormat($dateformat, $session_pickup_date);
 		$pickup_day_of_week = $session_pickup_date->format('l');
 	}
-	
+
 	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
 		$conflict = true;
 	}
@@ -440,7 +440,7 @@ defined( 'ABSPATH' ) || exit;
 	<div id="pickup-details" style="display: none;">
 		<div id="pickup_restriction_data">@if($restricted_start_date)@php echo htmlspecialchars($restricted_start_date_js); @endphp@endif</div>			
 		<div id="pickup_restriction_end_data">@if($restricted_end_date)@php echo htmlspecialchars($restricted_end_date_js); @endphp@endif</div>		
-		<div id="session_pickup_date">@php echo htmlspecialchars($session_pickup_date->format('d/m/Y')); @endphp</div>
+		<div id="session_pickup_date">@if($session_pickup_date)@php echo htmlspecialchars($session_pickup_date->format('d/m/Y')); @endphp@endif</div>
 		<div id="session_pickup_date_object">@php var_dump($session_pickup_date); @endphp</div>
 		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
 	</div>
