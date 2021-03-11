@@ -55,11 +55,12 @@ defined( 'ABSPATH' ) || exit;
 
 
 		WC()->session->set('pickup_date', $pickupdate);
-		WC()->session->set('pickup_formatted', $pickup_date_formatted);
+		WC()->session->set('pickup_date_formatted', $pickup_date_formatted);
 		WC()->session->set('pickup_timeslot', $pickuptimeslot);
 	}
 
 	$session_pickup_date = WC()->session->get('pickup_date');
+	$session_formatted = WC()->session->get('pickup_date_formatted');
 	$session_timeslot = WC()->session->get('pickup_timeslot');
 
 	$pickup_restriction_data = "";
