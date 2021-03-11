@@ -326,11 +326,14 @@ add_action('woocommerce_checkout_update_order_meta', 'App\add_pickup_to_order');
 function add_pickup_to_order($order_id) {
 	$pickup_date 		= WC()->session->get('pickup_date');
 	$pickup_date_formatted 		= WC()->session->get('pickup_date_formatted');
+    $pickup_object  = WC()->session->get('pickup_date_object');
 	$pickup_timeslot 	= WC()->session->get('pickup_timeslot');
+
 	$order = wc_get_order( $order_id );
 
 	$order->update_meta_data( 'pickup_date', $pickup_date );
 	$order->update_meta_data( 'pickup_date_formatted', $pickup_date_formatted );
+	$order->update_meta_data( 'pickup_date_object', $pickup_object );
 	$order->update_meta_data( 'pickup_timeslot', $pickup_timeslot );
 	$order->save();
 }
@@ -578,10 +581,10 @@ function bulk_pricing( $cart ) {
  * @return array modified $query
  */
 function handle_custom_query_var( $query, $query_vars ) {
-	if ( ! empty( $query_vars['pickup_date_formatted'] ) ) {
+	if ( ! empty( $query_vars['pickup_date'] ) ) {
 		$query['meta_query'][] = array(
-			'key' => 'pickup_date_formatted',
-			'value' => esc_attr( $query_vars['pickup_date_formatted'] ),
+			'key' => 'pickup_date',
+			'value' => esc_attr( $query_vars['pickup_date'] ),
 		);
 	}
 

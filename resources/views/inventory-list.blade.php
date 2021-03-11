@@ -67,7 +67,6 @@
   }
   
 
-
 if($date_range == true) {
   foreach ($date_range as $day) {
 
