@@ -50,17 +50,19 @@ defined( 'ABSPATH' ) || exit;
 		$pickupdate = $_POST['date'];
 		$pickuptimeslot = $_POST['timeslot'];
 
-		$pickupdate = DateTime::createFromFormat($dateformat, $pickupdate);
-		$pickup_date_formatted = $pickupdate->format('d/m/Y');
-		$pickup_date_calendar = $pickupdate->format('l, F j, Y');
+		$pickupdate_object = DateTime::createFromFormat($dateformat, $pickupdate);
+		
+		$pickup_date_formatted = $pickupdate_object->format('d/m/Y');
+		$pickup_date_calendar = $pickupdate_object->format('l, F j, Y');
 
-		WC()->session->set('pickup_date', $pickupdate);
+		WC()->session->set('pickup_date', $pickup_date_calendar);
 		WC()->session->set('pickup_date_formatted', $pickup_date_formatted);
-		WC()->session->set('pickup_date_calendar', $pickup_date_calendar);
+		WC()->session->set('pickup_date_object', $pickupdate_object);
 		WC()->session->set('pickup_timeslot', $pickuptimeslot);
 	}
 
 	$session_pickup_date = WC()->session->get('pickup_date');
+	$session_date_object = WC()->session->get('pickup_date_object');
 	$session_formatted = WC()->session->get('pickup_date_formatted');
 	$session_timeslot = WC()->session->get('pickup_timeslot');
 
@@ -71,7 +73,7 @@ defined( 'ABSPATH' ) || exit;
 	
 	if ($session_pickup_date) {
 		// $session_pickup_date = DateTime::createFromFormat($dateformat, $session_pickup_date);
-		$pickup_day_of_week = $session_pickup_date->format('l');
+		$pickup_day_of_week = $session_date_object->format('l');
 	}
 
 	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
@@ -445,7 +447,7 @@ defined( 'ABSPATH' ) || exit;
 	<div id="pickup-details" style="display: none;">
 		<div id="pickup_restriction_data">@if($restricted_start_date)@php echo htmlspecialchars($restricted_start_date_js); @endphp@endif</div>			
 		<div id="pickup_restriction_end_data">@if($restricted_end_date)@php echo htmlspecialchars($restricted_end_date_js); @endphp@endif</div>		
-		<div id="session_pickup_date">@if($session_pickup_date)@php echo htmlspecialchars($session_pickup_date->format('d/m/Y')); @endphp@endif</div>
+		<div id="session_pickup_date">@if($session_pickup_date)@php echo htmlspecialchars($session_date_object->format('d/m/Y')); @endphp@endif</div>
 		<div id="session_pickup_date_object">@php var_dump($session_pickup_date); @endphp</div>
 		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
 	</div>

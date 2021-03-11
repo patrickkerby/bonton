@@ -324,13 +324,13 @@ function zero_tax_items_based_on_invoice_choice( $cart ) {
  */
 add_action('woocommerce_checkout_update_order_meta', 'App\add_pickup_to_order');
 function add_pickup_to_order($order_id) {
-	$pickup_date 		= WC()->session->get('pickup_date_formatted');
-	$pickup_date_calendar 		= WC()->session->get('pickup_date_calendar');
+	$pickup_date 		= WC()->session->get('pickup_date');
+	$pickup_date_formatted 		= WC()->session->get('pickup_date_formatted');
 	$pickup_timeslot 	= WC()->session->get('pickup_timeslot');
 	$order = wc_get_order( $order_id );
 
-	$order->update_meta_data( 'pickup_date_formatted', $pickup_date );
-	$order->update_meta_data( 'pickup_date_calendar', $pickup_date_calendar );
+	$order->update_meta_data( 'pickup_date', $pickup_date );
+	$order->update_meta_data( 'pickup_date_formatted', $pickup_date_formatted );
 	$order->update_meta_data( 'pickup_timeslot', $pickup_timeslot );
 	$order->save();
 }
@@ -345,7 +345,7 @@ function add_pickup_to_order($order_id) {
 add_action( 'woocommerce_email_order_meta', 'App\bonton_add_email_order_meta', 10, 3 );
 function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 
-	$date = get_post_meta( $order_obj->get_order_number(), 'pickup_date_calendar', true );
+	$date = get_post_meta( $order_obj->get_order_number(), 'pickup_date', true );
 	$timeslot = get_post_meta( $order_obj->get_order_number(), 'pickup_timeslot', true );
  
 	// ok, we will add the separate version for plaintext emails
