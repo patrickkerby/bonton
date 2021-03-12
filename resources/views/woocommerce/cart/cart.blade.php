@@ -73,7 +73,9 @@ defined( 'ABSPATH' ) || exit;
 	
 	if ($session_pickup_date) {
 		// $session_pickup_date = DateTime::createFromFormat($dateformat, $session_pickup_date);
-		$pickup_day_of_week = $session_date_object->format('l');
+		if ($session_date_object) {
+			$pickup_day_of_week = $session_date_object->format('l');
+		}
 	}
 
 	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
