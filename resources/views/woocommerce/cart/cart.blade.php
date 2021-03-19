@@ -52,8 +52,10 @@ defined( 'ABSPATH' ) || exit;
 
 		$pickupdate_object = DateTime::createFromFormat($dateformat, $pickupdate);
 		
-		$pickup_date_formatted = $pickupdate_object->format('d/m/Y');
-		$pickup_date_calendar = $pickupdate_object->format('l, F j, Y');
+		if ($pickupdate_object) {
+			$pickup_date_formatted = $pickupdate_object->format('d/m/Y');
+			$pickup_date_calendar = $pickupdate_object->format('l, F j, Y');
+		}
 
 		WC()->session->set('pickup_date', $pickup_date_calendar);
 		WC()->session->set('pickup_date_formatted', $pickup_date_formatted);
@@ -392,7 +394,7 @@ defined( 'ABSPATH' ) || exit;
 							<div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
 								<div class="datepicker" id="datepicker">
 									{{-- <input type='text' name="date" id="datepicker" value="{{ $session_pickup_date }}" autocomplete="off" /> --}}
-									<input type='hidden' name="date" id="dateInput" value="{{ $session_pickup_date }}" />
+									<input type='hidden' name="date" id="dateInput" value="{{ $session_formatted }}" />
 								</div>
 								
 								<span class="input-group-addon">
