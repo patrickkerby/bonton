@@ -21,6 +21,7 @@ defined( 'ABSPATH' ) || exit;
 	do_action( 'woocommerce_before_cart' ); 
 	$long_fermentation = "";
 	$long_fermentation_in_cart = "";
+	$restricted_in_cart = "";
 	$giftcertificate_only_item_in_cart = false;
 	$cart_count = 0;
 	$gc_cart_count = 0;
@@ -285,16 +286,15 @@ defined( 'ABSPATH' ) || exit;
 									</tr>
 								@endif
 
-								@php
-										
+								@php									
 								if ($pickup_restriction_data) {
 									$pickup_restriction_check = true;
 									$restricted_in_cart = true;									
 								}
-								else {
-									$pickup_restriction_check = false;
-									$restricted_in_cart = false;									
-								}
+								// else {
+								// 	$pickup_restriction_check = false;
+								// 	$restricted_in_cart = false;									
+								// }
 								
 								if ($pickup_restriction_end_data) {
 									$pickup_restriction_end_check = true;
