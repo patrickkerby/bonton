@@ -26,7 +26,7 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_script('comment-reply');
     }
 
-    if (is_page( array( 789, 819, 815, 810, 791, 6968, 6177 )) ) {
+    if (is_page( array( 789, 819, 815, 810, 791, 6968, 6177, 10071 )) ) {
         wp_enqueue_script('sage/lists.js', asset_path('scripts/lists.js'), [], null, true);
     }
 }, 100);
@@ -195,4 +195,8 @@ add_action( 'woocommerce_checkout_update_order_meta', function( $order_id ){
 	if( !empty( $_POST['pickuplocation'] ) )
 		update_post_meta( $order_id, 'pickuplocation', sanitize_text_field( $_POST['pickuplocation'] ) );
  
+});
+
+add_action('init', function () {
+    remove_filter('script_loader_tag', 'Roots\\Soil\\CleanUp\\clean_script_tag');
 });

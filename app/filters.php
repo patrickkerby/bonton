@@ -622,7 +622,4 @@ function after_checkout_validation( $posted ) {
     // do all your logics here...
     // adding wc_add_notice with a second parameter of "error" will stop the form...
     // wc_add_notice( __( "OMG! You're not human!", 'woocommerce' ), 'error' );
-
-    
-
 }

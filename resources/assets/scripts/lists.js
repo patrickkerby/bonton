@@ -18,18 +18,16 @@ import pickupList from './routes/pickupList';
 import packingList from './routes/packingList';
 import bakingList from './routes/bakingList';
 import inventoryList from './routes/inventoryList';
+import oosList from './routes/oosList';
 
 
 /** Populate Router instance with DOM routes */
 const routes = new Router({
-  // List pages for baking, packing, pickup
   pickupList,
-  // List pages for baking, packing, pickup
   packingList,
-  // List pages for baking, packing, pickup
   bakingList,
-  // List pages for baking, packing, pickup
   inventoryList,
+  oosList,
 });
 
 // Load Events

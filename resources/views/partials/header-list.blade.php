@@ -11,6 +11,8 @@
         <h1>Pick-up List</h1>
       @elseif(is_page('inventory'))
         <h1>Inventory List</h1>
+      @elseif(is_page('out-of-stock'))
+        <h1>Out of Stock</h1>
       @endif
       
       @if(is_page('inventory'))
@@ -24,7 +26,9 @@
           <h5><button class="btn d-print-none" type="button" data-toggle="collapse" data-target="#dateSelect" aria-expanded="false" aria-controls="collapseExample">
             Edit
           </button></h5>
-        @else
+      @elseif(is_page('out-of-stock'))
+          {{-- Display no date picker --}}
+      @else
       <h5>        
           {{ $date_selector_date }} 
         
@@ -66,6 +70,9 @@
         </li>
         <li class="nav-item d-print-none">
           <a class="nav-link @if(is_page('inventory')) active @endif d-print-none" href="/lists/inventory">Inventory</a>
+        </li>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('out-of-stock')) active @endif d-print-none" href="/lists/out-of-stock">Out of Stock</a>
         </li>
         <li class="nav-item d-print-none">
           <a class="nav-link @if(is_page('packing-cooler')) active @endif d-print-none" href="/lists/packing-cooler">Packing (Cooler)</a>

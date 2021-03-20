@@ -139,7 +139,7 @@
               $total_quantity = $item['total_quantity'];
             @endphp
             <tr>
-              <td>{{ $name }}</td>
+              <td>{!! $name !!}</td>
               <td>
                 @if (strpos($category_parent, '94') !== false)
 
