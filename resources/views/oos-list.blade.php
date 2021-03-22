@@ -24,9 +24,7 @@
     // $query = new WP_Query($query_args);
     $prodlist = get_posts( $query_args );
 
-
 @endphp
-
 
   <div class="container">
     <div class="row no-gutters">
@@ -41,6 +39,7 @@
           @foreach($prodlist as $item)
 
           @php              
+            $loop_count = $loop->count;
             $prod_id = $item->ID;
             $variation = wc_get_product($prod_id);
             $parent_prod_id = $variation->get_parent_id();
@@ -48,22 +47,28 @@
             $variation_categories = wc_get_product_category_list($parent_prod_id);
             $product_categories = wc_get_product_category_list($prod_id);
 
+            if ($product) {
+            $status = $product->get_status();
+            }
 
           @endphp
-          {{-- @dump($product) --}}
-          <tr>
-            <td>{!! $item->post_title !!}</td>
-            <td>
-              @if ($product_categories)
-                {!! $product_categories !!}</td>
-              @else
-                {!! $variation_categories !!}</td>
-              @endif
-          </tr>
+            @unless($status == 'draft')
+              <tr>                
+                <td>{!! $item->post_title !!}</td>
+                <td>
+                  @if ($product_categories)
+                    {!! $product_categories !!}</td>
+                  @else
+                    {!! $variation_categories !!}</td>
+                  @endif
+              </tr>
+            @endunless
           @endforeach
         </tbody>
       </table>
     </div>
+    <h5>Total items: {{ $loop_count }}</h5>
+
   </div>
 
 @endsection
