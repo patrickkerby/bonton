@@ -1,3 +1,8 @@
+@php
+  $get_today = new DateTime('today');
+  $today = $get_today->format('l, F j, Y');
+@endphp
+
 <header class="container-fluid lists-header">
   <div class="row justify-content-center">
     <div class="col-sm-5">
@@ -13,6 +18,7 @@
         <h1>Inventory List</h1>
       @elseif(is_page('out-of-stock'))
         <h1>Out of Stock</h1>
+        <h5>{{ $today }}</h5>
       @endif
       
       @if(is_page('inventory'))
