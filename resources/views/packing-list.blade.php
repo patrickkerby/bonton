@@ -177,13 +177,15 @@ if ($list_type === "shelf") {
               <td class="details_table">
                 <table>
                   @foreach ($details->get_items() as $item_id => $item)
-                    @dd($item)
                     @php 
 
                       $prod_id = $item->get_product_id(); 
 
                       $product_raw = wc_get_product($prod_id);
-                      $prod_name = $product_raw->get_name();
+                      
+                      if ($product_raw) {
+                        $prod_name = $product_raw->get_name();
+                      }
                       
                       $prod_quantity = $item->get_quantity();
                       $sliced_meta = $item->get_meta( 'Sliced Option', true );
