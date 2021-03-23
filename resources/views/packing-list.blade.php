@@ -177,6 +177,7 @@ if ($list_type === "shelf") {
               <td class="details_table">
                 <table>
                   @foreach ($details->get_items() as $item_id => $item)
+                    @dd($item)
                     @php 
 
                       $prod_id = $item->get_product_id(); 
