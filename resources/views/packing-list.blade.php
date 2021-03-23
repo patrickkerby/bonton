@@ -12,6 +12,7 @@
 // Get order data!
   $query = new WC_Order_Query( array(  
     'limit' => -1,
+    'status' => array('wc-processing', 'wc-completed'),
     'pickup_date' => $date_selector_date,
   ) );
   $results = $query->get_orders();
