@@ -397,7 +397,7 @@ function bulk_pricing( $cart ) {
     
     $total_item_quantity = 0;
 
-    $excluded_products = array( 899, 963, 1087, 1119, 1164, 1988, 1158, 1168, 1177, 2098, 8703, 8516, 10167, 10144, 10036); // @TODO hook up to ACF
+    $excluded_products = array( 899, 963, 1087, 1119, 1164, 1988, 1158, 1168, 1177, 2098, 8703, 8516, 10167, 10144, 10036, 10028); // @TODO hook up to ACF
     //Excluded Products Legend:
     // 899  = Pretzels
     // 963  = Egg Bread
@@ -414,6 +414,7 @@ function bulk_pricing( $cart ) {
     // 10167 = Paska
     // 10144 = Easter Egg Filled Croissant
     // 10036 = Roasted Vegetable Cheddar Turnover
+    // 10028 = Focaccia
 
     
     $seasonal_pricing_activated = false; // @TODO Hook this up to ACF fiels.
