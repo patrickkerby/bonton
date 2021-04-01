@@ -42,6 +42,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<li class="pickup">
 	<?php $pickup_date = WC()->session->get('pickup_date'); ?>
 	<strong>Pickup date: <?php echo $pickup_date; ?></strong>
+	<div class="details" style="display: none;">@dump($pickup_date)</div>
 	</li>
 </ul>
 
