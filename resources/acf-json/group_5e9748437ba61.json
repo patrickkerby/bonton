@@ -1,6 +1,6 @@
 {
     "key": "group_5e9748437ba61",
-    "title": "Additional Product Options",
+    "title": "Product Availability & Restrictions",
     "fields": [
         {
             "key": "field_5e97484ce1bea",
@@ -63,6 +63,25 @@
             "ui_off_text": ""
         },
         {
+            "key": "field_60789abf2d33d",
+            "label": "Exclude from bulk discount?",
+            "name": "bulk_discount_exclusion",
+            "type": "true_false",
+            "instructions": "If this item is in a category eligible for bulk discounts, you may override eligibility here.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "Exclude",
+            "ui_off_text": "Default"
+        },
+        {
             "key": "field_5f5165cc85dc7",
             "label": "Restricted Pickup Dates (Start Date)",
             "name": "restricted_pickup",
@@ -111,8 +130,10 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": "",
+    "hide_on_screen": [
+        "the_content"
+    ],
     "active": true,
     "description": "",
-    "modified": 1599935024
+    "modified": 1618516984
 }

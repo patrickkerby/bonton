@@ -419,7 +419,8 @@ function bulk_pricing( $cart ) {
     // 11723 = Raspberry White Chocolate Filled Croissant
     // 11854 = Beef & Cheddar Swirl 
 
-    
+
+
     $seasonal_pricing_activated = false; // @TODO Hook this up to ACF fiels.
     $regular_discount_small = 0.9; // @TODO hook up to ACF
     $regular_discount_large = 0.8; // @TODO hook up to ACF
@@ -428,8 +429,17 @@ function bulk_pricing( $cart ) {
 
     // Loop through cart items
     foreach ( $cart->get_cart() as $cart_item ) {
-        if( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) && ! in_array( $cart_item['product_id'], $excluded_products)){
-            $attributes = $cart_item['data']->get_attributes();            
+        $prod_id = $cart_item['product_id'];
+        $exclusion_set = get_field('bulk_discount_exclusion', $prod_id);
+        if($exclusion_set === true) {
+            $exclusion = true;
+        }
+        else {
+            $exclusion = false;
+        }
+
+        if( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) && ! in_array( $cart_item['product_id'], $excluded_products) && $exclusion === false ){
+            $attributes = $cart_item['data']->get_attributes();    
             $quantity = $cart_item['quantity'];
             $product = wc_get_product( $cart_item['product_id'] );
 
@@ -509,17 +519,26 @@ function bulk_pricing( $cart ) {
         $discount_savings_percentage = 1 - $discount_percentage;
 
         foreach ( $cart->get_cart() as $cart_item ) {
+            $prod_id = $cart_item['product_id'];
+            $exclusion_set = get_field('bulk_discount_exclusion', $prod_id);
+            if($exclusion_set === true) {
+                $exclusion = true;
+            }
+            else {
+                $exclusion = false;
+            }
+            
             // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
-            if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) && ! in_array( $cart_item['product_id'], $excluded_products) ) {
+            if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) && ! in_array( $cart_item['product_id'], $excluded_products) && $exclusion === false ) {
                 $product = $cart_item['data'];
                 $quantity = $cart_item['quantity'];
                 $price = $product->get_price();
                 $name = $product->get_name();
                 
                 // If line item qualifies for bulk pricing, but is of single items, the discount only applies to  the number of items that directly make up a full "unit" (batches of 6).
-                $attributes = $cart_item['data']->get_attributes();            
+                $attributes = $cart_item['data']->get_attributes(); 
                 if (isset($attributes['pa_package-size'])) {
-                    $size = $attributes['pa_package-size'];                            
+                    $size = $attributes['pa_package-size'];                                                
                     if ($size == 'single') {
                         $is_single = true;
                         $discounted_quantity = $quantity;
