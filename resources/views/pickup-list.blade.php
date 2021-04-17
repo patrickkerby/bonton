@@ -16,6 +16,8 @@
       // 'orderby' => 'name',
       // 'order' => 'asc',
       'status' => 'processing',
+      'pickup_date' => $date_selector_date,
+
   ) );
   $results = $query->get_orders();
 
