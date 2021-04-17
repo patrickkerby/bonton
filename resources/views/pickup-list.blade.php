@@ -15,7 +15,7 @@
       'limit' => -1,
       // 'orderby' => 'name',
       // 'order' => 'asc',
-      'status' => array('wc-processing', 'wc-completed'),
+      'status' => 'processing',
   ) );
   $results = $query->get_orders();
 
