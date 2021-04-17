@@ -15,7 +15,7 @@
       'limit' => -1,
       // 'orderby' => 'name',
       // 'order' => 'asc',
-      'status' => 'processing',
+      'status' => array('wc-processing', 'wc-completed'),
       'pickup_date' => $date_selector_date,
 
   ) );
