@@ -77,10 +77,22 @@ do_action( 'wc_quick_view_before_single_product' );
 					$ingredients = get_field( "ingredients", $product_id );
 					if ( $ingredients && ! is_wp_error( $ingredients ) ) { 
 						echo '
-						<a class="ingredients" data-toggle="collapse" href="#collapseIngredients" role="button" aria-expanded="false" aria-controls="collapseIngredients">View Ingredients</a>
+						<a class="ingredients showmore collapsed" data-toggle="collapse" href="#collapseIngredients" role="button" aria-expanded="false" aria-controls="collapseIngredients">View Ingredients</a>
 						<div class="collapse" id="collapseIngredients">
 							<div class="card card-body">
 							'.$ingredients.'
+							</div>
+						</div>';
+					}
+
+					// Recommended Storage
+					$recommended_storage = get_field( "recommended_storage", $product_id );
+					if ( $recommended_storage && ! is_wp_error( $recommended_storage ) ) { 
+						echo '
+						<a class="storage showmore collapsed" data-toggle="collapse" href="#collapseStorage" role="button" aria-expanded="false" aria-controls="collapseStorage">Recommended Storage</a>
+						<div class="collapse" id="collapseStorage">
+							<div class="card card-body">
+							'.$recommended_storage.'
 							</div>
 						</div>';
 					}

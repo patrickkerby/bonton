@@ -90,6 +90,11 @@ if ( post_password_required() ) {
 					if ( $ingredients && ! is_wp_error( $ingredients ) ) { 
 						echo '<div class="ingredients">Ingredients: <span>'.$ingredients.'</span></div>';
 					}
+
+					$recommended_storage = get_field( "recommended_storage", $product_id );
+					if ( $recommended_storage && ! is_wp_error( $recommended_storage ) ) { 
+						echo '<div class="storage">Recommended Storage: <span>'.$recommended_storage.'</span></div>';
+					}
 				
 					$dateformat = "d/m/Y";
 
