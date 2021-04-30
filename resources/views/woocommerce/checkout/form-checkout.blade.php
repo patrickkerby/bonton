@@ -61,20 +61,26 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 </form>
 @php
- date_default_timezone_set('MST');
+ 	date_default_timezone_set('MST');
 	$today = date('d/m/Y');
+	$today2 = date('Ymd');
+	$tomorrow2 = date("Ymd", strtotime('tomorrow'));
 	$currenthour = date('H');
 	$cutoffhour = '15:00';
     $cutoff = date('H', strtotime($cutoffhour));
     $tomorrow = date("d/m/Y", strtotime('tomorrow'));
     $pickup_date 		= WC()->session->get('pickup_date_formatted');
+		$pickup_date2 = date("Ymd", strtotime($pickup_date));
 
     echo "<div style=\"display:none;\">Pickupdate: ".$pickup_date."</div>";
+    echo "<div style=\"display:none;\">Pickupdate2: ".$pickup_date2."</div>";
     echo "<div style=\"display:none;\">Today: ".$today."</div>";
+    echo "<div style=\"display:none;\">Today2: ".$today2."</div>";
     echo "<div style=\"display:none;\">Current Hour: ".$currenthour."</div>";
     echo "<div style=\"display:none;\">Cut off Hour: ".$cutoffhour."</div>";
     echo "<div style=\"display:none;\">Cut off: ".$cutoff."</div>";
     echo "<div style=\"display:none;\">Tomorrow: ".$tomorrow."</div>";
+    echo "<div style=\"display:none;\">Tomorrow2: ".$tomorrow2."</div>";
 
 
 		if ($currenthour > $cutoff) {
@@ -97,8 +103,16 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			echo "<div style=\"display:none;\">pickup date is less than or equal to tomorrow</div>";
 		}
 
+		if ($pickup_date2 <= $tomorrow2) {
+			echo "<div style=\"display:none;\">pickup date is less than or equal to tomorrow (Ymd)</div>";
+		}
+
 		if ($pickup_date >= $tomorrow) {
 			echo "<div style=\"display:none;\">pickup date is greater than or equal to tomorrow</div>";
+		}
+
+		if ($pickup_date2 >= $tomorrow2) {
+			echo "<div style=\"display:none;\">pickup date is greater than or equal to tomorrow (Ymd)</div>";
 		}
 
 

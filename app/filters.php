@@ -642,11 +642,9 @@ function after_checkout_validation( $posted ) {
           //
       }
     
-    if ($post3pm == true && $pickup_date <= $tomorrow || $pickup_date == $today) {
-        wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
-    }
+    // if ($post3pm == true && $pickup_date <= $tomorrow || $pickup_date == $today) {
+    //     wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
+    // }
 
-    // do all your logics here...
-    // adding wc_add_notice with a second parameter of "error" will stop the form...
-    // wc_add_notice( __( "OMG! You're not human!", 'woocommerce' ), 'error' );
+   
 }
