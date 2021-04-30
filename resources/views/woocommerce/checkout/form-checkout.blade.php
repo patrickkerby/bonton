@@ -76,10 +76,32 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
     echo "<div style=\"display:none;\">Cut off: ".$cutoff."</div>";
     echo "<div style=\"display:none;\">Tomorrow: ".$tomorrow."</div>";
 
-    var_dump($today);
-    var_dump($currenthour);
-    var_dump($tomorrow);
-    var_dump($pickup_date);		
+
+		if ($currenthour > $cutoff) {
+        $post3pm = true;
+        echo "<div style=\"display:none;\">Current hour IS after cutoff</div>";
+      }
+      elseif ($currenthour < $cutoff) {
+        $post3pm = false;
+				echo "<div style=\"display:none;\">Current hour is NOT after cutoff</div>";
+      }
+      else {
+          //
+      }
+    
+    if ($post3pm == true && $pickup_date <= $tomorrow || $pickup_date == $today) {
+			echo "<div style=\"display:none;\">It's after 3 and the pickup day is equal to or less than tomorrow OR the pickup day is today</div>";
+    }
+
+		if ($pickup_date <= $tomorrow) {
+			echo "<div style=\"display:none;\">pickup date is less than or equal to tomorrow</div>";
+		}
+
+		if ($pickup_date >= $tomorrow) {
+			echo "<div style=\"display:none;\">pickup date is greater than or equal to tomorrow</div>";
+		}
+
+
 @endphp
 
 <?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?>
