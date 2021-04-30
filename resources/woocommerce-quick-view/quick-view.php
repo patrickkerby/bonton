@@ -31,25 +31,43 @@ do_action( 'wc_quick_view_before_single_product' );
 		 */
 		do_action( 'woocommerce_before_single_product_summary' );
 		?>
-		<div class="sidebar">
+		<div class="availability-mobile d-md-none">
+			<?php
+			
+			/**
+			 * Add availability display to product single page and product modal - MOBILE VIEW
+			 */
+
+				$terms = get_the_terms( $product_id, 'pa_availability' );
+				$prefix = $days_available = '';
+				if (is_array($terms) || is_object($terms)) {
+						
+						foreach ($terms as $term) {
+								$days = $term->name;
+								$days_available .= $prefix . '' . $days . '';
+								$prefix = ', ';
+						}
+				}
+				$days_available = explode(",",$days_available);
+				
+				if (in_array('Everyday', $days_available)) {
+					$days = "";
+					echo '<strong>Available:</strong> <span>Every day! (Tuesday - Saturday)</span>';
+				}
+				else {
+						$days = implode(', ', $days_available);
+						echo '<strong>Available:</strong> <span>'.$days .'</span>';
+				}
+			?>
+		</div>
+
+		<div class="sidebar d-none d-md-block">
 			<ul>
 				<?php
 				
 				/**
 				 * Add availability display to product single page and product modal
 				 */
-
-					$terms = get_the_terms( $product_id, 'pa_availability' );
-					$prefix = $days_available = '';
-					if (is_array($terms) || is_object($terms)) {
-							
-							foreach ($terms as $term) {
-									$days = $term->name;
-									$days_available .= $prefix . '' . $days . '';
-									$prefix = ', ';
-							}
-					}
-					$days_available = explode(",",$days_available);
 					
 					if (in_array('Everyday', $days_available)) {
 						$days = "";
@@ -137,11 +155,6 @@ do_action( 'wc_quick_view_before_single_product' );
 			 * @hooked WC_Structured_Data::generate_product_data() - 60
 			 */
 			do_action( 'woocommerce_single_product_summary' );
-			?>
-			<?php 
-				if($days) {
-					echo '<span class="warning">Please ensure this product is available on your intended pickup date!</span>';
-				}
 			?>
 		</div>
 	</div>

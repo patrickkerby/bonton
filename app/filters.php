@@ -629,7 +629,7 @@ function after_checkout_validation( $posted ) {
 	$cutoffhour = '15:00';
     $cutoff = date('H', strtotime($cutoffhour));
     $tomorrow = date("d/m/Y", strtotime('tomorrow'));
-    $pickup_date 		= WC()->session->get('pickup_date_formatted');
+    $pickup_date = WC()->session->get('pickup_date_formatted');
 
 	if ($currenthour > $cutoff) {
         $post3pm = true;
@@ -642,7 +642,7 @@ function after_checkout_validation( $posted ) {
       }
     
     if ($post3pm == true && $pickup_date <= $tomorrow || $pickup_date == $today) {
-        wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
+        wc_add_notice( __( "You're past the cutoff time (3pm) for next day pickup, please return to cart and select a new pickup date. If this doesn't seem right, please get in touch!", 'woocommerce' ), 'error' );							
     }
 
     // do all your logics here...

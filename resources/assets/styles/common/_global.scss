@@ -188,6 +188,12 @@ ol.carousel-indicators {
   }
 }
 
+ol.flex-control-nav {
+  @include media-breakpoint-down(sm) {
+    display: none;
+  }
+}
+
 ol.carousel-indicators {
   bottom: 1rem;
   z-index: 6;
@@ -225,6 +231,11 @@ ul.flex-direction-nav {
   justify-content: space-between;
   z-index: 13;
 
+  @include media-breakpoint-down(sm) {
+    top: 0;
+    height: 100%;
+  }
+
   li a {
     position: relative;
     display: block;
@@ -234,34 +245,40 @@ ul.flex-direction-nav {
     height: 200px;
     width: 27px;
     text-indent: -999999px;
+
+    @include media-breakpoint-down(sm) {
+      height: 100%;
+    }
   }
 
   li a::before {
     content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid #fff;
+    border-right: 2px solid #fff;
+    transform: rotate(-135deg);
     position: absolute;
-    top: 47%;
     left: 0;
-    height: 3px;
-    width: 41%;
-    background: #fff;
-    transform: skew(0deg, -45deg);
+    top: calc(50% - 10px);
   }
 
-  li a::after {
-    content: "";
-    position: absolute;
-    bottom: 46%;
-    left: 0;
-    height: 3px;
-    width: 40%;
-    background: #fff;
-    transform: skew(0deg, 45deg);
-  }
+  // li a::after {
+  //   content: "";
+  //   position: absolute;
+  //   bottom: 46%;
+  //   left: 0;
+  //   height: 3px;
+  //   width: 40%;
+  //   background: #fff;
+  //   transform: skew(0deg, 45deg);
+  // }
 
   li.flex-nav-next a::before {
     right: 0;
     left: unset;
-    transform: skew(0deg, 45deg);
+    transform: rotate(45deg);
   }
 
   li.flex-nav-next a::after {
