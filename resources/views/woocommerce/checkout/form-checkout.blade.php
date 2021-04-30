@@ -60,5 +60,26 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 
 </form>
+@php
+ date_default_timezone_set('MST');
+	$today = date('d/m/Y');
+	$currenthour = date('H');
+	$cutoffhour = '15:00';
+    $cutoff = date('H', strtotime($cutoffhour));
+    $tomorrow = date("d/m/Y", strtotime('tomorrow'));
+    $pickup_date 		= WC()->session->get('pickup_date_formatted');
+
+    echo "<div style=\"display:none;\">Pickupdate: ".$pickup_date."</div>";
+    echo "<div style=\"display:none;\">Today: ".$today."</div>";
+    echo "<div style=\"display:none;\">Current Hour: ".$currenthour."</div>";
+    echo "<div style=\"display:none;\">Cut off Hour: ".$cutoffhour."</div>";
+    echo "<div style=\"display:none;\">Cut off: ".$cutoff."</div>";
+    echo "<div style=\"display:none;\">Tomorrow: ".$tomorrow."</div>";
+
+    var_dump($today);
+    var_dump($currenthour);
+    var_dump($tomorrow);
+    var_dump($pickup_date);		
+@endphp
 
 <?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?>
