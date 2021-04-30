@@ -62,26 +62,13 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 </form>
 @php
  	date_default_timezone_set('MST');
-	$today = date('d/m/Y');
-	$today2 = date('Ymd');
-	$tomorrow2 = date("Ymd", strtotime('tomorrow'));
+	$today = date('Ymd');
 	$currenthour = date('H');
 	$cutoffhour = '15:00';
     $cutoff = date('H', strtotime($cutoffhour));
-    $tomorrow = date("d/m/Y", strtotime('tomorrow'));
-    $pickup_date 		= WC()->session->get('pickup_date_formatted');
-		$pickup_date2 = date("Ymd", strtotime($pickup_date));
-
-    echo "<div style=\"display:none;\">Pickupdate: ".$pickup_date."</div>";
-    echo "<div style=\"display:none;\">Pickupdate2: ".$pickup_date2."</div>";
-    echo "<div style=\"display:none;\">Today: ".$today."</div>";
-    echo "<div style=\"display:none;\">Today2: ".$today2."</div>";
-    echo "<div style=\"display:none;\">Current Hour: ".$currenthour."</div>";
-    echo "<div style=\"display:none;\">Cut off Hour: ".$cutoffhour."</div>";
-    echo "<div style=\"display:none;\">Cut off: ".$cutoff."</div>";
-    echo "<div style=\"display:none;\">Tomorrow: ".$tomorrow."</div>";
-    echo "<div style=\"display:none;\">Tomorrow2: ".$tomorrow2."</div>";
-
+    $tomorrow = date("Ymd", strtotime('tomorrow'));
+    $pickup_date = WC()->session->get('pickup_date');
+	$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
 
 		if ($currenthour > $cutoff) {
         $post3pm = true;
@@ -95,25 +82,18 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
           //
       }
     
-    if ($post3pm == true && $pickup_date <= $tomorrow || $pickup_date == $today) {
+    if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
 			echo "<div style=\"display:none;\">It's after 3 and the pickup day is equal to or less than tomorrow OR the pickup day is today</div>";
     }
 
-		if ($pickup_date <= $tomorrow) {
+		if ($pickup_date_formatted <= $tomorrow) {
 			echo "<div style=\"display:none;\">pickup date is less than or equal to tomorrow</div>";
 		}
 
-		if ($pickup_date2 <= $tomorrow2) {
-			echo "<div style=\"display:none;\">pickup date is less than or equal to tomorrow (Ymd)</div>";
-		}
-
-		if ($pickup_date >= $tomorrow) {
+		if ($pickup_date_formatted >= $tomorrow) {
 			echo "<div style=\"display:none;\">pickup date is greater than or equal to tomorrow</div>";
 		}
 
-		if ($pickup_date2 >= $tomorrow2) {
-			echo "<div style=\"display:none;\">pickup date is greater than or equal to tomorrow (Ymd)</div>";
-		}
 
 
 @endphp

@@ -624,16 +624,16 @@ add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validati
 
 function after_checkout_validation( $posted ) {
     date_default_timezone_set('MST');
-	$today = date('d/m/Y');
+	$today = date('Ymd');
 	$currenthour = date('H');
 	$cutoffhour = '15:00';
     $cutoff = date('H', strtotime($cutoffhour));
-    $tomorrow = date("d/m/Y", strtotime('tomorrow'));
-    $pickup_date 		= WC()->session->get('pickup_date_formatted');
+    $tomorrow = date("Ymd", strtotime('tomorrow'));
+    $pickup_date = WC()->session->get('pickup_date');
+	$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
 
 	if ($currenthour > $cutoff) {
         $post3pm = true;
-        echo "<div style=\"display:none;\">Current hour IS after cutoff</div>";
       }
       elseif ($currenthour < $cutoff) {
         $post3pm = false;
@@ -642,9 +642,9 @@ function after_checkout_validation( $posted ) {
           //
       }
     
-    // if ($post3pm == true && $pickup_date <= $tomorrow || $pickup_date == $today) {
-    //     wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
-    // }
+    if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
+        wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
+    }
 
    
 }
