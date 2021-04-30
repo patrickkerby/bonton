@@ -638,6 +638,11 @@ function after_checkout_validation( $posted ) {
     echo "<div style=\"display:none;\">Cut off: ".$cutoff."</div>";
     echo "<div style=\"display:none;\">Tomorrow: ".$tomorrow."</div>";
 
+    var_dump($today);
+    var_dump($currenthour);
+    var_dump($tomorrow);
+    var_dump($pickup_date);
+
 
 
 	if ($currenthour > $cutoff) {
