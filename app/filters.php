@@ -631,8 +631,18 @@ function after_checkout_validation( $posted ) {
     $tomorrow = date("d/m/Y", strtotime('tomorrow'));
     $pickup_date 		= WC()->session->get('pickup_date_formatted');
 
+    echo "<div style=\"display:none;\">Pickupdate: ".$pickup_date."</div>";
+    echo "<div style=\"display:none;\">Today: ".$today."</div>";
+    echo "<div style=\"display:none;\">Current Hour: ".$currenthour."</div>";
+    echo "<div style=\"display:none;\">Cut off Hour: ".$cutoffhour."</div>";
+    echo "<div style=\"display:none;\">Cut off: ".$cutoff."</div>";
+    echo "<div style=\"display:none;\">Tomorrow: ".$tomorrow."</div>";
+
+
+
 	if ($currenthour > $cutoff) {
         $post3pm = true;
+        echo "<div style=\"display:none;\">Current hour IS after cutoff</div>";
       }
       elseif ($currenthour < $cutoff) {
         $post3pm = false;
