@@ -74,7 +74,7 @@ if($date_range == true) {
     $filtered_orders = wc_get_orders( 
     array( 
       'pickup_date' => $day,
-      'status' => 'processing',
+      'status' => array('wc-processing', 'wc-completed'),
       'limit' => -1
       ) );
   
