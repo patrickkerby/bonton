@@ -60,5 +60,42 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	<?php do_action( 'woocommerce_checkout_after_order_review' ); ?>
 
 </form>
+@php
+ 	date_default_timezone_set('MST');
+	$today = date('Ymd');
+	$currenthour = date('H');
+	$cutoffhour = '15:00';
+    $cutoff = date('H', strtotime($cutoffhour));
+    $tomorrow = date("Ymd", strtotime('tomorrow'));
+    $pickup_date = WC()->session->get('pickup_date');
+	$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
+
+		if ($currenthour > $cutoff) {
+        $post3pm = true;
+        echo "<div style=\"display:none;\">Current hour IS after cutoff</div>";
+      }
+      elseif ($currenthour < $cutoff) {
+        $post3pm = false;
+				echo "<div style=\"display:none;\">Current hour is NOT after cutoff</div>";
+      }
+      else {
+          //
+      }
+    
+    if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
+			echo "<div style=\"display:none;\">It's after 3 and the pickup day is equal to or less than tomorrow OR the pickup day is today</div>";
+    }
+
+		if ($pickup_date_formatted <= $tomorrow) {
+			echo "<div style=\"display:none;\">pickup date is less than or equal to tomorrow</div>";
+		}
+
+		if ($pickup_date_formatted >= $tomorrow) {
+			echo "<div style=\"display:none;\">pickup date is greater than or equal to tomorrow</div>";
+		}
+
+
+
+@endphp
 
 <?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?>
