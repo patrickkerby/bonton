@@ -40,6 +40,7 @@ do_action( 'wc_quick_view_before_single_product' );
 
 				$terms = get_the_terms( $product_id, 'pa_availability' );
 				$prefix = $days_available = '';
+				$long_fermentation = '';
 				if (is_array($terms) || is_object($terms)) {
 						
 						foreach ($terms as $term) {
@@ -50,14 +51,22 @@ do_action( 'wc_quick_view_before_single_product' );
 				}
 				$days_available = explode(",",$days_available);
 				
+				//Check if requires long fermentation lead time
+				if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
+					$long_fermentation = "<span class=\"long_fermentation\">* Not available for next-day order</span>";
+				}
+
 				if (in_array('Everyday', $days_available)) {
 					$days = "";
-					echo '<strong>Available:</strong> <span>Every day! (Tuesday - Saturday)</span>';
+					echo '<strong>Available:</strong> <span>Every day! (Tuesday - Saturday) '.$long_fermentation.'</span>';
 				}
 				else {
 						$days = implode(', ', $days_available);
-						echo '<strong>Available:</strong> <span>'.$days .'</span>';
+						echo '<strong>Available:</strong> <span>'.$days . $long_fermentation.'</span>';
 				}
+
+
+
 			?>
 		</div>
 
