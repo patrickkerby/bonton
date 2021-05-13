@@ -41,6 +41,8 @@ do_action( 'wc_quick_view_before_single_product' );
 				$terms = get_the_terms( $product_id, 'pa_availability' );
 				$prefix = $days_available = '';
 				$long_fermentation = '';
+				$bulk_discount = '';
+
 				if (is_array($terms) || is_object($terms)) {
 						
 						foreach ($terms as $term) {
@@ -53,7 +55,12 @@ do_action( 'wc_quick_view_before_single_product' );
 				
 				//Check if requires long fermentation lead time
 				if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
-					$long_fermentation = "<span class=\"long_fermentation\">* Not available for next-day order</span>";
+					$long_fermentation = "<span class=\"long_fermentation\">* Not available for next-day orders</span>";
+				}
+
+				//Check if qualifies for Bulk Ordering
+				if ( has_term( array('bulk-discount'), 'product_tag', $product_id ) ){
+					$bulk_discount = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Eligible for Bulk Discount</a>";
 				}
 
 				if (in_array('Everyday', $days_available)) {
@@ -64,8 +71,6 @@ do_action( 'wc_quick_view_before_single_product' );
 						$days = implode(', ', $days_available);
 						echo '<strong>Available:</strong> <span>'.$days . $long_fermentation.'</span>';
 				}
-
-
 
 			?>
 		</div>
@@ -165,7 +170,28 @@ do_action( 'wc_quick_view_before_single_product' );
 			 */
 			do_action( 'woocommerce_single_product_summary' );
 			?>
+			<div class="product_meta d-md-none">
+				
+					<?php
+						// get product_tags of the current product
+						if ( $current_tags && ! is_wp_error( $current_tags ) ) { 
+							echo "<ul>";
+							foreach ($current_tags as $tag) {
+								$tag_title = $tag->name; // tag name
+								$tag_link = get_term_link( $tag ); // might use this later. for now only displaying text
+
+								if ($tag_title != "Bulk Discount") {
+									echo '<li>'.$tag_title.'</li>';
+								}
+							}
+							echo "</ul>";
+						}
+					?>
+					</ul>
+					<?php echo $bulk_discount ?>
+			</div>
 		</div>
+
 	</div>
 </div>
 

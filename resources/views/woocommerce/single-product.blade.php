@@ -24,14 +24,12 @@ the readme will list any important changes.
   @endphp
 
   @while(have_posts())
-  <section class="row no-gutters justify-content-center">
   @php
       the_post();
       do_action('woocommerce_shop_loop');
       wc_get_template_part('content', 'single-product');   
       
   @endphp
-  </section>
   @endwhile
 
   @php

@@ -44,84 +44,129 @@ if ( post_password_required() ) {
 	 */
 	do_action( 'woocommerce_before_single_product_summary' );
 @endphp
-<div class="sidebar">
-			<ul>
-				<?php
-				
-				/**
-				 * Add availability display to product single page and product modal
-				 */
 
-					$terms = get_the_terms( $product_id, 'pa_availability' );
-					$prefix = $days_available = '';
-					if (is_array($terms) || is_object($terms)) {
-							
-							foreach ($terms as $term) {
-									$days = $term->name;
-									$days_available .= $prefix . '' . $days . '';
-									$prefix = ', ';
-							}
-					}
-					$days_available = explode(",",$days_available);
+<div class="availability-mobile d-md-none">
+		@php
+		
+		/**
+		 * Add availability display to product single page and product modal - MOBILE VIEW
+		 */
+
+			$terms = get_the_terms( $product_id, 'pa_availability' );
+			$prefix = $days_available = '';
+			$long_fermentation = '';
+			$bulk_discount = '';
+
+			if (is_array($terms) || is_object($terms)) {
 					
-					if (in_array('Everyday', $days_available)) {
-						echo '<li>Available: <span>Tuesday - Saturday!</span></li>';
+					foreach ($terms as $term) {
+							$days = $term->name;
+							$days_available .= $prefix . '' . $days . '';
+							$prefix = ', ';
 					}
-					else {
-							$days = implode(', ', $days_available);
-							echo '<li>Available: <span>'.$days .'</span></li>';
-					}
+			}
+			$days_available = explode(",",$days_available);
+			
+			//Check if requires long fermentation lead time
+			if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
+				$long_fermentation = "<span class=\"long_fermentation\">* Not available for next-day orders</span>";
+			}
 
-					// get product_tags of the current product
-					$current_tags = get_the_terms( $product_id, 'product_tag' );
-					if ( $current_tags && ! is_wp_error( $current_tags ) ) { 
-						foreach ($current_tags as $tag) {
-							$tag_title = $tag->name; // tag name
-							$tag_link = get_term_link( $tag ); // might use this later. for now only displaying text
-							echo '<li>'.$tag_title.'</li>';
-						}
-					}
-					?>
-					</ul>
+			//Check if qualifies for Bulk Ordering
+			if ( has_term( array('bulk-discount'), 'product_tag', $product_id ) ){
+				$bulk_discount = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Eligible for Bulk Discount</a>";
+			}
 
-					<?php
-					// Ingredients list
-					$ingredients = get_field( "ingredients", $product_id );
-					if ( $ingredients && ! is_wp_error( $ingredients ) ) { 
-						echo '<div class="ingredients">Ingredients: <span>'.$ingredients.'</span></div>';
-					}
+			if (in_array('Everyday', $days_available)) {
+				$days = "";
+				echo '<strong>Available:</strong> <span>Every day! (Tuesday - Saturday) '.$long_fermentation.'</span>';
+			}
+			else {
+					$days = implode(', ', $days_available);
+					echo '<strong>Available:</strong> <span>'.$days . $long_fermentation.'</span>';
+			}
+		@endphp
+	</div>
 
-					$recommended_storage = get_field( "recommended_storage", $product_id );
-					if ( $recommended_storage && ! is_wp_error( $recommended_storage ) ) { 
-						echo '<div class="storage">Recommended Storage: <span>'.$recommended_storage.'</span></div>';
-					}
+	<div class="sidebar d-none d-md-block">
+		<ul>
+			<?php
+			
+			/**
+			 * Add availability display to product single page and product modal
+			 */
 				
-					$dateformat = "d/m/Y";
-
-					//Is the product restricted?
-					$pickup_restriction_data = "";
-					$pickup_restriction_end_data = "";
-
-					$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
-					$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
-
-					if(isset($pickup_restriction_data_check)) {
-						$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+				if (in_array('Everyday', $days_available)) {
+					$days = "";
+					echo '<li>Available: <span>Every day! (Tuesday - Saturday)</span></li>';
+				}
+				else {
+						$days = implode(', ', $days_available);
+						echo '<li>Available: <span>'.$days .'</span></li>';
+				}
+				
+				// get product_tags of the current product
+				$current_tags = get_the_terms( $product_id, 'product_tag' );
+				if ( $current_tags && ! is_wp_error( $current_tags ) ) { 
+					foreach ($current_tags as $tag) {
+						$tag_title = $tag->name; // tag name
+						$tag_link = get_term_link( $tag ); // might use this later. for now only displaying text
+						echo '<li>'.$tag_title.'</li>';
 					}
-					if(isset($pickup_restriction_end_data_check)) {
-						$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
-					}
-
-					if ($pickup_restriction_data) {
-						$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
-						$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
-						echo '<div class="notice">Please note! This product is only available from '. $restricted_start_date->format('D, M j') . ' to 	' . $restricted_end_date->format('D, M j') . '</div>';
-					}
+				}
 				?>
+				</ul>
 
-				
+				<?php
+				// Ingredients list
+				$ingredients = get_field( "ingredients", $product_id );
+				if ( $ingredients && ! is_wp_error( $ingredients ) ) { 
+					echo '
+					<a class="ingredients showmore collapsed" data-toggle="collapse" href="#collapseIngredients" role="button" aria-expanded="false" aria-controls="collapseIngredients">View Ingredients</a>
+					<div class="collapse" id="collapseIngredients">
+						<div class="card card-body">
+						'.$ingredients.'
+						</div>
+					</div>';
+				}
 
-		</div>
+				// Recommended Storage
+				$recommended_storage = get_field( "recommended_storage", $product_id );
+				if ( $recommended_storage && ! is_wp_error( $recommended_storage ) ) { 
+					echo '
+					<a class="storage showmore collapsed" data-toggle="collapse" href="#collapseStorage" role="button" aria-expanded="false" aria-controls="collapseStorage">Recommended Storage</a>
+					<div class="collapse" id="collapseStorage">
+						<div class="card card-body">
+						'.$recommended_storage.'
+						</div>
+					</div>';
+				}
+
+				$dateformat = "d/m/Y";
+
+				//Is the product restricted?
+				$pickup_restriction_data = "";
+				$pickup_restriction_end_data = "";
+
+				$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
+				$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
+
+				if(isset($pickup_restriction_data_check)) {
+					$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+				}
+				if(isset($pickup_restriction_end_data_check)) {
+					$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
+				}
+
+				if ($pickup_restriction_data) {
+					$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
+					$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
+					echo '<div class="notice"><strong>Please note!</strong> This product is only available from '. $restricted_start_date->format('D, M j') . ' to 	' . $restricted_end_date->format('D, M j') . '</div>';
+				}
+			?>
+
+
+	</div>
 	<div class="summary entry-summary">
 		@php
 			/**
@@ -138,17 +183,63 @@ if ( post_password_required() ) {
 			 */
 			do_action( 'woocommerce_single_product_summary' );
 		@endphp
+
+		<div class="product_meta d-md-none">
+						
+			<?php
+				// get product_tags of the current product
+				if ( $current_tags && ! is_wp_error( $current_tags ) ) { 
+					echo "<ul>";
+					foreach ($current_tags as $tag) {
+						$tag_title = $tag->name; // tag name
+						$tag_link = get_term_link( $tag ); // might use this later. for now only displaying text
+
+						if ($tag_title != "Bulk Discount") {
+							echo '<li>'.$tag_title.'</li>';
+						}
+					}
+					echo "</ul>";
+				}
+			?>
+			</ul>
+			<?php echo $bulk_discount ?>
+		</div>
+		<?php
+		// Ingredients list
+		$ingredients = get_field( "ingredients", $product_id );
+		if ( $ingredients && ! is_wp_error( $ingredients ) ) { 
+			echo '<div class="ingredients">Ingredients: <span>'.$ingredients.'</span></div>';
+		}
+
+		$recommended_storage = get_field( "recommended_storage", $product_id );
+		if ( $recommended_storage && ! is_wp_error( $recommended_storage ) ) { 
+			echo '<div class="storage">Recommended Storage: <span>'.$recommended_storage.'</span></div>';
+		}
+
+		$dateformat = "d/m/Y";
+
+		//Is the product restricted?
+		$pickup_restriction_data = "";
+		$pickup_restriction_end_data = "";
+
+		$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
+		$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
+
+		if(isset($pickup_restriction_data_check)) {
+			$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+		}
+		if(isset($pickup_restriction_end_data_check)) {
+			$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
+		}
+
+		if ($pickup_restriction_data) {
+			$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
+			$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
+			echo '<div class="notice">Please note! This product is only available from '. $restricted_start_date->format('D, M j') . ' to 	' . $restricted_end_date->format('D, M j') . '</div>';
+		}
+		?>
 	</div>
-	@php
-	/**
-	 * Hook: woocommerce_after_single_product_summary.
-	 *
-	 * @hooked woocommerce_output_product_data_tabs - 10
-	 * @hooked woocommerce_upsell_display - 15
-	 * @hooked woocommerce_output_related_products - 20
-	 */
-	do_action( 'woocommerce_after_single_product_summary' );
-	@endphp
+
 	
 </div>
 

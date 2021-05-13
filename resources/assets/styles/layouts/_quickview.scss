@@ -79,9 +79,6 @@ div.pp_woocommerce_quick_view {
 
       @include media-breakpoint-down(sm) {
         row-gap: 1.5rem;
-      }
-
-      @include media-breakpoint-down(xs) {
         display: flex;
         flex-direction: column;
       }
@@ -220,8 +217,8 @@ div.pp_woocommerce_quick_view {
     }
   }
 
-  .woocommerce div.product p.price,
-  .woocommerce div.product span.price {
+  div.product p.price,
+  div.product span.price {
     @include media-breakpoint-down(sm) {
       font-size: 1.75rem;
       position: fixed;
@@ -232,11 +229,11 @@ div.pp_woocommerce_quick_view {
     }
   }
 
-  .woocommerce div.product .woocommerce-variation-price span.price {
+  div.product .woocommerce-variation-price span.price {
     bottom: 1.5rem;
   }
 
-  .woocommerce div.product div.summary {
+  div.product div.summary {
     width: 100% !important;
     display: inline-flex;
     flex-direction: column;
@@ -244,8 +241,8 @@ div.pp_woocommerce_quick_view {
     position: relative;
 
     @include media-breakpoint-down(sm) {
-      padding: 0 2.5rem;
-      margin-bottom: 6rem;
+      padding: 0 2.75rem;
+      margin-bottom: 7.5rem;
 
       .woocommerce-product-details__short-description {
         p {
@@ -260,13 +257,13 @@ div.pp_woocommerce_quick_view {
     }
   }
 
-  .woocommerce div.product.product-type-variable div.summary {
+  div.product.product-type-variable div.summary {
     @include media-breakpoint-down(sm) {
       margin-bottom: 10rem;
     }
   }
 
-  .woocommerce div.product form.cart {
+  div.product form.cart {
     @include media-breakpoint-down(sm) {
       display: flex !important;
       justify-content: flex-end;
@@ -277,11 +274,11 @@ div.pp_woocommerce_quick_view {
       padding: 1rem;
       margin: 0;
       background: #fff;
-      box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.16), 0 -60px 75px 0 rgb(255, 255, 255);
+      box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.16), 0 -35px 40px 0 rgb(255, 255, 255);
     }
   }
 
-  .woocommerce div.product .variations_form {
+  div.product .variations_form {
     @include media-breakpoint-down(sm) {
       flex-direction: column;
 
@@ -324,7 +321,8 @@ div.pp_woocommerce_quick_view {
   .single-product div.product.wcpa_has_options form.cart {
     @include media-breakpoint-down(sm) {
       padding-top: 3.5rem;
-      box-shadow: 0 0 24px 0 rgba(0, 0, 0, 0.2);
+      box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.16), 0 -35px 40px 0 rgb(255, 255, 255);
+      display: flex !important;
 
       .wcpa_form_item,
       .wcpa_form_outer {
@@ -349,11 +347,11 @@ div.pp_woocommerce_quick_view {
     }
   }
 
-  .woocommerce div.product form.cart .variations td {
+  div.product form.cart .variations td {
     line-height: 1.25rem;
   }
 
-  .woocommerce div.product form.cart .variations select {
+  div.product form.cart .variations select {
     width: 100%;
   }
 
@@ -414,12 +412,61 @@ div.pp_woocommerce_quick_view {
   }
 }
 
+.product_meta {
+  @include media-breakpoint-down(sm) {
+    ul {
+      margin: 1rem 0 0 0;
+      padding: 0;
+      list-style: none;
+      border-top: solid 2px $highlight;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 10px;
+      row-gap: 5px;
+      grid-auto-flow: row;
+
+      :first-child,
+      :nth-child(2) {
+        margin-top: 1rem;
+      }
+
+      li {
+        font-weight: 600;
+        font-size: 13px;
+        display: flex;
+        color: #575757;
+
+        &::before {
+          content: "";
+          width: 30px;
+          height: 19px;
+          background: url(../images/check.svg) no-repeat center center;
+        }
+      }
+    }
+
+    .bulk-discount {
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      margin: 1rem 0 0 0;
+
+      &::before {
+        content: "";
+        width: 30px;
+        height: 20px;
+        background: url(../images/exclaim.svg) no-repeat center center;
+      }
+    }
+  }
+}
+
 .single_variation_wrap .woocommerce-variation-add-to-cart .single_variation_wrap .single_variation .woocommerce-variation-price {
   display: none;
 }
 
-.quickview form.cart button.single_add_to_cart_button,
-.quickview form.cart .variations_button button.single_add_to_cart_button,
+form.cart button.single_add_to_cart_button,
+form.cart .variations_button button.single_add_to_cart_button,
 form.cart .qib-container + button[type="submit"]:not(#qib_id):not(#qib_id) {
   @include media-breakpoint-down(xs) {
     margin-left: 0.5rem !important;
