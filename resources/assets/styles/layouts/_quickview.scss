@@ -75,10 +75,9 @@ div.pp_woocommerce_quick_view {
       column-gap: 7%;
       grid-template-columns: 32% 61%;
       grid-template-rows: auto;
-      row-gap: 2rem;
 
       @include media-breakpoint-down(sm) {
-        row-gap: 1.5rem;
+        // row-gap: 1.5rem; apparently not supported?
         display: flex;
         flex-direction: column;
       }
@@ -213,7 +212,7 @@ div.pp_woocommerce_quick_view {
     }
 
     @include media-breakpoint-down(sm) {
-      margin: -4rem auto 0 auto !important;
+      margin: -3rem auto 0 auto !important;
     }
   }
 
@@ -243,6 +242,7 @@ div.pp_woocommerce_quick_view {
     @include media-breakpoint-down(sm) {
       padding: 0 2.75rem;
       margin-bottom: 7.5rem;
+      margin-top: 1.5rem;
 
       .woocommerce-product-details__short-description {
         p {
@@ -397,6 +397,7 @@ div.pp_woocommerce_quick_view {
   display: flex;
   align-items: center;
   font-weight: 600;
+  margin-top: 1.5rem;
 
   strong {
     color: $highlight;
@@ -431,7 +432,6 @@ div.pp_woocommerce_quick_view {
   font-size: 12px;
   align-items: center;
   font-weight: 600;
-  margin-top: -1.5rem;
   padding: 0.25rem 0.5rem;
   color: #fff;
   line-height: 1.4;
@@ -456,14 +456,13 @@ div.pp_woocommerce_quick_view {
 .product_meta {
   @include media-breakpoint-down(sm) {
     ul {
-      margin: 1rem 0 0 0;
+      margin: 1.5rem 0 0 0;
       padding: 0;
       list-style: none;
       border-top: solid 2px $highlight;
       display: grid;
       grid-template-columns: 1fr 1fr;
       column-gap: 10px;
-      row-gap: 5px;
       grid-auto-flow: row;
 
       :first-child,
