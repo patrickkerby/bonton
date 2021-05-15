@@ -270,6 +270,7 @@ div.pp_woocommerce_quick_view {
       position: fixed;
       bottom: 0;
       left: 0;
+      z-index: 1;
       width: 100%;
       padding: 1rem;
       margin: 0;
@@ -289,7 +290,9 @@ div.pp_woocommerce_quick_view {
     }
   }
 
-  .woocommerce-variation-description p {
+  .woocommerce-variation-description p,
+  .collapse,
+  .collapsing {
     @include media-breakpoint-down(sm) {
       position: absolute;
       bottom: 100%;
@@ -315,6 +318,15 @@ div.pp_woocommerce_quick_view {
         border-width: 8px;
         margin-left: -8px;
       }
+    }
+  }
+
+  .extra-info .collapse,
+  .extra-info .collapsing {
+    bottom: 90%;
+
+    &::after {
+      left: 2rem;
     }
   }
 
@@ -408,6 +420,35 @@ div.pp_woocommerce_quick_view {
       display: flex;
       font-size: 11px;
       padding: 0;
+    }
+  }
+}
+
+.restricted {
+  width: 80%;
+  margin: 0 auto;
+  background: $highlight;
+  font-size: 12px;
+  align-items: center;
+  font-weight: 600;
+  margin-top: -1.5rem;
+  padding: 0.25rem 0.5rem;
+  color: #fff;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.extra-info {
+  @include media-breakpoint-down(sm) {
+    position: relative;
+
+    a.showmore {
+      padding: 0.5rem 1rem 0.5rem 1.75rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+      display: inline-flex;
+      font-weight: 600;
+      background: url(../images/eye.svg) no-repeat 0.5rem center #f8f7f2;
     }
   }
 }
@@ -530,8 +571,12 @@ form.cart .qib-container + button[type="submit"]:not(#qib_id):not(#qib_id) {
       background: url(../images/arrow-sm.svg) no-repeat center center;
       width: 42px;
       height: 42px;
-      border-radius: 0 100% 100% 0;
       background-color: #fff;
+    }
+
+    @include media-breakpoint-down(xs) {
+      // background-size: 14px 7px;
+      border-radius: 0 100% 100% 0;
     }
   }
 

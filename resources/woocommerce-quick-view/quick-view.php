@@ -18,7 +18,24 @@ $product_id = get_the_ID();
 add_filter( 'woocommerce_add_to_cart_form_action', '__return_empty_string' );
 
 do_action( 'wc_quick_view_before_single_product' );
+
+//Is the product restricted?
+$dateformat = "d/m/Y";
+$pickup_restriction_data = "";
+$pickup_restriction_end_data = "";
+
+$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
+$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
+
+if(isset($pickup_restriction_data_check)) {
+	$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+}
+if(isset($pickup_restriction_end_data_check)) {
+	$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
+}
+
 ?>
+
 <div class="woocommerce quick-view single-product">
 	<div id="product-<?php the_ID(); ?>" <?php wc_product_class(); ?>>
 
@@ -70,11 +87,18 @@ do_action( 'wc_quick_view_before_single_product' );
 				else {
 						$days = implode(', ', $days_available);
 						echo '<strong>Available:</strong> <span>'.$days . $long_fermentation.'</span>';
-				}
-
+				}				
 			?>
 		</div>
-
+		
+			<?php
+				//Display notice if the product has restricted pickup dates
+				if ($pickup_restriction_data) {
+					$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
+					$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
+					echo '<div class="restricted d-md-none">Only available from '. $restricted_start_date->format('D, M j') . ' to 	' . $restricted_end_date->format('D, M j').'</div>';
+				}
+			?>
 		<div class="sidebar d-none d-md-block">
 			<ul>
 				<?php
@@ -129,22 +153,6 @@ do_action( 'wc_quick_view_before_single_product' );
 						</div>';
 					}
 
-					$dateformat = "d/m/Y";
-
-					//Is the product restricted?
-					$pickup_restriction_data = "";
-					$pickup_restriction_end_data = "";
-
-					$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
-					$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
-
-					if(isset($pickup_restriction_data_check)) {
-						$pickup_restriction_data = get_field('restricted_pickup', $product_id);
-					}
-					if(isset($pickup_restriction_end_data_check)) {
-						$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
-					}
-
 					if ($pickup_restriction_data) {
 						$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
 						$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
@@ -170,6 +178,39 @@ do_action( 'wc_quick_view_before_single_product' );
 			 */
 			do_action( 'woocommerce_single_product_summary' );
 			?>
+			<div class="extra-info d-md-none">
+			<?php
+					// Ingredients list
+					if ( $ingredients && ! is_wp_error( $ingredients ) && $recommended_storage && ! is_wp_error( $recommended_storage ) ) { 
+						echo '
+						<a class="ingredients showmore collapsed" data-toggle="collapse" href="#collapseIngredients" role="button" aria-expanded="false" aria-controls="collapseIngredients">Ingredients & Storage Recommendations</a>
+						<div class="collapse" id="collapseIngredients">
+							<h4>Ingredients:</h4>
+							<div class="ingredients">'.$ingredients.'</div>
+							<h4>Recommended Storage:</h4>
+							<div class="storage">'.$recommended_storage.'</div>
+						</div>';
+					}
+					// Recommended Storage
+					elseif ( $recommended_storage && ! is_wp_error( $recommended_storage )) { 
+						echo '
+						<a class="storage showmore collapsed" data-toggle="collapse" href="#collapseStorage" role="button" aria-expanded="false" aria-controls="collapseStorage">Recommended Storage</a>
+						<div class="collapse" id="collapseStorage">
+							<h4>Recommended Storage:</h4>
+							<div>'.$recommended_storage.'</div>
+						</div>';
+					}
+					elseif ( $ingredients && ! is_wp_error( $ingredients ) ) { 
+						echo '
+						<a class="storage showmore collapsed" data-toggle="collapse" href="#collapseStorage" role="button" aria-expanded="false" aria-controls="collapseStorage">Ingredients</a>
+						<div class="collapse" id="collapseStorage">
+							<h4>Ingredients:</h4>
+							<div>'.$ingredients.'</div>
+						</div>';
+					}
+				?>
+
+			</div>
 			<div class="product_meta d-md-none">
 				
 					<?php
@@ -189,6 +230,8 @@ do_action( 'wc_quick_view_before_single_product' );
 					?>
 					</ul>
 					<?php echo $bulk_discount ?>
+
+					
 			</div>
 		</div>
 
