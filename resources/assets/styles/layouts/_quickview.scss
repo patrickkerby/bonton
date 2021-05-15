@@ -448,7 +448,8 @@ div.pp_woocommerce_quick_view {
       margin: 1rem 0;
       display: inline-flex;
       font-weight: 600;
-      background: url(../images/eye.svg) no-repeat 0.5rem center #f8f7f2;
+      background: url(../images/eye.svg) no-repeat 0.5rem center;
+      background-color: #f8f7f2;
     }
   }
 }
