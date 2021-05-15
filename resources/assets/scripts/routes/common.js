@@ -70,6 +70,14 @@ export default {
         }
       });
 
+      // $('input[type=checkbox]').change(function(){
+      //   if($(this).prop('checked')) {
+      //       $('div.assorted-section_parent').addClass('show');
+      //   } else {
+      //       $('div.assorted-section_parent').removeClass('show');
+      //   }
+      // });
+
       // Enable slick lightbox on appropriate images
       $('main').slickLightbox({
         itemSelector: '.slick',
