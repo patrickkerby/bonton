@@ -2,8 +2,6 @@ export default {
   init() {
     $.noConflict();
 
-
-
     $('.hamburger').click(function() {
       $(this).toggleClass('is-active');
       $('.navbar-collapse').toggleClass('is-active');
@@ -14,6 +12,7 @@ export default {
       $('.navbar-collapse').removeClass('is-active');
       $('.hamburger').removeClass('is-active');
     });
+
   },
   finalize() {
     // JavaScript to be fired on all pages, after page specific JS is fired
@@ -71,18 +70,39 @@ export default {
       });
 
       // $('input[type=checkbox]').change(function(){
-      //   if($(this).prop('checked')) {
-      //       $('div.assorted-section_parent').addClass('show');
+      //   if(('input[type=checkbox]').prop('checked')) {
+      //       $('div.assorted-selection_parent').addClass('show');
       //   } else {
-      //       $('div.assorted-section_parent').removeClass('show');
+      //       $('div.assorted-selection_parent').removeClass('show');
       //   }
       // });
+
+      // remove class from body when close button is clicked  
+      $(document).on('click', '.close-product', function(e) {
+        if (!$(e.target).is('.quickview'))
+          $('.quickview-open').removeClass('quickview-open');
+      });
 
       // Enable slick lightbox on appropriate images
       $('main').slickLightbox({
         itemSelector: '.slick',
       });
-      
+
+      $(document).on('click', '.wcpa_has_options', function() {
+        if ($('.assorted-selection-clear').length < 1) {
+          $( '.assorted-section' ).after( '<span class="assorted-selection-clear">Submit</span>' );
+        }
+      });
+
+      //mobile trigger for assorted options on items like Danish
+      $(document).on('click', '.assorted-selection', function() {
+        $('.assorted-section_parent').addClass('show-assorted');
+      });
+
+      // remove class from body when close button is clicked  
+      $(document).on('click', '.assorted-selection-clear', function() {
+          $('.assorted-section_parent').removeClass('show-assorted');
+      });
     });
   },
 };
