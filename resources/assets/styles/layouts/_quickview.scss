@@ -505,6 +505,14 @@ div.pp_woocommerce_quick_view {
   }
 }
 
+.bulk-discount {
+  margin-bottom: 2rem;
+
+  @include media-breakpoint-down(sm) {
+    display: none;
+  }
+}
+
 .product_meta {
   @include media-breakpoint-down(sm) {
     ul {
