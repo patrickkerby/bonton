@@ -80,6 +80,11 @@ if(isset($pickup_restriction_end_data_check)) {
 					$bulk_discount = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Eligible for Bulk Discount</a>";
 				}
 
+				//Check if qualifies for buy 5 get 1 free
+				if ( has_term( array('6th-item-free'), 'product_tag', $product_id ) ){
+					$sixth_item_free = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Sixth item is free when you buy 1/2 dozen!</a>";
+				}
+
 				if (in_array('Everyday', $days_available)) {
 					$days = "";
 					echo '<strong>Available:</strong> <span>Every day! (Tuesday - Saturday) '.$long_fermentation.'</span>';
@@ -178,6 +183,11 @@ if(isset($pickup_restriction_end_data_check)) {
 			 */
 			do_action( 'woocommerce_single_product_summary' );
 			?>
+			
+			<div class="d-sm-none d-md-flex"> 
+				<?php echo $sixth_item_free ?>
+			</div>
+
 			<div class="extra-info d-md-none">
 			<?php
 					// Ingredients list
@@ -230,8 +240,7 @@ if(isset($pickup_restriction_end_data_check)) {
 					?>
 					</ul>
 					<?php echo $bulk_discount ?>
-
-					
+					<?php echo $sixth_item_free ?>					
 			</div>
 		</div>
 
