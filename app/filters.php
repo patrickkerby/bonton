@@ -645,6 +645,17 @@ function after_checkout_validation( $posted ) {
     if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
         wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
     }
-
-   
 }
+
+add_action('woocommerce_before_add_to_cart_form', 'App\sixth_item_free_language');
+
+function sixth_item_free_language() {
+    global $product;
+    $product_id = get_the_ID();
+
+    if ( has_term( array('6th-item-free'), 'product_tag', $product_id ) ){
+        $sixth_item_free = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Sixth item is free when you buy 1/2 dozen!</a>";
+        echo $sixth_item_free;
+    }
+}
+

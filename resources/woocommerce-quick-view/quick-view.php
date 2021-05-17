@@ -183,10 +183,6 @@ if(isset($pickup_restriction_end_data_check)) {
 			 */
 			do_action( 'woocommerce_single_product_summary' );
 			?>
-			
-			<div class="d-sm-none d-md-flex"> 
-				<?php echo $sixth_item_free ?>
-			</div>
 
 			<div class="extra-info d-md-none">
 			<?php
