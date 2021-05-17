@@ -23,6 +23,7 @@ do_action( 'wc_quick_view_before_single_product' );
 $dateformat = "d/m/Y";
 $pickup_restriction_data = "";
 $pickup_restriction_end_data = "";
+$sixth_item_free = "";
 
 $pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
 $pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
