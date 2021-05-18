@@ -2,6 +2,10 @@
 //Quick View styles
 .quickview-open {
   overflow: hidden;
+
+  @include media-breakpoint-down(sm) {
+    overflow: scroll;
+  }
 }
 
 .pp_overlay {
