@@ -55,7 +55,7 @@ div.pp_woocommerce_quick_view {
     overflow-y: scroll;
     padding: 2rem;
     border-radius: 0;
-    overscroll-behavior: contain;
+    overscroll-behavior: none;
 
     @include media-breakpoint-down(sm) {
       padding: 0;
@@ -278,6 +278,7 @@ div.pp_woocommerce_quick_view {
       margin: 0;
       background: #fff;
       box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.16), 0 -35px 40px 0 rgb(255, 255, 255);
+      overscroll-behavior: none;
     }
   }
 
