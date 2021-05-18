@@ -654,7 +654,7 @@ function sixth_item_free_language() {
     $product_id = get_the_ID();
 
     if ( has_term( array('6th-item-free'), 'product_tag', $product_id ) ){
-        $sixth_item_free = "Sixth item is free when you buy 1/2 dozen!";
+        $sixth_item_free = "<span class=\"bulk-discount\">Sixth item is free when you buy 1/2 dozen!</span>";
         echo $sixth_item_free;
     }
 }

@@ -2,10 +2,6 @@
 //Quick View styles
 .quickview-open {
   overflow: hidden;
-
-  @include media-breakpoint-down(sm) {
-    overflow: auto;
-  }
 }
 
 .pp_overlay {
@@ -22,9 +18,6 @@ div.pp_woocommerce_quick_view {
   display: flex !important;
   position: fixed !important;
   border-radius: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior: contain;
 
   div.quick-view {
     padding-bottom: 2rem;
@@ -283,8 +276,6 @@ div.pp_woocommerce_quick_view {
       margin: 0;
       background: #fff;
       box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.16), 0 -35px 40px 0 rgb(255, 255, 255);
-      overflow: auto;
-      overscroll-behavior-y: contain;
     }
   }
 
