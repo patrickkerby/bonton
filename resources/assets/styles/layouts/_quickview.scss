@@ -4,7 +4,7 @@
   overflow: hidden;
 
   @include media-breakpoint-down(sm) {
-    overflow: scroll;
+    overflow: auto;
   }
 }
 
@@ -22,6 +22,8 @@ div.pp_woocommerce_quick_view {
   display: flex !important;
   position: fixed !important;
   border-radius: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
 
   div.quick-view {
     padding-bottom: 2rem;
