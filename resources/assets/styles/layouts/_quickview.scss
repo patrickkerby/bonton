@@ -1,8 +1,8 @@
 /* stylelint-disable no-descending-specificity */
 //Quick View styles
-// .quickview-open {
-//   overflow: hidden;
-// }
+.quickview-open {
+  overscroll-behavior: none;
+}
 
 .pp_overlay {
   background: rgba(255, 255, 255, 0.6) !important;
