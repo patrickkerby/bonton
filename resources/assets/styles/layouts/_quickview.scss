@@ -644,10 +644,6 @@ form.cart .qib-container + button[type="submit"]:not(#qib_id):not(#qib_id) {
   border-radius: 2rem;
   text-indent: -99999px;
 
-  @include media-breakpoint-down(sm) {
-    top: 1rem;
-  }
-
   &::before {
     background: url(../images/Arrow.svg) no-repeat center center;
     width: 50px;
@@ -678,8 +674,11 @@ form.cart .qib-container + button[type="submit"]:not(#qib_id):not(#qib_id) {
   }
 
   @include media-breakpoint-down(xs) {
-    width: 100vw !important;
-    max-width: 100vw !important;
+    width: auto !important;
+    max-width: auto !important;
+    top: 1rem;
+    right: unset;
+    left: 0;
   }
 }
 
