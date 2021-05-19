@@ -37,12 +37,12 @@
   "vendor/ui-icons_777777_256x240.png": "vendor/ui-icons_777777_256x240_6d28e77d.png",
   "vendor/ui-icons_cc0000_256x240.png": "vendor/ui-icons_cc0000_256x240_bd6996f9.png",
   "vendor/ui-icons_ffffff_256x240.png": "vendor/ui-icons_ffffff_256x240_e33c878c.png",
-  "scripts/customizer.js": "scripts/customizer_bbc39790.js",
-  "styles/home.css": "styles/home_bbc39790.css",
-  "scripts/home.js": "scripts/home_bbc39790.js",
-  "scripts/lists.js": "scripts/lists_bbc39790.js",
-  "styles/main.css": "styles/main_bbc39790.css",
-  "scripts/main.js": "scripts/main_bbc39790.js",
-  "styles/woo.css": "styles/woo_bbc39790.css",
-  "scripts/woo.js": "scripts/woo_bbc39790.js"
+  "scripts/customizer.js": "scripts/customizer_c9376941.js",
+  "styles/home.css": "styles/home_c9376941.css",
+  "scripts/home.js": "scripts/home_c9376941.js",
+  "scripts/lists.js": "scripts/lists_c9376941.js",
+  "styles/main.css": "styles/main_c9376941.css",
+  "scripts/main.js": "scripts/main_c9376941.js",
+  "styles/woo.css": "styles/woo_c9376941.css",
+  "scripts/woo.js": "scripts/woo_c9376941.js"
 }
