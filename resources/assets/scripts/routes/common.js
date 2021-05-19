@@ -88,14 +88,9 @@ export default {
         itemSelector: '.slick',
       });
 
-      $(document).on('click', '.wcpa_has_options', function() {
-        if ($('.assorted-selection-clear').length < 1) {
-          $( '.assorted-section' ).after( '<span class="assorted-selection-clear">Submit</span>' );
-        }
-      });
-
+    // ASSORTED ITEMS SELECTION BEHAVIOUR FOR MOBILE
       //mobile trigger for assorted options on items like Danish
-      $(document).on('click', '.assorted-selection', function() {
+      $(document).on('click', '.assorted-section_parent label', function() {
         $('.assorted-section_parent').addClass('show-assorted');
       });
 
@@ -103,6 +98,14 @@ export default {
       $(document).on('click', '.assorted-selection-clear', function() {
           $('.assorted-section_parent').removeClass('show-assorted');
       });
+
+       //Add a fake submit button on the Assorted Items Selection textarea in order to dismiss it.
+       $(document).on('click', '.wcpa_has_options', function() {
+        if ($('.assorted-selection-clear').length < 1) {
+          $( '.assorted-section' ).after( '<span class="assorted-selection-clear">Done!</span>' );
+        }
+      });
+
     });
   },
 };

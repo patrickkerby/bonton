@@ -378,7 +378,7 @@ div.pp_woocommerce_quick_view {
       }
 
       div.assorted-section_parent {
-        display: none;
+        visibility: hidden;
         position: absolute;
         top: 0;
         left: 0;
@@ -386,15 +386,38 @@ div.pp_woocommerce_quick_view {
         width: 100%;
         padding: 1.5rem 2rem;
         background: $cream;
-        opacity: 0;
         box-shadow: inset 0 -8px 15px -8px rgba($color: #000, $alpha: 0.2);
 
         @include slowfade;
 
+        label {
+          visibility: visible;
+          display: flex;
+          opacity: 1;
+          height: 2.5rem;
+          position: absolute;
+          top: 0;
+          left: 0;
+          padding: 0.56rem 0 1rem 2.75rem;
+          width: 100%;
+          font-weight: 600;
+          color: $highlight;
+          background: url(../images/edit.svg) no-repeat 1.25rem center;
+          background-color: $cream;
+        }
+
         &.show-assorted {
-          display: block;
+          visibility: visible;
           top: -13rem;
           opacity: 1;
+
+          label {
+            opacity: 0;
+            margin: 0;
+            height: 0;
+
+            @include slowfade;
+          }
 
           @include slowfade;
         }

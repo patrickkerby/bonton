@@ -15,6 +15,7 @@
   "images/check.svg": "images/check_c67b5293.svg",
   "images/chevron.svg": "images/chevron_848663d6.svg",
   "images/curbside.svg": "images/curbside_1155a85f.svg",
+  "images/edit.svg": "images/edit_8e271bb8.svg",
   "images/envelope.svg": "images/envelope_d76574fb.svg",
   "images/exclaim.svg": "images/exclaim_2d442f46.svg",
   "images/eye.svg": "images/eye_09eeac99.svg",
@@ -37,12 +38,12 @@
   "vendor/ui-icons_777777_256x240.png": "vendor/ui-icons_777777_256x240_6d28e77d.png",
   "vendor/ui-icons_cc0000_256x240.png": "vendor/ui-icons_cc0000_256x240_bd6996f9.png",
   "vendor/ui-icons_ffffff_256x240.png": "vendor/ui-icons_ffffff_256x240_e33c878c.png",
-  "scripts/customizer.js": "scripts/customizer_5dab866f.js",
-  "styles/home.css": "styles/home_5dab866f.css",
-  "scripts/home.js": "scripts/home_5dab866f.js",
-  "scripts/lists.js": "scripts/lists_5dab866f.js",
-  "styles/main.css": "styles/main_5dab866f.css",
-  "scripts/main.js": "scripts/main_5dab866f.js",
-  "styles/woo.css": "styles/woo_5dab866f.css",
-  "scripts/woo.js": "scripts/woo_5dab866f.js"
+  "scripts/customizer.js": "scripts/customizer_0fe58c5e.js",
+  "styles/home.css": "styles/home_0fe58c5e.css",
+  "scripts/home.js": "scripts/home_0fe58c5e.js",
+  "scripts/lists.js": "scripts/lists_0fe58c5e.js",
+  "styles/main.css": "styles/main_0fe58c5e.css",
+  "scripts/main.js": "scripts/main_0fe58c5e.js",
+  "styles/woo.css": "styles/woo_0fe58c5e.css",
+  "scripts/woo.js": "scripts/woo_0fe58c5e.js"
 }
