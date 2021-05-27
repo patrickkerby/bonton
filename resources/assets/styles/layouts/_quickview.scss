@@ -328,6 +328,21 @@ div.pp_woocommerce_quick_view {
         border-width: 8px;
         margin-left: -8px;
       }
+
+      &::before {
+        content: "X";
+        position: absolute;
+        top: 4px;
+        right: 4px;
+        display: flex;
+        color: #fff;
+      }
+    }
+  }
+
+  .woocommerce-variation-description.hide {
+    @include media-breakpoint-down(sm) {
+      display: none !important;
     }
   }
 

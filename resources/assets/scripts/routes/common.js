@@ -69,14 +69,6 @@ export default {
         }
       });
 
-      // $('input[type=checkbox]').change(function(){
-      //   if(('input[type=checkbox]').prop('checked')) {
-      //       $('div.assorted-selection_parent').addClass('show');
-      //   } else {
-      //       $('div.assorted-selection_parent').removeClass('show');
-      //   }
-      // });
-
       // remove class from body when close button is clicked  
       $(document).on('click', '.close-product', function(e) {
         if (!$(e.target).is('.quickview'))
@@ -88,7 +80,7 @@ export default {
         itemSelector: '.slick',
       });
 
-    // ASSORTED ITEMS SELECTION BEHAVIOUR FOR MOBILE
+      // ASSORTED ITEMS SELECTION BEHAVIOUR FOR MOBILE
       //mobile trigger for assorted options on items like Danish
       $(document).on('click', '.assorted-section_parent label', function() {
         $('.assorted-section_parent').addClass('show-assorted');
@@ -100,11 +92,16 @@ export default {
       });
 
        //Add a fake submit button on the Assorted Items Selection textarea in order to dismiss it.
-       $(document).on('click', '.wcpa_has_options', function() {
+      $(document).on('click', '.wcpa_has_options', function() {
         if ($('.assorted-selection-clear').length < 1) {
           $( '.assorted-section' ).after( '<span class="assorted-selection-clear">Done!</span>' );
         }
       });
+
+      $(document).on('click', '.woocommerce-variation-description p', function() {
+        $('.woocommerce-variation-description').addClass('hide');
+      });
+
 
     });
   },
