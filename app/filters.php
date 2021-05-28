@@ -371,7 +371,7 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 
 
 // BULK PRICING FOR BAKED YEASTED ITEMS
-// if category is Bread (52), Bagels (10) & if product is not in blacklist
+// if category is Bread (52), Buns & Bagels (91) & if product is not in blacklist
 //   get_quantity of each line item
 //     if line item = "single", unit_quantity = quantity * 1/6
 //     if line item = "1/2 dozen", unit_quantity = quantity * 1
@@ -384,7 +384,7 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 
 // Product categories
 function get_my_bulk_terms(){
-    return array( 10, 52 );
+    return array( 91, 52 );
 }
 
 add_action( 'woocommerce_before_calculate_totals', 'App\bulk_pricing', 30, 10 );
