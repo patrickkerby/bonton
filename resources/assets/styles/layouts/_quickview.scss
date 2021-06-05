@@ -294,6 +294,51 @@ div.pp_woocommerce_quick_view {
     }
   }
 
+  div.product-type-bundle {
+    div.summary {
+      padding: 0 2rem;
+    }
+
+    div.bundled_product_summary {
+      @include media-breakpoint-down(sm) {
+        margin: 0.75rem 0 !important;
+        padding: 0.75rem 0 !important;
+      }
+    }
+
+    form.cart {
+      @include media-breakpoint-down(sm) {
+        position: unset;
+        bottom: unset;
+        left: unset;
+        justify-content: unset;
+        overscroll-behavior: unset;
+        box-shadow: unset;
+        padding: unset;
+        display: block !important;
+      }
+    }
+
+    p.price,
+    span.price,
+    .bundle_wrap .price {
+      @include media-breakpoint-down(sm) {
+        position: unset;
+        bottom: unset;
+        left: unset;
+        font-size: 1.25rem;
+      }
+    }
+
+    .bundle_form .bundle_price p.price,
+    .single-product .bundle_form .bundle_price p.price,
+    .bundled_product .price,
+    .bundle_wrap .price {
+      margin-right: 0.5rem !important;
+      min-width: unset !important;
+    }
+  }
+
   div.product .variations_form {
     @include media-breakpoint-down(sm) {
       flex-direction: column;
