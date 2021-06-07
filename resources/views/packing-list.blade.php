@@ -190,24 +190,42 @@ if ($list_type === "shelf") {
                       
                       $prod_quantity = $item->get_quantity();
                       $sliced_meta = $item->get_meta( 'Sliced Option', true );
-                      
+
+                      //If the product is a bundled product, we want to hide the parent. We only want to see the items that require packing.
+                        $bundle_mode = $item->get_meta( '_bundle_group_mode', true);
+                        
+                        if ($bundle_mode == "parent") {
+                          $is_bundle_parent = true;
+                        }
+                        else {
+                          $is_bundle_parent = false;
+                        }
+
+                      // Hide specific meta data from the details column. List the items by key here:
+                        $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
+
+
                       $product_meta_objects = $item->get_meta_data();
 
                     @endphp
 
                     @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
-                      <tr>
-                        <td class="qty_cell"><span class="qty">{{ $prod_quantity }} </span></td>
-                        <td class="prod_name_cell">
-                          <span class="prod_name">{{ $prod_name }}</span>
-                          
-                        </td>
-                        <td class="details_cell">
-                          @foreach ( $product_meta_objects as $meta )
-                            <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
-                          @endforeach
-                        </td>               
-                      </tr> 
+                      @unless($is_bundle_parent)
+                        <tr>
+                          <td class="qty_cell"><span class="qty">{{ $prod_quantity }} </span></td>
+                          <td class="prod_name_cell">
+                            <span class="prod_name">{{ $prod_name }}</span>
+                            
+                          </td>
+                          <td class="details_cell">
+                            @foreach ( $product_meta_objects as $meta )
+                              @unless(in_array($meta->key, $hidden_meta))
+                                <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
+                              @endunless
+                            @endforeach
+                          </td>               
+                        </tr> 
+                      @endunless
                     @endif
                   @endforeach
                 </table>                         
