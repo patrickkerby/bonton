@@ -100,25 +100,34 @@ if($date_range == true) {
         $package_size = $product->get_attribute( 'package-size' );
         $product_size = $product->get_attribute( 'size' );
 
+        if (wc_pb_is_bundle_container_order_item($item)) {
+          $is_bundle_parent = true;
+        }
+        else {
+          $is_bundle_parent = false;
+        }
+
         $item_quantity = call_user_func('itemQuantity', $package_size);
         $quantity = $item_quantity * $prod_quantity;  
 
-        if (!empty($variation_id)) {  
-          if (!empty($option) && !empty($product_size)) {
-            $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
-          }
-          elseif (!empty($option) && empty($product_size)) {
-            $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
-          }
-          elseif (!empty($product_size) && empty($option)) {
-            $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+        if (empty($is_bundle_parent)) {  
+          if (!empty($variation_id)) {  
+            if (!empty($option) && !empty($product_size)) {
+              $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
+            }
+            elseif (!empty($option) && empty($product_size)) {
+              $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
+            }
+            elseif (!empty($product_size) && empty($option)) {
+              $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
+            }
+            else {
+              $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
+            }
           }
           else {
-            $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+            $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
           }
-        }
-        else {
-          $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
         }
       }
     }
@@ -143,7 +152,7 @@ if($date_range == true) {
 
   // Reorganize the filteredProducts array to be grouped by date
     foreach($productsPerDay as $value){
-    $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category']);
+      $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category'], 'is_bundle_parent' => $value['is_bundle_parent']);
     }
 
   // Array of ALL products ordered in time range
@@ -151,7 +160,7 @@ if($date_range == true) {
     $uniqueListedProducts = array_unique($listedProducts);
 
     // print("<pre>".print_r($prod,true)."</pre>");
-    // print("<pre>".print_r($uniqueListedProducts,true)."</pre>");
+    // print("<pre>".print_r($dailyProducts,true)."</pre>");
   }
  @endphp
 
