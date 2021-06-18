@@ -72,25 +72,34 @@
       $package_size = $product->get_attribute( 'package-size' );
       $product_size = $product->get_attribute( 'size' );
 
+      if (wc_pb_is_bundle_container_order_item($item)) {
+          $is_bundle_parent = true;
+        }
+        else {
+          $is_bundle_parent = false;
+        }
+
       $item_quantity = call_user_func('itemQuantity', $package_size);
       $quantity = $item_quantity * $prod_quantity;  
 
-      if (!empty($variation_id)) {  
-        if (!empty($option) && !empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
-        }
-        elseif (!empty($option) && empty($product_size)) {
-          $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
-        }
-        elseif (!empty($product_size) && empty($option)) {
-          $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+      if (empty($is_bundle_parent)) {  
+        if (!empty($variation_id)) {  
+          if (!empty($option) && !empty($product_size)) {
+            $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          elseif (!empty($option) && empty($product_size)) {
+            $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          elseif (!empty($product_size) && empty($option)) {
+            $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          else {
+            $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
         }
         else {
-          $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
         }
-      }
-      else {
-        $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
       }
     }
   }
