@@ -154,7 +154,14 @@
 
                   <a href="#">Grocery, </a>
                 @endif
-                {!! $category !!}
+                @unless(
+                  $category === "picnic" || 
+                  $category === "charcuterie" ||
+                  $category === "date night" ||
+                  $category === "gift ideas"
+                )
+                  {!! $category !!}
+                @endunless
               </td>
               <td>{{ $total_quantity }}</td>
             </tr>
