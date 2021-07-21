@@ -62,10 +62,19 @@
       $product = $item->get_product();
       $prod_name = $item->get_name();
 
-      // $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
-          
-      $categories = wc_get_product_category_list($prod_id);
+      
+      //Filter the list of categories to exclude the referenced categories
+      $excluded_categories = array(713,714,716,717,715); // use these to exclude categories from appearing.
+      $category_names = array();
       $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
+
+      foreach ($term_obj_list as $term) {
+        if(!in_array($term->term_id, $excluded_categories)) {
+          array_push($category_names, $term->name);
+        }
+      }
+      $categories = implode(', ', $category_names);
+      
       $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
 
       $option = $product->get_attribute( 'variety' );
@@ -155,10 +164,10 @@
                   <a href="#">Grocery, </a>
                 @endif
                 @unless(
-                  $category === "picnic" || 
-                  $category === "charcuterie" ||
-                  $category === "date night" ||
-                  $category === "gift ideas"
+                  $category == "picnic" || 
+                  $category == "charcuterie" ||
+                  $category == "date night" ||
+                  $category == "gift ideas"
                 )
                   {!! $category !!}
                 @endunless
