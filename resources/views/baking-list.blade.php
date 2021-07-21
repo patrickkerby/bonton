@@ -3,10 +3,11 @@
 --}}
 
 @extends('layouts.lists')
-
 @php
   $post_id = get_the_ID();
   // do_action( 'acf/save_post', $post_id );
+  $excluded_categories = array();
+  $excluded_category_ids = array();
 
   $date_selector_date = get_field('list_date');
 
@@ -61,32 +62,40 @@
       $variation_id = $item->get_variation_id(); 
       $product = $item->get_product();
       $prod_name = $item->get_name();
-
-      
-      //Filter the list of categories to exclude the referenced categories
-      $excluded_categories = array(713,714,716,717,715); // use these to exclude categories from appearing.
-      $category_names = array();
-      $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
-
-      foreach ($term_obj_list as $term) {
-        if(!in_array($term->term_id, $excluded_categories)) {
-          array_push($category_names, $term->name);
-        }
-      }
-      $categories = implode(', ', $category_names);
-      
-      $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
-
       $option = $product->get_attribute( 'variety' );
       $package_size = $product->get_attribute( 'package-size' );
       $product_size = $product->get_attribute( 'size' );
 
+      //Filter the list of categories to exclude terms that have been excluded via ACF
+      $category_names = array();
+      $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
+
+      foreach ($term_obj_list as $term) {
+        $baking_exlusion = get_field('baking_list_exclusion', 'product_cat_' . $term->term_id); //Gets the ACF field using term_id
+        
+        //Create an array of IDs to be excluded
+        if($baking_exlusion == true) {
+          array_push($excluded_category_ids, $term->term_id);
+        }
+
+        //Remove the duplicates created by the loop
+        $excluded_categories = array_unique($excluded_category_ids);
+
+        //While we're looping the terms, create array of term names
+        if(!in_array($term->term_id, $excluded_categories)) {
+          array_push($category_names, $term->name);
+        }
+      }
+      $categories = implode(', ', $category_names);            
+      $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
+
+      //Hide bundle parent items, as they're not really needed for the baking list
       if (wc_pb_is_bundle_container_order_item($item)) {
           $is_bundle_parent = true;
-        }
-        else {
-          $is_bundle_parent = false;
-        }
+      }
+      else {
+        $is_bundle_parent = false;
+      }
 
       $item_quantity = call_user_func('itemQuantity', $package_size);
       $quantity = $item_quantity * $prod_quantity;  
