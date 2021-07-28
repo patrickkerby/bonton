@@ -18,6 +18,15 @@
 
   ul.products {
     width: 100%;
+    //convert to CSSGrid layout in order to easily adjust individual product sizes
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    row-gap: 15px;
+    column-gap: 15px;
+
+    &::before {
+      display: none !important;
+    }
 
     li.product {
       display: flex;
@@ -26,6 +35,13 @@
       align-items: center;
       overflow: hidden;
       background: #343534;
+      margin: 0 !important;
+      width: auto !important;
+      grid-column: span 2;
+
+      @include media-breakpoint-down(sm) {
+        grid-column: span 3;
+      }
 
       @include slowfade;
 
@@ -91,6 +107,7 @@
           font-size: 18px;
           font-weight: normal;
           text-transform: none;
+          text-align: center;
           line-height: 18px;
           height: auto;
           background: none;
@@ -150,6 +167,71 @@
       }
 
       @include slowfade(0.2);
+
+      &.single-feature {
+        grid-column: span 4;
+      }
+
+      &.double-feature {
+        grid-column: span 3;
+      }
+
+      &.double-feature,
+      &.single-feature {
+        order: -1;
+        flex-direction: column;
+
+        @include media-breakpoint-down(sm) {
+          grid-column: span 6;
+        }
+
+        h2 {
+          font-size: 2.42rem;
+          line-height: 2.3rem;
+          color: #fff;
+          background: none;
+          position: relative;
+          bottom: unset;
+          margin: auto auto 1rem auto;
+          border-bottom: solid;
+
+          @include media-breakpoint-down(md) {
+            font-size: 2rem;
+            line-height: 2rem;
+            padding: 1rem 0.5rem;
+          }
+        }
+
+        h3 {
+          font-family: $font-family-sans-serif;
+          font-size: 1.1rem;
+          line-height: 1.2rem;
+          font-weight: normal;
+          text-align: center;
+          color: #fff;
+          margin: 0 auto auto auto;
+          padding: 0 20% 1rem 20%;
+          z-index: 1;
+
+          @include media-breakpoint-down(md) {
+            font-size: 1rem;
+            line-height: 1.1rem;
+            padding: 0 10% 1rem 10%;
+          }
+        }
+
+        img {
+          opacity: 0.8;
+        }
+
+        &:hover {
+          img {
+            opacity: 0.2;
+
+            @include slowfade;
+          }
+        }
+      }
 
       &.post-1670:hover h2 {
         bottom: 50%;

@@ -23,15 +23,71 @@ global $product;
 if ( empty( $product ) || ! $product->is_visible() ) {
 	return;
 }
+
+global $wp_query;
+
+$terms_post = get_the_terms( $post->cat_ID , 'product_cat' );
+foreach ($terms_post as $term_cat) { 
+	$term_cat_id = $term_cat->term_id; 
+}
+
+$featured_class = "";
+$prod_id = $product->get_id();
+$custom_image_check = false;
+$rows = get_field('featured_products', 'product_cat_' . $term_cat_id);
+
 ?>
-<li <?php wc_product_class( '', $product ); ?>>
-	<?php
+
+@if($rows)
+@foreach ($rows as $row)
+	@php 
+		$title = $row['custom_title']; 
+		$product_selection = $row['select_a_product']; 
+	@endphp
+	@if ($prod_id === $product_selection && $loop->count === 1)
+		@php 
+			$featured_class = "single-feature";
+			$description = $row['custom_description'];
+			$custom_image = $row['custom_image'];
+
+			if(!empty($custom_image)) {
+				$custom_image_check = true;	
+			}			
+		@endphp		
+		
+	@elseif ($prod_id === $product_selection && $loop->count > 1)
+		@php 
+			$featured_class = "double-feature";
+			$description = $row['custom_description'];
+			$custom_image = $row['custom_image'];
+
+			if(!empty($custom_image)) {
+				$custom_image_check = true;	
+			}	
+		@endphp	
+	@else
+		@php
+			add_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_template_loop_product_thumbnail', 10 );
+		@endphp	
+	@endif
+@endforeach
+@endif
+
+<li <?php wc_product_class( $featured_class, $product ); ?>>
+
+<?php
 	/**
 	 * Hook: woocommerce_before_shop_loop_item.
 	 *
 	 * @hooked woocommerce_template_loop_product_link_open - 10
 	 */
 	do_action( 'woocommerce_before_shop_loop_item' );
+	if($custom_image_check) {
+		remove_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_template_loop_product_thumbnail', 10 );
+
+		
+		echo wp_get_attachment_image( $custom_image, array('600', '399'),"", array( "class" => "attachment-woocommerce_thumbnail size-woocommerce_thumbnail" ) ); 
+	}
 
 	/**
 	 * Hook: woocommerce_before_shop_loop_item_title.
@@ -55,6 +111,10 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 	 * @hooked woocommerce_template_loop_price - 10
 	 */
 	do_action( 'woocommerce_after_shop_loop_item_title' );
+
+	if ($description) {
+		echo "<h3>" . $description . "</h3>";
+	}
 
 	/**
 	 * Hook: woocommerce_after_shop_loop_item.
