@@ -85,16 +85,16 @@ function save_general_details( $ord_id ){
  * @compatible    WooCommerce 3.4.5
  */
  
-add_filter( 'manage_edit-shop_order_columns', 'App\bbloomer_add_new_order_admin_list_column' );
+add_filter( 'manage_edit-shop_order_columns', 'App\add_new_order_admin_list_column' );
  
-function bbloomer_add_new_order_admin_list_column( $columns ) {
+function add_new_order_admin_list_column( $columns ) {
     $columns['pickup_date'] = 'Pickup Date';
     return $columns;
 }
  
-add_action( 'manage_shop_order_posts_custom_column', 'App\bbloomer_add_new_order_admin_list_column_content' );
+add_action( 'manage_shop_order_posts_custom_column', 'App\add_new_order_admin_list_column_content' );
  
-function bbloomer_add_new_order_admin_list_column_content( $column ) {
+function add_new_order_admin_list_column_content( $column ) {
    
     global $post;
  
@@ -102,7 +102,39 @@ function bbloomer_add_new_order_admin_list_column_content( $column ) {
  
 				$order = wc_get_order( $post->ID );
 				$date = get_post_meta( $order->get_id(), 'pickup_date', true );
+			
         echo $date;
       
     }
 }
+
+/**
+ * 
+ * Make order screen custom column sortable
+ * 
+ */
+add_filter( 'manage_edit-shop_order_sortable_columns', 'App\MY_COLUMNS_SORT_FUNCTION' );
+
+function MY_COLUMNS_SORT_FUNCTION( $columns ) 
+{
+	$custom = array(
+			'pickup_date'    => 'pickup_date' 
+			);
+	return wp_parse_args( $custom, $columns );
+}
+
+add_action( 'pre_get_posts', 'App\pickupdate_orderby' );
+
+function pickupdate_orderby( $query ) {
+    if( ! is_admin() )
+        return;
+ 
+    $orderby = $query->get( 'orderby');
+ 
+    if( 'pickup_date' == $orderby ) {
+						
+				$query->set('meta_key','pickup_date_object');
+        $query->set('orderby','meta_value');
+    }
+}
+
