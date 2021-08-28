@@ -3,7 +3,8 @@
 .packing-list,
 .baking-list,
 .inventory-list,
-.oos-list {
+.oos-list,
+.grocery-list {
   margin: 0;
   padding-top: 3rem;
 
@@ -197,6 +198,10 @@
 
   tr {
     border-top: solid 2px #d2d2d2;
+
+    &.dtrg-group {
+      background: $cream-dark;
+    }
 
     td {
       vertical-align: top;
@@ -400,6 +405,40 @@ table.shelf {
 
   tr.cooler.shelf {
     display: table-row;
+  }
+}
+
+span.stock {
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  color: #fff;
+
+  &.instock {
+    background-color: $highlight;
+  }
+
+  &.outofstock {
+    background-color: $danger;
+  }
+}
+
+.grocery-list {
+  tr {
+    border-top: solid 2px $cream-dark;
+  }
+
+  td.notes {
+    width: 40%;
+
+    span {
+      color: #ccc;
+    }
+  }
+
+  .categories {
+    font-size: 0.85rem;
   }
 }
 
