@@ -26,7 +26,7 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_script('comment-reply');
     }
 
-    if (is_page( array( 789, 819, 815, 810, 791, 6968, 6177, 10794, 10071, 14747 )) ) {
+    if (is_page( array( 789, 819, 815, 810, 791, 6968, 6177, 10794, 10071, 15435 )) ) {
         wp_enqueue_script('sage/lists.js', asset_path('scripts/lists.js'), [], null, true);
     }
 }, 100);
