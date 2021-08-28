@@ -81,7 +81,7 @@
           <a class="nav-link @if(is_page('inventory')) active @endif d-print-none" href="/lists/inventory">Inventory</a>
         </li>
         <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('grocery-inventory')) active @endif d-print-none" href="/lists/grocery-inventory">Groceries</a>
+          <a class="nav-link @if(is_page('grocery-inventory')) active @endif d-print-none" href="/lists/grocery-list">Groceries</a>
         </li>
         <li class="nav-item d-print-none">
           <a class="nav-link @if(is_page('out-of-stock')) active @endif d-print-none" href="/lists/out-of-stock">Out of Stock</a>
