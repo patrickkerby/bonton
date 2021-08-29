@@ -72,13 +72,20 @@
                     @php
                       $variation = new WC_Product_Variation($variation_id);
                       $variationName = $variation->get_name(); 
+                      $variationEnabled = $variation->is_purchasable(); 
+
                       $variationStock = $variation->get_stock_status();                             
+                    
+                      // print("<pre>".print_r($variation,true)."</pre>");
+
                     @endphp
-                    <td><strong>{!! $product_name !!}</strong></td>
-                    <td>{!! $variationName !!}</td>
-                    <td class="categories">{!! $categories !!}</td>
-                    <td><span class="stock {{ $variationStock }}">{{ $variationStock }}</span></td>
-                    <td class="notes"><span>Notes</span></td>
+                    @if($variationEnabled)
+                      <td><strong>{!! $product_name !!}</strong></td>
+                      <td>{!! $variationName !!}</td>
+                      <td class="categories">{!! $categories !!}</td>
+                      <td><span class="stock {{ $variationStock }}">{{ $variationStock }}</span></td>
+                      <td class="notes"><span>Notes</span></td>
+                    @endif
                   </tr>
                 @endforeach
               @endif            
