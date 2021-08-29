@@ -73,11 +73,7 @@
                       $variation = new WC_Product_Variation($variation_id);
                       $variationName = $variation->get_name(); 
                       $variationEnabled = $variation->is_purchasable(); 
-
                       $variationStock = $variation->get_stock_status();                             
-                    
-                      // print("<pre>".print_r($variation,true)."</pre>");
-
                     @endphp
                     @if($variationEnabled)
                       <td><strong>{!! $product_name !!}</strong></td>
