@@ -63,6 +63,7 @@
       $product = $item->get_product();
       $prod_name = $item->get_name();
       $option = $product->get_attribute( 'variety' );
+      $topping = $product->get_attribute( 'topping' );
       $package_size = $product->get_attribute( 'package-size' );
       $product_size = $product->get_attribute( 'size' );
 
@@ -102,12 +103,27 @@
 
       if (empty($is_bundle_parent)) {  
         if (!empty($variation_id)) {  
+          //size, option, topping
+          if (!empty($option) && !empty($product_size) && !empty($topping)) {
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          //option, topping
+          if (!empty($option) && empty($product_size) && !empty($topping)) {
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          //size, topping
+          if (empty($option) && !empty($product_size) && !empty($topping)) {
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          //option, size
           if (!empty($option) && !empty($product_size)) {
             $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }
+          //option
           elseif (!empty($option) && empty($product_size)) {
             $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }
+          //size
           elseif (!empty($product_size) && empty($option)) {
             $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }

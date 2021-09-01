@@ -112,18 +112,33 @@ if($date_range == true) {
 
         if (empty($is_bundle_parent)) {  
           if (!empty($variation_id)) {  
-            if (!empty($option) && !empty($product_size)) {
-              $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
-            }
-            elseif (!empty($option) && empty($product_size)) {
-              $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
-            }
-            elseif (!empty($product_size) && empty($option)) {
-              $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
-            }
-            else {
-              $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
-            }
+            //size, option, topping
+          if (!empty($option) && !empty($product_size) && !empty($topping)) {
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          //option, topping
+          if (!empty($option) && empty($product_size) && !empty($topping)) {
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          //size, topping
+          if (empty($option) && !empty($product_size) && !empty($topping)) {
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          //option, size
+          if (!empty($option) && !empty($product_size)) {
+            $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          //option
+          elseif (!empty($option) && empty($product_size)) {
+            $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          //size
+          elseif (!empty($product_size) && empty($option)) {
+            $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
+          else {
+            $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          }
           }
           else {
             $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
