@@ -97,6 +97,7 @@ if($date_range == true) {
         $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
 
         $option = $product->get_attribute( 'variety' );
+        $topping = $product->get_attribute( 'topping' );
         $package_size = $product->get_attribute( 'package-size' );
         $product_size = $product->get_attribute( 'size' );
 
