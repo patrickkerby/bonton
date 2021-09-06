@@ -379,8 +379,20 @@ ul.woocommerce-thankyou-order-details li {
 
 .wdgk_donation_content {
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  margin: 3rem 2px 0 2px;
+  margin: 1rem 0 2rem 0;
+  padding: 1rem;
+  background: $cream-dark;
+
+  .wdgk_display_option {
+    display: flex;
+    margin: 1rem 0;
+  }
+
+  span {
+    margin: 0 1rem 0 0;
+  }
 }
 
 .wdgk_donation_content input.wdgk_donation {
