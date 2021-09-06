@@ -26,6 +26,7 @@ defined( 'ABSPATH' ) || exit;
 	$cart_count = 0;
 	$gc_cart_count = 0;
 	$conflict = false;
+	$post3pm = "";
 
 	$dateformat = "d/m/Y";
 	date_default_timezone_set('MST');
@@ -83,6 +84,15 @@ defined( 'ABSPATH' ) || exit;
 
 	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
 		$conflict = true;
+	}
+
+	//if session date is earlier than current date, turn on the conflict
+	if ($session_date_object) {
+		 $potential_old_date = new DateTime($session_pickup_date);
+
+		 if($potential_old_date < $today) {
+			 $conflict = true;
+		 }
 	}
 
 	$morning_selected = "";

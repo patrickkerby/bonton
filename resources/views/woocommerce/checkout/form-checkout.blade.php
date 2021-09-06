@@ -69,7 +69,8 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
     $tomorrow = date("Ymd", strtotime('tomorrow'));
     $pickup_date = WC()->session->get('pickup_date');
 	$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
-
+	$post3pm = "";
+	
 		if ($currenthour > $cutoff) {
         $post3pm = true;
         echo "<div style=\"display:none;\">Current hour IS after cutoff</div>";
