@@ -377,6 +377,7 @@ defined( 'ABSPATH' ) || exit;
 				<?php do_action( 'woocommerce_after_cart_table' ); ?>
 			</form>
 			<?php do_action( 'woocommerce_before_cart_collaterals' ); ?>
+			<p>*Please note: if you would like a charitable donation tax receipt, <a href="https://jpwc.ca/donate/" target="_blank">please donate directly to JPWC here.</a></p>
 
 				<div class="cart-collaterals @if($conflict === true) conflict @endif col-sm-12">
 					<?php
@@ -389,7 +390,6 @@ defined( 'ABSPATH' ) || exit;
 						do_action( 'woocommerce_cart_collaterals' );
 					?>
 				</div>
-				<p>*Please note: if you would like a charitable donation tax receipt, <a href="https://jpwc.ca/donate/" target="_blank">please donate directly to JPWC here.</a></p>
 		<?php do_action( 'woocommerce_after_cart' ); ?>
 		
 		</div>
