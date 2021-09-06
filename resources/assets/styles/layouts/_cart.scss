@@ -387,6 +387,7 @@ ul.woocommerce-thankyou-order-details li {
 
   .wdgk_display_option {
     display: flex;
+    flex-direction: row;
     margin: 1rem 0;
 
     span {
