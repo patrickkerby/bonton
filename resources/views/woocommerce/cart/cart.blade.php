@@ -389,8 +389,9 @@ defined( 'ABSPATH' ) || exit;
 						do_action( 'woocommerce_cart_collaterals' );
 					?>
 				</div>
-
+				<p>*Please note: if you would like a charitable donation tax receipt, <a href="https://jpwc.ca/donate/" target="_blank">please donate directly to JPWC here.</a></p>
 		<?php do_action( 'woocommerce_after_cart' ); ?>
+		
 		</div>
 		@unless($giftcertificate_only_item_in_cart == true)
 

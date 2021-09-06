@@ -511,7 +511,6 @@ function bulk_pricing( $cart ) {
             $discount_percentage = $regular_discount_large;
         }
     }
-                  var_dump($discount_percentage);
 
     // Set price with 10% discount, for items within set categories only (bread, bagels, sweet buns)
     if ( $total_item_quantity >= 5) {
