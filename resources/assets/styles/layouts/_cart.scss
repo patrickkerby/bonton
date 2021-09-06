@@ -383,7 +383,7 @@ ul.woocommerce-thankyou-order-details li {
   justify-content: center;
   margin: 1rem 0 2rem 0;
   padding: 1rem;
-  background: $cream-dark;
+  background: $cream;
 
   .wdgk_display_option {
     display: flex;
@@ -392,6 +392,7 @@ ul.woocommerce-thankyou-order-details li {
 
   span {
     margin: 0 1rem 0 0;
+    background: none;
   }
 }
 
