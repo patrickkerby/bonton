@@ -3,7 +3,18 @@
 --}}
 
 @extends('layouts.lists')
-
+<script >
+  function printDiv(divName) {
+       var printContents = document.getElementById(divName).innerHTML;
+       var originalContents = document.body.innerHTML;
+  
+       document.body.innerHTML = printContents;
+  
+       window.print();
+  
+       document.body.innerHTML = originalContents;
+  }
+  </script>
 @php
   $post_id = get_the_ID();
   // do_action( 'acf/save_post', $post_id );
@@ -55,8 +66,6 @@
     $shelf_list = array( '91, 83, 52, 104, 13, 105, 135, 94, 102, 106, 54, 10, 67, 285, 289, 662 ' );
     $shelf_list_slugs = array('buns-bagels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients', 'savoury-treats');
 
-
-
     //Product pages give an option to override the natural category and assign the product as cooler. Add to cooler array:
     $cooler_override_args = array(
       'status' => 'publish',
@@ -96,6 +105,11 @@
     $shelf_array = array_merge($shelf_array,$shelf_overrides);
 
     $daily_order_number = 100;
+
+    // Hide specific meta data from the details column. List the items by key here:
+    $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
+
+
 @endphp
 
 @section('content')
@@ -112,6 +126,7 @@
             <th>Location</th>
             <th>Notes</th>
             <td>Email</td>
+            <td class="d-print-none">Order Details to Print</td>
           </tr>
         </thead>
         <tbody>  
@@ -140,17 +155,21 @@
               <td class="location">
                 {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
                 @php $responses = array(); @endphp
-                @foreach ($details->get_items() as $item_id => $item)
+                @foreach ($details->get_items() as $item_id => $item)                
+                
                   @php 
+
                     $prod_id = $item->get_product_id(); 
                     $cooler_override = $item->get_meta( '_cooler', true );
                                       
                     if(in_array($prod_id, $cooler_array)) {
-                      $responses[] = '<span class="order_location cooler">C</span>';    
+                      $responses[] = '<span class="order_location cooler">C</span>';   
+                      $in_cooler = true; 
                     } 
                     // Add elseif for freezer list        
                     else {  
-                      $responses[] = '<span class="order_location shelf">S</span>';
+                      $responses[] = '<span class="order_location shelf">S</span>';                
+                      $in_shelf = true;
                     }                    
                   @endphp
                 @endforeach
@@ -162,6 +181,148 @@
               </td>
               <td class="notes">{{ $customer_note }}</td>
               <td>{{ $email }}</td>
+              <td class="d-print-none">
+                <button class="btn btn-default" onclick="printDiv('order-{{ $order_number }}')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print</i></button>
+                
+                {{-- Begin print-only section --}}
+                
+                
+                <div id="order-{{ $order_number }}" class="d-none">
+                  @php
+                      $cooler_count = 0;
+                      $shelf_count = 0;
+                  @endphp
+                  <style>
+                    @media print {
+                      .page-break	{ display: block; page-break-before: always; }
+                      @page {
+                        margin: 5mm;
+                      }
+                      * {
+                        -webkit-print-color-adjust: exact !important;   /* Chrome, Safari, Edge */
+                        color-adjust: exact !important;                 /*Firefox*/
+                      }
+                      .print-order {
+                        max-width: 80mm;
+                        border: solid 2px #000;
+                        padding: 5mm;
+                      }
+                      .storage {
+                        font-size: 16px;
+                        font-weight: 700;
+                        color: #fff;
+                        background: #000;
+                        width: 100%;
+                        padding: 0.25rem;
+                        display: block;
+                        margin: 0 0 1rem 0;
+                        text-align: center;
+                      
+                      }
+                      .meta-label {
+                        font-weight: 700;
+                        font-size: .875rem;
+                        padding-bottom: 0.25rem;
+                        display: inline-block;
+                        margin-left: 0.5rem;
+                      }
+                      .meta-label strong {
+                        font-weight: 900;
+                        font-size: 11px;
+                        opacity: .4;
+                        text-transform: uppercase;
+                      }
+                    }
+                    
+                  </style>
+
+                  <div class="print-order">
+                  <h1>{{  $daily_order_number  }}</h1>
+                  <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
+                  <strong>Phone:</strong> {{ $phone }}<br>
+                  <strong>Order #:</strong> {{ $order_number }}<br><br>
+                  
+                  @foreach ($details->get_items() as $item_id => $item)
+                    @php                      
+                      $prod_id = $item->get_product_id(); 
+                      $quantity = $item->get_quantity();
+                      $product_name = $item->get_name();
+                      $product_meta_objects = $item->get_meta_data();
+
+                      $cooler_override = $item->get_meta( '_cooler', true );
+
+                    @endphp
+
+                    @if(in_array($prod_id, $cooler_array))
+                      @php
+                        $cooler_count++;
+                      @endphp
+
+                      @if($cooler_count == 1)
+                        <span class="storage">Cooler Items</span>
+                      @endif
+                      
+                      <div class="items">
+                        <strong>{{ $product_name }}</strong>
+                        <span class="meta-label"><strong>Qty:</strong> {{ $quantity }}</span> <br>
+                        
+                        @foreach ( $product_meta_objects as $meta )
+                          @unless(in_array($meta->key, $hidden_meta))
+                            @if(!is_array($meta->value))
+                              <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
+                            @endif
+                              
+                          @endunless
+                        @endforeach
+                      </div>
+                      
+                    @endif
+                  @endforeach
+                  
+                  @foreach ($details->get_items() as $item_id => $item)
+                    @php                                         
+                      $prod_id = $item->get_product_id(); 
+                      $quantity = $item->get_quantity();
+                      $product_name = $item->get_name();
+                      $product_meta_objects = $item->get_meta_data();
+
+                      $cooler_override = $item->get_meta( '_cooler', true );
+
+                    @endphp
+
+                    @if(!in_array($prod_id, $cooler_array))
+                      @php
+                        $shelf_count++;
+                      @endphp     
+               
+                      @if($shelf_count == 1)
+                        <span class="storage">Shelf Items</span>
+                      @endif
+
+                      <strong>{{ $product_name }}</strong><br>
+                      <span class="meta-label"><strong>Qty:</strong> {{ $quantity }}</span> <br>
+
+                      @foreach ( $product_meta_objects as $meta )
+                        @unless(in_array($meta->key, $hidden_meta))
+                          @if(!is_array($meta->value))
+                            <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
+                          @endif
+                            
+                        @endunless
+                      @endforeach
+                      <hr>
+                      
+                    @endif
+                  @endforeach
+                  @if($customer_note)
+                  <strong>Note:</strong><br>
+                    {{ $customer_note }}
+                  @endif
+                  <div class="page-break"></div>
+                </div>
+                </div>
+
+              </td>
             </tr>        
           @endforeach
         </tbody>
