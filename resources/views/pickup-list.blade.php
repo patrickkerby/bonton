@@ -263,7 +263,7 @@
                       @endif
                       
                       <div class="items">
-                        <strong>{{ $product_name }}</strong>
+                        <strong>{{ $product_name }}</strong><br>
                         <span class="meta-label"><strong>Qty:</strong> {{ $quantity }}</span> <br>
                         
                         @foreach ( $product_meta_objects as $meta )
