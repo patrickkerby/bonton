@@ -1,4 +1,8 @@
 {{-- This file controls the print-only content for printing out all orders from the pickup list --}}
+@php 
+  $daily_order_number = 100;
+@endphp
+
 @foreach ($filtered_orders as $details )
 
 @php 
