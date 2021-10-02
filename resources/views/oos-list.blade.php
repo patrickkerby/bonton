@@ -24,6 +24,9 @@
     // $query = new WP_Query($query_args);
     $prodlist = get_posts( $query_args );
 
+    print("<pre>".print_r($array_data,true)."</pre>");
+
+
 @endphp
 
   <div class="container">
