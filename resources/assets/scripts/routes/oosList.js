@@ -11,8 +11,9 @@ export default {
           'paging': false,
           'info': false,
           'order': [[ 1, 'desc' ], [ 0, 'asc' ]],
-        }     
-      );      
+          'pageLength': 500,
+        }
+      );
     });
   },
 };
