@@ -55,7 +55,7 @@
             }
 
           @endphp
-            @unless($status == 'draft')
+            {{-- @unless($status == 'draft') --}}
               <tr>                
                 <td>{!! $item->post_title !!}</td>
                 <td>
@@ -65,7 +65,7 @@
                     {!! $variation_categories !!}</td>
                   @endif
               </tr>
-            @endunless
+            {{-- @endunless --}}
           @endforeach
         </tbody>
       </table>
