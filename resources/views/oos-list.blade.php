@@ -24,7 +24,7 @@
     // $query = new WP_Query($query_args);
     $prodlist = get_posts( $query_args );
 
-    print("<pre>".print_r($prodlist,true)."</pre>");
+    // print("<pre>".print_r($prodlist,true)."</pre>");
 
 
 @endphp
@@ -43,8 +43,9 @@
 
           @php              
             $loop_count = $loop->count;
-            $prod_id = $item->ID;
+            $prod_id = $item->ID;            
             $variation = wc_get_product($prod_id);
+            $variation_name = $variation->get_name();
             $parent_prod_id = $variation->get_parent_id();
             $product = wc_get_product( $parent_prod_id );
             $variation_categories = wc_get_product_category_list($parent_prod_id);
@@ -57,7 +58,8 @@
           @endphp
             {{-- @unless($status == 'draft') --}}
               <tr>                
-                <td>{!! $item->post_title !!}</td>
+                {{-- <td>{!! $item->post_title !!}</td> --}}
+                <td>{{ $variation_name }}</td>
                 <td>
                   @if ($product_categories)
                     {!! $product_categories !!}</td>
