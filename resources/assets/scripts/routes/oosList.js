@@ -8,9 +8,9 @@ export default {
       $.noConflict();
       $('#lists').DataTable(
         {
+          'paging': false,
           'info': false,
           'order': [[ 1, 'desc' ], [ 0, 'asc' ]],
-          'pageLength': 500,
         }
       );
     });
