@@ -181,7 +181,7 @@
                 {!! $order_location !!}
               </td>
               <td class="notes">{{ $customer_note }}</td>
-              <td>{{ $email }}</td>
+              <td class="d-print-none">{{ $email }}</td>
               <td class="d-print-none">
                 @include('partials.print-individual-receipt')
               </td>
