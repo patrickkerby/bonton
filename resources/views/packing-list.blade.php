@@ -19,6 +19,7 @@
   $daily_order_number = 100;
   $post_id = get_the_ID();
   $date_selector_date = get_field('list_date');
+  $is_packing_list = true;
 
 // Get order data!
   $query = new WC_Order_Query( array(  

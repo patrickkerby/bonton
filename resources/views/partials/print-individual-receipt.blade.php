@@ -90,8 +90,7 @@
       $cooler_override = $item->get_meta( '_cooler', true );
 
     @endphp
-    
-    @unless($list_type === "shelf")
+    @unless($list_type === "shelf" && $is_packing_list == true)
       @if(in_array($prod_id, $cooler_array))
         @php
           $cooler_count++;
@@ -130,7 +129,7 @@
 
     @endphp
 
-    @unless($list_type === "cooler")
+    @unless($list_type === "cooler" && $is_packing_list == true)
       @if(!in_array($prod_id, $cooler_array))
         @php
           $shelf_count++;

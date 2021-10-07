@@ -20,6 +20,7 @@
   // do_action( 'acf/save_post', $post_id );
 
   $date_selector_date = get_field('list_date');
+  $is_packing_list = false;
 
 // Get order data!
   $query = new WC_Order_Query( array(  
