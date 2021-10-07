@@ -3,7 +3,18 @@
 --}}
 
 @extends('layouts.lists')
-
+<script >
+  function printDiv(divName) {
+       var printContents = document.getElementById(divName).innerHTML;
+       var originalContents = document.body.innerHTML;
+  
+       document.body.innerHTML = printContents;
+  
+       window.print();
+  
+      //  document.body.innerHTML = originalContents;
+  }
+  </script>
 @php  
   $daily_order_number = 100;
   $post_id = get_the_ID();
@@ -119,6 +130,8 @@ if ($list_type === "shelf") {
               <span class="product">Product</span>
               <span class="details">Details</span>
             </th>
+            <td class="d-print-none">Order Details to Print</td>
+
           </tr>
         </thead>
         <tbody>
@@ -229,6 +242,9 @@ if ($list_type === "shelf") {
                     @endif
                   @endforeach
                 </table>                         
+              </td>
+              <td class="d-print-none">
+                @include('partials.print-individual-receipt')
               </td>
             </tr>
           @endforeach

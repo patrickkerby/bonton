@@ -14,13 +14,19 @@
   @endphp
   <style>
     @media print {
-      .page-break	{ display: block; page-break-before: always; }
+      .page-break	{ display: block; page-break-after: always; }
       @page {
-        margin: 2mm;
+        margin: 0;
       }
       * {
         -webkit-print-color-adjust: exact !important;   /* Chrome, Safari, Edge */
         color-adjust: exact !important;                 /*Firefox*/
+      }
+
+      body.pickup-list,
+      html {
+        margin: 0;
+        padding: 0;
       }
       .print-order {
         max-width: 108mm;
@@ -84,31 +90,33 @@
       $cooler_override = $item->get_meta( '_cooler', true );
 
     @endphp
+    
+    @unless($list_type === "shelf")
+      @if(in_array($prod_id, $cooler_array))
+        @php
+          $cooler_count++;
+        @endphp
 
-    @if(in_array($prod_id, $cooler_array))
-      @php
-        $cooler_count++;
-      @endphp
-
-      @if($cooler_count == 1)
-        <span class="storage">Cooler Items</span>
-      @endif
-      
-      <div class="items">
-        <strong>{{ $product_name }}</strong><br>
-        <span class="meta-label"><strong>Qty:</strong> {{ $quantity }}</span> <br>
+        @if($cooler_count == 1)
+          <span class="storage">Cooler Items</span>
+        @endif
         
-        @foreach ( $product_meta_objects as $meta )
-          @unless(in_array($meta->key, $hidden_meta))
-            @if(!is_array($meta->value))
-              <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
-            @endif
-              
-          @endunless
-        @endforeach
-      </div>
-      
-    @endif
+        <div class="items">
+          <strong>{{ $product_name }}</strong><br>
+          <span class="meta-label"><strong>Qty:</strong> {{ $quantity }}</span> <br>
+          
+          @foreach ( $product_meta_objects as $meta )
+            @unless(in_array($meta->key, $hidden_meta))
+              @if(!is_array($meta->value))
+                <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
+              @endif
+                
+            @endunless
+          @endforeach
+        </div>
+        
+      @endif
+    @endunless
   @endforeach
   
   @foreach ($details->get_items() as $item_id => $item)
@@ -122,29 +130,31 @@
 
     @endphp
 
-    @if(!in_array($prod_id, $cooler_array))
-      @php
-        $shelf_count++;
-      @endphp     
+    @unless($list_type === "cooler")
+      @if(!in_array($prod_id, $cooler_array))
+        @php
+          $shelf_count++;
+        @endphp     
 
-      @if($shelf_count == 1)
-        <span class="storage">Shelf Items</span>
+        @if($shelf_count == 1)
+          <span class="storage">Shelf Items</span>
+        @endif
+
+        <strong>{{ $product_name }}</strong><br>
+        <span class="meta-label"><strong>Qty:</strong> {{ $quantity }}</span> <br>
+
+        @foreach ( $product_meta_objects as $meta )
+          @unless(in_array($meta->key, $hidden_meta))
+            @if(!is_array($meta->value))
+              <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
+            @endif
+              
+          @endunless
+        @endforeach
+        <hr>
+        
       @endif
-
-      <strong>{{ $product_name }}</strong><br>
-      <span class="meta-label"><strong>Qty:</strong> {{ $quantity }}</span> <br>
-
-      @foreach ( $product_meta_objects as $meta )
-        @unless(in_array($meta->key, $hidden_meta))
-          @if(!is_array($meta->value))
-            <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
-          @endif
-            
-        @endunless
-      @endforeach
-      <hr>
-      
-    @endif
+    @endunless
   @endforeach
   @if($customer_note)
   <strong>Note:</strong><br>

@@ -26,7 +26,7 @@
     @endphp
     <style>
       @media print {
-        .page-break	{ display: block; page-break-before: always; }
+        .page-break	{ display: block; page-break-after: always; }
         @page {
           margin: 0;
         }
@@ -34,9 +34,17 @@
           -webkit-print-color-adjust: exact !important;   /* Chrome, Safari, Edge */
           color-adjust: exact !important;                 /*Firefox*/
         }
+  
+        body.pickup-list,
+        html {
+          margin: 0;
+          padding: 0;
+        }
         .print-order {
-          max-width: 80mm;
-          padding: 5mm;
+          max-width: 108mm;
+          border: solid 2px #000;
+          padding: 3mm;
+          position: relative;
         }
         .storage {
           font-size: 16px;
@@ -59,18 +67,30 @@
         }
         .meta-label strong {
           font-weight: 900;
-          font-size: 11px;
-          opacity: .4;
+          font-size: 11px;        
           text-transform: uppercase;
         }
-      }      
+        .meta:before {
+          opacity: 1 !important;
+        }
+  
+        .date {
+          position: absolute;
+          top: 2mm;
+          right: 2mm;
+          font-size: 14px;
+          text-align: right;
+        }
+      }
+      
     </style>
 
     <div class="print-order">
-      <h1>{{  $daily_order_number  }}</h1>
-      <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
-      <strong>Phone:</strong> {{ $phone }}<br>
-      <strong>Order #:</strong> {{ $order_number }}<br><br>
+      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {{ $timeslot }}</strong></p>
+  <h1>{{  $daily_order_number  }}</h1>
+  <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
+  <strong>Phone:</strong> {{ $phone }}<br>
+  <strong>Order #:</strong> {{ $order_number }}<br><br>
     
       @foreach ($details->get_items() as $item_id => $item)
         @php                      
