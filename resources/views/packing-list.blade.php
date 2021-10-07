@@ -12,7 +12,7 @@
   
        window.print();
   
-      //  document.body.innerHTML = originalContents;
+       document.body.innerHTML = originalContents;
   }
   </script>
 @php  
@@ -247,9 +247,16 @@ if ($list_type === "shelf") {
                 @include('partials.print-individual-receipt')
               </td>
             </tr>
+          
           @endforeach
         </tbody>
       </table>
+      <div id="receipt-printer-all" class="d-none">
+        @include('partials.print-shelf-cooler-receipt')
+      </div>
+      <button class="btn btn-default" onclick="printDiv('receipt-printer-all')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Receipt Printer)</i></button>
+
+
     </div>
   </div>
 @endsection

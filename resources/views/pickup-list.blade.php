@@ -12,7 +12,7 @@
   
        window.print();
   
-      //  document.body.innerHTML = originalContents;
+       document.body.innerHTML = originalContents;
   }
   </script>
 @php

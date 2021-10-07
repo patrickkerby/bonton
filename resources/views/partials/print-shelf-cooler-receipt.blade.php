@@ -3,6 +3,8 @@
   $daily_order_number = 100;
 @endphp
 
+
+
 @foreach ($filtered_orders as $details )
 
 @php 
@@ -17,9 +19,32 @@
   $timeslot = $details->get_meta( 'pickup_timeslot', true );
   $location = $details->get_meta( 'pickuplocation', true );
   $order_number = $details->get_id();
+
+  // Check to see if the products associated with the order are shelf or cooler.
+  $list_check = array();
+  $list_class = array();
+  
+  foreach ($details->get_items() as $item_id => $item) {
+    $prod_id = $item->get_product_id(); 
+                      
+    if(in_array($prod_id, $cooler_array)) {
+      $list_check[] = '<span class="order_location cooler">C</span>';
+      $list_class[] = 'cooler';
+    } 
+    // Add elseif for freezer list        
+    elseif(in_array($prod_id, $shelf_array)) {  
+      $list_check[] = '<span class="order_location shelf">S</span>';
+      $list_class[] = 'shelf';
+    }                   
+  }
+  $list_check_unique = array_unique($list_check);
+  $order_location = implode("", $list_check_unique);
+  
+  $list_class_unique = array_unique($list_class);
+  $list_class_marker = implode(" ", $list_class_unique);
 @endphp
                                 
-  <div id="order-{{ $order_number }}" class="">
+  <div id="order-{{ $order_number }}" class="{{ $list_type }}">
     @php
         $cooler_count = 0;
         $shelf_count = 0;
@@ -81,11 +106,26 @@
           font-size: 14px;
           text-align: right;
         }
+
+        .cooler .shelf.print-order,
+        .shelf .cooler.print-order {
+          display: none;
+        }
+
+        
+
+        .cooler .shelf.cooler.print-order,
+        .shelf .shelf.cooler.print-order {
+          display: block;
+        }
+
+        
       }
       
     </style>
 
-    <div class="print-order">
+    <div class="print-order {{ $list_class_marker }}">
+
       <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {{ $timeslot }}</strong></p>
       <h1>{{  $daily_order_number  }}</h1>
       <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
@@ -102,6 +142,9 @@
             $cooler_override = $item->get_meta( '_cooler', true );
             
             @endphp
+
+@unless ($list_type === "shelf")
+    
 
           @if(in_array($prod_id, $cooler_array))
             @php
@@ -125,7 +168,9 @@
                 @endunless
                 @endforeach
               </div>
-              @endif
+          @endif
+
+          @endunless
       @endforeach
         
         @foreach ($details->get_items() as $item_id => $item)
@@ -138,6 +183,7 @@
             $cooler_override = $item->get_meta( '_cooler', true );
 
           @endphp
+@unless ($list_type === "cooler")
 
           @if(!in_array($prod_id, $cooler_array))
             @php
@@ -161,6 +207,7 @@
             @endforeach
             <hr>            
           @endif
+          @endunless
       @endforeach
         
         @if($customer_note)
