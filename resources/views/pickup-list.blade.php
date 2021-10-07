@@ -126,7 +126,7 @@
             <th>Pickup</th>
             <th>Location</th>
             <th>Notes</th>
-            <td>Email</td>
+            <td class="d-print-none">Email</td>
             <td class="d-print-none">Order Details to Print</td>
           </tr>
         </thead>
