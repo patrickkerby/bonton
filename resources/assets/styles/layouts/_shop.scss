@@ -341,4 +341,54 @@
     }
   }
 }
+
+.checkout form.login {
+  position: fixed;
+  top: 0;
+  background: rgb(255, 255, 255);
+  z-index: 9;
+  width: 100%;
+  left: 0;
+  height: 100vh;
+  margin: 0;
+  box-shadow: #666 0 20px 24px;
+  display: none;
+  flex-direction: column;
+  padding: 20% 11%;
+
+  a.closebutton {
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    font-weight: bolder;
+    padding: 0.5rem;
+    border: solid 2px $highlight;
+  }
+
+  .woocommerce-form-login__rememberme {
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+
+    span {
+      margin-left: 1rem;
+    }
+  }
+
+  input,
+  textarea {
+    border: solid 2px $cream-dark;
+    height: 40px;
+    padding: 0 0.5rem;
+
+    @include slowfade;
+
+    &:focus {
+      border: solid 2px #dad5bc;
+
+      @include slowfade;
+    }
+  }
+}
+
 /* stylelint-enable no-descending-specificity */

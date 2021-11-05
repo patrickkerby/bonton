@@ -6,10 +6,11 @@
     @php do_action('get_header') @endphp
       @if(isset($landing_page) && $landing_page == TRUE)
         @include('partials.header-landing')
+      @elseif(is_page_template( 'views/faq.blade.php' ))
+        @include('partials.header-faq')
       @else
         @include('partials.header')
       @endif
-
     <div class="wrap {{ $container }}" role="document">
       <div class="content">
         @if ( is_front_page() )
@@ -19,11 +20,11 @@
         @else
           <main class="main justify-content-center">
             @yield('content')
-          </main>        
+          </main>
         @endif
       </div>
     </div>
-    @php do_action('get_footer') @endphp
+    @php do_action('get_footer')@endphp
     @include('partials.footer')
     @php wp_footer() @endphp
     <a href="#" class="close-product" onclick="return false;">close</a>
