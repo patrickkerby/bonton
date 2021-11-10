@@ -137,7 +137,10 @@ if ($list_type === "shelf") {
         </thead>
         <tbody>
           @foreach ($filtered_orders as $details )
+          
             @php 
+                          
+
               $daily_order_number++;
               $phone = $details->get_billing_phone();
               $order_id = $details->get_id();
@@ -148,7 +151,9 @@ if ($list_type === "shelf") {
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
               $location = $details->get_meta( 'pickuplocation', true );
               $order_number = $details->get_id();
-                
+
+              
+              
               // Check to see if the products associated with the order are shelf or cooler.
               $list_check = array();
               $list_class = array();
@@ -196,6 +201,7 @@ if ($list_type === "shelf") {
 
                       $prod_id = $item->get_product_id(); 
 
+                      // $product_raw = wc_get_product($prod_id);
                       $product_raw = wc_get_product($prod_id);
                       
                       if ($product_raw) {
@@ -203,6 +209,7 @@ if ($list_type === "shelf") {
                       }
                       
                       $prod_quantity = $item->get_quantity();
+
                       $sliced_meta = $item->get_meta( 'Sliced Option', true );
 
                       //If the product is a bundled product, we want to hide the parent. We only want to see the items that require packing.
@@ -218,18 +225,55 @@ if ($list_type === "shelf") {
                       // Hide specific meta data from the details column. List the items by key here:
                         $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
 
-
                       $product_meta_objects = $item->get_meta_data();
+
+                      $item_product_data_array = $item->get_data();
+
+                      // Check to see if line items have been refunded
+                      $order = wc_get_order( $order_number );
+                      $order_refunds = $order->get_refunds();  
+                      $refund_item_id = "";
+                      $total_qty = $prod_quantity;
+                      if($order_refunds) {
+                        foreach( $order_refunds as $refund ){
+                          foreach( $refund->get_items() as $item_id => $item ){
+
+                              ## --- Using WC_Order_Item_Product methods --- ##
+                              $refund_item_id = $item -> get_product_id();
+                              $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
+                              $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
+                          }
+                        }
+
+                        if($prod_id == $refund_item_id) {
+                          $total_qty = $prod_quantity + $refunded_quantity;
+                        }                        
+                      }
+
 
                     @endphp
 
                     @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
-                      @unless($is_bundle_parent)
+                      @unless($is_bundle_parent || $total_qty == 0)
                         <tr>
-                          <td class="qty_cell"><span class="qty">{{ $prod_quantity }} </span></td>
+                          <td class="qty_cell"><span class="qty">
+                          
+                          @if($order_refunds)
+                            {{ $total_qty }}
+                          @else
+                            {{ $prod_quantity }}
+                          @endif
+                          </span>
+                          
+                          </td>
                           <td class="prod_name_cell">
                             <span class="prod_name">{{ $prod_name }}</span>
                             
+                           
+                            
+
+
+
                           </td>
                           <td class="details_cell">
                             @foreach ( $product_meta_objects as $meta )

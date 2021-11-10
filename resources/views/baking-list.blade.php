@@ -54,7 +54,8 @@
   }
   
   foreach($filtered_orders as $details) {
-
+    $order_id = $details->get_id();
+    
     foreach ($details->get_items() as $item_id => $item) {
 
       $prod_id = $item->get_product_id(); 
@@ -66,6 +67,27 @@
       $topping = $product->get_attribute( 'topping' );
       $package_size = $product->get_attribute( 'package-size' );
       $product_size = $product->get_attribute( 'size' );
+
+      // Check to see if line items have been refunded
+      $order = wc_get_order( $order_id );
+      $order_refunds = $order->get_refunds();
+      $refund_item_id = "";
+      $total_qty = $prod_quantity;
+      if($order_refunds) {
+        foreach( $order_refunds as $refund ){
+          foreach( $refund->get_items() as $item_id => $item ){
+
+              ## --- Using WC_Order_Item_Product methods --- ##
+              $refund_item_id = $item -> get_product_id();
+              $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
+              $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
+          }
+        }
+
+        if($prod_id == $refund_item_id) {
+          $total_qty = $prod_quantity + $refunded_quantity;
+        }                        
+      }
 
       //Filter the list of categories to exclude terms that have been excluded via ACF
       $category_names = array();
@@ -105,34 +127,34 @@
         if (!empty($variation_id)) {  
           //size, option, topping
           if (!empty($option) && !empty($product_size) && !empty($topping)) {
-            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }
           //option, topping
           if (!empty($option) && empty($product_size) && !empty($topping)) {
-            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }
           //size, topping
           if (empty($option) && !empty($product_size) && !empty($topping)) {
-            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }
           //option, size
           if (!empty($option) && !empty($product_size)) {
-            $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }
           //option
           elseif (!empty($option) && empty($product_size)) {
-            $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }
           //size
           elseif (!empty($product_size) && empty($option)) {
-            $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }
           else {
-            $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'category' => $categories, 'category_parent' => $parent_cat_id); 
           }
         }
         else {
-          $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $prod[] = array('name' => $prod_name, 'total_quantity' => $total_qty, 'category' => $categories, 'category_parent' => $parent_cat_id); 
         }
       }
     }
