@@ -51,7 +51,7 @@
               <div class="d-none d-sm-block col-sm-2">
                 <ul class="carousel-indicators">
                   @foreach ($featured_products->featured_row_1->product as $item)                                      
-                    <li data-target="#featuredProducts1" data-slide-to="{{ $loop->index }}" @if ($loop->first) class="active" @endif>{{ $item->product->post_title }}</li>
+                    <li data-target="#featuredProducts1" data-slide-to="{{ $loop->index }}" @if ($loop->first) class="active" @endif>{!! $item->product->post_title !!}</li>
                   @endforeach
                 </ul>
               </div>
@@ -65,14 +65,14 @@
                       echo wp_get_attachment_image( $prod_img, $size, "", array( "class" => "featured-product" ) );                  
                     @endphp                 
                     <div class="carousel-caption">
-                      <h4>{{ $item->product->post_title }}</h4>
+                      <h4>{!! $item->product->post_title !!}</h4>
                       @if ($item->description_override)
                         <p>{{ $item->description_override }}</p>
                       @else
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="{{ $item->link }}" title="" class="product-link"><span>{{ $item->link_text }}</span></a>
+                        <a href="{{ $item->link }}" title="" class="product-link"><span>{!! $item->link_text !!}</span></a>
                       </div>
                     </div> 
                   </div>                                                       
@@ -94,14 +94,14 @@
                       echo wp_get_attachment_image( $prod_img, $size, "", array( "class" => "featured-product" ) );                  
                     @endphp
                     <div class="carousel-caption left">
-                      <h4>{{ $item->product->post_title }}</h4>
+                      <h4>{!! $item->product->post_title !!}</h4>
                       @if ($item->description_override)
                         <p>{{ $item->description_override }}</p>
                       @else
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="{{ $item->link }}" title="" class="product-link"><span>{{ $item->link_text }}</span></a>
+                        <a href="{{ $item->link }}" title="" class="product-link"><span>{!! $item->link_text !!}</span></a>
                       </div>
                     </div> 
                   </div>                                                       
@@ -110,7 +110,7 @@
               <div class="d-none d-sm-block col-sm-2">
                 <ul class="carousel-indicators right">
                   @foreach ($featured_products->featured_row_1->product_2 as $item)                                      
-                    <li data-target="#featuredProducts2" data-slide-to="{{ $loop->index }}" @if ($loop->first) class="active" @endif>{{ $item->product->post_title }}</li>
+                    <li data-target="#featuredProducts2" data-slide-to="{{ $loop->index }}" @if ($loop->first) class="active" @endif>{!! $item->product->post_title !!}</li>
                   @endforeach
                 </ul>
               </div>
