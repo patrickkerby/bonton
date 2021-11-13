@@ -121,7 +121,7 @@
       }
 
       $item_quantity = call_user_func('itemQuantity', $package_size);
-      $quantity = $item_quantity * $prod_quantity;  
+      $total_qty = $item_quantity * $total_qty;  
 
       if (empty($is_bundle_parent)) {  
         if (!empty($variation_id)) {  
