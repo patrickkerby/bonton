@@ -421,11 +421,12 @@ function bulk_pricing( $cart ) {
 
 
 
-    $seasonal_pricing_activated = false; // @TODO Hook this up to ACF fiels.
+    $seasonal_pricing_activated = true; // @TODO Hook this up to ACF fiels.
     $regular_discount_small = 0.9; // @TODO hook up to ACF
     $regular_discount_large = 0.8; // @TODO hook up to ACF
-    $seasonal_discount_small = 0.85; // @TODO hook up to ACF
-    $seasonal_discount_large = 0.75; // @TODO hook up to ACF
+    $seasonal_discount_small = 1; // @TODO hook up to ACF
+    $seasonal_discount_large = 1; // @TODO hook up to ACF
+    $discount_percentage = 1;
 
     // Loop through cart items
     foreach ( $cart->get_cart() as $cart_item ) {
@@ -488,8 +489,8 @@ function bulk_pricing( $cart ) {
 
             $date = str_replace('/', '-', $pickupdate);
             $pickupdate_time = date('Y-m-d', strtotime($date));
-            $start_date = '2020-12-14'; // @TODO hook up to ACF
-            $cutoff_date = '2030-12-20'; // @TODO hook up to ACF
+            $start_date = '2021-12-21'; // @TODO hook up to ACF
+            $cutoff_date = '2021-12-31'; // @TODO hook up to ACF
 
             if ($pickupdate_time > $start_date && $pickupdate_time < $cutoff_date) {
                 // Set discount percentage based on total number of eligible items in the cart
@@ -498,6 +499,15 @@ function bulk_pricing( $cart ) {
                 }
                 elseif ( $total_item_quantity >= 10  ) {
                     $discount_percentage = $seasonal_discount_large;
+                }
+            }
+            else {
+                // Set discount percentage based on total number of eligible items in the cart
+                if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
+                    $discount_percentage = $regular_discount_small;
+                }
+                elseif ( $total_item_quantity >= 10  ) {
+                    $discount_percentage = $regular_discount_large;
                 }
             }
         }
@@ -657,4 +667,3 @@ function sixth_item_free_language() {
         echo $sixth_item_free;
     }
 }
-
