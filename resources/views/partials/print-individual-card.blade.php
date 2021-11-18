@@ -20,6 +20,9 @@
         padding: 0!important;
         size: 4in 5.5in;
       }
+      @page :first {
+        margin-bottom: 1cm;
+      }
       * {
         -webkit-print-color-adjust: exact !important;   /* Chrome, Safari, Edge */
         color-adjust: exact !important;                 /*Firefox*/
@@ -33,10 +36,11 @@
         max-width: 4in;
         min-width: 4in !important;
       }
+
       .print-order {
         max-width: 4in;
         /* border: solid 2px #000; */
-        padding: 3mm;
+        padding: 8mm;
         position: relative;
       }
       .items {
@@ -45,6 +49,7 @@
         display: flex;
         flex-wrap: wrap;
         position: relative;
+        box-decoration-break: clone;
       }
       .items strong {
         line-height: 1;
@@ -55,14 +60,12 @@
       .storage {
         font-size: 16px;
         font-weight: 700;
-        color: #fff;
-        background: #000;
         width: 100%;
         padding: 0.25rem;
         display: block;
         margin: 0 0 1rem 0;
         text-align: center;
-      
+        border: solid 2px #000;
       }
       .meta-label {
         font-weight: 700;
@@ -89,8 +92,8 @@
 
       .date {
         position: absolute;
-        top: 2mm;
-        right: 4mm;
+        top: 8mm;
+        right: 8mm;
         font-size: 14px;
         text-align: right;
       }
