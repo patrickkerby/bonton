@@ -10,9 +10,9 @@
   
        document.body.innerHTML = printContents;
   
-       window.print();
+      //  window.print();
   
-       document.body.innerHTML = originalContents;
+      //  document.body.innerHTML = originalContents;
   }
   </script>
 @php  
@@ -268,12 +268,6 @@ if ($list_type === "shelf") {
                           </td>
                           <td class="prod_name_cell">
                             <span class="prod_name">{{ $prod_name }}</span>
-                            
-                           
-                            
-
-
-
                           </td>
                           <td class="details_cell">
                             @foreach ( $product_meta_objects as $meta )
@@ -290,6 +284,7 @@ if ($list_type === "shelf") {
               </td>
               <td class="d-print-none">
                 @include('partials.print-individual-receipt')
+                @include('partials.print-individual-card')
               </td>
             </tr>
           

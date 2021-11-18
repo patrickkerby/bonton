@@ -1,6 +1,6 @@
 {{-- This file controls the print-only content for printing out an individual order from the pickup list --}}
 
-<button class="btn btn-default" onclick="printDiv('order-{{ $order_number }}')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print</i></button>
+<button class="btn btn-default" onclick="printDiv('order-{{ $order_number }}')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print Receipt</i></button>
                                 
 <div id="order-{{ $order_number }}" class="d-none">
   @php
