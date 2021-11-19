@@ -18,7 +18,7 @@
       @page {
         margin: 0;
         padding: 0!important;
-        size: 4in 5.5in;
+        /* size: 4in 5.5in; */
       }
       @page :first {
         margin-bottom: 1cm;
@@ -28,14 +28,14 @@
         color-adjust: exact !important;                 /*Firefox*/
       }
 
-      body,
+      /* body,
       html {
         margin: 0;
         padding: 0 !important;
         width: 4in;
         max-width: 4in;
         min-width: 4in !important;
-      }
+      } */
 
       .print-order {
         max-width: 4in;
