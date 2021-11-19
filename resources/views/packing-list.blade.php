@@ -3,18 +3,30 @@
 --}}
 
 @extends('layouts.lists')
-<script >
-  function printDiv(divName) {
-       var printContents = document.getElementById(divName).innerHTML;
-       var originalContents = document.body.innerHTML;
-  
-       document.body.innerHTML = printContents;
-  
-       window.print();
-  
-       document.body.innerHTML = originalContents;
+
+<script>
+  function printDiv(divName, printSize) {
+
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    
+    var body = document.body;
+    body.classList.add(printSize);
+
+    if (body.classList.contains("cardPrint")) {
+      var pageRules = document.getElementById('cardSizes');
+      let pageSizeString = '@page {size: 4in 5.5in;}';
+      pageRules.innerHTML = pageSizeString;
+    }
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
   }
-  </script>
+</script>
+
 @php  
   $daily_order_number = 100;
   $post_id = get_the_ID();
@@ -283,8 +295,10 @@ if ($list_type === "shelf") {
                 </table>                         
               </td>
               <td class="d-print-none">
-                @include('partials.print-individual-receipt')
-                @include('partials.print-individual-card')
+                <div id="hiddenPrint">
+                  @include('partials.print-individual-receipt')
+                  @include('partials.print-individual-card')
+                </div>
               </td>
             </tr>
           
@@ -299,4 +313,6 @@ if ($list_type === "shelf") {
 
     </div>
   </div>
+
+
 @endsection

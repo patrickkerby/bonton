@@ -1,6 +1,6 @@
 {{-- This file controls the print-only content for printing out an individual order from the pickup list --}}
 
-<button class="btn btn-default" onclick="printDiv('order-{{ $order_number }}-card')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print Card</i></button>
+<button class="btn btn-default" onclick="printDiv('order-{{ $order_number }}-card', 'cardPrint') "><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print Card</i></button>
                                 
 <div id="order-{{ $order_number }}-card" class="d-none">
   @php
@@ -9,16 +9,20 @@
 
       // $date_selector_date = get_field('list_date');
       // $timeslot = $order->get_meta( 'pickup_timeslot', true );
-
-
   @endphp
+
+
+
+<style id="cardSizes" class="cardSizes">
+
+</style>
+
   <style>
     @media print {
       .page-break	{ display: block; page-break-after: always; }
       @page {
         margin: 0;
         padding: 0!important;
-        /* size: 4in 5.5in; */
       }
       @page :first {
         margin-bottom: 1cm;
@@ -28,16 +32,15 @@
         color-adjust: exact !important;                 /*Firefox*/
       }
 
-      /* body,
-      html {
+      body.cardPrint {
         margin: 0;
         padding: 0 !important;
         width: 4in;
         max-width: 4in;
         min-width: 4in !important;
-      } */
+      }
 
-      .print-order {
+      .cardPrint .print-order {
         max-width: 4in;
         /* border: solid 2px #000; */
         padding: 8mm;
@@ -60,6 +63,7 @@
       .storage {
         font-size: 16px;
         font-weight: 700;
+        color: #000;
         width: 100%;
         padding: 0.25rem;
         display: block;
