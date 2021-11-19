@@ -78,11 +78,11 @@
         display: inline-block;
         margin-left: 0.5rem;
       }
-      span.meta {
+      .cardPrint span.meta {
         margin: 0 !important;
         font-size: 8pt !important;
       }
-      span.meta::before {
+      .cardPrint span.meta::before {
         font-size: 8pt !important;
       }
       .cardPrint .meta-label strong {
@@ -102,7 +102,7 @@
         text-align: right;
       }
 
-      .item_content {
+      .cardPrint .item_content {
         width: 85%;   
         padding: 3mm 0;
       }
