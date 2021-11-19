@@ -81,7 +81,7 @@
           padding: 8mm;
           position: relative;
         }
-        .items {
+        .cardPrint .items {
           break-inside: avoid;
           border-bottom: dotted 1px #666;
           display: flex;
@@ -89,13 +89,13 @@
           position: relative;
           box-decoration-break: clone;
         }
-        .items strong {
+        .cardPrint .items strong {
           line-height: 1;
           margin-bottom: 1mm;
           display: inline-flex;
           font-size: 10pt;
         }
-        .storage {
+        .cardPrint .storage {
           font-size: 16px;
           font-weight: 700;
           color: #000;
@@ -106,30 +106,30 @@
           text-align: center;
           border: solid 2px #000;
         }
-        .meta-label {
+        .cardPrint .meta-label {
           font-weight: 700;
           font-size: .875rem;
           padding-bottom: 0.25rem;
           display: inline-block;
           margin-left: 0.5rem;
         }
-        span.meta {
+        .cardPrint span.meta {
           margin: 0 !important;
           font-size: 8pt !important;
         }
-        span.meta::before {
+        .cardPrint span.meta::before {
           font-size: 8pt !important;
         }
-        .meta-label strong {
+        .cardPrint .meta-label strong {
           font-weight: 900;
           font-size: 11px;        
           text-transform: uppercase;
         }
-        .meta:before {
+        .cardPrint .meta:before {
           opacity: 1 !important;
         }
   
-        .date {
+        .cardPrint .date {
           position: absolute;
           top: 8mm;
           right: 8mm;
@@ -137,11 +137,11 @@
           text-align: right;
         }
   
-        .item_content {
+        .cardPrint .item_content {
           width: 85%;   
           padding: 3mm 0;
         }
-        .qty {
+        .cardPrint .qty {
           width: 15%;
           font-size: 11pt;
           font-weight: bolder;
@@ -152,13 +152,13 @@
           right: 0;
           top: 0;
         }
-        .qty span {
+        .cardPrint .qty span {
           display: flex;
           height: 100%;
           justify-content: center;
           align-items: center;
         }
-        .customer {
+        .cardPrint .customer {
           margin-bottom: 1rem;
         }
       }
