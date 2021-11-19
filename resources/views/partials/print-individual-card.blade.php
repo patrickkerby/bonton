@@ -25,7 +25,7 @@
         padding: 0!important;
       }
       @page :first {
-        margin-bottom: 1cm;
+        /* margin-bottom: 1cm; */
       }
       * {
         -webkit-print-color-adjust: exact !important;   /* Chrome, Safari, Edge */
@@ -43,7 +43,7 @@
       .cardPrint .print-order {
         max-width: 4in;
         /* border: solid 2px #000; */
-        padding: 8mm;
+        padding: 0 8mm;
         position: relative;
       }
       .cardPrint .items {
