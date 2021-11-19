@@ -308,7 +308,11 @@ if ($list_type === "shelf") {
       <div id="receipt-printer-all" class="d-none">
         @include('partials.print-shelf-cooler-receipt')
       </div>
-      <button class="btn btn-default" onclick="printDiv('receipt-printer-all')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Receipt Printer)</i></button>
+      <div id="card-printer-all" class="d-none">
+        @include('partials.print-shelf-cooler-cards')
+      </div>
+      <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Receipt Printer)</i></button>
+      <button class="btn btn-default" onclick="printDiv('card-printer-all', 'cardPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Cards)</i></button>
 
 
     </div>
