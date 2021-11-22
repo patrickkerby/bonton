@@ -161,6 +161,15 @@
         .cardPrint .customer {
           margin-bottom: 1rem;
         }
+
+        .cooler .shelf.print-order,
+        .shelf .cooler.print-order {
+          display: none;
+        }
+        .cooler .shelf.cooler.print-order,
+        .shelf .shelf.cooler.print-order {
+          display: block;
+        }
       }
       
     </style>
@@ -176,15 +185,15 @@
       </div>
         
       @foreach ($details->get_items() as $item_id => $item)
-      @php                      
-            $prod_id = $item->get_product_id(); 
-            $quantity = $item->get_quantity();
-            $product_name = $item->get_name();
-            $product_meta_objects = $item->get_meta_data();
-            
-            $cooler_override = $item->get_meta( '_cooler', true );
-            
-            @endphp
+        @php                      
+          $prod_id = $item->get_product_id(); 
+          $quantity = $item->get_quantity();
+          $product_name = $item->get_name();
+          $product_meta_objects = $item->get_meta_data();
+          
+          $cooler_override = $item->get_meta( '_cooler', true );
+          
+        @endphp
 
         @unless ($list_type === "shelf")
     
@@ -213,7 +222,7 @@
             </div>
           @endif
 
-          @endunless
+        @endunless
       @endforeach
         
         @foreach ($details->get_items() as $item_id => $item)
