@@ -16,6 +16,11 @@ export default {
           'paging': false,
           'info': false,
           'order': [[ 1, 'desc' ], [ 0, 'asc' ]],
+          'dom': 'Bfrtip',
+          'buttons': [
+            'copy',
+            'csv',
+            'pdf'],          
         }     
       ); 
       
