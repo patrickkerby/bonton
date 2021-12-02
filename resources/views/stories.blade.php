@@ -26,7 +26,9 @@
           <div class="excerpt">
             <h3>{{ $item['title'] }}</h3>
             {!! $item['story_excerpt'] !!}
-            <a href="{{ $item['story_link'] }}" class="button btn">{{ $item['story_link_button_label'] }}</a>
+            @if($item['story_link'])
+              <a href="{{ $item['story_link'] }}" class="button btn">{{ $item['story_link_button_label'] }}</a>
+            @endif
           </div>
         </div>
       </div>        
