@@ -188,16 +188,11 @@ defined( 'ABSPATH' ) || exit;
 								}
 
 								//Check if product is gift certificate or bread club
-								if ( $product_id == 5317) {
+								if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
 									$giftcertificate_in_cart = true;
 									$gc_cart_count++;
 								}
 
-								//breadclb check, treat same as gc
-								if ( $product_id == 18200) {
-									$giftcertificate_in_cart = true;
-									$gc_cart_count++;
-								}
 
 							?>
 							<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
