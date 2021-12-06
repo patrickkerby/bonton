@@ -78,14 +78,28 @@ font-display:auto;font-style:normal;font-weight:500;
 														<td valign="top" style="padding: 30px !important; background-color: #fff;">
 															
 	<table style="border: dashed #ccc 2px; padding: 20px;">
-		<tr>
+		<tr> 
 			<td>
 				<img style="max-height: 440px; width: auto;" src="https://bonton.ca/email/giftcertificate.jpg" alt="Bon Ton Bakery, Edmonton Alberta" />
 			</td>
 			<td>
-				<h1 class="tk-orpheuspro" style="font-family: 'orpheuspro',serif; color: #333333; font-size: 42px; line-height: 38px; padding-bottom: 20px;">Gift Certificate</h1>
-				<?php
 
+					<?php
+						if ($coupon_id = 18150) {
+							$coupon_heading = "Bon Ton Bread Club!";
+
+						}
+						else {
+							$coupon_heading = "Gift Certificate";
+							
+
+						}
+					?>
+
+				<h1 class="tk-orpheuspro" style="font-family: orpheuspro,serif; color: #333333; font-size: 42px; line-height: 38px; padding-bottom: 20px;"><?php echo $coupon_heading; ?></h1>
+
+
+			<?php
 				if ( ! empty( $receiver_details ) ) {
 					echo '<div id="sc-cc"><div class="sc-coupons-list">';
 					foreach ( $receiver_details as $receiver_data ) {

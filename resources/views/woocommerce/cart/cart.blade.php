@@ -190,7 +190,7 @@ defined( 'ABSPATH' ) || exit;
 								//Check if product is gift certificate or bread club
 								if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
 									$giftcertificate_in_cart = true;
-									$gc_cart_count++;
+									$gc_cart_count++; 
 								}
 
 
