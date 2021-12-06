@@ -187,8 +187,14 @@ defined( 'ABSPATH' ) || exit;
 									$long_fermentation_in_cart = True;
 								}
 
-								//Check if product is gift certificate
+								//Check if product is gift certificate or bread club
 								if ( $product_id == 5317) {
+									$giftcertificate_in_cart = true;
+									$gc_cart_count++;
+								}
+
+								//breadclb check, treat same as gc
+								if ( $product_id == 18200) {
 									$giftcertificate_in_cart = true;
 									$gc_cart_count++;
 								}
