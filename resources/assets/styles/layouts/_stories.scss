@@ -219,4 +219,23 @@ body.stories {
       }
     }
   }
+
+  .cta {
+    position: relative;
+    top: -4rem;
+
+    a {
+      text-align: center;
+      margin: auto;
+      background-color: $highlight;
+      color: #fff;
+      font-size: 20px;
+      font-weight: bold;
+      display: inline-flex;
+      width: 100%;
+      padding: 1rem 0.5rem;
+      border-radius: 30px;
+      justify-content: center;
+    }
+  }
 }

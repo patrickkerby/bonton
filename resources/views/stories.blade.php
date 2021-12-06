@@ -53,6 +53,16 @@
             @endif
           </div>
         @endforeach
+        @if ($call_to_actions)
+          <div class="cta row justify-content-center">
+          @foreach ($call_to_actions as $cta)
+
+            <div class="col-sm-5">
+              <a href="{{ $cta['call_to_action']['url'] }}">{{ $cta['call_to_action']['title'] }}</a>
+            </div>
+          @endforeach
+          </div>
+        @endif
       </div>
     </section>
   @endwhile
