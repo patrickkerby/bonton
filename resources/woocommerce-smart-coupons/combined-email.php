@@ -247,6 +247,18 @@ font-display:auto;font-style:normal;font-weight:500;
 
 							<p style="font-size: 12px; width: 250px; line-height: 15px; margin-top: 20px; padding-top: 20px;">
 								<br><br>This Gift Certificate is valid for online use only. Visit www.bonton.ca to redeem.
+
+								<?php if ($coupon_id = 18150) {
+										$coupon_instructions = "<br><br>This Gift Certificate is for the Bon Ton Bread Club! Visit www.bonton.ca/bread-club/ to redeem.";
+								}
+								else { 
+									$coupon_instructions = "<br><br>This Gift Certificate is valid for online use only. Visit www.bonton.ca to redeem.";
+								}
+
+								echo $coupon_instructions;
+
+								?>
+								 
 							</p>
 							</a>
 						</div>
