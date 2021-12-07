@@ -508,6 +508,19 @@ div.pp_woocommerce_quick_view {
     }
   }
 
+  .wcpa_form_item.breadclub_parent {
+    .wcpa_checkbox {
+      label {
+        font-size: 0.7rem;
+      }
+    }
+
+    .wcpa_priceouter,
+    .wcpa_price_summary {
+      display: none;
+    }
+  }
+
   div.product form.cart .variations td {
     line-height: 1.25rem;
   }
