@@ -515,10 +515,13 @@ div.pp_woocommerce_quick_view {
       }
     }
 
-    .wcpa_priceouter,
-    .wcpa_price_summary {
+    .wcpa_priceouter {
       display: none;
     }
+  }
+
+  .wcpa_price_summary {
+    display: none;
   }
 
   div.product form.cart .variations td {
