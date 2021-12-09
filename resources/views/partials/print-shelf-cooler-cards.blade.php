@@ -235,7 +235,7 @@
             $cooler_override = $item->get_meta( '_cooler', true );
 
           @endphp
-@unless ($list_type === "cooler")
+        @unless ($list_type === "cooler")
 
           @if(!in_array($prod_id, $cooler_array))
             @php
