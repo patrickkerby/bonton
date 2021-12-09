@@ -3,18 +3,28 @@
 --}}
 
 @extends('layouts.lists')
-<script >
-  function printDiv(divName) {
-       var printContents = document.getElementById(divName).innerHTML;
-       var originalContents = document.body.innerHTML;
-  
-       document.body.innerHTML = printContents;
-  
-       window.print();
-  
-       document.body.innerHTML = originalContents;
+<script>
+  function printDiv(divName, printSize) {
+
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    
+    var body = document.body;
+    body.classList.add(printSize);
+
+    if (body.classList.contains("cardPrint")) {
+      var pageRules = document.getElementById('cardSizes');
+      let pageSizeString = '@page {size: 4in 5.5in;}';
+      pageRules.innerHTML = pageSizeString;
+    }
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
   }
-  </script>
+</script>
 @php
   $post_id = get_the_ID();
   // do_action( 'acf/save_post', $post_id );
@@ -189,7 +199,7 @@
           @endforeach
         </tbody>
       </table>
-      <button class="btn btn-default" onclick="printDiv('receipt-printer-all')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Receipt Printer)</i></button>
+      <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Receipt Printer)</i></button>
 
       <div id="receipt-printer-all" class="d-none">
         @include('partials.print-all-receipt')
