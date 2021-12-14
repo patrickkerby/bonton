@@ -10,7 +10,6 @@
       // $date_selector_date = get_field('list_date');
       // $timeslot = $order->get_meta( 'pickup_timeslot', true );
 
-
   @endphp
   <style>
 @media print {
