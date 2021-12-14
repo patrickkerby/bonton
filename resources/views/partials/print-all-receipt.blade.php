@@ -48,7 +48,7 @@
         }
   
         .receiptPrint .print-order {
-          max-width: 4in;
+          max-width: 3in;
           /* border: solid 2px #000; */
           padding: 0;
           position: relative;
@@ -103,7 +103,7 @@
   
         .receiptPrint .date {
           position: absolute;
-          top: 8mm;
+          top: 0;
           right: 8mm;
           font-size: 14px;
           text-align: right;
@@ -187,8 +187,8 @@
                     @endif                      
                   @endunless
                 @endforeach
-                <div class="qty"><span>{{ $quantity }}</span></div> 
               </div>
+              <div class="qty"><span>{{ $quantity }}</span></div> 
             </div>
           @endif
       @endforeach

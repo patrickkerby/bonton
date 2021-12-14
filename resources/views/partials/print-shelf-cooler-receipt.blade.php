@@ -128,7 +128,7 @@
   
         .receiptPrint .date {
           position: absolute;
-          top: 8mm;
+          top: 0;
           right: 8mm;
           font-size: 14px;
           text-align: right;
