@@ -73,9 +73,9 @@
         }
   
         .receiptPrint .print-order {
-          max-width: 4in;
+          max-width: 3in;
           /* border: solid 2px #000; */
-          padding: 0 8mm;
+          padding: 0;
           position: relative;
         }
         .receiptPrint .items {
@@ -90,7 +90,7 @@
           line-height: 1;
           margin-bottom: 1mm;
           display: inline-flex;
-          font-size: 10pt;
+          font-size: 11pt;
         }
         .receiptPrint .storage {
           font-size: 16px;
@@ -105,21 +105,21 @@
         }
         .receiptPrint .meta-label {
           font-weight: 700;
-          font-size: .875rem;
+          font-size: 1.2rem;
           padding-bottom: 0.25rem;
           display: inline-block;
           margin-left: 0.5rem;
         }
         .receiptPrint span.meta {
           margin: 0 !important;
-          font-size: 8pt !important;
+          font-size: 10pt !important;
         }
         .receiptPrint span.meta::before {
-          font-size: 8pt !important;
+          font-size: 10pt !important;
         }
         .receiptPrint .meta-label strong {
           font-weight: 900;
-          font-size: 11px;        
+          font-size: 13px;        
           text-transform: uppercase;
         }
         .receiptPrint .meta:before {
@@ -132,6 +132,8 @@
           right: 8mm;
           font-size: 14px;
           text-align: right;
+          width: 1.5in;
+          font-weight: 900;
         }
   
         .receiptPrint .item_content {
@@ -140,7 +142,7 @@
         }
         .receiptPrint .qty {
           width: 15%;
-          font-size: 11pt;
+          font-size: 13pt;
           font-weight: bolder;
           border-left: dotted 1px #666;
           text-align: center;
