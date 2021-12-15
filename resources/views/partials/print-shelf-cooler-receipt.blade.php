@@ -67,9 +67,9 @@
         body.receiptPrint {
           margin: 0;
           padding: 0 !important;
-          width: 4in;
-          max-width: 4in;
-          min-width: 4in !important;
+          width: 3in;
+          max-width: 3in;
+          min-width: 3in !important;
         }
   
         .receiptPrint .print-order {
@@ -129,7 +129,7 @@
         .receiptPrint .date {
           position: absolute;
           top: 0;
-          right: 8mm;
+          right: 0;
           font-size: 14px;
           text-align: right;
           width: 1.5in;

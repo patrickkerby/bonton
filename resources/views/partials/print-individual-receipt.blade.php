@@ -91,7 +91,7 @@
       .receiptPrint .date {
         position: absolute;
         top: 0;
-        right: 4mm;
+        right: 0;
         font-size: 14px;
         text-align: right;
         width: 1.5in;
@@ -120,7 +120,7 @@
         align-items: center;
       }
       .receiptPrint .customer {
-        margin-bottom: 3rem;
+        margin-bottom: 1rem;
       }
     }
     
