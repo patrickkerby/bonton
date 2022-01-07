@@ -150,8 +150,7 @@ if ($list_type === "shelf") {
         <tbody>
           @foreach ($filtered_orders as $details )
           
-            @php 
-                          
+            @php                           
 
               $daily_order_number++;
               $phone = $details->get_billing_phone();

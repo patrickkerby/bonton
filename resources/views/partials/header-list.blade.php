@@ -22,6 +22,9 @@
       @elseif(is_page('grocery-list'))
         <h1>Grocery Inventory</h1>
         <h5>{{ $today }}</h5>
+      @elseif(is_page('bread-club-list'))
+        <h1>Bread Club List</h1>
+        <h5>{{ $today }}</h5>
       @endif
       
       @if(is_page('inventory'))
@@ -35,7 +38,7 @@
           <h5><button class="btn d-print-none" type="button" data-toggle="collapse" data-target="#dateSelect" aria-expanded="false" aria-controls="collapseExample">
             Edit
           </button></h5>
-      @elseif(is_page('out-of-stock') || is_page('grocery-list'))
+      @elseif(is_page('out-of-stock') || is_page('grocery-list') || is_page('bread-club-list'))
           {{-- Display no date picker --}}
       @else
       <h5>        
