@@ -32,8 +32,8 @@
     }
   },
   "require": {
-    "php": ">=7.1",
-    "composer/installers": "~1.0",
+    "php": "^7.3|^8.0",
+    "composer/installers": "~2.0",
     "illuminate/support": "5.8.*",
     "roots/sage-lib": "~9.0.9",
     "soberwp/controller": "2.1.2",
