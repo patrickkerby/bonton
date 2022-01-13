@@ -98,7 +98,7 @@ defined( 'ABSPATH' ) || exit;
 	$morning_selected = "";
 	$midday_selected = "";
 	$afternoon_selected = "";
-	$deliver_morning_selected = "";
+	$delivery_morning_selected = "";
 	$delivery_afternoon_selected = "";
 
 	if ( isset($session_timeslot)) {
