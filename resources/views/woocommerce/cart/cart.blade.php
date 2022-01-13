@@ -98,6 +98,8 @@ defined( 'ABSPATH' ) || exit;
 	$morning_selected = "";
 	$midday_selected = "";
 	$afternoon_selected = "";
+	$deliver_morning_selected = "";
+	$delivery_afternoon_selected = "";
 
 	if ( isset($session_timeslot)) {
 		if ( $session_timeslot === 'morning') {
@@ -109,6 +111,12 @@ defined( 'ABSPATH' ) || exit;
 		elseif ( $session_timeslot === 'afternoon') {
 			$afternoon_selected = "checked";
 		}
+		elseif ( $session_timeslot === 'delivery-morning') {
+			$delivery_morning_selected = "checked";
+		}
+		elseif ( $session_timeslot === 'delivery-afternoon') {
+			$delivery_afternoon_selected = "checked";
+		}				
 	}
 @endphp
 	<div class="row justify-content-center">	
@@ -434,6 +442,18 @@ defined( 'ABSPATH' ) || exit;
 									<input class="form-check-input" type="radio" name="timeslot" id="afternoon" value="afternoon" {{ $afternoon_selected }}>
 									<label class="form-check-label" for="afternoon">
 										2pm - 5pm
+									</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="timeslot" id="delivery-morning" value="delivery-morning" {{ $delivery_morning_selected }}>
+									<label class="form-check-label" for="delivery-morning">
+										Delivery: 10am - Noon
+									</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="timeslot" id="delivery-afternoon" value="delivery-afternoon" {{ $delivery_afternoon_selected }}>
+									<label class="form-check-label" for="delivery-afternoon">
+										Delivery: 4pm - 6pm
 									</label>
 								</div>
 							</div>
