@@ -82,7 +82,7 @@ defined( 'ABSPATH' ) || exit;
 		}
 	}
 
-	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
+	if ( !isset($session_pickup_date) || $session_pickup_date == "" || $session_timeslot == "" || !isset($session_timeslot)) {		
 		$conflict = true;
 	}
 
@@ -425,10 +425,11 @@ defined( 'ABSPATH' ) || exit;
 							<div class="acf-label">
 								<label>Timeslot</label>
 							</div>
-							<div class="acf-input">      
-								<div class="form-check">
+							<div class="acf-input">   								
+								<p><em>In-store / curbside pickup: </em></p>   
+								<div class="form-check">									
 									<input class="form-check-input" type="radio" name="timeslot" id="morning" value="morning" {{ $morning_selected }}>
-									<label class="form-check-label" for="morning">
+									<label class="form-check-label" for="morning" required>
 										9am - 11am
 									</label>
 								</div>
@@ -444,16 +445,22 @@ defined( 'ABSPATH' ) || exit;
 										2pm - 5pm
 									</label>
 								</div>
+								<hr>
+								<p>
+									<em>Doorstep Delivery</em> <span><a class="delivery-modal" data-toggle="modal" href="#delivery">
+										(?)
+									</a></span><br>
+								</p>   
 								<div class="form-check">
 									<input class="form-check-input" type="radio" name="timeslot" id="delivery-morning" value="delivery-morning" {{ $delivery_morning_selected }}>
 									<label class="form-check-label" for="delivery-morning">
-										Delivery: 10am - Noon
+										Between 10 am &amp; Noon
 									</label>
 								</div>
 								<div class="form-check">
 									<input class="form-check-input" type="radio" name="timeslot" id="delivery-afternoon" value="delivery-afternoon" {{ $delivery_afternoon_selected }}>
 									<label class="form-check-label" for="delivery-afternoon">
-										Delivery: 4pm - 6pm
+										Between 4 pm &amp; 6 pm
 									</label>
 								</div>
 							</div>
@@ -485,4 +492,19 @@ defined( 'ABSPATH' ) || exit;
 		<div id="session_pickup_date">@if($session_date_object)@php echo htmlspecialchars($session_date_object->format('d/m/Y')); @endphp@endif</div>
 		<div id="session_pickup_date_object">@php var_dump($session_pickup_date); @endphp</div>
 		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
+	</div>
+
+	<div class="modal fade" id="delivery" tabindex="-1" role="dialog" aria-labelledby="bontonDelivery" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					Delivery details here
+				</div>
+			</div>
+		</div>
 	</div>
