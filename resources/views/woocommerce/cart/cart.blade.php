@@ -445,24 +445,14 @@ defined( 'ABSPATH' ) || exit;
 										2pm - 5pm
 									</label>
 								</div>
-								<hr>
-								<p>
-									<em>Doorstep Delivery</em> <span><a class="delivery-modal" data-toggle="modal" href="#delivery">
-										(?)
-									</a></span><br>
-								</p>   
+								<hr>								
 								<div class="form-check">
 									<input class="form-check-input" type="radio" name="timeslot" id="delivery-morning" value="delivery-morning" {{ $delivery_morning_selected }}>
 									<label class="form-check-label" for="delivery-morning">
-										Between 10 am &amp; Noon
+										Deliver to my door instead!
 									</label>
-								</div>
-								<div class="form-check">
-									<input class="form-check-input" type="radio" name="timeslot" id="delivery-afternoon" value="delivery-afternoon" {{ $delivery_afternoon_selected }}>
-									<label class="form-check-label" for="delivery-afternoon">
-										Between 4 pm &amp; 6 pm
-									</label>
-								</div>
+									<p class="small">Available in Edmonton, St. Albert, Spruce Grove, Acheson, Stony Plain, Fort Saskatchewan, Sherwood Park, Nisku, Leduc, Beaumont. <a class="delivery-modal" data-toggle="modal" href="#delivery">See more details</a>.</p>
+								</div>								
 							</div>
 						</div>
 
