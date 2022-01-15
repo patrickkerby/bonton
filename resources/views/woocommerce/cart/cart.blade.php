@@ -358,6 +358,41 @@ defined( 'ABSPATH' ) || exit;
 								$conflict = true;
 						}
 
+						// Conflict check for shipping method matching timeslot type chosen
+
+						$chosen_methods = WC()->session->get( 'chosen_shipping_methods' );
+						$chosen_shipping = $chosen_methods[0];
+						
+						if (isset($session_timeslot) && isset($chosen_shipping) ) {
+							if (str_contains($chosen_shipping, 'local') && str_contains($session_timeslot, 'delivery') || str_contains($chosen_shipping, 'flat') && !str_contains($session_timeslot, 'delivery')) {
+								echo 'DANGER';	
+								$conflict = true;
+								$conflict_timeslot_mismatch = true;
+							}
+							else {
+								$conflict_timeslot_mismatch = false;
+							}
+						}	
+						else {
+							$conflict_timeslot_mismatch = false;
+						}
+
+						//Set a timeslot reminder:
+						if (!isset($session_timeslot) && isset($session_pickup_date) ) {
+							$conflict_no_timeslot = true;
+						}
+						else {
+							$conflict_no_timeslot = false;
+						}
+
+						//If date or timeslot has been chosen, change language for update button
+						if (isset($session_timeslot) || isset($session_pickup_date) ) {
+							$datetime_button_copy = 'Update';
+						}
+						else {
+							$datetime_button_copy = 'Select date & time to continue';
+						}
+
 					@endphp
 
 						<?php do_action( 'woocommerce_cart_contents' ); ?>
@@ -421,12 +456,22 @@ defined( 'ABSPATH' ) || exit;
 								</span>
 							</div>
 						</div>
+						@if ( $long_fermentation_in_cart == True)
+							<div class="lf_notice"> 
+								<strong>Why can't I choose tomorrow?</strong> <br>Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
+							</div><br>
+						@endif
+						@if ( $restricted_in_cart == True)
+							<div class="lf_notice"> 
+								<strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
+							</div>
+						@endif
 						<div class="acf-field acf-field-radio" data-name="timeslot" data-type="radio">
 							<div class="acf-label">
-								<label>Timeslot</label>
+								<h3>Timeslot</h3>
 							</div>
 							<div class="acf-input">   								
-								<p><em>In-store / curbside pickup: </em></p>   
+								<p><strong>In-store / curbside pickup: </strong></p>   
 								<div class="form-check">									
 									<input class="form-check-input" type="radio" name="timeslot" id="morning" value="morning" {{ $morning_selected }}>
 									<label class="form-check-label" for="morning" required>
@@ -445,33 +490,34 @@ defined( 'ABSPATH' ) || exit;
 										2pm - 5pm
 									</label>
 								</div>
-								<hr>								
+								<hr>
+								<p>
+									<strong>Doorstep Delivery</strong> <span><a class="delivery-modal" data-toggle="modal" href="#delivery">
+										(?)
+									</a></span><br>
+								</p>   
 								<div class="form-check">
 									<input class="form-check-input" type="radio" name="timeslot" id="delivery-morning" value="delivery-morning" {{ $delivery_morning_selected }}>
 									<label class="form-check-label" for="delivery-morning">
-										Deliver to my door instead!
+										Between 10 am &amp; Noon
 									</label>
-									<p class="small">Available in Edmonton, St. Albert, Spruce Grove, Acheson, Stony Plain, Fort Saskatchewan, Sherwood Park, Nisku, Leduc, Beaumont. <a class="delivery-modal" data-toggle="modal" href="#delivery">See more details</a>.</p>
-								</div>								
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="timeslot" id="delivery-afternoon" value="delivery-afternoon" {{ $delivery_afternoon_selected }}>
+									<label class="form-check-label" for="delivery-afternoon">
+										Between 4 pm &amp; 6 pm
+									</label>
+								</div>
+								<p class="small delivery-caption">Important! <a class="delivery-modal" data-toggle="modal" href="#delivery">Delivery areas &amp; pricing info</a>.</p>
 							</div>
 						</div>
 
 						<div class="acf-form-submit">
-							<input type="submit" class="acf-button button button-primary button-large" value="Confirm date to continue">
+							<input type="submit" class="acf-button button button-primary button-large" value="{{ $datetime_button_copy }}">
 							<span class="acf-spinner"></span>
 						</div>
 					</div>
-				</form>
-					@if ( $long_fermentation_in_cart == True)
-						<div class="lf_notice"> 
-							<strong>Why can't I choose tomorrow?</strong> <br>Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
-						</div><br>
-					@endif
-					@if ( $restricted_in_cart == True)
-					<div class="lf_notice"> 
-						<strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
-					</div>
-				@endif
+				</form>					
 			</div>
 		@endunless
 	</div>
@@ -498,3 +544,27 @@ defined( 'ABSPATH' ) || exit;
 			</div>
 		</div>
 	</div>
+
+	{{-- Validation messages --}}
+	@if ($conflict_timeslot_mismatch)
+	<div class="alert alert-danger alert-dismissible fade show" role="alert">
+		<div class="alert-danger">
+			<strong>Whoops! </strong> It looks like your <span class="underline">timeslot</span> selection and your <span class="underline">shipping</span> selection aren't quite jivin'.
+		</div>
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	@endif
+
+	@if ($conflict_no_timeslot)
+	<div class="alert alert-danger alert-dismissible fade show" role="alert">
+		<div class="alert-danger">
+			<strong>Hmm. </strong> Please choose a timeslot to go along with your pickup / delivery date!
+		</div>
+		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		</button>
+	</div>
+	@endif
+	
