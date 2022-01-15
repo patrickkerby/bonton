@@ -105,6 +105,18 @@ add_filter('sage/display_sidebar', function ($display) {
     return $display;
 });
 
+//WC login/out
+add_filter( 'wp_nav_menu_items', 'App\add_loginout_link', 10, 2 );
+function add_loginout_link( $items, $args ) {
+  if (is_user_logged_in() && $args->theme_location == 'footer_navigation') {
+    $items .= '<li class="small menu-item logout"><a href="'. wp_logout_url( get_permalink( wc_get_page_id( 'myaccount' ) ) ) .'">Log Out</a></li>';
+  }
+   elseif (!is_user_logged_in() && $args->theme_location == 'footer_navigation') {
+    $items .= '<li class="small menu-item login"><a href="' . get_permalink( wc_get_page_id( 'myaccount' ) ) . '">Log In</a></li>';
+  }
+   return $items;
+}
+
 //remove woocommerce tabs
 add_filter( 'woocommerce_product_tabs', function ( $tabs ) {
 	unset( $tabs['additional_information'] );
