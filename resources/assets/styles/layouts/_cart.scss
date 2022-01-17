@@ -308,20 +308,30 @@ ul.woocommerce-thankyou-order-details li {
   }
 }
 
+.woocommerce .cart-collaterals {
+  padding: 0;
+}
+
+.woocommerce .cart-collaterals .cart_totals,
+.woocommerce-page .cart-collaterals .cart_totals {
+  width: 100%;
+}
+
 .cart-collaterals .cart_totals table.shop_table {
-  border-top: none !important;
+  border: none !important;
+  background-color: $cream;
 
   th {
     font-family: $font-family-serif;
-    font-size: 20px;
-    padding: 1.25rem 0 1rem 1rem !important;
-    border-top: solid 3px $cream !important;
+    font-size: 17px;
+    padding: 1rem 0 1rem 1rem !important;
+    border-top: solid 3px #fff !important;
   }
 
   td {
-    font-size: 22px;
+    font-size: 19px;
     padding: 1rem !important;
-    border-top: solid 3px $cream !important;
+    border-top: solid 3px #fff !important;
   }
 }
 

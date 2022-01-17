@@ -40,9 +40,21 @@ $calculator_text          = '';
 						printf( '<label for="shipping_method_%1$s_%2$s">%3$s</label>', $index, esc_attr( sanitize_title( $method->id ) ), wc_cart_totals_shipping_method_label( $method ) ); // WPCS: XSS ok.
 						do_action( 'woocommerce_after_shipping_rate', $method, $index );
 						?>
-					</li>
+					</li>					
 				<?php endforeach; ?>
 			</ul>
+			@php
+					
+						$chosen_methods = WC()->session->get( 'chosen_shipping_methods' );
+						$chosen_shipping = $chosen_methods[0];
+						
+						if (isset($chosen_shipping) && str_contains($chosen_shipping, 'local') ) {
+							echo 'SHOW TIMESLOT PICKER';
+						}
+						elseif (isset($chosen_shipping) && str_contains($chosen_shipping, 'delivery') || isset($chosen_shipping) && str_contains($chosen_shipping, 'flat_rate') ) {
+							echo 'SHOW DELIVER TIMESLOT PICKER';
+						}
+					@endphp
 			<?php if ( is_cart() ) : ?>
 				<p class="woocommerce-shipping-destination">
 					<?php

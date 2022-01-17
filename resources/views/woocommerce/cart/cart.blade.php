@@ -364,8 +364,8 @@ defined( 'ABSPATH' ) || exit;
 						$chosen_shipping = $chosen_methods[0];
 						
 						if (isset($session_timeslot) && isset($chosen_shipping) ) {
-							if (str_contains($chosen_shipping, 'local') && str_contains($session_timeslot, 'delivery') || str_contains($chosen_shipping, 'flat') && !str_contains($session_timeslot, 'delivery')) {
-								echo 'DANGER';	
+							echo $chosen_shipping;
+							if (str_contains($chosen_shipping, 'local') && str_contains($session_timeslot, 'delivery') || str_contains($chosen_shipping, 'flat') && !str_contains($session_timeslot, 'delivery')) {								
 								$conflict = true;
 								$conflict_timeslot_mismatch = true;
 							}
