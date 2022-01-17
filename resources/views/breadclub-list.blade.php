@@ -129,11 +129,12 @@
         <table id="lists-{{ $day }}" class="display {{ $list_type }}">
           <thead>
             <tr>
-              <th width="10%">ID</th>
+              <th width="5%">ID</th>
               <th width="20%">Customer</th>
-              <th width="20%">Size</th>
+              <th width="20%">Email</th>
+              <th width="15%">Size</th>
               <th width="20%">Pickup Day</th>
-              <th width="30%" class="products">Note</th>
+              <th width="20%" class="products">Note</th>
             </tr>
           </thead>
           <tbody>
@@ -144,6 +145,7 @@
                 $firstName = $order->get_billing_first_name();
                 $lastName = $order->get_billing_last_name();
                 $customer_note = $order->get_customer_note(); 
+                $customer_email = $order->get_billing_email(); 
               @endphp
 
               @foreach ($order->get_items() as $item_id => $item)
@@ -159,6 +161,7 @@
                   <tr>
                     <td><strong>{{ $daily_order_number }}</strong><br>{{ $order_id }}</td>
                     <td>{{ $firstName }} {{ $lastName }}</td>
+                    <td>{{ $customer_email }}</td>
                     <td>{{ $product_size }}</td>
                     <td>{{ $pickup_day }}</td>
                     <td class="small">{{ $customer_note }}</td>
