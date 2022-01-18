@@ -327,14 +327,12 @@ function add_pickup_to_order($order_id) {
 	$pickup_date = WC()->session->get('pickup_date');
 	$pickup_date_formatted = WC()->session->get('pickup_date_formatted');
     $pickup_object = WC()->session->get('pickup_date_object');
-	$pickup_timeslot = WC()->session->get('pickup_timeslot');
 
 	$order = wc_get_order( $order_id );
 
 	$order->update_meta_data( 'pickup_date', $pickup_date );
 	$order->update_meta_data( 'pickup_date_formatted', $pickup_date_formatted );
 	$order->update_meta_data( 'pickup_date_object', $pickup_object );
-	$order->update_meta_data( 'pickup_timeslot', $pickup_timeslot );
 	$order->save();
 }
 
@@ -349,7 +347,6 @@ add_action( 'woocommerce_email_order_meta', 'App\bonton_add_email_order_meta', 1
 function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 
 	$date = get_post_meta( $order_obj->get_order_number(), 'pickup_date', true );
-	$timeslot = get_post_meta( $order_obj->get_order_number(), 'pickup_timeslot', true );
  
 	// ok, we will add the separate version for plaintext emails
 	if ( $plain_text === false ) {
@@ -358,14 +355,12 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
         echo '<h2>Important: Pickup Details</h2>
 		<ul>
 		<li><strong>Pickup Date:</strong> ' . $date . '</li>
-		<li><strong>Pickup Timeslot:</strong> ' . $timeslot . '</li>
 		</ul>';
  
 	} else {
  
 		echo "Important: Pickup Details\n
-		Pickup Date: $date
-		Pickup Timeslot: $timeslot";	
+		Pickup Date: $date";
 	}
 }
 
@@ -668,7 +663,6 @@ function sixth_item_free_language() {
     }
 }
 
-
 //WC login/out
 add_filter( 'wp_nav_menu_items', 'App\add_loginout_link', 10, 2 );
 function add_loginout_link( $items, $args ) {
@@ -680,3 +674,7 @@ function add_loginout_link( $items, $args ) {
   }
    return $items;
 }
+
+
+
+

@@ -35,7 +35,6 @@ defined( 'ABSPATH' ) || exit;
 	$cutoff = date('H', strtotime($cutoffhour));	
 	$tomorrow = new DateTime('tomorrow');
 	$today = new DateTime('today');
-	
 
 	if ($currenthour > $cutoff) {
   	$post3pm = true;
@@ -47,10 +46,8 @@ defined( 'ABSPATH' ) || exit;
 		//
 	}
 
-
 	if ( isset($_POST['date']))  { // Save post data to session. Only use session data from here on in.
 		$pickupdate = $_POST['date'];
-		$pickuptimeslot = $_POST['timeslot'];
 
 		$pickupdate_object = DateTime::createFromFormat($dateformat, $pickupdate);
 		
@@ -62,13 +59,11 @@ defined( 'ABSPATH' ) || exit;
 		WC()->session->set('pickup_date', $pickup_date_calendar);
 		WC()->session->set('pickup_date_formatted', $pickup_date_formatted);
 		WC()->session->set('pickup_date_object', $pickupdate_object);
-		WC()->session->set('pickup_timeslot', $pickuptimeslot);
 	}
 
 	$session_pickup_date = WC()->session->get('pickup_date');
 	$session_date_object = WC()->session->get('pickup_date_object');
 	$session_formatted = WC()->session->get('pickup_date_formatted');
-	$session_timeslot = WC()->session->get('pickup_timeslot');
 
 	$pickup_restriction_data = "";
 	$pickup_restriction_end_data = "";
@@ -82,7 +77,7 @@ defined( 'ABSPATH' ) || exit;
 		}
 	}
 
-	if ( !isset($session_pickup_date) || $session_pickup_date == "" || $session_timeslot == "" || !isset($session_timeslot)) {		
+	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
 		$conflict = true;
 	}
 
@@ -95,29 +90,6 @@ defined( 'ABSPATH' ) || exit;
 		 }
 	}
 
-	$morning_selected = "";
-	$midday_selected = "";
-	$afternoon_selected = "";
-	$delivery_morning_selected = "";
-	$delivery_afternoon_selected = "";
-
-	if ( isset($session_timeslot)) {
-		if ( $session_timeslot === 'morning') {
-			$morning_selected = "checked";
-		}
-		elseif ( $session_timeslot === 'midday') {
-			$midday_selected = "checked";
-		}
-		elseif ( $session_timeslot === 'afternoon') {
-			$afternoon_selected = "checked";
-		}
-		elseif ( $session_timeslot === 'delivery-morning') {
-			$delivery_morning_selected = "checked";
-		}
-		elseif ( $session_timeslot === 'delivery-afternoon') {
-			$delivery_afternoon_selected = "checked";
-		}				
-	}
 @endphp
 	<div class="row justify-content-center">	
 		<div class="col-md-8">
@@ -358,39 +330,13 @@ defined( 'ABSPATH' ) || exit;
 								$conflict = true;
 						}
 
-						// Conflict check for shipping method matching timeslot type chosen
 
-						$chosen_methods = WC()->session->get( 'chosen_shipping_methods' );
-						$chosen_shipping = $chosen_methods[0];
-						
-						if (isset($session_timeslot) && isset($chosen_shipping) ) {
-							echo $chosen_shipping;
-							if (str_contains($chosen_shipping, 'local') && str_contains($session_timeslot, 'delivery') || str_contains($chosen_shipping, 'flat') && !str_contains($session_timeslot, 'delivery')) {								
-								$conflict = true;
-								$conflict_timeslot_mismatch = true;
-							}
-							else {
-								$conflict_timeslot_mismatch = false;
-							}
-						}	
-						else {
-							$conflict_timeslot_mismatch = false;
-						}
-
-						//Set a timeslot reminder:
-						if (!isset($session_timeslot) && isset($session_pickup_date) ) {
-							$conflict_no_timeslot = true;
-						}
-						else {
-							$conflict_no_timeslot = false;
-						}
-
-						//If date or timeslot has been chosen, change language for update button
-						if (isset($session_timeslot) || isset($session_pickup_date) ) {
+						//If date has been chosen, change language for update button
+						if (isset($session_pickup_date) ) {
 							$datetime_button_copy = 'Update';
 						}
 						else {
-							$datetime_button_copy = 'Select date & time to continue';
+							$datetime_button_copy = 'Select date to continue';
 						}
 
 					@endphp
@@ -465,52 +411,7 @@ defined( 'ABSPATH' ) || exit;
 							<div class="lf_notice"> 
 								<strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
 							</div>
-						@endif
-						<div class="acf-field acf-field-radio" data-name="timeslot" data-type="radio">
-							<div class="acf-label">
-								<h3>Timeslot</h3>
-							</div>
-							<div class="acf-input">   								
-								<p><strong>In-store / curbside pickup: </strong></p>   
-								<div class="form-check">									
-									<input class="form-check-input" type="radio" name="timeslot" id="morning" value="morning" {{ $morning_selected }}>
-									<label class="form-check-label" for="morning" required>
-										9am - 11am
-									</label>
-								</div>
-								<div class="form-check">
-									<input class="form-check-input" type="radio" name="timeslot" id="midday" value="midday" {{ $midday_selected }}>
-									<label class="form-check-label" for="midday">
-										11am - 2pm
-									</label>
-								</div>
-								<div class="form-check">
-									<input class="form-check-input" type="radio" name="timeslot" id="afternoon" value="afternoon" {{ $afternoon_selected }}>
-									<label class="form-check-label" for="afternoon">
-										2pm - 5pm
-									</label>
-								</div>
-								<hr>
-								<p>
-									<strong>Doorstep Delivery</strong> <span><a class="delivery-modal" data-toggle="modal" href="#delivery">
-										(?)
-									</a></span><br>
-								</p>   
-								<div class="form-check">
-									<input class="form-check-input" type="radio" name="timeslot" id="delivery-morning" value="delivery-morning" {{ $delivery_morning_selected }}>
-									<label class="form-check-label" for="delivery-morning">
-										Between 10 am &amp; Noon
-									</label>
-								</div>
-								<div class="form-check">
-									<input class="form-check-input" type="radio" name="timeslot" id="delivery-afternoon" value="delivery-afternoon" {{ $delivery_afternoon_selected }}>
-									<label class="form-check-label" for="delivery-afternoon">
-										Between 4 pm &amp; 6 pm
-									</label>
-								</div>
-								<p class="small delivery-caption">Important! <a class="delivery-modal" data-toggle="modal" href="#delivery">Delivery areas &amp; pricing info</a>.</p>
-							</div>
-						</div>
+						@endif						
 
 						<div class="acf-form-submit">
 							<input type="submit" class="acf-button button button-primary button-large" value="{{ $datetime_button_copy }}">
@@ -546,21 +447,10 @@ defined( 'ABSPATH' ) || exit;
 	</div>
 
 	{{-- Validation messages --}}
-	@if ($conflict_timeslot_mismatch)
+	@if ($conflict && isset($session_pickup_date))
 	<div class="alert alert-danger alert-dismissible fade show" role="alert">
 		<div class="alert-danger">
-			<strong>Whoops! </strong> It looks like your <span class="underline">timeslot</span> selection and your <span class="underline">shipping</span> selection aren't quite jivin'.
-		</div>
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-	@endif
-
-	@if ($conflict_no_timeslot)
-	<div class="alert alert-danger alert-dismissible fade show" role="alert">
-		<div class="alert-danger">
-			<strong>Hmm. </strong> Please choose a timeslot to go along with your pickup / delivery date!
+			<strong>Whoops! </strong> It looks like product(s) you have selected aren't available on your chosen pickup date. Please remove the product(s) or select a different pickup date.
 		</div>
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
@@ -568,3 +458,4 @@ defined( 'ABSPATH' ) || exit;
 	</div>
 	@endif
 	
+
