@@ -26,13 +26,54 @@ do_action( 'woocommerce_before_shipping_calculator' ); ?>
 	<section class="shipping-calculator-form" style="display:none;">
 
 		<?php if ( apply_filters( 'woocommerce_shipping_calculator_enable_country', true ) ) : ?>			
-			<strong>Canada, </strong>
-			<input type="hidden" name="calc_shipping_country">
+		<p class="form-row form-row-wide" id="calc_shipping_country_field">
+			<select name="calc_shipping_country" id="calc_shipping_country" class="country_to_state country_select" rel="calc_shipping_state">
+				<option value="default"><?php esc_html_e( 'Select a country / region&hellip;', 'woocommerce' ); ?></option>
+				<?php
+				foreach ( WC()->countries->get_shipping_countries() as $key => $value ) {
+					echo '<option value="' . esc_attr( $key ) . '"' . selected( WC()->customer->get_shipping_country(), esc_attr( $key ), false ) . '>' . esc_html( $value ) . '</option>';
+				}
+				?>
+			</select>
+		</p>	
+		
+		
+		{{-- <strong>Canada, </strong>
+			<input type="hidden" name="calc_shipping_country"> --}}
 		<?php endif; ?>
 
 		<?php if ( apply_filters( 'woocommerce_shipping_calculator_enable_state', true ) ) : ?>
-		<strong>Alberta</strong>
-			<input type="hidden" name="calc_shipping_state">
+		
+		<p class="form-row form-row-wide" id="calc_shipping_state_field">
+			<?php
+			$current_cc = WC()->customer->get_shipping_country();
+			$current_r  = WC()->customer->get_shipping_state();
+			$states     = WC()->countries->get_states( $current_cc );
+
+			if ( is_array( $states ) && empty( $states ) ) {
+				?>
+				<input type="hidden" name="calc_shipping_state" id="calc_shipping_state" placeholder="<?php esc_attr_e( 'State / County', 'woocommerce' ); ?>" />
+				<?php
+			} elseif ( is_array( $states ) ) {
+				?>
+				<span>
+					<select name="calc_shipping_state" class="state_select" id="calc_shipping_state" data-placeholder="<?php esc_attr_e( 'State / County', 'woocommerce' ); ?>">
+						<option value=""><?php esc_html_e( 'Select an option&hellip;', 'woocommerce' ); ?></option>
+						<?php
+						foreach ( $states as $ckey => $cvalue ) {
+							echo '<option value="' . esc_attr( $ckey ) . '" ' . selected( $current_r, $ckey, false ) . '>' . esc_html( $cvalue ) . '</option>';
+						}
+						?>
+					</select>
+				</span>
+				<?php
+			} else {
+				?>
+				<input type="text" class="input-text" value="<?php echo esc_attr( $current_r ); ?>" placeholder="<?php esc_attr_e( 'State / County', 'woocommerce' ); ?>" name="calc_shipping_state" id="calc_shipping_state" />
+				<?php
+			}
+			?>
+		</p>
 
 		
 		<?php endif; ?>
