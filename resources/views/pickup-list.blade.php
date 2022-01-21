@@ -49,10 +49,12 @@
   foreach ( $results as $daily_results ) {    
     $order_id = $daily_results->get_id();
     $order_pickup_date = $daily_results->get_meta('pickup_date');
+    $shipping_method = $daily_results->get_shipping_methods();
+
           
-    if ($order_pickup_date === $date_selector_date) {
+    if ($order_pickup_date === $date_selector_date && !$daily_results->has_shipping_method('flat_rate')) {
       $filtered_orders[] = $daily_results;
-    }
+    } 
   }
 
   // Sort the packing list by timeslot
