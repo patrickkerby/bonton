@@ -22,7 +22,7 @@
       @elseif(is_page('grocery-list'))
         <h1>Grocery Inventory</h1>
         <h5>{{ $today }}</h5>
-      @elseif(is_page('bread-club-list'))
+      @elseif(is_page('bread-club-list') || is_page('bread-club-schedule'))
         <h1>Bread Club List</h1>
         <h5>{{ $today }}</h5>
       @endif

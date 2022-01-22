@@ -12,10 +12,6 @@ export default {
           'info': false,
           'dom': 'Bfrtip',
           'bFilter': false,
-          'buttons': [
-            'copy',
-            'csv',
-          ],
         }
       );
       $('#lists-Thursday').DataTable(
@@ -24,10 +20,6 @@ export default {
           'info': false,
           'dom': 'Bfrtip',
           'bFilter': false,
-          'buttons': [
-            'copy',
-            'csv',
-          ],
         }
       );
   });   
