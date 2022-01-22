@@ -89,6 +89,7 @@ function getDatesInRange($dateFromString, $dateToString, $dayOfWeek)
                     {{ $size['size_title'] }}
                   </th>
                 @endforeach
+                <th>Addons:</th>
                 </tr>
               </thead>
               @foreach ( $bc_program_products as $program_products )
@@ -114,39 +115,19 @@ function getDatesInRange($dateFromString, $dateToString, $dayOfWeek)
                         <li>{!! $item1->post_title !!}</li>
                       @endforeach
                     @endif
-                    @if($addons)
-                      <li class="addon"><strong>Addon:</strong>
-                        @foreach ($addons as $addon )
-                          {!! $addon->post_title !!}
-                        @endforeach
-                      </li>
-                    @endif            
+
                   @elseif($loop->iteration == 2)
                     @if($products_size_2)
                       @foreach ($products_size_2 as $item )
                         <li>{!! $item->post_title !!}</li>
                       @endforeach            
-                    @endif
-                    @if($addons)
-                      <li class="addon"><strong>Addon:</strong>
-                        @foreach ($addons as $addon )
-                          {!! $addon->post_title !!}
-                        @endforeach
-                      </li>
-                    @endif
+                    @endif                    
 
                   @elseif($loop->iteration == 3)
                     @if($products_size_3)
                       @foreach ($products_size_3 as $item )
                         <li>{!! $item->post_title !!}</li>
                       @endforeach
-                    @endif
-                    @if($addons)
-                      <li class="addon"><strong>Addon:</strong>
-                        @foreach ($addons as $addon )
-                          {!! $addon->post_title !!}
-                        @endforeach
-                      </li>
                     @endif
 
                   @elseif($loop->iteration == 4)
@@ -155,17 +136,21 @@ function getDatesInRange($dateFromString, $dateToString, $dayOfWeek)
                         <li>{!! $item->post_title !!}</li>
                       @endforeach
                     @endif
-                    @if($addons)
-                      <li class="addon"><strong>Addon:</strong>
-                        @foreach ($addons as $addon )
-                          {!! $addon->post_title !!}
-                        @endforeach
-                      </li>
-                    @endif
                   @endif
                 </ul>
               </td>
               @endforeach
+              @if($addons)
+                <td>
+                  <ul>
+                    <li>
+                      @foreach ($addons as $addon )
+                        {!! $addon->post_title !!}
+                      @endforeach
+                    </li>
+                  </ul>
+                </td>  
+              @endif 
             </tr>
             @endforeach
           @endif

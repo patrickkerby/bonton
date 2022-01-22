@@ -15,8 +15,6 @@ export default {
           'buttons': [
             'copy',
             'csv',
-            'pdf',
-            'print',
           ],
         }
       );
@@ -29,8 +27,6 @@ export default {
           'buttons': [
             'copy',
             'csv',
-            'pdf',
-            'print',
           ],
         }
       );
