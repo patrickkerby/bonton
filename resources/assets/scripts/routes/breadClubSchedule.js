@@ -10,7 +10,7 @@ export default {
         {
           'paging': false,
           'info': false,
-          'dom': 'Bfrtip',
+          'dom': 'rtip',
           'bFilter': false,
         }
       );
@@ -18,7 +18,7 @@ export default {
         {
           'paging': false,
           'info': false,
-          'dom': 'Bfrtip',
+          'dom': 'rtip',
           'bFilter': false,
         }
       );
