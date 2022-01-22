@@ -80,7 +80,7 @@ function getDatesInRange($dateFromString, $dateToString, $dayOfWeek)
           <strong>{{ $program['start_date'] }} - {{ $program['end_date'] }}</strong><br>
           <br>
           @if ($bc_program_products)
-            <table id="lists-{{ $$dayOfWeek }}">
+            <table id="lists-{{ $dayOfWeek }}">
               <thead>
                 <tr>
                   <th>Week</th>
