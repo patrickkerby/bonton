@@ -10,8 +10,8 @@ export default {
         {
           'paging': false,
           'info': false,
-          'order': [[1, 'asc']],
           'dom': 'Bfrtip',
+          'bFilter': false,
           'buttons': [
             'copy',
             'csv',
@@ -24,8 +24,8 @@ export default {
         {
           'paging': false,
           'info': false,
-          'order': [[1, 'asc']],
           'dom': 'Bfrtip',
+          'bFilter': false,
           'buttons': [
             'copy',
             'csv',
