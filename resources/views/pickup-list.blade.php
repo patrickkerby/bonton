@@ -3,6 +3,7 @@
 --}}
 
 @extends('layouts.lists')
+
 <script>
   function printDiv(divName, printSize) {
 
@@ -26,6 +27,8 @@
   }
 </script>
 @php
+global $wpdb;
+
   $post_id = get_the_ID();
   // do_action( 'acf/save_post', $post_id );
 
@@ -120,12 +123,42 @@
     // Hide specific meta data from the details column. List the items by key here:
     $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
 
+    /// Check to see if customer is a bread club member
+    $breadclub_array = array();
+    $breadclub_id = 18200;
+
+    //Get all orders that contain specific product 
+    $bread_club_results = $wpdb->get_col("
+        SELECT order_items.order_id
+        FROM {$wpdb->prefix}woocommerce_order_items as order_items
+        LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as order_item_meta ON order_items.order_item_id = order_item_meta.order_item_id
+        LEFT JOIN {$wpdb->posts} AS posts ON order_items.order_id = posts.ID
+        WHERE posts.post_type = 'shop_order'
+        AND posts.post_status IN ( 'wc-processing', 'wc-completed' )
+        AND order_items.order_item_type = 'line_item'
+        AND order_item_meta.meta_key = '_product_id'
+        AND order_item_meta.meta_value = '$breadclub_id'
+    ");
+
+    foreach ($bread_club_results as $order_id) {
+        $order = wc_get_order($order_id);
+        $customer_email = $order->get_billing_email(); 
+
+        foreach ($order->get_items() as $item_id => $item) {
+            $prod_id = $item['product_id']; 
+        
+            if ($prod_id == $breadclub_id) {
+                $breadclub_array[] = $customer_email;
+            }
+        }
+    }
 
 @endphp
 
 @section('content')
   <div class="row">
     <div class="col-sm-12">
+      @dump($breadclub_array)
       <table id="lists" class="display">
         <thead>
           <tr>
@@ -154,13 +187,31 @@
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
               $location = $details->get_meta( 'pickuplocation', true );
               $order_number = $details->get_id();
+
+              if (in_array($email, $breadclub_array)) {
+                $is_breadclub_member = true;
+              }
+              else {
+                $is_breadclub_member = false;
+              }
+
+              
+
             @endphp
             <tr>
               <td>{{ $daily_order_number }}</td>
-              <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
+              <td class="name">
+                <strong>{{ $last_name }}, {{ $first_name }}</strong>
+                @if ($is_breadclub_member)
+                    <span class="breadclubflag">Bread Club Member!</span>
+                @else
+                    
+                @endif
+              
+              </td>
               <td>{{ $order_number }}</td>
               <td class="phone">{{ $phone }}</td>
-              <td class="location"> 
+              <td class="location">                 
                 <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
               </td>
               <td class="location">
@@ -181,7 +232,9 @@
                     else {  
                       $responses[] = '<span class="order_location shelf">S</span>';                
                       $in_shelf = true;
-                    }                    
+                    }
+
+                    //Does customer have a breadclub subscription?
                   @endphp
                 @endforeach
                 @php

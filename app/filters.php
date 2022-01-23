@@ -679,3 +679,4 @@ function sixth_item_free_language() {
         echo $sixth_item_free;
     }
 }
+

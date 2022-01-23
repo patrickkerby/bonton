@@ -241,6 +241,20 @@
         font-weight: 900;
       }
 
+      span.breadclubflag {
+        display: flex;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        justify-content: center;
+        background: $highlight;
+        padding: 0.25rem 1rem;
+        border-radius: 1rem;
+        font-weight: bold;
+        color: #fff;
+        margin: 0 auto;
+        width: 175px;
+      }
+
       &.location {
         .timeslot {
           text-transform: capitalize;
