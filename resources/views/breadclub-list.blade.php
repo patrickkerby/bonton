@@ -44,9 +44,8 @@
               <th width="5%">ID</th>
               <th width="20%">Customer</th>
               <th width="20%">Email</th>
-              <th width="10%">Size</th>
-              <th width="10%">Pickup Day</th>
-              <th width="15%">Details</th>
+              <th width="15%">Size</th>
+              <th width="20%">Details</th>
               <th width="20%" class="products">Note</th>
             </tr>
           </thead>
@@ -82,7 +81,6 @@
                     <td>{{ $firstName }} {{ $lastName }}</td>
                     <td>{{ $customer_email }}</td>
                     <td>{{ $product_size }}</td>
-                    <td>{{ $pickup_day }}</td>
                     <td>
                       <ul>
                         @if($sliced_meta)
