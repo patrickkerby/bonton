@@ -250,7 +250,6 @@ global $wpdb;
 
           @foreach ($combined_orders as $details )
             @php 
-              $daily_order_number++;
               $phone = $details->get_billing_phone();
               $order_id = $details->get_id();
               $email = $details->get_billing_email();
@@ -264,13 +263,15 @@ global $wpdb;
               $order_number = $details->get_id();
 
               if (in_array_r($email, $breadclub_email_list) && $order_pickup_date != $date_selector_date) {
-                $is_breadclub_member = true;
+                $is_breadclub_member = true;                
               }
               else {
                 $is_breadclub_member = false;
+                $daily_order_number++;
               }
               if( in_array_r($order_number, $breadclub_id_list) ) {
                 $is_customer_and_bc = true;
+                $daily_order_number++;
               }              
               else {
                 $is_customer_and_bc = false;
