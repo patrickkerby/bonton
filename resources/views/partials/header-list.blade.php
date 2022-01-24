@@ -81,6 +81,12 @@
     <div class="col-sm-7 d-print-none">
       <ul class="nav nav-tabs d-print-none">
         <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('bread-club-schedule')) active @endif d-print-none" href="/lists/bread-club-schedule">Bread Club Schedule</a>
+        </li>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('bread-club-list')) active @endif d-print-none" href="/lists/bread-club-list">Bread Club Packing List</a>
+        </li>
+        <li class="nav-item d-print-none">
           <a class="nav-link @if(is_page('baking')) active @endif d-print-none" href="/lists/baking">Baking</a>
         </li>
         <li class="nav-item d-print-none">
