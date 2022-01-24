@@ -44,8 +44,9 @@
               <th width="5%">ID</th>
               <th width="20%">Customer</th>
               <th width="20%">Email</th>
-              <th width="15%">Size</th>
-              <th width="20%">Pickup Day</th>
+              <th width="10%">Size</th>
+              <th width="10%">Pickup Day</th>
+              <th width="15%">Details</th>
               <th width="20%" class="products">Note</th>
             </tr>
           </thead>
@@ -66,6 +67,12 @@
                   $product = $item->get_product();
                   $pickup_day = $product->get_attribute( 'Pickup Date' );
                   $product_size = $product->get_attribute( 'Size' );
+                  $sliced_meta = $item->get_meta( 'Sliced Option', true );
+                  $addon_meta = $item->get_meta( '_Bread Club Addon', true );
+                  $product_meta_objects = $item->get_meta_data();
+                  $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
+
+
                 @endphp
                 
                 @if ($prod_id == 18200 && str_contains($pickup_day, $day))
@@ -76,6 +83,22 @@
                     <td>{{ $customer_email }}</td>
                     <td>{{ $product_size }}</td>
                     <td>{{ $pickup_day }}</td>
+                    <td>
+                      <ul>
+                        @if($sliced_meta)
+                          <li>{{ $sliced_meta }}</li>
+                        @endif
+                        @if($addon_meta)
+                          <li>Addons included.</li>
+                        @endif
+                      </ul>
+                      
+                      {{-- @foreach ( $product_meta_objects as $meta )
+                        @unless(in_array($meta->key, $hidden_meta))
+                          <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
+                        @endunless
+                      @endforeach --}}
+                    </td>
                     <td class="small">{{ $customer_note }}</td>
                   </tr>
                 @endif
