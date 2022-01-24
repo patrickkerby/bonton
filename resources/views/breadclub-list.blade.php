@@ -30,6 +30,7 @@
   $program_loop = get_field('program_scheduler', 'option');
   //TODO: compare against current date to show appropriate week.
 
+
 @endphp	
 
 @section('content')
@@ -37,7 +38,11 @@
   <div class="row no-gutters justify-content-center">
     <div class="col-10">
       @foreach($pickup_day_list as $day) 
-      @php $daily_order_number = 900; @endphp
+      @php
+      $daily_order_number = 900; 
+      $product_sizes_array = array();
+      $addon_count = 0;
+      @endphp
 
         <h2>{{ $day }} Bread Club</h2>
         <table id="lists-{{ $day }}" class="display {{ $list_type }}">
@@ -72,12 +77,13 @@
                   $addon_meta = $item->get_meta( '_Bread Club Addon', true );
                   $product_meta_objects = $item->get_meta_data();
                   $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
-
-
                 @endphp
                 
                 @if ($prod_id == 18200 && str_contains($pickup_day, $day))
-                @php $daily_order_number++; @endphp
+                @php 
+                  $daily_order_number++; 
+                  $product_sizes_array[] = $product_size;                
+                @endphp
                   <tr>
                     <td><strong>{{ $daily_order_number }}</strong><br>{{ $order_id }}</td>
                     <td>{{ $firstName }} {{ $lastName }}</td>
@@ -90,14 +96,11 @@
                         @endif
                         @if($addon_meta)
                           <li>Addons included.</li>
+                          @php
+                            $addon_count++;   
+                          @endphp
                         @endif
                       </ul>
-                      
-                      {{-- @foreach ( $product_meta_objects as $meta )
-                        @unless(in_array($meta->key, $hidden_meta))
-                          <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
-                        @endunless
-                      @endforeach --}}
                     </td>
                     <td class="small">{{ $customer_note }}</td>
                   </tr>
@@ -106,6 +109,15 @@
             @endforeach
           </tbody>
         </table>
+        <div class="totals col-sm-4">
+          <h5>Totals:</h5>
+          <ul>
+            @foreach (array_count_values($product_sizes_array) as $key => $value)
+              <li>{{ $key }}: <strong>{{ $value }}</strong></li>
+            @endforeach   
+              <li>Addons: <strong>{{ $addon_count }}</strong></li>     
+          </ul>
+        </div>
         <br><br>
       @endforeach
     </div>

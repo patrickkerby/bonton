@@ -508,6 +508,11 @@ span.stock {
     display: flex;
     justify-content: center;
   }
+
+  .totals {
+    border: solid 2px $highlight;
+    margin-left: auto;
+  }
 }
 
 /* stylelint-enable no-descending-specificity */
