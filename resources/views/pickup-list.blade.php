@@ -143,6 +143,7 @@ global $wpdb;
     $shelf_array = array_merge($shelf_array,$shelf_overrides);
 
     $daily_order_number = 100;
+    $daily_breadclub_number = 900;
 
     // Hide specific meta data from the details column. List the items by key here:
     $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
@@ -263,23 +264,32 @@ global $wpdb;
               $order_number = $details->get_id();
 
               if (in_array_r($email, $breadclub_email_list) && $order_pickup_date != $date_selector_date) {
-                $is_breadclub_member = true;                
+                $is_breadclub_member = true;  
+                $daily_breadclub_number++;                
               }
               else {
                 $is_breadclub_member = false;
                 $daily_order_number++;
               }
-              if( in_array_r($order_number, $breadclub_id_list) ) {
+              if( in_array_r($order_number, $breadclub_id_list) && $order_pickup_date == $date_selector_date ) {
                 $is_customer_and_bc = true;
-                $daily_order_number++;
+                $daily_breadclub_number++;                
               }              
               else {
-                $is_customer_and_bc = false;
+                $is_customer_and_bc = false;                
               }
 
             @endphp
             <tr>
-              <td>{{ $daily_order_number }}</td>
+              <td>
+                @if($is_breadclub_member)
+                  {{ $daily_breadclub_number }}
+                @elseif($is_customer_and_bc)
+                  {{ $daily_breadclub_number }}, {{ $daily_order_number }}
+                @else
+                  {{ $daily_order_number }}
+                @endif
+              </td>
               <td class="name">
                 <strong>{{ $last_name }}, {{ $first_name }}</strong>
                 @if ($is_breadclub_member || $is_customer_and_bc)

@@ -37,6 +37,8 @@
   <div class="row no-gutters justify-content-center">
     <div class="col-10">
       @foreach($pickup_day_list as $day) 
+      @php $daily_order_number = 900; @endphp
+
         <h2>{{ $day }} Bread Club</h2>
         <table id="lists-{{ $day }}" class="display {{ $list_type }}">
           <thead>
