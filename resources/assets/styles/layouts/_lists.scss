@@ -318,6 +318,11 @@
             color: #e65748;
             border: solid 2px #e65748;
           }
+
+          &.breadclub {
+            color: $highlight;
+            border: solid 2px $highlight;
+          }
         }
       }
 

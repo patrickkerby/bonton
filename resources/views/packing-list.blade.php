@@ -161,9 +161,7 @@ if ($list_type === "shelf") {
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
               $location = $details->get_meta( 'pickuplocation', true );
-              $order_number = $details->get_id();
-
-              
+              $order_number = $details->get_id();              
               
               // Check to see if the products associated with the order are shelf or cooler.
               $list_check = array();
