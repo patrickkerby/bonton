@@ -185,6 +185,12 @@ if ($list_type === "shelf") {
               
               $list_class_unique = array_unique($list_class);
               $list_class_marker = implode(" ", $list_class_unique);
+
+              $shipping_method = $details->get_shipping_methods();
+
+              if($details->has_shipping_method('flat_rate')) {
+                $order_location = 'Delivery';
+              }
             @endphp
 
             <tr class="pack {{ $status }} {{ $list_class_marker }}">
@@ -193,8 +199,11 @@ if ($list_type === "shelf") {
                 <span class="id">#{{ $daily_order_number }}</span>
               </td>
               <td class="location">
-                <p class="timeslot {{ $location }}">{{ $timeslot }}</p>                  
-                {!! $order_location !!}
+                @if($details->has_shipping_method('flat_rate'))
+                  {!! $order_location !!}
+                @else
+                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>
+                @endif
               </td>
               <td> 
                 <strong>{{ $last_name }}, {{ $first_name }} (#{{ $order_number }})</strong>

@@ -1,3 +1,5 @@
+/* stylelint-disable no-descending-specificity */
+
 ul.woocommerce-thankyou-order-details li {
   margin-top: 1.5rem;
 }
@@ -139,10 +141,14 @@ ul.woocommerce-thankyou-order-details li {
   }
 
   .acf-field-date-picker {
-    margin: 0 0 1rem 0;
+    margin: 0 0 2rem 0;
 
     .input {
       overflow: visible;
+    }
+
+    .ui-datepicker {
+      width: 100%;
     }
   }
 
@@ -302,20 +308,30 @@ ul.woocommerce-thankyou-order-details li {
   }
 }
 
+.woocommerce .cart-collaterals {
+  padding: 0;
+}
+
+.woocommerce .cart-collaterals .cart_totals,
+.woocommerce-page .cart-collaterals .cart_totals {
+  width: 100%;
+}
+
 .cart-collaterals .cart_totals table.shop_table {
-  border-top: none !important;
+  border: none !important;
+  background-color: $cream;
 
   th {
     font-family: $font-family-serif;
-    font-size: 20px;
-    padding: 1.25rem 0 1rem 1rem !important;
-    border-top: solid 3px $cream !important;
+    font-size: 17px;
+    padding: 1rem 0 1rem 1rem !important;
+    border-top: solid 3px #fff !important;
   }
 
   td {
-    font-size: 22px;
+    font-size: 19px;
     padding: 1rem !important;
-    border-top: solid 3px $cream !important;
+    border-top: solid 3px #fff !important;
   }
 }
 
@@ -331,8 +347,17 @@ ul.woocommerce-thankyou-order-details li {
 .lf_notice {
   background: $highlight;
   color: #fff;
-  padding: 2rem;
+  padding: 1rem;
   font-weight: 500;
+  margin-top: -2.1rem;
+  font-size: 0.9rem;
+  line-height: 1.25rem;
+
+  strong {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+    display: inline-flex;
+  }
 }
 
 //Remove woocommerce cart and checkout notifications for coupons.
@@ -406,4 +431,62 @@ ul.woocommerce-thankyou-order-details li {
   height: 50px !important;
   line-height: 48px;
   margin: 0;
+}
+
+// Shipping details
+.woocommerce ul#shipping_method li {
+  label,
+  input {
+    font-size: 1.1rem;
+    line-height: 1.1rem;
+  }
+
+  input {
+    vertical-align: middle;
+    margin: 0 6px 0 0;
+  }
+}
+
+.cart .woocommerce-shipping-destination {
+  font-size: 1rem;
+  line-height: normal;
+  padding-top: 1rem;
+  border-top: solid 1px $cream-dark;
+}
+
+.shipping-calculator-button {
+  font-size: 1rem;
+}
+
+.cart-collaterals .shipping-calculator-button::after {
+  font-size: 0.7rem;
+}
+
+.woocommerce-shipping-totals .form-row {
+  font-size: 1rem;
+}
+
+.cart .shipping-calculator-form button {
+  font-size: 15px;
+  height: 30px !important;
+  line-height: 30px !important;
+  padding: 0 1rem !important;
+}
+
+.delivery-caption {
+  margin-top: 1rem;
+}
+
+.cart .alert {
+  position: fixed;
+  z-index: 9999999999;
+  bottom: 10px;
+  width: 96%;
+  height: 100px;
+  margin: 0 auto;
+  left: 2%;
+  box-shadow: 0 0 900px #999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
