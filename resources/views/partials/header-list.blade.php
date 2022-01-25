@@ -2,7 +2,52 @@
   $get_today = new DateTime('today');
   $today = $get_today->format('l, F j, Y');
 @endphp
-
+<header class="mobile-banner">    
+  <button class="navbar-toggler hamburger hamburger--arrow" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="hamburger-box">
+      <span class="hamburger-inner"></span>
+    </span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent1">
+    
+    <nav class="nav-mobile">
+      <ul class="d-print-none">    
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('pickup')) active @endif d-print-none" href="/lists/pickup">Pickup</a>
+        </li>    
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('packing-shelf')) active @endif d-print-none" href="/lists/packing-shelf">Packing (Shelf)</a>
+        </li>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('packing-cooler')) active @endif d-print-none" href="/lists/packing-cooler">Packing (Cooler)</a>
+        </li>
+      </ul>
+      <hr>
+      <ul>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('baking')) active @endif d-print-none" href="/lists/baking">Baking</a>
+        </li>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('inventory')) active @endif d-print-none" href="/lists/inventory">Inventory</a>
+        </li>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('grocery-inventory')) active @endif d-print-none" href="/lists/grocery-list">Groceries</a>
+        </li>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('out-of-stock')) active @endif d-print-none" href="/lists/out-of-stock">Out of Stock</a>
+        </li>
+      </ul>
+      <hr>
+      <ul>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('bread-club-schedule')) active @endif d-print-none" href="/lists/bread-club-schedule">Bread Club Schedule</a>
+        </li>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('bread-club-list')) active @endif d-print-none" href="/lists/bread-club-list">Bread Club Packing List</a>
+        </li>
+      </ul>     
+    </nav>
+</header>
 <header class="container-fluid lists-header">
   <div class="row justify-content-center">
     <div class="col-sm-5">
@@ -79,35 +124,9 @@
       </div>
     </div>
     <div class="col-sm-7 d-print-none">
-      <ul class="nav nav-tabs d-print-none">
-        <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('bread-club-schedule')) active @endif d-print-none" href="/lists/bread-club-schedule">Bread Club Schedule</a>
-        </li>
-        <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('bread-club-list')) active @endif d-print-none" href="/lists/bread-club-list">Bread Club Packing List</a>
-        </li>
-        <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('baking')) active @endif d-print-none" href="/lists/baking">Baking</a>
-        </li>
-        <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('inventory')) active @endif d-print-none" href="/lists/inventory">Inventory</a>
-        </li>
-        <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('grocery-inventory')) active @endif d-print-none" href="/lists/grocery-list">Groceries</a>
-        </li>
-        <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('out-of-stock')) active @endif d-print-none" href="/lists/out-of-stock">Out of Stock</a>
-        </li>
-        <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('packing-cooler')) active @endif d-print-none" href="/lists/packing-cooler">Packing (Cooler)</a>
-        </li>
-        <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('packing-shelf')) active @endif d-print-none" href="/lists/packing-shelf">Packing (Shelf)</a>
-        </li>
-        <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('pickup')) active @endif d-print-none" href="/lists/pickup">Pickup</a>
-        </li>
-      </ul>
+      
     </div>
+
+    
   </div>
 </header>

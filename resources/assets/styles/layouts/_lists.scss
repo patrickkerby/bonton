@@ -8,7 +8,8 @@
 .bread-club-list,
 .bread-club-schedule {
   margin: 0;
-  padding-top: 3rem;
+  width: 100%;
+  // padding-top: 3rem;
 
   &.admin-bar {
     #wpadminbar {
@@ -407,6 +408,27 @@
     font-size: 16px;
     padding: 0.4rem;
   }
+
+  .mobile-banner button {
+    position: fixed;
+    top: 0;
+  }
+
+  .mobile-banner .navbar-collapse {
+    width: 50vw;
+    left: unset;
+    right: 0;
+    position: fixed;
+
+    nav {
+      flex-direction: column;
+    }
+
+    .nav-mobile a {
+      font-size: 1.25rem;
+      line-height: 1rem;
+    }
+  }
 }
 
 table.cooler {
@@ -512,6 +534,13 @@ span.stock {
   .totals {
     border: solid 2px $highlight;
     margin-left: auto;
+  }
+
+  .dataTables_filter {
+    display: inline-flex;
+    margin: 0 0 0 2rem;
+    top: -1rem;
+    position: relative;
   }
 }
 
