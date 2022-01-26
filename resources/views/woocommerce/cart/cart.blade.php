@@ -457,5 +457,3 @@ defined( 'ABSPATH' ) || exit;
 		</button>
 	</div>
 	@endif
-	
-
