@@ -37,11 +37,9 @@ function bonton_pickup_meta( $order ){  ?>
 			 * get all the meta data values we need
 			 */ 
 			$date = get_post_meta( $order->get_id(), 'pickup_date', true );
-			$timeslot = get_post_meta( $order->get_id(), 'pickup_timeslot', true );                    
         ?>
         <div class="address">
-            <p><strong>Pickup Date:</strong> <?php echo $date ?></p>
-            <p><strong>Timeslot:</strong> <?php echo $timeslot ?></p>
+				<p><strong>Pickup Date:</strong> <?php echo $date ?></p>
         </div>
         <div class="edit_address"><?php
  
@@ -51,19 +49,7 @@ function bonton_pickup_meta( $order ){  ?>
 				'value' => $date,
 				'description' => '(Format: Thursday, September 12, 2020)',
 				'wrapper_class' => 'form-field-wide'
-			) );
- 
-			woocommerce_wp_select( array(
-				'id' => 'pickup_timeslot',
-				'label' => 'Timeslot:',
-				'value' => $timeslot,
-				'options' => array(
-					'morning' => 'morning',
-                    'midday' => 'midday',
-                    'afternoon' => 'afternoon'
-				),
-				'wrapper_class' => 'form-field-wide'
-			) );
+			) );			
  
 		?></div>
 <?php }
@@ -72,7 +58,7 @@ add_action( 'woocommerce_process_shop_order_meta', 'App\save_general_details' );
  
 function save_general_details( $ord_id ){
 	update_post_meta( $ord_id, 'pickup_date', wc_clean( $_POST[ 'pickup_date' ] ) );
-	update_post_meta( $ord_id, 'pickup_timeslot', wc_clean( $_POST[ 'pickup_timeslot' ] ) );
+	
 	// wc_clean() and wc_sanitize_textarea() are WooCommerce sanitization functions
 }
 
@@ -138,3 +124,59 @@ function pickupdate_orderby( $query ) {
     }
 }
 
+
+// add custom billing field to edit order screen
+
+add_action( 'woocommerce_admin_order_data_after_billing_address', 'App\misha_editable_order_meta_billing' );	 	
+function misha_editable_order_meta_billing( $order ){	 	 
+	$billing_unitno = get_post_meta( $order->get_id(), 'billing_unitno', true );
+	?>
+	<div class="address">
+		<p<?php if( !$billing_unitno ) echo ' class="none_set"' ?>>
+			<strong>Unit / House Number:</strong>
+			<?php echo ( $billing_unitno ) ? $billing_unitno : 'No unit / apartment set.' ?>
+		</p>
+	</div>
+	<div class="edit_address"><?php
+		woocommerce_wp_text_input( array( 
+			'id' => 'billing_unitno',
+			'label' => 'Unit / Apartment Number', 
+			'wrapper_class' => 'form-field-half',
+			'value' => $billing_unitno
+		) );
+        ?></div><?php
+}
+
+add_action( 'woocommerce_process_shop_order_meta', 'App\misha_save_billing_details' );
+
+function misha_save_billing_details( $ord_id ){
+	update_post_meta( $ord_id, 'billing_unitno', wc_clean( $_POST[ 'billing_unitno' ] ) );
+}
+
+// add custom shipping field to edit order screen
+
+add_action( 'woocommerce_admin_order_data_after_shipping_address', 'App\misha_editable_order_meta_shipping' );	 	
+function misha_editable_order_meta_shipping( $order ){	 	 
+	$shipping_unitno = get_post_meta( $order->get_id(), 'shipping_unitno', true );
+	?>
+	<div class="address">
+		<p<?php if( !$shipping_unitno ) echo ' class="none_set"' ?>>
+			<strong>Unit / House Number:</strong>
+			<?php echo ( $shipping_unitno ) ? $shipping_unitno : 'No unit / apartment set.' ?>
+		</p>
+	</div>
+	<div class="edit_address"><?php
+		woocommerce_wp_text_input( array( 
+			'id' => 'shipping_unitno',
+			'label' => 'Unit / Apartment Number', 
+			'wrapper_class' => 'form-field-half',
+			'value' => $shipping_unitno
+		) );
+        ?></div><?php
+}
+
+add_action( 'woocommerce_process_shop_order_meta', 'App\misha_save_shipping_details' );
+
+function misha_save_shipping_details( $ord_id ){
+	update_post_meta( $ord_id, 'shipping_unitno', wc_clean( $_POST[ 'shipping_unitno' ] ) );
+}

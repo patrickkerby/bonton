@@ -131,13 +131,15 @@
               $phone = $details->get_billing_phone();
               $email = $details->get_billing_email();
               $order_id = $details->get_id();
-              $first_name = $details->get_billing_first_name();
-              $last_name = $details->get_billing_last_name();
-              $address1 = $details->get_billing_address_1();
-              $address2 = $details->get_billing_address_2();
-              $city = $details->get_billing_city();
-              $state = $details->get_billing_state();
-              $postcode = $details->get_billing_postcode();
+              $first_name = $details->get_shipping_first_name();
+              $last_name = $details->get_shipping_last_name();
+              $address1 = $details->get_shipping_address_1();
+              $address2 = $details->get_shipping_address_2();
+              $unitno_shipping = $details->get_meta( 'shipping_unitno', true );
+              $unitno_billing = $details->get_meta( 'billing_unitno', true );
+              $city = $details->get_shipping_city();
+              $state = $details->get_shipping_state();
+              $postcode = $details->get_shipping_postcode();
               $status = $details->get_status();
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
@@ -155,7 +157,11 @@
                 {{ $address2 }}
               </td>
               <td>
-
+                @if($unitno_shipping)
+                  {{ $unitno_shipping }}
+                @else
+                  {{ $unitno_billing }}
+                @endif
               </td>
               <td>{{  $city }}</td>
               <td>{{ $state }}</td>

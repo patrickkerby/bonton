@@ -675,3 +675,93 @@ function sixth_item_free_language() {
     }
 }
 
+/**
+ * @snippet       Rename Address 1 & 2 Placeholder | WooCommerce Checkout
+ * @how-to        Get CustomizeWoo.com FREE
+ * @author        Rodolfo Melogli
+ * @testedwith    WooCommerce 3.8
+ * @donate $9     https://businessbloomer.com/bloomer-armada/
+ */
+ 
+add_filter( 'woocommerce_default_address_fields' , 'App\bbloomer_rename_address_placeholders_checkout', 9999 );
+ 
+function bbloomer_rename_address_placeholders_checkout( $address_fields ) {
+   $address_fields['address_1'] = array(
+        'label'  =>  'House Number',
+        'placeholder'   => 'ex: 8720',
+        'required'  => true
+    );
+    $address_fields['address_2'] = array(
+        'label'  =>  'Street',
+        'placeholder'   => 'ex: 149 Street',
+        'required'  => true
+    );   return $address_fields;
+}
+
+add_filter( 'woocommerce_checkout_fields' , 'App\bbloomer_add_field_and_reorder_fields' );
+   
+function bbloomer_add_field_and_reorder_fields( $fields ) {
+   
+    // Add New Fields
+        
+    $fields['billing']['billing_unitno'] = array(
+    'label'     => 'Apartment/Unit',
+    'placeholder'   => 'Apartment/Unit',
+    'priority' => 60,
+    'required'  => false,
+    'clear'     => true
+     );
+   
+    $fields['shipping']['shipping_unitno'] = array(
+    'label'     => 'Apartment/Unit',
+    'placeholder'   => 'Apartment/Unit',
+    'priority' => 60,
+    'required'  => false,
+    'clear'     => true
+     );     
+      
+    return $fields;
+}
+
+// ------------------------------------
+// Add Billing House # to Address Fields
+  
+add_filter( 'woocommerce_order_formatted_billing_address' , 'App\bbloomer_default_billing_address_fields', 10, 2 );
+  
+function bbloomer_default_billing_address_fields( $fields, $order ) {
+    $fields['billing_unitno'] = get_post_meta( $order->get_id(), '_billing_unitno', true );
+    return $fields;
+}
+  
+// ------------------------------------
+// Add Shipping House # to Address Fields
+  
+add_filter( 'woocommerce_order_formatted_shipping_address' , 'App\bbloomer_default_shipping_address_fields', 10, 2 );
+  
+function bbloomer_default_shipping_address_fields( $fields, $order ) {
+    $fields['shipping_unitno'] = get_post_meta( $order->get_id(), '_shipping_unitno', true );
+    return $fields;
+}
+
+// ------------------------------------
+// Create 'replacements' for new Address Fields
+  
+add_filter( 'woocommerce_formatted_address_replacements', 'App\add_new_replacement_fields',10,2 );
+  
+function add_new_replacement_fields( $replacements, $address ) {
+    $replacements['{billing_unitno}'] = isset($address['billing_unitno']) ? $address['billing_unitno'] : '';
+    $replacements['{shipping_unitno}'] = isset($address['shipping_unitno']) ? $address['shipping_unitno'] : '';
+    return $replacements;
+}
+
+// save fields to order meta
+add_action( 'woocommerce_checkout_update_order_meta', 'App\misha_save_what_we_added' );
+
+function misha_save_what_we_added( $order_id ){
+
+	if( !empty( $_POST['billing_unitno'] ) )
+		update_post_meta( $order_id, 'billing_unitno', sanitize_text_field( $_POST['billing_unitno'] ) );
+
+    if( !empty( $_POST['shipping_unitno'] ) )
+    update_post_meta( $order_id, 'shipping_unitno', sanitize_text_field( $_POST['shipping_unitno'] ) );
+}
