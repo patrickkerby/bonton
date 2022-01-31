@@ -158,17 +158,18 @@ defined( 'ABSPATH' ) || exit;
 								$days_available = explode(", ",$days_available);															
 
 								//Pickup Restriction!!
-
-								$pickup_restriction_data = get_field('restricted_pickup', $product_id);
-								$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
+								if (!wc_pb_is_bundled_cart_item($cart_item)) {
+									$pickup_restriction_data = get_field('restricted_pickup', $product_id);
+									$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
 								
 
-								if($pickup_restriction_data) {
-									$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
-									$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
-									$restricted_start_date_js = $restricted_start_date->format('d/m/Y');
-									$restricted_end_date_js = $restricted_end_date->format('d/m/Y');
-									$restriction_msg = '<span class="restricted_notice">Only available '. $restricted_start_date->format('D, M j') . ' to ' . $restricted_end_date->format('D, M j') . '</span>';
+									if($pickup_restriction_data) {
+										$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
+										$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
+										$restricted_start_date_js = $restricted_start_date->format('d/m/Y');
+										$restricted_end_date_js = $restricted_end_date->format('d/m/Y');
+										$restriction_msg = '<span class="restricted_notice">Only available '. $restricted_start_date->format('D, M j') . ' to ' . $restricted_end_date->format('D, M j') . '</span>';
+									}
 								}								
 
 								//Is the product available on the day selected? 
@@ -239,6 +240,8 @@ defined( 'ABSPATH' ) || exit;
 									?>
 
 									<?php
+									if (!wc_pb_is_bundled_cart_item($cart_item)) {
+
 										if (in_array('Everyday', $days_available)) {
 											echo '<span class="availability"><strong>Availability: </strong> All week!</span>';
 										}
@@ -246,13 +249,17 @@ defined( 'ABSPATH' ) || exit;
 												$days = implode(', ', $days_available);
 												echo '<span class="availability"><strong>Availability: </strong>' . $days . '</span>';
 										}
+									}
 									?>
 									@if($long_fermentation === 'yes')
 										<span class="availability"><strong>*Note:</strong> Not available for next-day pickup</span>										
 									@endif
 									
+									@if (!wc_pb_is_bundled_cart_item($cart_item))
+
 									@if($pickup_restriction_data)
 									{!! $restriction_msg !!}
+									@endif
 									@endif
 																		
 									</td>
@@ -460,6 +467,7 @@ defined( 'ABSPATH' ) || exit;
 	</div>
 
 	<div id="pickup-details" style="display: none;">
+
 		<div id="pickup_restriction_data">@if($restricted_start_date)@php echo htmlspecialchars($restricted_start_date_js); @endphp@endif</div>			
 		<div id="pickup_restriction_end_data">@if($restricted_end_date)@php echo htmlspecialchars($restricted_end_date_js); @endphp@endif</div>		
 		<div id="session_pickup_date">@if($session_date_object)@php echo htmlspecialchars($session_date_object->format('d/m/Y')); @endphp@endif</div>
