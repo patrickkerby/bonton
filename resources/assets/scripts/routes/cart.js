@@ -94,7 +94,7 @@ export default {
 
         // The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
         var vacationDays = ['2021-12-22','2021-12-23','2021-12-24','2021-12-25','2021-12-28','2021-12-29','2021-12-30','2021-12-31','2022-01-01','2022-01-04','2022-01-05','2022-01-06'];
-        var enableDays = ['2022-01-14']; 
+        var enableDays = ['2022-02-14']; 
 
         $( function() {
           
