@@ -4,6 +4,29 @@
 
 @extends('layouts.lists')
 
+<script>
+  function printDiv(divName, printSize) {
+
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    
+    var body = document.body;
+    body.classList.add(printSize);
+
+    if (body.classList.contains("cardPrint")) {
+      var pageRules = document.getElementById('cardSizes');
+      let pageSizeString = '@page {size: 4in 5.5in;}';
+      pageRules.innerHTML = pageSizeString;
+    }
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+  }
+</script>
+
 @php
   $post_id = get_the_ID();
   // do_action( 'acf/save_post', $post_id );
@@ -50,8 +73,6 @@
     // $timeslot = $daily_restuls->get_meta('_timeslot');
 
     //Create array of pickup timeslots, then loop through them to create two sets of filtered orders
-    
-
     if ($order_pickup_date === $date_selector_date && $daily_results->has_shipping_method('flat_rate')) {
       $filtered_orders[] = $daily_results;
     }
@@ -93,11 +114,12 @@
             <th>Country</th>
             <th>Postal / ZIP Code</th>
             <th>Delivery Notes (Optional)</th>
-            <th>Number of Packages</th>     
+            <th>Number of Packages</th>
+            <th class="d-print-none">Order Details to Print</th>   
           </tr>
         </thead>
         <tbody>  
-          @foreach ($filtered_orders as $details )
+          @foreach ($filtered_orders as $details)
             @php 
               $phone = $details->get_billing_phone();
               $email = $details->get_billing_email();
@@ -118,7 +140,7 @@
               $order_number = $details->get_id();  
             @endphp
 
-            @if ($order_timeslot == $timeslot)
+            @if($order_timeslot == $timeslot)
               <tr>
                 <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
                 <td class="phone">{{ $phone }}</td>
@@ -141,6 +163,9 @@
                 <td>{{ $postcode }}</td>
                 <td class="notes">{{ $customer_note }}</td>              
                 <td></td>
+                <td class="d-print-none">
+                  @include('partials.print-individual-shipping')
+                </td>
               </tr>   
             @endif
      
