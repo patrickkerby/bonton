@@ -76,9 +76,8 @@
       @elseif(is_page('bread-club-schedule'))
         <h1>Bread Club Schedule</h1>
         <h5>{{ $today }}</h5> 
-      @elseif(is_page('stoortodoor'))
-        <h1>Bread Club Schedule</h1>
-        <h5>{{ $today }}</h5>        
+      @elseif(is_page('storetodoor'))
+        <h1>Store to Door Export</h1>
       @endif
       
       @if(is_page('inventory'))

@@ -547,4 +547,13 @@ span.stock {
   }
 }
 
+.storetodoor {
+  .dataTables_filter {
+    display: inline-flex;
+    margin: 0 0 0 2rem;
+    top: -1rem;
+    position: relative;
+  }
+}
+
 /* stylelint-enable no-descending-specificity */
