@@ -77,8 +77,7 @@
     <div class="col-sm-12">
 
     @foreach ($timeslot_array as $timeslot)
-        
-      
+              
       <h2>{!! $timeslot !!}</h2>
       
       <table id="lists{{ $loop->iteration }}" class="display">
@@ -121,7 +120,7 @@
 
             @if ($order_timeslot == $timeslot)
               <tr>
-                <td class="name"><strong>{{ $last_name }}, {{ $first_name }} <br> {!! $timeslot !!}</strong></td>
+                <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
                 <td class="phone">{{ $phone }}</td>
                 <td class=""> 
                   {{ $address1 }}
