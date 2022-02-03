@@ -1,6 +1,11 @@
 {{-- This file controls the print-only content for printing out all orders from the pickup list --}}
 @php 
+if ($is_storetodoor) {
+  $daily_order_number = 500;
+}
+else {
   $daily_order_number = 100;
+}
 @endphp
 
 @foreach ($filtered_orders as $details )
@@ -155,8 +160,12 @@
         <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
         <strong>Phone:</strong> {{ $phone }}<br>
         <strong>Order #:</strong> {{ $order_number }}<br><br>
+        @if ($is_storetodoor)
+        <p><strong>-----DELIVERY------</strong></p>
+      @endif<br>
       </div>
-    
+          
+     
       @foreach ($details->get_items() as $item_id => $item)
       @php                      
             $prod_id = $item->get_product_id(); 

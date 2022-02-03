@@ -33,6 +33,7 @@
 
   $date_selector_date = get_field('list_date');
   $is_packing_list = false;
+  $is_storetodoor = true;
 
   //function for creating unique arrays from a key/value set
   function unique_multidim_array($array, $key) {
@@ -88,6 +89,65 @@
   
   $timeslot_array = array_unique($sorted_orders);
   array_multisort($sorted_orders, SORT_ASC, $filtered_orders);
+
+
+
+  //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
+//THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
+
+//Cooler List
+$cooler_list = array(  '22', '53', '51','107','103' );
+    $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries', 'gluten-free-baked-goods');
+
+// Shelf List
+    $shelf_list = array( '91, 83, 52, 104, 13, 105, 135, 94, 102, 106, 54, 10, 67, 285, 289, 662 ' );
+    $shelf_list_slugs = array('buns-bagels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients', 'savoury-treats');
+
+    //Product pages give an option to override the natural category and assign the product as cooler. Add to cooler array:
+    $cooler_override_args = array(
+      'status' => 'publish',
+      'cooler' => '1',
+      'return' => 'ids',
+      'limit' => '-1'
+    );
+    $cooler_overrides = wc_get_products( $cooler_override_args );
+
+    //Product pages give an option to override the natural category and assign the product as shelf. Add to shelf array:
+    $shelf_override_args = array(
+      'status' => 'publish',
+      'shelf' => '1',
+      'return' => 'ids',
+      'limit' => '-1'
+    );
+    $shelf_overrides = wc_get_products( $shelf_override_args );
+
+    $cooler_args = array(
+      'status' => 'publish',
+      'category' => $cooler_list_slugs,
+      'limit' => -1,
+      'return' => 'ids',
+      'exclude' => $shelf_overrides
+    );
+    $cooler_array = wc_get_products( $cooler_args );
+    $cooler_array = array_merge($cooler_array,$cooler_overrides);
+
+    $shelf_args = array(
+      'status' => 'publish',
+      'category' => $shelf_list_slugs,
+      'limit' => -1,
+      'return' => 'ids',
+      'exclude' => $cooler_overrides
+    );
+    $shelf_array = wc_get_products( $shelf_args );
+    $shelf_array = array_merge($shelf_array,$shelf_overrides);
+
+    $daily_order_number = 100;
+    $daily_breadclub_number = 900;
+
+    // Hide specific meta data from the details column. List the items by key here:
+    $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
+
+    
 
   // $unique_array = unique_multidim_array($filtered_orders,'_timeslot');
 
@@ -172,8 +232,14 @@
           @endforeach
         </tbody>
       </table>
+      
       <br><br>
-      @endforeach       
+      @endforeach    
+      <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;">Print All Order Items </i></button>
+
+      <div id="receipt-printer-all" class="d-none">
+        @include('partials.print-all-receipt')
+      </div>   
     </div>
   </div>
 @endsection
