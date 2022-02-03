@@ -7,3 +7,7 @@
     height: 100% !important;
   }
 }
+
+.modal-open .modal {
+  z-index: 99999999999999;
+}

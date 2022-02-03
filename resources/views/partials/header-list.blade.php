@@ -45,6 +45,9 @@
         <li class="nav-item d-print-none">
           <a class="nav-link @if(is_page('bread-club-list')) active @endif d-print-none" href="/lists/bread-club-list">Bread Club Packing List</a>
         </li>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('storetodoor')) active @endif d-print-none" href="/lists/storetodoor">Store to Door Export</a>
+        </li>
       </ul>     
     </nav>
 </header>
@@ -72,7 +75,9 @@
         <h5>{{ $today }}</h5>
       @elseif(is_page('bread-club-schedule'))
         <h1>Bread Club Schedule</h1>
-        <h5>{{ $today }}</h5>        
+        <h5>{{ $today }}</h5> 
+      @elseif(is_page('storetodoor'))
+        <h1>Store to Door Export</h1>
       @endif
       
       @if(is_page('inventory'))

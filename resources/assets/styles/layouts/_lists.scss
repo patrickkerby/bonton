@@ -6,7 +6,10 @@
 .oos-list,
 .grocery-list,
 .bread-club-list,
-.bread-club-schedule {
+.bread-club-schedule,
+.shipping-list,
+.store2door-list,
+.storetodoor {
   margin: 0;
   width: 100%;
   // padding-top: 3rem;
@@ -536,6 +539,15 @@ span.stock {
     margin-left: auto;
   }
 
+  .dataTables_filter {
+    display: inline-flex;
+    margin: 0 0 0 2rem;
+    top: -1rem;
+    position: relative;
+  }
+}
+
+.storetodoor {
   .dataTables_filter {
     display: inline-flex;
     margin: 0 0 0 2rem;

@@ -26,7 +26,7 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_script('comment-reply');
     }
 
-    if (is_page( array( 789, 819, 815, 810, 791, 6968, 6177, 10794, 10071, 14747, 15435, 19316, 19656, 19367, 19747 )) ) {
+    if (is_page( array( 789, 819, 815, 810, 791, 6968, 6177, 10794, 10071, 14747, 15435, 19316, 19656, 19367, 19747, 19361, 19364, 19369 )) ) {
         wp_enqueue_script('sage/lists.js', asset_path('scripts/lists.js'), [], null, true);
     }
 }, 100);
@@ -171,31 +171,31 @@ if( function_exists('acf_add_options_page') ) {
 	));
 }
 
-// Add instore vs curbside to checkout
+// // Add instore vs curbside to checkout
 
-// add fields
-add_action( 'woocommerce_after_order_notes', function( $checkout ){
+// // add fields
+// add_action( 'woocommerce_after_order_notes', function( $checkout ){
   
-    woocommerce_form_field( 'pickuplocation', array(
-        'type'          => 'select',
-        'class'         => array('bonton-field', 'form-row-wide'), 
-        'label'         => 'In-store or curbside pickup?',
-        'required'      => true,
-        'options'	=> array( 
-            ''		=> 'Please select',
-            'Curbside'	=> 'Curbside',
-            'In-store'	=> 'In-store'
-            ),
-        ), $checkout->get_value( 'pickuplocation' ) ); 
-});
+//     woocommerce_form_field( 'pickuplocation', array(
+//         'type'          => 'select',
+//         'class'         => array('bonton-field', 'form-row-wide'), 
+//         'label'         => 'In-store or curbside pickup?',
+//         'required'      => true,
+//         'options'	=> array( 
+//             ''		=> 'Please select',
+//             'Curbside'	=> 'Curbside',
+//             'In-store'	=> 'In-store'
+//             ),
+//         ), $checkout->get_value( 'pickuplocation' ) ); 
+// });
  
-// save fields to order meta
-add_action( 'woocommerce_checkout_update_order_meta', function( $order_id ){
+// // save fields to order meta
+// add_action( 'woocommerce_checkout_update_order_meta', function( $order_id ){
  
-	if( !empty( $_POST['pickuplocation'] ) )
-		update_post_meta( $order_id, 'pickuplocation', sanitize_text_field( $_POST['pickuplocation'] ) );
+// 	if( !empty( $_POST['pickuplocation'] ) )
+// 		update_post_meta( $order_id, 'pickuplocation', sanitize_text_field( $_POST['pickuplocation'] ) );
  
-});
+// });
 
 add_action('init', function () {
     remove_filter('script_loader_tag', 'Roots\\Soil\\CleanUp\\clean_script_tag');

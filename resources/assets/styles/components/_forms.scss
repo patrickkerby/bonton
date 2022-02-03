@@ -32,3 +32,9 @@ a.ui-button:active {
   background: $highlight;
   border: 1px solid darken($color: $highlight, $amount: 10);
 }
+
+//timeslot picker
+.custom-timeslot select,
+.custom-timeslot_pickup select {
+  margin: 0.5rem 0 0 1.5rem !important;
+}
