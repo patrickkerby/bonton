@@ -411,11 +411,16 @@ defined( 'ABSPATH' ) || exit;
 							<div class="lf_notice"> 
 								<strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
 							</div>
-						@endif						
+						@endif		
 
 						<div class="acf-form-submit">
 							<input type="submit" class="acf-button button button-primary button-large" value="{{ $datetime_button_copy }}">
 							<span class="acf-spinner"></span>
+						</div>
+
+						<div class="delivery-notice">
+							<h5>Delivery is now available!</h5>
+							<a href="" data-toggle="modal" data-target="#delivery" >See more details here.</a>
 						</div>
 					</div>
 				</form>					
@@ -435,12 +440,38 @@ defined( 'ABSPATH' ) || exit;
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
+					<h2>Delivery Details</h2>
+
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
 				</div>
 				<div class="modal-body">
-					Delivery details here
+					<p>We now offer order delivery to Edmonton and surrounding areas in partnership with Store to Door!</p>
+					<h4>Delivery Areas:</h4>
+					<p>Edmonton, Sherwood Park, St. Albert, Spruce Grove, Acheson, Nisku, Leduc, Beaumont, Fort Saskatchewan<br>
+					(Pricing for delivery varies by location)</p>
+					
+					
+					{{-- <ul>
+						<li>Edmonton</li>	
+						<li>Sherwood Park</li>
+						<li>St. Albert</li>
+						<li>Spruce Grove</li>
+						<li>Acheson</li>
+						<li>Nisku</li>
+						<li>Leduc</li>
+						<li>Beaumont</li>
+						<li>Fort Saskatchewan</li>
+					</ul> --}}
+					{{-- <p>(Pricing for delivery fluctuates by location)</p> --}}
+					<br>
+					<h4>2 Delivery times per day</h4>
+					<p>Customers can choose between two delivery windows (10am-12pm or 4pm-6pm). Once the Store to Door team leaves the bakery with your order, they'll keep you updated by text to track your delivery.</p>
+					<br>
+					<h4>Directly to your door (So, please be home!)</h4>
+					<p>If you choose delivery, please ensure someone is home during your selected delivery window. <strong>If no one is home to receive the order, the Store to Door driver will leave the product on your step.</strong></p>
+					<p>Many of our products will freeze or spoil quickly in weather conditions that are too hot or too cold. It is the customer's responsibility to be available to receive their order during the delivery window. Bon Ton will not replace products or refund orders in cases where products are left on customer's steps.</p>
 				</div>
 			</div>
 		</div>

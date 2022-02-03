@@ -477,6 +477,18 @@ ul.woocommerce-thankyou-order-details li {
   margin-top: 1rem;
 }
 
+.delivery-notice {
+  margin: 2rem 0;
+  padding: 2rem 1rem;
+  border: solid 4px $cream;
+  // background: $cream;
+  text-align: center;
+
+  h5 {
+    margin: 0;
+  }
+}
+
 .cart .alert {
   position: fixed;
   z-index: 9999999999;
