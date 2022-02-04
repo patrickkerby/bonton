@@ -19,7 +19,6 @@ else {
   $last_name = $details->get_billing_last_name();
   $status = $details->get_status();
   $customer_note = $details->get_customer_note();
-  $timeslot = $details->get_meta( 'pickup_timeslot', true );
   $location = $details->get_meta( 'pickuplocation', true );
   $order_number = $details->get_id();
 @endphp
@@ -154,15 +153,14 @@ else {
     </style>
 
     <div class="print-order">
-      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {{ $timeslot }}</strong></p>
+      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {!! $timeslot !!}</strong></p>
       <h1>{{  $daily_order_number  }}</h1>
       <div class="customer">
         <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
         <strong>Phone:</strong> {{ $phone }}<br>
-        <strong>Order #:</strong> {{ $order_number }}<br><br>
+        <strong>Order #:</strong> {{ $order_number }}<br>
         @if ($is_storetodoor)
-        <p><strong>-----DELIVERY------</strong></p>
-      @endif<br>
+      @endif
       </div>
           
      
