@@ -8,7 +8,7 @@ else {
 }
 @endphp
 
-  @foreach ($filtered_orders_print as $details )
+  @foreach (array_reverse($filtered_orders_print) as $details )
 
 @php 
   $phone = $details->get_billing_phone();
