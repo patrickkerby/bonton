@@ -20,7 +20,7 @@ else {
   $customer_note = $details->get_customer_note();
   $location = $details->get_meta( 'pickuplocation', true );
   $order_number = $details->get_id();
-  $order_timeslot = $details->get_meta( '_timeslot', true );
+  $timeslot = $details->get_meta( '_timeslot', true );
 
 @endphp
                 
