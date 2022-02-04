@@ -29,6 +29,7 @@
 
 @php  
   $daily_order_number = 100;
+  $daily_delivery_number = 500;
   $post_id = get_the_ID();
   $date_selector_date = get_field('list_date');
   $is_packing_list = true;
@@ -151,8 +152,10 @@ if ($list_type === "shelf") {
           @foreach ($filtered_orders as $details )
           
             @php                           
+              $shipping_method = $details->get_shipping_methods();
 
-              $daily_order_number++;
+              
+              
               $phone = $details->get_billing_phone();
               $order_id = $details->get_id();
               $first_name = $details->get_billing_first_name();
@@ -169,7 +172,7 @@ if ($list_type === "shelf") {
               
               foreach ($details->get_items() as $item_id => $item) {
                 $prod_id = $item->get_product_id(); 
-                                  
+                
                 if(in_array($prod_id, $cooler_array)) {
                   $list_check[] = '<span class="order_location cooler">C</span>';
                   $list_class[] = 'cooler';
@@ -185,18 +188,36 @@ if ($list_type === "shelf") {
               
               $list_class_unique = array_unique($list_class);
               $list_class_marker = implode(" ", $list_class_unique);
-
-              $shipping_method = $details->get_shipping_methods();
-
+              
               if($details->has_shipping_method('flat_rate')) {
                 $order_location = 'Delivery';
               }
-            @endphp
+              else {
+                $order_location = 'Pickup';
+              }
 
-            <tr class="pack {{ $status }} {{ $list_class_marker }}">
-              <td class="id">
-                <span class="check"></span>
-                <span class="id">#{{ $daily_order_number }}</span>
+              if($order_location == 'Delivery') {
+                $daily_delivery_number++;
+              }
+              else {
+                $daily_order_number++;
+              }              
+              @endphp
+
+
+<tr class="pack {{ $status }} {{ $list_class_marker }}">
+  <td class="id">
+    <span class="check"></span>
+    <span class="id">
+      
+      @if($details->has_shipping_method('flat_rate'))
+        #{{ $daily_delivery_number }}
+      @else
+        #{{ $daily_order_number }}
+      @endif
+                  
+                  
+                </span>
               </td>
               <td class="location">
                 @if($details->has_shipping_method('flat_rate'))
