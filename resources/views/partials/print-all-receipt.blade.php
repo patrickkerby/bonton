@@ -21,6 +21,8 @@ else {
   $customer_note = $details->get_customer_note();
   $location = $details->get_meta( 'pickuplocation', true );
   $order_number = $details->get_id();
+  $timeslot = $details->get_meta( '_timeslot', true );
+
 @endphp
                                 
   <div id="order-{{ $order_number }}" class="">
