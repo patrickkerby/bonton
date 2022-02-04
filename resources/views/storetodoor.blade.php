@@ -204,7 +204,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
               <tr>
                 <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
                 <td class="phone">{{ $phone }}</td>
-                <td class=""> 
+                <td class="">
                   {{ $address1 }}
                 </td>
                 <td class="">
@@ -238,7 +238,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
       <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;">Print All Order Items </i></button>
 
       <div id="receipt-printer-all" class="d-none">
-        @include('partials.print-all-receipt')
+        @include('partials.print-all-delivery-contents')
       </div>   
     </div>
   </div>
