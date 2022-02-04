@@ -261,6 +261,7 @@ global $wpdb;
               $status = $details->get_status();
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
+              $timeslot_new = $order->get_meta( '_timeslot', true );
               $location = $details->get_meta( 'pickuplocation', true );
               $order_pickup_date = $details->get_meta( 'pickup_date', true );
               $order_number = $details->get_id();
@@ -303,8 +304,12 @@ global $wpdb;
               </td>
               <td>{{ $order_number }}</td>
               <td class="phone">{{ $phone }}</td>
-              <td class="location">                 
-                <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
+              <td class="location">    
+                @if ($timeslot)
+                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
+                @else
+                <p class="timeslot {{ $location }}">{{ $timeslot_new }}</p>  
+                @endif             
               </td>
               <td class="location">
                 {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
