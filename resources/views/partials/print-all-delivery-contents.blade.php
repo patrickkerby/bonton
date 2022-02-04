@@ -8,9 +8,7 @@ else {
 }
 @endphp
 
-@foreach ($timeslot_array as $timeslot)
-
-  @foreach ($filtered_orders as $details )
+  @foreach ($filtered_orders_print as $details )
 
 @php 
   $phone = $details->get_billing_phone();
@@ -25,7 +23,6 @@ else {
   $order_timeslot = $details->get_meta( '_timeslot', true );
 
 @endphp
-@if($order_timeslot == $timeslot)
                 
   <div id="order-{{ $order_number }}" class="">
     @php
@@ -251,6 +248,5 @@ else {
     <div class="page-break"></div>
     </div>
   </div>
-  @endif
-@endforeach
+
 @endforeach

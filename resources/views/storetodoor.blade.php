@@ -66,6 +66,7 @@
 //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();
   $timeslot_array = array();
+  $filtered_orders_print = array();
 
   foreach ( $results as $daily_results ) {    
     $order_id = $daily_results->get_id();
@@ -76,6 +77,7 @@
     //Create array of pickup timeslots, then loop through them to create two sets of filtered orders
     if ($order_pickup_date === $date_selector_date && $daily_results->has_shipping_method('flat_rate')) {
       $filtered_orders[] = $daily_results;
+      $filtered_orders_print[] = $daily_results;
     }
   }
 
