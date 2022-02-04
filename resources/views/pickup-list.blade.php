@@ -261,7 +261,7 @@ global $wpdb;
               $status = $details->get_status();
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
-              $timeslot_new = $order->get_meta( '_timeslot', true );
+              $timeslot_new = $details->get_meta( '_timeslot', true );
               $location = $details->get_meta( 'pickuplocation', true );
               $order_pickup_date = $details->get_meta( 'pickup_date', true );
               $order_number = $details->get_id();
@@ -281,6 +281,8 @@ global $wpdb;
               else {
                 $is_customer_and_bc = false;                
               }
+
+              var_dump($timeslot_new);
 
             @endphp
             <tr>
@@ -305,11 +307,12 @@ global $wpdb;
               <td>{{ $order_number }}</td>
               <td class="phone">{{ $phone }}</td>
               <td class="location">    
-                @if ($timeslot)
+                @isset ($timeslot)
                   <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
-                @else
+                @endisset
+                @isset($timeslot_new)
                 <p class="timeslot {{ $location }}">{{ $timeslot_new }}</p>  
-                @endif             
+                @endisset  
               </td>
               <td class="location">
                 {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
