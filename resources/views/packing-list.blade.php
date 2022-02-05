@@ -164,7 +164,21 @@ if ($list_type === "shelf") {
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
               $location = $details->get_meta( 'pickuplocation', true );
-              $order_number = $details->get_id();              
+              $order_number = $details->get_id();  
+              
+              $timeslot_new = $details->get_meta( '_timeslot_pickup', true );
+
+              if($timeslot_new == '9am - 11am') {
+                $timeslot_new = 'Morning';
+              }
+              elseif ($timeslot_new == '11am - 2pm') {
+                $timeslot_new = 'Midday';
+              }
+              elseif ($timeslot_new == '2pm - 5pm') {
+                $timeslot_new = 'Afternoon';
+              }
+
+
               
               // Check to see if the products associated with the order are shelf or cooler.
               $list_check = array();
@@ -221,9 +235,13 @@ if ($list_type === "shelf") {
               </td>
               <td class="location">
                 @if($details->has_shipping_method('flat_rate'))
-                  {!! $order_location !!}
-                @else
-                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>
+                  {!! $order_location !!}                
+                @endif
+                @if($timeslot)
+                  <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
+                @endif
+                @if($timeslot_new)
+                <p class="timeslot {{ $location }}">{{ $timeslot_new }}</p>  
                 @endif
               </td>
               <td> 
