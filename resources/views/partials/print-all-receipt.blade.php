@@ -167,7 +167,7 @@ else {
     </style>
 
     <div class="print-order">
-      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {!! $timeslot !!} {{ $timeslot_new }} {{ $timeslot_old   }}</strong></p>
+      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {!! $timeslot !!} {{ $timeslot_new }} {{ $timeslot_old }}</strong></p>
       <h1>{{  $daily_order_number  }}</h1>
       <div class="customer">
         <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
