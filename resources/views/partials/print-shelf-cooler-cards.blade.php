@@ -1,12 +1,21 @@
 {{-- This file controls the print-only content for printing out all orders from the pickup list --}}
 @php 
   $daily_order_number = 100;
+  $daily_delivery_number = 500;
 @endphp
+
 
 @foreach ($filtered_orders as $details )
 
 @php 
-  $daily_order_number++;
+
+  if($details->has_shipping_method('flat_rate')) {
+    $daily_delivery_number++;
+  }
+  else {
+    $daily_order_number++;
+  }
+
   $phone = $details->get_billing_phone();
   $email = $details->get_billing_email();
   $order_id = $details->get_id();
@@ -14,9 +23,12 @@
   $last_name = $details->get_billing_last_name();
   $status = $details->get_status();
   $customer_note = $details->get_customer_note();
-  $timeslot = $details->get_meta( 'pickup_timeslot', true );
   $location = $details->get_meta( 'pickuplocation', true );
   $order_number = $details->get_id();
+
+  $timeslot = $details->get_meta( '_timeslot', true );
+  $timeslot_old = $details->get_meta( 'pickup_timeslot', true );
+  $timeslot_new = $details->get_meta( '_timeslot_pickup', true );
 
   // Check to see if the products associated with the order are shelf or cooler.
   $list_check = array();
@@ -176,8 +188,14 @@
 
     <div class="print-order {{ $list_class_marker }}">
 
-      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {{ $timeslot }}</strong></p>
-      <h1>{{  $daily_order_number  }}</h1>
+      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> <br> {!! $timeslot !!} {{ $timeslot_new }} {{ $timeslot_old }}</strong></p>
+      <h1>
+        @if($details->has_shipping_method('flat_rate'))
+          {{  $daily_delivery_number  }}
+        @else
+          {{  $daily_order_number  }}
+        @endif
+      </h1>
       <div class="customer">
         <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
         <strong>Phone:</strong> {{ $phone }}<br>
