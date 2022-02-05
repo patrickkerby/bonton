@@ -22,6 +22,18 @@ else {
   $location = $details->get_meta( 'pickuplocation', true );
   $order_number = $details->get_id();
   $timeslot = $details->get_meta( '_timeslot', true );
+  $timeslot_old = $details->get_meta( 'pickup_timeslot', true );
+  $timeslot_new = $details->get_meta( '_timeslot_pickup', true );
+
+  if($timeslot_new == '9am - 11am') {
+    $timeslot_new = 'Morning';
+  }
+  elseif ($timeslot_new == '11am - 2pm') {
+    $timeslot_new = 'Midday';
+  }
+  elseif ($timeslot_new == '2pm - 5pm') {
+    $timeslot_new = 'Afternoon';
+  }
 
 @endphp
                                 
@@ -155,14 +167,13 @@ else {
     </style>
 
     <div class="print-order">
-      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {!! $timeslot !!}</strong></p>
+      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {!! $timeslot !!} {{ $timeslot_new }} {{ $timeslot_old   }}</strong></p>
       <h1>{{  $daily_order_number  }}</h1>
       <div class="customer">
         <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
         <strong>Phone:</strong> {{ $phone }}<br>
         <strong>Order #:</strong> {{ $order_number }}<br>
-        @if ($is_storetodoor)
-      @endif
+        
       </div>
           
      
