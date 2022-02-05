@@ -187,8 +187,15 @@
     </style>
 
     <div class="print-order {{ $list_class_marker }}">
-
-      <p class="date"><strong>{{ $date_selector_date }}</strong> <br> <br> {!! $timeslot !!} {{ $timeslot_new }} {{ $timeslot_old }}</strong></p>
+      <p class="date">
+        <strong>{{ $date_selector_date }}</strong> <br> 
+        @if($details->has_shipping_method('flat_rate'))
+          Delivery                
+        @endif
+        {!! $timeslot !!}
+        {{ $timeslot_new }}
+        {{ $timeslot_old }}
+      </p>
       <h1>
         @if($details->has_shipping_method('flat_rate'))
           {{  $daily_delivery_number  }}

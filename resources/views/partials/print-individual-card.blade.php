@@ -131,8 +131,28 @@
   </style>
 
   <div class="print-order">
-    <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {{ $timeslot }}</strong></p>
-    <h1>{{  $daily_order_number  }}</h1>
+    <p class="date">
+      <strong>{{ $date_selector_date }}</strong> <br>
+        @if($details->has_shipping_method('flat_rate'))
+          {!! $order_location !!}                
+        @endif
+        @if($timeslot)
+          {{ $timeslot }}
+        @endif
+        @if($timeslot_new)
+          {{ $timeslot_new }}
+        @endif
+        @if ($timeslot_delivery)
+          {{ $timeslot_delivery_esc }}
+        @endif     
+    </p>
+    <h1>
+      @if($details->has_shipping_method('flat_rate'))
+        #{{ $daily_delivery_number }}
+      @else
+        #{{ $daily_order_number }}
+      @endif
+    </h1>
     <div class="customer">
       <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
       <strong>Phone:</strong> {{ $phone }}<br>
