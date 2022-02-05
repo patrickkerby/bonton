@@ -72,7 +72,7 @@ global $wpdb;
           
     if ($order_pickup_date === $date_selector_date && !$daily_results->has_shipping_method('flat_rate')) {
       $filtered_orders[] = $daily_results;
-    } 
+    }
   }
 
 // This is a custom function to perform recursive array searches. (regular in_array doesn't work for multidimensional arrays)
@@ -200,14 +200,14 @@ global $wpdb;
     else {
       $is_today_breadclub = false;
     }
+    $breadclub_array = array();
+    $breadclub_email_list = array();
+    $breadclub_id_list = array();
     
     if($is_today_breadclub) {
       // Limit the list of bread club orders to only those that chose a pickup day equal to the day picked on page. If the date on page is even a breadclub day to begin with
-      $breadclub_array = array();
-      $breadclub_email_list = array();
-      $breadclub_id_list = array();
 
-
+      if ($bread_club_results) {
       foreach ($bread_club_results as $order_id) {
         $order = wc_get_order($order_id);
         foreach ($order->get_items() as $item_id => $item) {
@@ -220,6 +220,7 @@ global $wpdb;
             }
           }
       }
+    }
       //combine the breadclub orders with the original set of orders for this day
       $combined_orders_raw = array_merge( $breadclub_array, $filtered_orders );
     }
@@ -261,10 +262,20 @@ global $wpdb;
               $status = $details->get_status();
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
-              $timeslot_new = $details->get_meta( '_timeslot', true );
+              $timeslot_new = $details->get_meta( '_timeslot_pickup', true );
               $location = $details->get_meta( 'pickuplocation', true );
               $order_pickup_date = $details->get_meta( 'pickup_date', true );
               $order_number = $details->get_id();
+
+              if($timeslot_new == '9am - 11am') {
+                $timeslot_new = 'Morning';
+              }
+              elseif ($timeslot_new == '11am - 2pm') {
+                $timeslot_new = 'Midday';
+              }
+              elseif ($timeslot_new == '2pm - 5pm') {
+                $timeslot_new = 'Afternoon';
+              }
 
               if (in_array_r($email, $breadclub_email_list) && $order_pickup_date != $date_selector_date) {
                 $is_breadclub_member = true;  
@@ -282,7 +293,6 @@ global $wpdb;
                 $is_customer_and_bc = false;                
               }
 
-              var_dump($timeslot_new);
 
             @endphp
             <tr>
@@ -307,12 +317,13 @@ global $wpdb;
               <td>{{ $order_number }}</td>
               <td class="phone">{{ $phone }}</td>
               <td class="location">    
-                @isset ($timeslot)
+                @if($timeslot)
                   <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
-                @endisset
-                @isset($timeslot_new)
+                @endif
+                @if($timeslot_new)
                 <p class="timeslot {{ $location }}">{{ $timeslot_new }}</p>  
-                @endisset  
+                @endif
+                
               </td>
               <td class="location">
                 {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
