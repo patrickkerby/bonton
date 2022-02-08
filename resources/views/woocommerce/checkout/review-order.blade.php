@@ -52,6 +52,14 @@ defined( 'ABSPATH' ) || exit;
 	</tbody>
 	<tfoot>
 
+	
+	@if ($session_pickup_date)
+		<tr class="cart-subtotal">
+			<th>Pickup / Delivery Date:</th>
+			<td></td>
+		</tr>
+		@endif
+
 		<tr class="cart-subtotal">
 			<th><?php esc_html_e( 'Subtotal', 'woocommerce' ); ?></th>
 			<td><?php wc_cart_totals_subtotal_html(); ?></td>
