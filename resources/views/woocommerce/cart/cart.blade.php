@@ -91,7 +91,7 @@ defined( 'ABSPATH' ) || exit;
 	}
 
 @endphp
-	<div class="row justify-content-center">	
+	<div class="row justify-content-center">		
 		<div class="col-md-8">
 			<form class="woocommerce-cart-form" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
 				<?php do_action( 'woocommerce_before_cart_table' ); ?>
@@ -458,21 +458,7 @@ defined( 'ABSPATH' ) || exit;
 					<p>We now offer order delivery to Edmonton and surrounding areas in partnership with Store to Door!</p>
 					<h4>Delivery Areas:</h4>
 					<p>Edmonton, Sherwood Park, St. Albert, Spruce Grove, Acheson, Nisku, Leduc, Beaumont, Fort Saskatchewan<br>
-					(Pricing for delivery varies by location)</p>
-					
-					
-					{{-- <ul>
-						<li>Edmonton</li>	
-						<li>Sherwood Park</li>
-						<li>St. Albert</li>
-						<li>Spruce Grove</li>
-						<li>Acheson</li>
-						<li>Nisku</li>
-						<li>Leduc</li>
-						<li>Beaumont</li>
-						<li>Fort Saskatchewan</li>
-					</ul> --}}
-					{{-- <p>(Pricing for delivery fluctuates by location)</p> --}}
+					(Pricing for delivery varies by location)</p>					
 					<br>
 					<h4>2 Delivery times per day</h4>
 					<p>Customers can choose between two delivery windows (10am - 1pm or 4pm - 7pm). Once the Store to Door team leaves the bakery with your order, they'll keep you updated by text to track your delivery.</p>
