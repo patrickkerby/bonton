@@ -121,10 +121,37 @@ if ($list_type === "shelf") {
   }
 
 // Sort the packing list by timeslot
-  $sorted_orders = array(); 
+$sorted_orders = array(); 
   foreach ($filtered_orders as $order) {
     $timeslot = $order->get_meta( 'pickup_timeslot', true );
-    $sorted_orders[] = $timeslot; //any object field
+    $timeslot_new = $order->get_meta( '_timeslot_pickup', true );
+    $timeslot_delivery = $order->get_meta( '_timeslot', true );
+
+
+      //Simplify output for timeslots - Pickup
+      if($timeslot_new == '9am - 11am') {
+        $timeslot_new = 'morning';
+      }
+      elseif ($timeslot_new == '11am - 2pm') {
+        $timeslot_new = 'midday';
+      }
+      elseif ($timeslot_new == '2pm - 5pm') {
+        $timeslot_new = 'afternoon';
+      }
+
+      if($timeslot) {
+        $sorted_orders[] = $timeslot; //any object field
+      }
+      elseif ($timeslot_new) {        
+        $sorted_orders[] = $timeslot_new; //any object field
+      }
+      elseif ($timeslot_delivery) {        
+        $sorted_orders[] = $timeslot_delivery; //any object field
+      }
+      else {
+        $sorted_orders[] = 'No timeslot selected'; //any object field
+      }
+
   }
   array_multisort($sorted_orders, SORT_DESC, $filtered_orders);
 
@@ -145,17 +172,14 @@ if ($list_type === "shelf") {
               <span class="details">Details</span>
             </th>
             <td class="d-print-none">Order Details to Print</td>
-
           </tr>
         </thead>
         <tbody>
           @foreach ($filtered_orders as $details )
           
-            @php                           
+            @php
               $shipping_method = $details->get_shipping_methods();
 
-              
-              
               $phone = $details->get_billing_phone();
               $order_id = $details->get_id();
               $first_name = $details->get_billing_first_name();
@@ -168,7 +192,6 @@ if ($list_type === "shelf") {
               
               $timeslot_new = $details->get_meta( '_timeslot_pickup', true );
               $timeslot_delivery = $details->get_meta( '_timeslot', true );
-
 
               //Simplify output for timeslots - Pickup
               if($timeslot_new == '9am - 11am') {
@@ -192,7 +215,6 @@ if ($list_type === "shelf") {
               }
               else {}
 
-              
               // Check to see if the products associated with the order are shelf or cooler.
               $list_check = array();
               $list_class = array();
@@ -231,19 +253,16 @@ if ($list_type === "shelf") {
               }              
               @endphp
 
-
-<tr class="pack {{ $status }} {{ $list_class_marker }}">
-  <td class="id">
-    <span class="check"></span>
-    <span class="id">
-      
-      @if($details->has_shipping_method('flat_rate'))
-        #{{ $daily_delivery_number }}
-      @else
-        #{{ $daily_order_number }}
-      @endif
+            <tr class="pack {{ $status }} {{ $list_class_marker }}">
+              <td class="id">
+                <span class="check"></span>
+                <span class="id">
                   
-                  
+                  @if($details->has_shipping_method('flat_rate'))
+                    #{{ $daily_delivery_number }}
+                  @else
+                    #{{ $daily_order_number }}
+                  @endif
                 </span>
               </td>
               <td class="location">
@@ -323,8 +342,6 @@ if ($list_type === "shelf") {
                           $total_qty = $prod_quantity + $refunded_quantity;
                         }                        
                       }
-
-
                     @endphp
 
                     @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
