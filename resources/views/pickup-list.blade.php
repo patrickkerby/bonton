@@ -86,13 +86,38 @@ global $wpdb;
   }
 
 // Sort the packing list by timeslot
-  $sorted_orders = array(); 
+$sorted_orders = array(); 
   foreach ($filtered_orders as $order) {
     $timeslot = $order->get_meta( 'pickup_timeslot', true );
-    
-    $sorted_orders[] = $timeslot; //any object field
+    $timeslot_new = $order->get_meta( '_timeslot_pickup', true );
+    $timeslot_delivery = $order->get_meta( '_timeslot', true );
+
+
+      //Simplify output for timeslots - Pickup
+      if($timeslot_new == '9am - 11am') {
+        $timeslot_new = 'morning';
+      }
+      elseif ($timeslot_new == '11am - 2pm') {
+        $timeslot_new = 'midday';
+      }
+      elseif ($timeslot_new == '2pm - 5pm') {
+        $timeslot_new = 'afternoon';
+      }
+
+      if($timeslot) {
+        $sorted_orders[] = $timeslot; //any object field
+      }
+      elseif ($timeslot_new) {        
+        $sorted_orders[] = $timeslot_new; //any object field
+      }
+      elseif ($timeslot_delivery) {        
+        $sorted_orders[] = $timeslot_delivery; //any object field
+      }
+      else {
+        $sorted_orders[] = 'No timeslot selected'; //any object field
+      }
+
   }
-  
   array_multisort($sorted_orders, SORT_DESC, $filtered_orders);
   
 //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
@@ -237,6 +262,7 @@ global $wpdb;
 @section('content')
   <div class="row">
     <div class="col-sm-12">
+
       <table id="lists" class="display">
         <thead>
           <tr>
