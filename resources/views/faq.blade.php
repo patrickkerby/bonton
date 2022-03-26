@@ -10,17 +10,14 @@
 
     @php
 
-      $faq = get_field('faq');
+      $faqs = get_field('faq');
 
       $faq_categories = get_terms( array(
         'taxonomy' => 'faq_categories',
         'hide_empty' => true,
       ) );   
 
-
-
     @endphp
-
     <div class="row justify-content-around faq-categories">    
       @foreach ($faq_categories as $faq_category)
         <div class="col">
@@ -31,18 +28,17 @@
     <div class="row justify-content-center">      
       <div class="col-md-8 faq">
     
-        @if( $faq )        
+        @if( $faqs )
           <div id="accordion1" class="accordion">
             @foreach ($faq_categories as $faq_category_single)
               @php
                 $selected_category = $faq_category_single->term_id;
               @endphp
-
             <div id="{{ $selected_category }}">
               <h2>{{ $faq_category_single->name }}</h2>
 
               @php $count = 0; @endphp
-              @foreach( $faq as $faq_row )
+              @foreach( $faqs as $faq_row )
                 @php
                   $faq_title = $faq_row['faq_title'];
                   $faq_content = $faq_row['faq_content'];
