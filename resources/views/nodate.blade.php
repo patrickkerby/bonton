@@ -39,7 +39,7 @@ global $wpdb;
   $query = new WC_Order_Query( array(  
       'limit' => -1,
       'status' => array('wc-processing'),
-      'pickup_date' => 'null',
+      'pickup_date' => '',
   ) );
   $results = $query->get_orders();
 
