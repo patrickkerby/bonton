@@ -268,6 +268,7 @@ $sorted_orders = array();
           <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>email</th>
             <th>Order #</th>
             <th>Phone</th>
             <th>Pickup</th>
@@ -342,6 +343,7 @@ $sorted_orders = array();
               </td>
               <td>{{ $order_number }}</td>
               <td class="phone">{{ $phone }}</td>
+              <td>{{ $email }}</td>
               <td class="location">    
                 @if($timeslot)
                   <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
