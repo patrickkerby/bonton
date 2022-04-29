@@ -20,6 +20,31 @@ defined( 'ABSPATH' ) || exit;
 $session_pickup_date = WC()->session->get('pickup_date');
 $session_date_object = WC()->session->get('pickup_date_object');
 $session_formatted = WC()->session->get('pickup_date_formatted');
+$giftcertificate_only_item_in_cart = false;
+$cart_count = 0;
+$gc_cart_count = 0;
+$conflict = false;
+
+
+foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+	$long_fermentation = "";
+	$giftcertificate_in_cart = false;
+	$cart_count++;
+
+	// Conflict check for number of items in the cart. this is needed incase someone puts multiple GC products into the cart.								
+	$cart_count = $cart_count - $gc_cart_count;
+
+	//Check if product is gift certificate or bread club
+	if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
+		$giftcertificate_in_cart = true;
+		$gc_cart_count++; 
+	}
+
+	if ( $giftcertificate_in_cart && $cart_count < 1) {
+		$giftcertificate_only_item_in_cart = true;
+		$conflict = false;
+	}
+}
 
 ?>
 <div class="cart_totals <?php echo ( WC()->customer->has_calculated_shipping() ) ? 'calculated_shipping' : ''; ?>">
