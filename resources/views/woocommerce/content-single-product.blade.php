@@ -56,53 +56,55 @@ if(isset($pickup_restriction_end_data_check)) {
 		 */
 		do_action( 'woocommerce_before_single_product_summary' );
 		?>
-		<div class="availability-mobile d-md-none">
-			<?php
-			
-			/**
-			 * Add availability display to product single page and product modal - MOBILE VIEW
-			 */
-
-				$terms = get_the_terms( $product_id, 'pa_availability' );
-				$prefix = $days_available = '';
-				$long_fermentation = '';
-				$bulk_discount = '';
-
-				if (is_array($terms) || is_object($terms)) {
-						
-						foreach ($terms as $term) {
-								$days = $term->name;
-								$days_available .= $prefix . '' . $days . '';
-								$prefix = ', ';
-						}
-				}
-				$days_available = explode(",",$days_available);
+		@unless ($product_id == 18200)		
+			<div class="availability-mobile d-md-none">
+				<?php
 				
-				//Check if requires long fermentation lead time
-				if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
-					$long_fermentation = "<span class=\"long_fermentation\">* Not available for next-day orders</span>";
-				}
+				/**
+				 * Add availability display to product single page and product modal - MOBILE VIEW
+				 */
 
-				//Check if qualifies for Bulk Ordering
-				if ( has_term( array('bulk-discount'), 'product_tag', $product_id ) ){
-					$bulk_discount = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Eligible for Bulk Discount</a>";
-				}
+					$terms = get_the_terms( $product_id, 'pa_availability' );
+					$prefix = $days_available = '';
+					$long_fermentation = '';
+					$bulk_discount = '';
 
-				//Check if qualifies for buy 5 get 1 free
-				if ( has_term( array('6th-item-free'), 'product_tag', $product_id ) ){
-					$sixth_item_free = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Sixth item is free when you buy 1/2 dozen!</a>";
-				}
+					if (is_array($terms) || is_object($terms)) {
+							
+							foreach ($terms as $term) {
+									$days = $term->name;
+									$days_available .= $prefix . '' . $days . '';
+									$prefix = ', ';
+							}
+					}
+					$days_available = explode(",",$days_available);
+					
+					//Check if requires long fermentation lead time
+					if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
+						$long_fermentation = "<span class=\"long_fermentation\">* Not available for next-day orders</span>";
+					}
 
-				if (in_array('Everyday', $days_available)) {
-					$days = "";
-					echo '<strong>Available:</strong> <span>Every day! (Tuesday - Saturday) '.$long_fermentation.'</span>';
-				}
-				else {
-						$days = implode(', ', $days_available);
-						echo '<strong>Available:</strong> <span>'.$days . $long_fermentation.'</span>';
-				}				
-			?>
-		</div>
+					//Check if qualifies for Bulk Ordering
+					if ( has_term( array('bulk-discount'), 'product_tag', $product_id ) ){
+						$bulk_discount = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Eligible for Bulk Discount</a>";
+					}
+
+					//Check if qualifies for buy 5 get 1 free
+					if ( has_term( array('6th-item-free'), 'product_tag', $product_id ) ){
+						$sixth_item_free = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Sixth item is free when you buy 1/2 dozen!</a>";
+					}
+
+					if (in_array('Everyday', $days_available)) {
+						$days = "";
+						echo '<strong>Available:</strong> <span>Every day! (Tuesday - Saturday) '.$long_fermentation.'</span>';
+					}
+					else {
+							$days = implode(', ', $days_available);
+							echo '<strong>Available:</strong> <span>'.$days . $long_fermentation.'</span>';
+					}				
+				?>
+			</div>
+		@endunless
 		
 			<?php
 				//Display notice if the product has restricted pickup dates
@@ -113,6 +115,7 @@ if(isset($pickup_restriction_end_data_check)) {
 				}
 			?>
 		<div class="sidebar d-none d-md-block">
+			@unless ($product_id == 18200)		
 			<ul>
 				<?php
 				
@@ -140,6 +143,7 @@ if(isset($pickup_restriction_end_data_check)) {
 					}
 					?>
 					</ul>
+				@endunless
 
 					<?php
 					// Ingredients list
