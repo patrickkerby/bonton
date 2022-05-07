@@ -425,10 +425,10 @@ defined( 'ABSPATH' ) || exit;
 							<span class="acf-spinner"></span>
 						</div>
 
-						<div class="delivery-notice">
+						{{-- <div class="delivery-notice">
 							<h5>Delivery is now available!</h5>
 							<a href="" data-toggle="modal" data-target="#delivery" >See more details here.</a>
-						</div>
+						</div> --}}
 					</div>
 				</form>					
 			</div>
