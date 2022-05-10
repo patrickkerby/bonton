@@ -12,6 +12,39 @@
     }
   }
 
+  .breadclub-promo {
+    text-align: center;
+    border: solid 4px $cream;
+    border-width: 4px 0;
+    margin: 2rem 3rem 0 3rem;
+    padding: 2rem;
+    color: #5b6c81;
+
+    h2 {
+      font-size: 50px;
+      color: #5b6c81;
+    }
+
+    p {
+      font-size: 19px;
+      max-width: 70%;
+      margin: 0 auto;
+      color: #5b6c81;
+    }
+
+    a {
+      color: #fff;
+      background: #5b6c81;
+      display: inline-flex;
+      padding: 0.5rem 3rem;
+      margin: 2rem 0 0 0;
+
+      strong {
+        margin-right: 0.25rem;
+      }
+    }
+  }
+
   .wpf-search-container .page-title {
     display: none;
   }
