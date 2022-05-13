@@ -8,7 +8,7 @@
   global $wpdb;
   $daily_order_number = 900;
   $date_selector_date = '';
-  $pickup_day_list = array("Tuesday", "Thursday");
+  $pickup_day_list = array("Tuesday", "Friday");
 
   $product_id = 18200; //TODO: have this set via ACF incase the product ever changes, or to build new programs.
 
@@ -38,11 +38,11 @@
   <div class="row no-gutters justify-content-center">
     <div class="col-10">
       @foreach($pickup_day_list as $day) 
-      @php
-      $daily_order_number = 900; 
-      $product_sizes_array = array();
-      $addon_count = 0;
-      @endphp
+        @php
+          $daily_order_number = 900; 
+          $product_sizes_array = array();
+          $addon_count = 0;
+        @endphp
 
         <h2>{{ $day }} Bread Club</h2>
         <table id="lists-{{ $day }}" class="display {{ $list_type }}">
@@ -60,7 +60,10 @@
             @foreach ($results as $order_id)
               @php
                 $order = wc_get_order($order_id);
-                $order_items = $order->get_items();                
+                $order_items = $order->get_items();   
+                $get_date = $order->get_date_created();             
+                $order_date_created = $get_date->date('Y-m-d');
+                $date_for_comparison = strtotime($order_date_created);
                 $firstName = $order->get_billing_first_name();
                 $lastName = $order->get_billing_last_name();
                 $customer_note = $order->get_customer_note(); 
@@ -71,15 +74,16 @@
                 @php
                   $prod_id = $item['product_id']; 
                   $product = $item->get_product();
-                  $pickup_day = $product->get_attribute( 'Pickup Date' );
+                  $pickup_day = $product->get_attribute( 'Pickup Day' );
                   $product_size = $product->get_attribute( 'Size' );
                   $sliced_meta = $item->get_meta( 'Sliced Option', true );
-                  $addon_meta = $item->get_meta( '_Bread Club Addon', true );
+                  $addon_meta_friday = $item->get_meta( 'Friday Addons', true);
+                  $addon_meta_tuesday = $item->get_meta( 'Tuesdday Addons', true);
                   $product_meta_objects = $item->get_meta_data();
                   $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
                 @endphp
                 
-                @if ($prod_id == 18200 && str_contains($pickup_day, $day))
+                @if ($prod_id == 18200 && str_contains($pickup_day, $day) && $date_for_comparison > 1650054601)
                 @php 
                   $daily_order_number++; 
                   $product_sizes_array[] = $product_size;                
@@ -94,8 +98,14 @@
                         @if($sliced_meta)
                           <li>{{ $sliced_meta }}</li>
                         @endif
-                        @if($addon_meta)
-                          <li>Addons included.</li>
+                        @if($addon_meta_tuesday)
+                          <li>{!! $addon_meta_tuesday !!}</li>
+                          @php
+                            $addon_count++;   
+                          @endphp
+                        @endif
+                        @if($addon_meta_friday)
+                          <li>{!! $addon_meta_friday !!}</li>
                           @php
                             $addon_count++;   
                           @endphp
