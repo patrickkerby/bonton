@@ -79,7 +79,8 @@
                   $sliced_meta = $item->get_meta( 'Sliced Option', true );
                   $addon_meta_friday = $item->get_meta( 'Friday Addons', true);
                   $addon_meta_tuesday = $item->get_meta( 'Tuesdday Addons', true);
-                  $product_meta_objects = $item->get_meta_data();
+                  $addon_cookies = $item->get_meta( 'addon_cookies', true);
+                  $product_meta_objects = $item->get_meta_data();                  
                   $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
                 @endphp
                 
@@ -110,6 +111,12 @@
                             $addon_count++;   
                           @endphp
                         @endif
+                        @if($addon_meta_friday)
+                        <li>{{ $addon_cookies }}</li>
+                        @php
+                          $addon_count++;   
+                        @endphp
+                      @endif
                       </ul>
                     </td>
                     <td class="small">{{ $customer_note }}</td>
