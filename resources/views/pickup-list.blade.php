@@ -38,27 +38,27 @@ global $wpdb;
 
 // Get order data!
   $query = new WC_Order_Query( array(  
-      'limit' => -1,
-      // 'orderby' => 'name',
-      // 'order' => 'asc',
-      'status' => array('wc-processing', 'wc-completed'),
-      'pickup_date' => $date_selector_date,
-
+    'limit' => -1,
+    // 'orderby' => 'name',
+    // 'order' => 'asc',
+    'status' => array('wc-processing', 'wc-completed'),
+    'pickup_date' => $date_selector_date,
   ) );
+
   $results = $query->get_orders();
 
   //Get all orders that contain specific product (breadclub) 
   $bread_club_results = $wpdb->get_col("
-        SELECT order_items.order_id
-        FROM {$wpdb->prefix}woocommerce_order_items as order_items
-        LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as order_item_meta ON order_items.order_item_id = order_item_meta.order_item_id
-        LEFT JOIN {$wpdb->posts} AS posts ON order_items.order_id = posts.ID
-        WHERE posts.post_type = 'shop_order'
-        AND posts.post_status IN ( 'wc-processing', 'wc-completed' )
-        AND order_items.order_item_type = 'line_item'
-        AND order_item_meta.meta_key = '_product_id'
-        AND order_item_meta.meta_value = '$breadclub_id'
-    ");
+    SELECT order_items.order_id
+    FROM {$wpdb->prefix}woocommerce_order_items as order_items
+    LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as order_item_meta ON order_items.order_item_id = order_item_meta.order_item_id
+    LEFT JOIN {$wpdb->posts} AS posts ON order_items.order_id = posts.ID
+    WHERE posts.post_type = 'shop_order'
+    AND posts.post_status IN ( 'wc-processing', 'wc-completed' )
+    AND order_items.order_item_type = 'line_item'
+    AND order_item_meta.meta_key = '_product_id'
+    AND order_item_meta.meta_value = '$breadclub_id'
+  ");
 
 
 //Create filtered list of orders based on the date selected on list page.
@@ -92,31 +92,29 @@ $sorted_orders = array();
     $timeslot_new = $order->get_meta( '_timeslot_pickup', true );
     $timeslot_delivery = $order->get_meta( '_timeslot', true );
 
+    //Simplify output for timeslots - Pickup
+    if($timeslot_new == '9am - 11am') {
+      $timeslot_new = 'morning';
+    }
+    elseif ($timeslot_new == '11am - 2pm') {
+      $timeslot_new = 'midday';
+    }
+    elseif ($timeslot_new == '2pm - 5pm') {
+      $timeslot_new = 'afternoon';
+    }
 
-      //Simplify output for timeslots - Pickup
-      if($timeslot_new == '9am - 11am') {
-        $timeslot_new = 'morning';
-      }
-      elseif ($timeslot_new == '11am - 2pm') {
-        $timeslot_new = 'midday';
-      }
-      elseif ($timeslot_new == '2pm - 5pm') {
-        $timeslot_new = 'afternoon';
-      }
-
-      if($timeslot) {
-        $sorted_orders[] = $timeslot; //any object field
-      }
-      elseif ($timeslot_new) {        
-        $sorted_orders[] = $timeslot_new; //any object field
-      }
-      elseif ($timeslot_delivery) {        
-        $sorted_orders[] = $timeslot_delivery; //any object field
-      }
-      else {
-        $sorted_orders[] = 'No timeslot selected'; //any object field
-      }
-
+    if($timeslot) {
+      $sorted_orders[] = $timeslot; //any object field
+    }
+    elseif ($timeslot_new) {        
+      $sorted_orders[] = $timeslot_new; //any object field
+    }
+    elseif ($timeslot_delivery) {        
+      $sorted_orders[] = $timeslot_delivery; //any object field
+    }
+    else {
+      $sorted_orders[] = 'No timeslot selected'; //any object field
+    }
   }
   array_multisort($sorted_orders, SORT_DESC, $filtered_orders);
   
@@ -235,10 +233,14 @@ $sorted_orders = array();
       if ($bread_club_results) {
       foreach ($bread_club_results as $order_id) {
         $order = wc_get_order($order_id);
+        $get_date = $order->get_date_created();             
+        $order_date_created = $get_date->date('Y-m-d');
+        $date_for_comparison = strtotime($order_date_created);
+
         foreach ($order->get_items() as $item_id => $item) {
           $breadclub_pickup_day = $item->get_meta( 'pickup-date', true );
           
-            if(str_contains($breadclub_pickup_day, $current_day_of_week)) {
+            if(str_contains($breadclub_pickup_day, $current_day_of_week) && $date_for_comparison > 1650054601) {
               $breadclub_array[] = $order;
               $breadclub_email_list[] = $order->get_billing_email();
               $breadclub_id_list[] = $order->get_id();
