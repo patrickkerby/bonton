@@ -240,7 +240,7 @@ $sorted_orders = array();
         foreach ($order->get_items() as $item_id => $item) {
           $breadclub_pickup_day = $item->get_meta( 'pickup-date', true );
           
-            if(str_contains($breadclub_pickup_day, $current_day_of_week)) {
+            if(str_contains($breadclub_pickup_day, $current_day_of_week) && $date_for_comparison > 1650054601) {
               $breadclub_array[] = $order;
               $breadclub_email_list[] = $order->get_billing_email();
               $breadclub_id_list[] = $order->get_id();
