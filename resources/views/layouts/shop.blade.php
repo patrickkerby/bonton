@@ -6,13 +6,13 @@
     @include('partials.header')
 
     <div class="container-fluid" role="document">
-      <div class="row justify-content-center">
+      {{-- <div class="row justify-content-center">
         <div class="col-sm-10 breadclub-promo">
           <h2>Bread Club!</h2>
           <p>A subscription program prioritizing variety, freshness, and taste! Choose the size and day of the week, we choose the products and guide you through enjoying all our breads have to offer.</p>
           <a href="/bread-club"><strong>Sign up</strong> by May 15!</a>
         </div>	
-      </div>
+      </div> --}}
       @if (App\display_sidebar())
         <main class="wrap main row justify-content-center">
           <button class="navbar-toggler mobile-filter collapsed" type="button" data-toggle="collapse" data-target="#mobileFilter" aria-controls="mobile-filter" aria-expanded="false" aria-label="Toggle navigation">Filter Products</button>
