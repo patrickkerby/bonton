@@ -425,10 +425,10 @@ defined( 'ABSPATH' ) || exit;
 							<span class="acf-spinner"></span>
 						</div>
 
-						{{-- <div class="delivery-notice">
+						<div class="delivery-notice">
 							<h5>Delivery is now available!</h5>
 							<a href="" data-toggle="modal" data-target="#delivery" >See more details here.</a>
-						</div> --}}
+						</div>
 					</div>
 				</form>					
 			</div>
@@ -461,7 +461,7 @@ defined( 'ABSPATH' ) || exit;
 					(Pricing for delivery varies by location)</p>					
 					<br>
 					<h4>2 Delivery times per day</h4>
-					<p>Customers can choose between two delivery windows (10am - 1pm or 4pm - 7pm). Once the Store to Door team leaves the bakery with your order, they'll keep you updated by text to track your delivery.</p>
+					<p>Customers can choose between two delivery windows (10am - 1pm or 3pm - 6pm). Once the Store to Door team leaves the bakery with your order, they'll keep you updated by text to track your delivery.</p>
 					<br>
 					<h4>Directly to your door (So, please be home!)</h4>
 					<p>If you choose delivery, please ensure someone is home during your selected delivery window. <strong>If no one is home to receive the order, the Store to Door driver will leave the product on your step.</strong></p>

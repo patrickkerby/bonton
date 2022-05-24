@@ -52,7 +52,7 @@ $calculator_text          = '';
 						printf( esc_html__( '%s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' );
 						$calculator_text = esc_html__( 'Change address', 'woocommerce' );
 					} else {
-						//ADD THIS BACK IN FOR DELIVERY echo wp_kses_post( apply_filters( 'woocommerce_shipping_estimate_html', __( 'Set your location if you would like delivery!', 'woocommerce' ) ) );
+						echo wp_kses_post( apply_filters( 'woocommerce_shipping_estimate_html', __( 'Set your location if you would like delivery!', 'woocommerce' ) ) );
 					}
 					?>
 				</p>
