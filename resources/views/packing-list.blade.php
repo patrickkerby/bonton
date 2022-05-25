@@ -210,7 +210,7 @@ $sorted_orders = array();
               if($timeslot_delivery == 'Between 10 am &amp; 1 pm') {
                 $timeslot_delivery_esc = '10 - 1';
               }
-              elseif ($timeslot_delivery == 'Between 4 pm &amp; 7 pm') {
+              elseif ($timeslot_delivery == 'Between 3 pm &amp; 6 pm') {
                 $timeslot_delivery_esc = '4 - 7';
               }
               else {}
