@@ -27,8 +27,9 @@ defined( 'ABSPATH' ) || exit;
 	$gc_cart_count = 0;
 	$conflict = false;
 	$post3pm = "";
+	$test = "no test";
 
-	$dateformat = "d/m/Y";
+	$dateformat = "!d/m/Y";
 	date_default_timezone_set('MST');
 	$currenthour = date('H');
 	$cutoffhour = '15:00';
@@ -87,6 +88,7 @@ defined( 'ABSPATH' ) || exit;
 
 		 if($potential_old_date < $today) {
 			 $conflict = true;
+			 $test = "potential old date conflict";
 		 }
 	}
 
@@ -142,7 +144,6 @@ defined( 'ABSPATH' ) || exit;
 									$pickup_restriction_data = get_field('restricted_pickup', $product_id);
 									$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
 								
-
 									if($pickup_restriction_data) {
 										$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
 										$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
@@ -307,13 +308,16 @@ defined( 'ABSPATH' ) || exit;
 								if ($pickup_restriction_data) {
 									if ($session_date_object < $restricted_start_date || $session_date_object > $restricted_end_date){
 										$conflict = true;
+										$test = "test id 2";
+
 									}	
 								}
 
 								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
 								if ($post3pm == true && $session_date_object <= $tomorrow || $session_date_object == $today) {
 									$session_pickup_date = null;	
-									$conflict = true;		
+									$conflict = true;	
+									$test = "test id 3";	
 								}
 								else {
 									//
@@ -321,6 +325,7 @@ defined( 'ABSPATH' ) || exit;
 								// This check MUST occur in the loop. Otherwise, it won't catch
 								if ($availability_msg == TRUE) {
 									$conflict = true;
+									$test = "test id 4";
 								}
 							}
 						}
@@ -335,6 +340,7 @@ defined( 'ABSPATH' ) || exit;
 
 						if ($availability_msg == TRUE) {
 								$conflict = true;
+								$test = "test id 5";
 						}
 
 
@@ -475,7 +481,12 @@ defined( 'ABSPATH' ) || exit;
 	@if ($conflict && isset($session_pickup_date))
 	<div class="alert alert-danger alert-dismissible fade show" role="alert">
 		<div class="alert-danger">
-			<strong>Whoops! </strong> It looks like product(s) you have selected aren't available on your chosen pickup date. Please remove the product(s) or select a different pickup date.
+			<strong>Whoops! </strong> It looks like product(s) you have selected aren't available on your chosen pickup date. Please remove the product(s) or select a different pickup date.			
+
+			<br> Test = {{ $test }}
+			<br><strong>Session pickup date:</strong> @dump($session_pickup_date)
+			<br><strong>Session pickup date full object:</strong> @dump($session_date_object)
+			<br><strong>Restricted start date:</strong> @dump($restricted_start_date)
 		</div>
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
