@@ -346,6 +346,7 @@ $sorted_orders = array();
                 @endif
               
               </td>
+              <td>{{ $email }}</td>
               <td>{{ $order_number }}</td>
               <td class="phone">{{ $phone }}</td>
               <td class="location">    

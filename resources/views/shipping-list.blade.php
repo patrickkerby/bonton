@@ -150,8 +150,8 @@
               $phone = $details->get_billing_phone();
               $email = $details->get_billing_email();
               $order_id = $details->get_id();
-              $first_name = $details->get_billing_first_name();
-              $last_name = $details->get_billing_last_name();
+              $first_name = $details->get_shipping_first_name();
+              $last_name = $details->get_shipping_last_name();
               $status = $details->get_status();
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
