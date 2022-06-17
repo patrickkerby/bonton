@@ -274,6 +274,7 @@ $sorted_orders = array();
           <tr>
             <th>ID</th>
             <th>Name</th>
+            <th>Email</th>
             <th>Order #</th>
             <th>Phone</th>
             <th>Pickup</th>
