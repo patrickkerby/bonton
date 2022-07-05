@@ -22,14 +22,33 @@ defined( 'ABSPATH' ) || exit;
 $formatted_destination    = isset( $formatted_destination ) ? $formatted_destination : WC()->countries->get_formatted_address( $package['destination'], ', ' );
 $has_calculated_shipping  = ! empty( $has_calculated_shipping );
 $show_shipping_calculator = ! empty( $show_shipping_calculator );
-$calculator_text          = '';
+$calculator_text = '';
+$session_date_object = WC()->session->get('pickup_date_object');
+$delivery_available = false;
+$pickup_day_of_week = "";
+
+
+if($session_date_object) {
+	$pickup_day_of_week = $session_date_object->format('l');
+
+	if ($pickup_day_of_week === "Saturday") {
+		$delivery_available = true;
+	}
+	else {
+		$delivery_available = false;
+	}
+}
+
 ?>
+
 <tr class="woocommerce-shipping-totals shipping">
 	<th><?php echo wp_kses_post( $package_name ); ?></th>
 	<td data-title="<?php echo esc_attr( $package_name ); ?>">
 		<?php if ( $available_methods ) : ?>
 			<ul id="shipping_method" class="woocommerce-shipping-methods">
 				<?php foreach ( $available_methods as $method ) : ?>
+
+				@if($delivery_available)
 					<li>
 						<?php
 						if ( 1 < count( $available_methods ) ) {
@@ -40,11 +59,26 @@ $calculator_text          = '';
 						printf( '<label for="shipping_method_%1$s_%2$s">%3$s</label>', $index, esc_attr( sanitize_title( $method->id ) ), wc_cart_totals_shipping_method_label( $method ) ); // WPCS: XSS ok.
 						do_action( 'woocommerce_after_shipping_rate', $method, $index );
 						?>
-					</li>					
+					</li>	
+				@else
+					@if($method->method_id === 'local_pickup')
+						<li>
+							<?php
+							if ( 1 < count( $available_methods ) ) {
+								printf( '<input type="radio" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" %4$s />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ), checked( $method->id, $chosen_method, false ) ); // WPCS: XSS ok.
+							} else {
+								printf( '<input type="hidden" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ) ); // WPCS: XSS ok.
+							}
+							printf( '<label for="shipping_method_%1$s_%2$s">%3$s</label>', $index, esc_attr( sanitize_title( $method->id ) ), wc_cart_totals_shipping_method_label( $method ) ); // WPCS: XSS ok.
+							do_action( 'woocommerce_after_shipping_rate', $method, $index );
+							?>
+						</li>	
+					@endif	
+				@endif			
 				<?php endforeach; ?>
 			</ul>
-
-			<?php if ( is_cart() ) : ?>
+			
+			<?php if ( is_cart() && $delivery_available ) : ?>
 				<p class="woocommerce-shipping-destination">
 					<?php
 					if ( $formatted_destination ) {
@@ -56,6 +90,8 @@ $calculator_text          = '';
 					}
 					?>
 				</p>
+			@else
+				<p class="small">(Delivery is currently only available on Saturdays)</p>	
 			<?php endif; ?>
 			<?php
 		elseif ( ! $has_calculated_shipping || ! $formatted_destination ) :
@@ -77,7 +113,8 @@ $calculator_text          = '';
 			<?php echo '<p class="woocommerce-shipping-contents"><small>' . esc_html( $package_details ) . '</small></p>'; ?>
 		<?php endif; ?>
 
-		<?php if ( $show_shipping_calculator ) : ?>
+
+		<?php if ( $show_shipping_calculator && $delivery_available ) : ?>
 			<?php woocommerce_shipping_calculator( $calculator_text ); ?>
 		<?php endif; ?>
 	</td>
