@@ -28,6 +28,7 @@ defined( 'ABSPATH' ) || exit;
 	$conflict = false;
 	$post3pm = "";
 	$test = "no test";
+	$cooler_item_in_cart = false;
 
 	$dateformat = "!d/m/Y";
 	date_default_timezone_set('MST');
@@ -173,9 +174,7 @@ defined( 'ABSPATH' ) || exit;
 								if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
 									$giftcertificate_in_cart = true;
 									$gc_cart_count++; 
-								}
-
-
+								}									
 							?>
 							<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
 								<td class="product-remove">
@@ -195,15 +194,14 @@ defined( 'ABSPATH' ) || exit;
 								</td>	
 								<td class="product-name" colspan="4" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
 									@php
-									if ( ! $product_permalink ) {
-										echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;' );
-									} else {
-										echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', sprintf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $_product->get_name() ), $cart_item, $cart_item_key ) );
-									}
+										if ( ! $product_permalink ) {
+											echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;' );
+										} else {
+											echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', sprintf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $_product->get_name() ), $cart_item, $cart_item_key ) );
+										}
 
-									do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key );								
-
-									@endphp
+										do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key );																										
+									@endphp									
 								</td>
 							</tr>
 							

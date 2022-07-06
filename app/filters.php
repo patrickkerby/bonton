@@ -765,3 +765,36 @@ function misha_save_what_we_added( $order_id ){
     if( !empty( $_POST['shipping_unitno'] ) )
     update_post_meta( $order_id, 'shipping_unitno', sanitize_text_field( $_POST['shipping_unitno'] ) );
 }
+
+// Add fee to cart if delivery contains cooler items
+add_action('woocommerce_cart_calculate_fees', 'App\delivery_fee');
+
+function delivery_fee() {
+	if (is_admin() && !defined('DOING_AJAX')) {
+		return;
+	}
+
+    $cooler_item_in_cart = false;
+ 
+    foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+        $product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
+
+        $terms = get_the_terms( $product_id, 'product_cat' );
+
+        foreach($terms as $term) {
+            
+            $product_cat_id = $term->term_id;									
+            $product_cat_meta = get_term_meta($product_cat_id, 'list_type', true);
+                                                
+            if (str_contains($product_cat_meta, 'cooler')) {
+                $cooler_item_in_cart = true;
+            }
+        }
+    }
+
+	$chosen_shipping_method = WC()->session->get('chosen_shipping_methods'); 
+
+	if (strpos($chosen_shipping_method[0], 'flat_rate') !== false && $cooler_item_in_cart == true) {
+		WC()->cart->add_fee(__('Fee for Delivering Cold Item', 'txtdomain'), 2, true);
+	}
+}

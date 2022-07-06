@@ -33,6 +33,7 @@ foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 
 	// Conflict check for number of items in the cart. this is needed incase someone puts multiple GC products into the cart.								
 	$cart_count = $cart_count - $gc_cart_count;
+	$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
 
 	//Check if product is gift certificate or bread club
 	if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
