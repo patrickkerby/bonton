@@ -459,17 +459,14 @@ defined( 'ABSPATH' ) || exit;
 					</button>
 				</div>
 				<div class="modal-body">
-					<p>We now offer order delivery to Edmonton and surrounding areas in partnership with Store to Door!</p>
-					<h4>Delivery Areas:</h4>
-					<p>Edmonton, Sherwood Park, St. Albert, Spruce Grove, Acheson, Nisku, Leduc, Beaumont, Fort Saskatchewan<br>
-					(Pricing for delivery varies by location)</p>					
-					<br>
-					<h4>2 Delivery times per day</h4>
-					<p>Customers can choose between two delivery windows (10am - 1pm or 3pm - 6pm). Once the Store to Door team leaves the bakery with your order, they'll keep you updated by text to track your delivery.</p>
-					<br>
-					<h4>Directly to your door (So, please be home!)</h4>
-					<p>If you choose delivery, please ensure someone is home during your selected delivery window. <strong>If no one is home to receive the order, the Store to Door driver will leave the product on your step.</strong></p>
-					<p>Many of our products will freeze or spoil quickly in weather conditions that are too hot or too cold. It is the customer's responsibility to be available to receive their order during the delivery window. Bon Ton will not replace products or refund orders in cases where products are left on customer's steps.</p>
+					<p>We offer order delivery to Edmonton with Deeleeo on Saturdays only! The delivery window is 10am - 1pm.</p>						
+					<p>At this time, we are not able to deliver to surrounding areas.</p>
+					<p>Once the Deeleeo team leaves the bakery with your order, they'll keep you updated by text to track your delivery.</p>
+					
+					<strong>Directly to your door (So, please be home!)</strong>
+					<p>If you choose delivery, please ensure someone is home during the delivery window. If no one is home to receive the order, the Store to Door driver will leave the product on your step.</p>
+					<p>Many of our products will freeze or spoil quickly in weather conditions that are too hot or too cold. It is the customer's responsibility to be available to receive their order during the delivery window. Bon Ton will not replace products or refund orders in cases where products are left on customers' steps.</p>
+				
 				</div>
 			</div>
 		</div>
@@ -480,11 +477,6 @@ defined( 'ABSPATH' ) || exit;
 	<div class="alert alert-danger alert-dismissible fade show" role="alert">
 		<div class="alert-danger">
 			<strong>Whoops! </strong> It looks like product(s) you have selected aren't available on your chosen pickup date. Please remove the product(s) or select a different pickup date.			
-
-			<br> Test = {{ $test }}
-			<br><strong>Session pickup date:</strong> @dump($session_pickup_date)
-			<br><strong>Session pickup date full object:</strong> @dump($session_date_object)
-			<br><strong>Restricted start date:</strong> @dump($restricted_start_date)
 		</div>
 		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
 			<span aria-hidden="true">&times;</span>
