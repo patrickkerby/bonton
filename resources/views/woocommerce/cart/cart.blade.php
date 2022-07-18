@@ -464,7 +464,7 @@ defined( 'ABSPATH' ) || exit;
 					<p>Once the Deeleeo team leaves the bakery with your order, they'll keep you updated by text to track your delivery.</p>
 					
 					<strong>Directly to your door (So, please be home!)</strong>
-					<p>If you choose delivery, please ensure someone is home during the delivery window. If no one is home to receive the order, the Store to Door driver will leave the product on your step.</p>
+					<p>If you choose delivery, please ensure someone is home during the delivery window. If no one is home to receive the order, the Deeleeo driver will leave the product on your step.</p>
 					<p>Many of our products will freeze or spoil quickly in weather conditions that are too hot or too cold. It is the customer's responsibility to be available to receive their order during the delivery window. Bon Ton will not replace products or refund orders in cases where products are left on customers' steps.</p>
 				
 				</div>
