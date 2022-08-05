@@ -91,7 +91,6 @@ foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 				@endif			
 				<?php endforeach; ?>
 			</ul>
-			
 			@if ( is_cart() && $icecream_conflict)
 				<p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
 
@@ -110,6 +109,7 @@ foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 			@else
 				<p class="small">(Delivery is currently only available on Saturdays)</p>								
 			@endif
+
 			<?php
 		elseif ( ! $has_calculated_shipping || ! $formatted_destination ) :
 			if ( is_cart() && 'no' === get_option( 'woocommerce_enable_shipping_calc' ) ) {
@@ -134,5 +134,8 @@ foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 		<?php if ( $show_shipping_calculator && $delivery_available && $icecream_conflict === false ) : ?>
 			<?php woocommerce_shipping_calculator( $calculator_text ); ?>
 		<?php endif; ?>
+		<hr>
+		<p class="small">NOTE: Delivery is unavailable for August 13, and will resume on August 20.</p>
+
 	</td>
 </tr>
