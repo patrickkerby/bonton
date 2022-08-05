@@ -27,6 +27,7 @@ $session_date_object = WC()->session->get('pickup_date_object');
 $delivery_available = false;
 $pickup_day_of_week = "";
 $pickup_date = "";
+$icecream_conflict = false;
 
 
 if($session_date_object) {
@@ -39,6 +40,16 @@ if($session_date_object) {
 	else {
 		$delivery_available = false;
 	}
+}
+
+foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+   $cart_product = $cart_item['data'];
+   $cart_product_id = $cart_item['product_id'];
+
+	 if ($cart_product_id === 2045) {
+		// $delivery_available = false;
+		$icecream_conflict = true;
+	 }
 }
 
 
@@ -81,7 +92,10 @@ if($session_date_object) {
 				<?php endforeach; ?>
 			</ul>
 			
-			<?php if ( is_cart() && $delivery_available ) : ?>
+			@if ( is_cart() && $icecream_conflict)
+				<p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
+
+			@elseif ( is_cart() && $delivery_available )
 				<p class="woocommerce-shipping-destination">
 					<?php
 					if ( $formatted_destination ) {
@@ -94,8 +108,8 @@ if($session_date_object) {
 					?>
 				</p>
 			@else
-				<p class="small">(Delivery is currently only available on Saturdays)</p>	
-			<?php endif; ?>
+				<p class="small">(Delivery is currently only available on Saturdays)</p>								
+			@endif
 			<?php
 		elseif ( ! $has_calculated_shipping || ! $formatted_destination ) :
 			if ( is_cart() && 'no' === get_option( 'woocommerce_enable_shipping_calc' ) ) {
@@ -117,7 +131,7 @@ if($session_date_object) {
 		<?php endif; ?>
 
 
-		<?php if ( $show_shipping_calculator && $delivery_available ) : ?>
+		<?php if ( $show_shipping_calculator && $delivery_available && $icecream_conflict === false ) : ?>
 			<?php woocommerce_shipping_calculator( $calculator_text ); ?>
 		<?php endif; ?>
 	</td>
