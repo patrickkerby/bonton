@@ -26,18 +26,21 @@ $calculator_text = '';
 $session_date_object = WC()->session->get('pickup_date_object');
 $delivery_available = false;
 $pickup_day_of_week = "";
+$pickup_date = "";
 
 
 if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
+	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday") {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2022-08-13") {
 		$delivery_available = true;
 	}
 	else {
 		$delivery_available = false;
 	}
 }
+
 
 ?>
 
