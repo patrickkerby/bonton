@@ -135,7 +135,6 @@ foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 			<?php woocommerce_shipping_calculator( $calculator_text ); ?>
 		<?php endif; ?>
 		<hr>
-		<p class="small">NOTE: Delivery is unavailable for August 13, and will resume on August 20.</p>
 
 	</td>
 </tr>
