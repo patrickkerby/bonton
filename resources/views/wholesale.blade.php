@@ -20,7 +20,6 @@ $current_user = wp_get_current_user();
 
       </div>
       <div class="col-sm-10">
-        <h3>Custom products</h3>
         @php
           $userid = get_current_user_id();
 
@@ -30,6 +29,8 @@ $current_user = wp_get_current_user();
         @endphp
 
         @if($customer_products)
+          <h3>Custom products</h3>
+
           @php
           $customer_products = implode(', ', $customer_products);
 
@@ -49,12 +50,14 @@ $current_user = wp_get_current_user();
           ) );          
         @endphp
         @else
+          <h4>Custom Products</h4>
           <p>We don't have any products that we've created custom for you. In need of something unique? Give us a call!</p>
         @endif
 
+        @if(is_user_logged_in())
         <h3>Frequently ordered</h3>
+
         @php
-        if(is_user_logged_in() ) {
           wc_the_product_table( array( 
             // 'category' => 'wholesale',
             'rows_per_page' => 50,
@@ -68,9 +71,9 @@ $current_user = wp_get_current_user();
             'page_length' => false,
             'user_products' => true,
             'columns' => "image,name,price,buy"
-          ) );
-        }
+          ) );        
         @endphp
+      @endif
 
         <h3>The Whole Dang Shebang</h3>
         @php
