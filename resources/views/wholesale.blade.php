@@ -50,6 +50,7 @@ $current_user = wp_get_current_user();
           ) );          
         @endphp
         @else
+          <hr>
           <h4>Custom Products</h4>
           <p>We don't have any products that we've created custom for you. In need of something unique? Give us a call!</p>
         @endif
