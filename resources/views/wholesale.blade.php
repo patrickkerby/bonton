@@ -27,7 +27,10 @@ $current_user = wp_get_current_user();
           $customer_products = get_field('customer_special_products', $userid_var);
 
           $customer_products = implode(', ', $customer_products);
+        @endphp
 
+        @if($customer_products)
+          @php
           wc_the_product_table( array( 
             // 'category' => 'wholesale',
             'rows_per_page' => 50,
@@ -43,7 +46,7 @@ $current_user = wp_get_current_user();
             'columns' => "image,name,price,buy"
           ) );          
         @endphp
-        @if(! $customer_products)
+        @else
           <p>We don't have any products that we've created custom for you. In need of something unique? Give us a call!</p>
         @endif
 
