@@ -20,6 +20,7 @@ $current_user = wp_get_current_user();
 
       </div>
       <div class="col-sm-10">
+        <h3>Custom products</h3>
         @php
           $userid = get_current_user_id();
 
@@ -53,6 +54,7 @@ $current_user = wp_get_current_user();
 
         <h3>Frequently ordered</h3>
         @php
+        if(is_user_logged_in() ) {
           wc_the_product_table( array( 
             // 'category' => 'wholesale',
             'rows_per_page' => 50,
@@ -67,6 +69,7 @@ $current_user = wp_get_current_user();
             'user_products' => true,
             'columns' => "image,name,price,buy"
           ) );
+        }
         @endphp
 
         <h3>The Whole Dang Shebang</h3>
