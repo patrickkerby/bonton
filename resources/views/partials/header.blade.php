@@ -14,6 +14,9 @@ $news_title = get_the_title( get_option('page_for_posts', true) );
 $hero_product = get_field('shop_header_image', 'option');
 $sub_title = get_field('sub_title');
 
+// $use_custom_header = false;
+
+
 @endphp
 
 <header class="banner d-none d-sm-flex">

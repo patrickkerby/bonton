@@ -700,7 +700,8 @@ body.is-active {
 }
 
 .contact,
-.faq {
+.faq,
+.page-template-wholesale {
   .hero {
     height: 400px;
     display: flex;
@@ -735,6 +736,11 @@ body.is-active {
     font-weight: 200;
     margin: 8rem 0 4rem 0;
   }
+}
+
+.page-template-wholesale .hero {
+  height: 200px;
+  margin-bottom: 6rem;
 }
 
 .landing .hero-slider {

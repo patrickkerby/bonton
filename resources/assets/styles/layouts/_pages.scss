@@ -23,3 +23,63 @@
     }
   }
 }
+
+.page-template-wholesale {
+  .col-name a {
+    font-weight: 600 !important;
+  }
+
+  table.dataTable tbody th,
+  table.dataTable tbody td {
+    vertical-align: middle;
+  }
+
+  .col-buy form {
+    display: flex !important;
+    align-items: center;
+    justify-content: end;
+  }
+
+  .woocommerce-variation {
+    order: -1;
+    margin: 0 1rem 0 0 !important;
+  }
+
+  .wcpa_form_outer {
+    width: auto;
+    margin: 0 1rem 0 0;
+  }
+
+  .wcpa_form_item {
+    margin: 0;
+  }
+
+  .woocommerce button.button.alt.disabled {
+    padding: 0 1rem !important;
+  }
+
+  .wc-product-table .wpt_variations_form .woocommerce-variation-add-to-cart {
+    margin-left: 1rem !important;
+  }
+
+  .wc-product-table .add-to-cart-button {
+    position: relative;
+  }
+
+  a.added_to_cart {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: darken($highlight, 10%);
+    height: 50px;
+    margin: 0 !important;
+    padding: 0 1.4rem !important;
+    align-items: center;
+    display: flex !important;
+    color: #fff;
+
+    &:hover {
+      background: darken($highlight, 20%);
+    }
+  }
+}
