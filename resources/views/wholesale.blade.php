@@ -26,11 +26,12 @@ $current_user = wp_get_current_user();
           $userid_var = 'user_'.$userid;
           $customer_products = get_field('customer_special_products', $userid_var);
 
-          $customer_products = implode(', ', $customer_products);
         @endphp
 
         @if($customer_products)
           @php
+          $customer_products = implode(', ', $customer_products);
+
           wc_the_product_table( array( 
             // 'category' => 'wholesale',
             'rows_per_page' => 50,
