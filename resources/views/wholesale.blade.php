@@ -81,7 +81,7 @@ $current_user = wp_get_current_user();
           wc_the_product_table( array( 
             'rows_per_page' => 100,
             'lazy_load' => true,
-            'variations' => false,
+            // 'variations' => false,
             'filters' => "categories, tags"
           ) );
         @endphp
