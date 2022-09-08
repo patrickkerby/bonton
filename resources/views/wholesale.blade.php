@@ -82,7 +82,8 @@ $current_user = wp_get_current_user();
             'rows_per_page' => 100,
             'lazy_load' => true,
             // 'variations' => false,
-            'filters' => "categories, tags"
+            'filters' => "categories",
+            'exclude_category' => "wholesale"
           ) );
         @endphp
       </div>
