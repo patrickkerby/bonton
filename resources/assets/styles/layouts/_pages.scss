@@ -87,4 +87,10 @@
     margin-bottom: -1.75rem;
     margin-top: 2rem;
   }
+
+  .woocommerce-variation-description,
+  .bulk-discount,
+  .wcpa_type_textarea {
+    display: none;
+  }
 }
