@@ -81,10 +81,11 @@ $current_user = wp_get_current_user();
           wc_the_product_table( array( 
             'rows_per_page' => 100,
             // 'lazy_load' => true,
-            // 'variations' => false,
+            'variations' => true,
             'filters' => "categories",
-            'exclude_category' => "wholesale,cakes,holiday",
-            'cf' => "_stock_status:instock"
+            'exclude_category' => "wholesale,cakes",
+            'cf' => "_stock_status:instock",
+            'column_breakpoints' => "default,none,default,all"
           ) );
         @endphp
       </div>
