@@ -93,4 +93,8 @@
   .wcpa_type_textarea {
     display: none;
   }
+
+  .wc-product-table .wpt_variations_form .variations select {
+    max-width: 250px;
+  }
 }
