@@ -80,7 +80,7 @@ $current_user = wp_get_current_user();
         @php
           wc_the_product_table( array( 
             'rows_per_page' => 100,
-            'lazy_load' => true,
+            // 'lazy_load' => true,
             // 'variations' => false,
             'filters' => "categories",
             'exclude_category' => "wholesale",
