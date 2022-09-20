@@ -37,7 +37,7 @@ $current_user = wp_get_current_user();
           wc_the_product_table( array( 
             // 'category' => 'wholesale',
             'rows_per_page' => 50,
-            // 'variations' => true,
+            'variations' => true,
             'search_box' => false,
             'totals' => false,
             'filters' => false,
@@ -62,7 +62,7 @@ $current_user = wp_get_current_user();
           wc_the_product_table( array( 
             // 'category' => 'wholesale',
             'rows_per_page' => 50,
-            'variations' => true,
+            'variations' => 'separate',
             'search_box' => false,
             'totals' => false,
             'filters' => false,
