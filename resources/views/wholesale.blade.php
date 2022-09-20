@@ -3,6 +3,7 @@
 --}}
 @php
 $current_user = wp_get_current_user();
+// $order_history = site_url( '/my-account/orders/', 'https' );
 @endphp
 
 @extends('layouts.app')
@@ -30,7 +31,6 @@ $current_user = wp_get_current_user();
 
         @if($customer_products)
           <h3>Custom products</h3>
-
           @php
           $customer_products = implode(', ', $customer_products);
 
@@ -75,6 +75,7 @@ $current_user = wp_get_current_user();
           ) );        
         @endphp
       @endif
+      <p><a href="https://bonton.ca/my-account/orders/" target="_blank">Visit this page for a complete list of your Order History</a></p>
 
         <h3>The Whole Dang Shebang</h3>
         @php
