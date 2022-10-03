@@ -67,7 +67,7 @@ defined( 'ABSPATH' ) || exit;
 			$product_selection = $row['select_a_product']; 
 
 			$featured_ids[] = $product_selection;
-if(is_admin()) {
+if ( current_user_can( 'manage_options' ) ) {
 	var_dump($featured_ids);
 }
 
