@@ -62,14 +62,9 @@ defined( 'ABSPATH' ) || exit;
 	@foreach ($rows as $row)
 		@php 
 			
-
-			$title = $row['custom_title']; 
 			$product_selection = $row['select_a_product']; 
 
 			$featured_ids[] = $product_selection;
-
-			$description = $row['custom_description'];
-			$custom_image = $row['custom_image'];
 
 			if(!empty($custom_image)) {
 				$custom_image_check = true;	
@@ -78,11 +73,17 @@ defined( 'ABSPATH' ) || exit;
 		@endphp
 		@if ($prod_id === $product_selection && $loop->count === 1)
 			@php 
-				$featured_class = "single-feature";	
+				$featured_class = "single-feature";
+				$description = $row['custom_description'];
+				$custom_image = $row['custom_image'];	
+				$title = $row['custom_title']; 
 			@endphp		
 		@elseif ($prod_id === $product_selection && $loop->count > 1)
 			@php 
-				$featured_class = "double-feature";			
+				$featured_class = "double-feature";		
+				$description = $row['custom_description'];
+				$custom_image = $row['custom_image'];	
+				$title = $row['custom_title']; 
 			@endphp	
 		@endif
 	@endforeach
@@ -90,11 +91,6 @@ defined( 'ABSPATH' ) || exit;
 	@else
 		{{-- <p>no rows found</p> --}}
 @endif
-@php
-	if ( current_user_can( 'manage_options' ) ) {
-		var_dump($featured_ids);
-	}
-@endphp
 
 {{-- <h3>@dump($featured_ids)</h3> --}}
 <li <?php wc_product_class( $featured_class, $prod_id ); ?>>
