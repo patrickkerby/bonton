@@ -67,9 +67,6 @@ defined( 'ABSPATH' ) || exit;
 			$product_selection = $row['select_a_product']; 
 
 			$featured_ids[] = $product_selection;
-if ( current_user_can( 'manage_options' ) ) {
-	var_dump($featured_ids);
-}
 
 			$description = $row['custom_description'];
 			$custom_image = $row['custom_image'];
@@ -93,6 +90,11 @@ if ( current_user_can( 'manage_options' ) ) {
 	@else
 		{{-- <p>no rows found</p> --}}
 @endif
+@php
+	if ( current_user_can( 'manage_options' ) ) {
+		var_dump($featured_ids);
+	}
+@endphp
 
 {{-- <h3>@dump($featured_ids)</h3> --}}
 <li <?php wc_product_class( $featured_class, $prod_id ); ?>>
