@@ -24,6 +24,47 @@
             "multiple": 1,
             "return_format": "id",
             "ui": 1
+        },
+        {
+            "key": "field_63335af3b4aef",
+            "label": "Allow customer to order on credit?",
+            "name": "allow_customer_to_order_on_credit",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
+            "key": "field_63337d70a38aa",
+            "label": "Custom Shipping Method",
+            "name": "custom_shipping_method",
+            "type": "taxonomy",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "taxonomy": "product_shipping_class",
+            "field_type": "select",
+            "allow_null": 0,
+            "add_term": 0,
+            "save_terms": 0,
+            "load_terms": 0,
+            "return_format": "object",
+            "multiple": 0
         }
     ],
     "location": [
@@ -44,5 +85,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1661544594
+    "modified": 1664318891
 }

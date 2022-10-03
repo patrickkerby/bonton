@@ -93,6 +93,19 @@ defined( 'ABSPATH' ) || exit;
 		 }
 	}
 
+	if ( is_user_logged_in() ) { // check if there is a logged in user 	 
+		$user = wp_get_current_user(); // getting & setting the current user 
+		$roles = ( array ) $user->roles; // obtaining the role
+	}
+	else {
+		return array(); // if there is no logged in user return empty array  
+	}
+	if (in_array("wcwp_wholfalse", $roles)) {
+		$is_wholesale_user = false;
+	}
+	else {
+		$is_wholesale_user = false;
+	}
 @endphp
 	<div class="row justify-content-center">
 		<div class="col-md-8">
@@ -306,8 +319,6 @@ defined( 'ABSPATH' ) || exit;
 								if ($pickup_restriction_data) {
 									if ($session_date_object < $restricted_start_date || $session_date_object > $restricted_end_date){
 										$conflict = true;
-										$test = "test id 2";
-
 									}	
 								}
 
@@ -315,7 +326,6 @@ defined( 'ABSPATH' ) || exit;
 								if ($post3pm == true && $session_date_object <= $tomorrow || $session_date_object == $today) {
 									$session_pickup_date = null;	
 									$conflict = true;	
-									$test = "test id 3";	
 								}
 								else {
 									//
@@ -323,7 +333,6 @@ defined( 'ABSPATH' ) || exit;
 								// This check MUST occur in the loop. Otherwise, it won't catch
 								if ($availability_msg == TRUE) {
 									$conflict = true;
-									$test = "test id 4";
 								}
 							}
 						}
@@ -338,7 +347,6 @@ defined( 'ABSPATH' ) || exit;
 
 						if ($availability_msg == TRUE) {
 								$conflict = true;
-								$test = "test id 5";
 						}
 
 
@@ -357,12 +365,14 @@ defined( 'ABSPATH' ) || exit;
 						<tr>
 							<td colspan="6" class="actions">
 
+								@unless($is_wholesale_user)
 								<?php if ( wc_coupons_enabled() ) { ?>
 									<div class="coupon">
 										<label for="coupon_code"><?php esc_html_e( 'Coupon:', 'woocommerce' ); ?></label> <input type="text" name="coupon_code" class="input-text" id="coupon_code" value="" placeholder="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" /> <button type="submit" class="button" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?>"><?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?></button>
 										<?php do_action( 'woocommerce_cart_coupon' ); ?>
 									</div>
 								<?php } ?>
+								@endunless
 
 								<button type="submit" class="button" name="update_cart" value="<?php esc_attr_e( 'Update cart', 'woocommerce' ); ?>"><?php esc_html_e( 'Update cart', 'woocommerce' ); ?></button>
 
@@ -429,10 +439,12 @@ defined( 'ABSPATH' ) || exit;
 							<span class="acf-spinner"></span>
 						</div>
 
+					@unless($is_wholesale_user)
 						<div class="delivery-notice">
 							<h5>Delivery is now available!</h5>
 							<a href="" data-toggle="modal" data-target="#delivery" >See more details here.</a>
 						</div>
+						@endunless
 					</div>
 				</form>					
 			</div>
