@@ -67,6 +67,9 @@ defined( 'ABSPATH' ) || exit;
 			$product_selection = $row['select_a_product']; 
 
 			$featured_ids[] = $product_selection;
+if(is_admin()) {
+	var_dump($featured_ids);
+}
 
 			$description = $row['custom_description'];
 			$custom_image = $row['custom_image'];
