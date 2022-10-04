@@ -93,19 +93,19 @@ defined( 'ABSPATH' ) || exit;
 		 }
 	}
 
-	if ( is_user_logged_in() ) { // check if there is a logged in user 	 
-		$user = wp_get_current_user(); // getting & setting the current user 
-		$roles = ( array ) $user->roles; // obtaining the role
-	}
-	else {
-		return array(); // if there is no logged in user return empty array  
-	}
-	if (in_array("wcwp_wholfalse", $roles)) {
-		$is_wholesale_user = false;
-	}
-	else {
-		$is_wholesale_user = false;
-	}
+		// if ( is_user_logged_in() ) { // check if there is a logged in user 	 
+		// 	$user = wp_get_current_user(); // getting & setting the current user 
+		// 	$roles = ( array ) $user->roles; // obtaining the role
+		// }
+		// else {
+		// 	return array(); // if there is no logged in user return empty array  
+		// }
+		// if (in_array("wcwp_wholfalse", $roles)) {
+		// 	$is_wholesale_user = false;
+		// }
+		// else {
+		// 	$is_wholesale_user = false;
+		// }
 @endphp
 	<div class="row justify-content-center">
 		<div class="col-md-8">
@@ -365,14 +365,12 @@ defined( 'ABSPATH' ) || exit;
 						<tr>
 							<td colspan="6" class="actions">
 
-								@unless($is_wholesale_user)
 								<?php if ( wc_coupons_enabled() ) { ?>
 									<div class="coupon">
 										<label for="coupon_code"><?php esc_html_e( 'Coupon:', 'woocommerce' ); ?></label> <input type="text" name="coupon_code" class="input-text" id="coupon_code" value="" placeholder="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" /> <button type="submit" class="button" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?>"><?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?></button>
 										<?php do_action( 'woocommerce_cart_coupon' ); ?>
 									</div>
 								<?php } ?>
-								@endunless
 
 								<button type="submit" class="button" name="update_cart" value="<?php esc_attr_e( 'Update cart', 'woocommerce' ); ?>"><?php esc_html_e( 'Update cart', 'woocommerce' ); ?></button>
 
@@ -439,12 +437,10 @@ defined( 'ABSPATH' ) || exit;
 							<span class="acf-spinner"></span>
 						</div>
 
-					@unless($is_wholesale_user)
 						<div class="delivery-notice">
 							<h5>Delivery is now available!</h5>
 							<a href="" data-toggle="modal" data-target="#delivery" >See more details here.</a>
 						</div>
-						@endunless
 					</div>
 				</form>					
 			</div>
