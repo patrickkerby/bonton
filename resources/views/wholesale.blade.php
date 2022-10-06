@@ -71,7 +71,8 @@ $current_user = wp_get_current_user();
             'show_footer' => false,
             'page_length' => false,
             'user_products' => true,
-            'columns' => "image,name,price,buy"
+            'columns' => "image,name,price,buy",
+            'cache' => false
           ) );        
         @endphp
       @endif
