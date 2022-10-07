@@ -274,7 +274,7 @@ $sorted_orders = array();
           <tr>
             <th>ID</th>
             <th>Name</th>
-            {{-- <th>Email</th> --}}
+            <th>Email</th>
             <th>Order #</th>
             <th>Phone</th>
             <th>Pickup</th>
@@ -347,7 +347,7 @@ $sorted_orders = array();
                 @endif
               
               </td>
-              {{-- <td>{{ $email }}</td> --}}
+              <td>{{ $email }}</td>
               <td>{{ $order_number }}</td>
               <td class="phone">{{ $phone }}</td>
               <td class="location">    
