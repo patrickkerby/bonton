@@ -441,9 +441,8 @@ function bulk_pricing( $cart ) {
         $roles = ( array ) $user->roles; // obtaining the role         
     }
     else {            
-        return array(); // if there is no logged in user return empty array  
+        $roles = array(); // if there is no logged in user return empty array  
     }
-
 
     if (! in_array("wcwp_wholesale", $roles)) {
 
@@ -623,7 +622,6 @@ function bulk_pricing( $cart ) {
             }
         }
         else {
-            //continue on as you do
         } 
     }
 }
