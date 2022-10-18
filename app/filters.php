@@ -426,8 +426,6 @@ function bulk_pricing( $cart ) {
     // 11723 = Raspberry White Chocolate Filled Croissant
     // 11854 = Beef & Cheddar Swirl 
 
-
-
     $seasonal_pricing_activated = true; // @TODO Hook this up to ACF fiels.
     $regular_discount_small = 0.9; // @TODO hook up to ACF
     $regular_discount_large = 0.8; // @TODO hook up to ACF

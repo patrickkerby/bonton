@@ -57,6 +57,7 @@ add_action('after_setup_theme', function () {
      */
     register_nav_menus([
         'primary_navigation' => __('Primary Navigation', 'sage'),
+        'wholesale_navigation' => __('Wholesale Navigation', 'sage'),
         'footer_navigation' => __('Footer Navigation', 'sage'),
         'mobile_navigation' => __('Mobile Navigation', 'sage'),
         'top_navigation' => __('Top Navigation', 'sage')
@@ -118,6 +119,10 @@ add_action('widgets_init', function () {
     register_sidebar([
         'name'          => __('Shop Page - Before Products', 'sage'),
         'id'            => 'sidebar-shop'
+    ] + $config);
+    register_sidebar([
+        'name'          => __('Wholesale', 'sage'),
+        'id'            => 'wholesale_navigation'
     ] + $config);
 });
 

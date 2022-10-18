@@ -30,8 +30,10 @@ $sub_title = get_field('sub_title');
   </div>
   <div class="container-fluid">
     <nav class="nav-primary">
-      @if (has_nav_menu('primary_navigation'))
+      @if (has_nav_menu('primary_navigation') && !$is_wholesale_user)
         {!! wp_nav_menu(['theme_location' => 'primary_navigation', 'menu_class' => 'nav']) !!}
+      @elseif (has_nav_menu('wholesale_navigation') && $is_wholesale_user)  
+        {!! wp_nav_menu(['theme_location' => 'wholesale_navigation', 'menu_class' => 'nav']) !!}
       @endif
     </nav>
   </div>

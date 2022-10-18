@@ -93,21 +93,6 @@ defined( 'ABSPATH' ) || exit;
 		 }
 	}
 
-	if ( is_user_logged_in() ) { 
-			$user = wp_get_current_user(); // getting & setting the current user 
-			$roles = ( array ) $user->roles; // obtaining the role
-		
-			if (in_array("wcwp_wholfalse", $roles)) {
-				$is_wholesale_user = false;
-			}
-			else {
-				$is_wholesale_user = false;
-			}
-		}
-		else {
-			// return array(); 
-			$is_wholesale_user = false;
-		}
 @endphp
 	<div class="row justify-content-center">
 		<div class="col-md-8">

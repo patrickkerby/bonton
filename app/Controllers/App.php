@@ -50,5 +50,17 @@ class App extends Controller
         }
         return $container_fluid;
     }
+
+    public function is_wholesale_user()
+    {
+        if (in_array( 'wcwp_wholesale', (array) wp_get_current_user()->roles)) { 
+            $is_wholesale_user = true;
+        }
+        else {
+            // return array(); 
+            $is_wholesale_user = false;
+        }
+        return $is_wholesale_user;
+    }
 }
 
