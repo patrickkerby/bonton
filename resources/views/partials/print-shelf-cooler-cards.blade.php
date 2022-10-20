@@ -2,6 +2,7 @@
 @php 
   $daily_order_number = 100;
   $daily_delivery_number = 500;
+  $daily_wholesale_number = 900;
 @endphp
 
 
@@ -12,6 +13,8 @@
   if($details->has_shipping_method('flat_rate')) {
     $daily_delivery_number++;
   }
+  elseif($is_wholesale_user)
+    $daily_wholesale_number++;
   else {
     $daily_order_number++;
   }
@@ -199,6 +202,8 @@
       <h1>
         @if($details->has_shipping_method('flat_rate'))
           {{  $daily_delivery_number  }}
+        @elseif($is_wholesale_user)
+          {{ $daily_wholesale_number }}
         @else
           {{  $daily_order_number  }}
         @endif

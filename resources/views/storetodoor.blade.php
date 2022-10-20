@@ -51,12 +51,19 @@
     return $temp_array;
 }
 
+// Users query
+$user_ids = (array) get_users([
+      'role'       => 'customer',
+      'number'     => -1,
+      'fields'     => 'ID',
+  ]);
 
 // Get order data!
   $query = new WC_Order_Query( array(  
       'limit' => -1,
       // 'orderby' => 'name',
       // 'order' => 'asc',
+      'customer_id' => $user_ids, //This limits the query to customers only (excludes wholesale)
       'status' => array('wc-processing', 'wc-completed'),
       'pickup_date' => $date_selector_date,
 

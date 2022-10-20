@@ -16,10 +16,10 @@
           <a class="nav-link @if(is_page('pickup')) active @endif d-print-none" href="/lists/pickup">Pickup</a>
         </li>    
         <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('packing-shelf')) active @endif d-print-none" href="/lists/packing-shelf">Packing (Shelf)</a>
+          <a class="nav-link @if(is_page('packing-shelf')) active @endif d-print-none" href="/lists/packing-shelf">Packing: Shelf</a>
         </li>
         <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('packing-cooler')) active @endif d-print-none" href="/lists/packing-cooler">Packing (Cooler)</a>
+          <a class="nav-link @if(is_page('packing-cooler')) active @endif d-print-none" href="/lists/packing-cooler">Packing: Cooler</a>  
         </li>
       </ul>
       <hr>
@@ -48,7 +48,15 @@
         <li class="nav-item d-print-none">
           <a class="nav-link @if(is_page('storetodoor')) active @endif d-print-none" href="/lists/storetodoor">Store to Door Export</a>
         </li>
-      </ul>     
+      </ul>  
+      <hr>
+      <ul>
+        <li class="nav-item d-print-none">
+          <a class="nav-link @if(is_page('wholesale-pickup')) active @endif d-print-none" href="/lists/wholesale-pickup">Wholesale Pickup</a>
+          <a class="nav-link @if(is_page('wholesale-packing-shelf')) active @endif d-print-none" href="/lists/wholesale-packing-shelf">Wholesale Packing (Shelf)</a>
+          <a class="nav-link @if(is_page('wholesale-packing-cooler')) active @endif d-print-none" href="/lists/wholesale-packing-cooler">Wholesale Packing (Cooler)</a>
+        </li>
+      </ul>   
     </nav>
 </header>
 <header class="container-fluid lists-header">
@@ -78,7 +86,14 @@
         <h5>{{ $today }}</h5> 
       @elseif(is_page('storetodoor'))
         <h1>Store to Door Export</h1>
+      @elseif(is_page('wholesale-pickup'))
+        <h1>Wholesale Pickup</h1>
+      @elseif(is_page('wholesale-packing-shelf'))
+        <h1>Wholesale Packing (Shelf)</h1>
+      @elseif(is_page('wholesale-packing-cooler'))
+        <h1>Wholesale Packing (Cooler)</h1>
       @endif
+
       
       @if(is_page('inventory'))
         @if (isset($date1_cal))

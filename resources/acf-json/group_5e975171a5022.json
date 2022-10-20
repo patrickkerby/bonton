@@ -50,6 +50,13 @@
                 "operator": "==",
                 "value": "product_cat"
             }
+        ],
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "views\/wholesale-packing-list.blade.php"
+            }
         ]
     ],
     "menu_order": 0,
@@ -61,5 +68,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1657145549
+    "modified": 1666286246
 }
