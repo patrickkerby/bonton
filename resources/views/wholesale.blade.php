@@ -85,7 +85,7 @@ $current_user = wp_get_current_user();
             'lazy_load' => true,
             'variations' => true,
             'filters' => "categories",
-            'exclude_category' => "wholesale,cakes,grocery,subscription",
+            'exclude_category' => "wholesale",
             'cf' => "_stock_status:instock",
             'column_breakpoints' => "default,none,default,all"
           ) );
