@@ -58,7 +58,6 @@ $user_ids = (array) get_users([
       'fields'     => 'ID',
   ]);
 
-  var_dump($user_ids);
 
 // Get order data!
   $query = new WC_Order_Query( array(  
@@ -71,6 +70,8 @@ $user_ids = (array) get_users([
 
   ) );
   $results = $query->get_orders();
+  
+  var_dump($results);
 
 //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();
