@@ -71,7 +71,7 @@ $user_ids = (array) get_users([
   ) );
   $results = $query->get_orders();
   
-  var_dump($results);
+  var_dump($user_ids);
 
 //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();
