@@ -64,14 +64,14 @@ $user_ids = (array) get_users([
       'limit' => -1,
       // 'orderby' => 'name',
       // 'order' => 'asc',
-      // 'customer_id' => $user_ids, //This limits the query to customers only (excludes wholesale)
+      'customer_id' => $user_ids, //This limits the query to customers only (excludes wholesale)
       'status' => array('wc-processing', 'wc-completed'),
       'pickup_date' => $date_selector_date,
 
   ) );
   $results = $query->get_orders();
   
-  var_dump($user_ids);
+  var_dump($results);
 
 //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();
