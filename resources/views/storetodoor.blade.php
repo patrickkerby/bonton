@@ -63,7 +63,7 @@ $user_ids = (array) get_users([
       'limit' => -1,
       // 'orderby' => 'name',
       // 'order' => 'asc',
-      'customer_id' => $user_ids, //This limits the query to customers only (excludes wholesale)
+      // 'customer_id' => $user_ids, //This limits the query to customers only (excludes wholesale)
       'status' => array('wc-processing', 'wc-completed'),
       'pickup_date' => $date_selector_date,
 
