@@ -58,6 +58,8 @@ $user_ids = (array) get_users([
       'fields'     => 'ID',
   ]);
 
+  var_dump($user_ids);
+
 // Get order data!
   $query = new WC_Order_Query( array(  
       'limit' => -1,
