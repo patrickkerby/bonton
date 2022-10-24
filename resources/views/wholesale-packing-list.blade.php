@@ -33,7 +33,6 @@
   $date_selector_date = get_field('list_date');
   $is_packing_list = true;
 
-
 // Users query
   $user_ids = (array) get_users([
       'role'       => 'wcwp_wholesale',
@@ -272,7 +271,7 @@ $sorted_orders = array();
               </td>
               <td class="location">
                 @if($details->has_shipping_method('flat_rate'))
-                  {!! $shipping_data_name !!}
+                  <p class="timeslot">Delivery: {!! $shipping_data_name !!}</p>
                 @endif
                 @if($timeslot)
                   <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
@@ -376,12 +375,12 @@ $sorted_orders = array();
                       @endunless
                     @endif
                   @endforeach
-                </table>                         
+                </table>
               </td>
               <td class="d-print-none">
                 <div id="hiddenPrint">
-                  @include('partials.print-individual-receipt')
-                  @include('partials.print-individual-card')
+                  @include('print.print-individual-wholesale-receipt')
+                  @include('print.print-individual-wholesale-card')
                 </div>
               </td>
             </tr>
@@ -390,10 +389,10 @@ $sorted_orders = array();
         </tbody>
       </table>
       <div id="receipt-printer-all" class="d-none">
-        @include('partials.print-shelf-cooler-receipt')
+        @include('print.print-packing-wholesale-receipts')
       </div>
       <div id="card-printer-all" class="d-none">
-        @include('partials.print-shelf-cooler-cards')
+        @include('print.print-packing-wholesale-cards')
       </div>
       <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Receipt Printer)</i></button>
       <button class="btn btn-default" onclick="printDiv('card-printer-all', 'cardPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Cards)</i></button>
