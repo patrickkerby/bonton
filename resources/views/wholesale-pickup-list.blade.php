@@ -205,6 +205,10 @@ $sorted_orders = array();
               $order_number = $details->get_id();
               $is_delivery = $details->has_shipping_method('flat_rate');
             
+              $userid = $details->get_user_id();
+              $userid_var = 'user_'.$userid;
+              $special_delivery_instructions = get_field('special_delivery_instructions', $userid_var);
+
               foreach( $details->get_items( 'shipping' ) as $item_id => $item ){
                 // Get the data in an unprotected array
                 $item_data = $item->get_data();
@@ -274,7 +278,13 @@ $sorted_orders = array();
 
                   {!! $order_location !!}
               </td>
-              <td class="notes">{{ $customer_note }}</td>
+              <td class="notes">
+                {{ $customer_note }}
+                
+                @if($is_delivery)
+                  {{ $special_delivery_instructions }}
+                @endif
+              </td>
               <td class="d-print-none">
                 @include('partials.print-individual-receipt')
               </td>

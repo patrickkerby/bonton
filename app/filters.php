@@ -807,20 +807,31 @@ function misha_save_what_we_added( $order_id ){
 // 	}
 // }
 
-// add_filter( 'body_class', function( $classes ) {
+// change delivery fee for custom wholesale account
+add_action('woocommerce_cart_calculate_fees', 'App\delivery_fee');
 
-//     if( is_user_logged_in() ) { // check if there is a logged in user 	 
-//         $user = wp_get_current_user(); // getting & setting the current user 
-//         $roles = ( array ) $user->roles; // obtaining the role         
-//     }
-//     else {            
-//         return array(); // if there is no logged in user return empty array  
-//     }
-    
-//     if (in_array("wcwp_wholesale", $roles)) {
-//         return array_merge( $classes, array( 'wholesale-user' ) );
-//     }
-// } );
+function delivery_fee() {
+	if (is_admin() && !defined('DOING_AJAX')) {
+		return;
+	}
+
+    if (in_array( 'wcwp_wholesale', (array) wp_get_current_user()->roles)) { 
+        $is_wholesale_user = true;
+    }
+    else {
+        $is_wholesale_user = false;
+    }
+
+    $userid = get_current_user_id();
+    $userid_var = 'user_'.$userid;
+    $wholesale_user_delivery_discount = get_field('wholesale_user_delivery_discount', $userid_var);
+
+	$chosen_shipping_method = WC()->session->get('chosen_shipping_methods'); 
+
+	if (strpos($chosen_shipping_method[0], 'alg_wc_shipping') !== false) {
+		WC()->cart->add_fee(__('Custom Delivery Discount', 'txtdomain'), -$wholesale_user_delivery_discount, true);
+	}
+}
 
 add_filter( 'body_class', function ( $classes ) {
 
@@ -839,6 +850,7 @@ add_filter( 'body_class', function ( $classes ) {
     return $classes;
 });
 
+// Allow wholesale user to have credit account.
 add_filter( 'woocommerce_available_payment_gateways', function( $available_gateways ) {
     
     $userid = get_current_user_id();
