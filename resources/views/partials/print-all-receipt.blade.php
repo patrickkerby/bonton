@@ -3,6 +3,9 @@
 if ($is_storetodoor) {
   $daily_order_number = 500;
 }
+elseif ($list_type === "pickup-wholesale") {
+  $daily_order_number = 900;
+}
 else {
   $daily_order_number = 100;
 }
@@ -34,6 +37,8 @@ else {
   elseif ($timeslot_new == '2pm - 5pm') {
     $timeslot_new = 'Afternoon';
   }
+
+  
 
 @endphp
                                 
@@ -173,20 +178,19 @@ else {
         <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
         <strong>Phone:</strong> {{ $phone }}<br>
         <strong>Order #:</strong> {{ $order_number }}<br>
-        
+        @if($list_type === "pickup-wholesale")      
+          <strong>Paid with:</strong> {{ $payment_method }}
+        @endif
       </div>
-          
      
       @foreach ($details->get_items() as $item_id => $item)
-      @php                      
-            $prod_id = $item->get_product_id(); 
-            $quantity = $item->get_quantity();
-            $product_name = $item->get_name();
-            $product_meta_objects = $item->get_meta_data();
-            
-            $cooler_override = $item->get_meta( '_cooler', true );
-            
-            @endphp
+        @php                      
+          $prod_id = $item->get_product_id(); 
+          $quantity = $item->get_quantity();
+          $product_name = $item->get_name();
+          $product_meta_objects = $item->get_meta_data();
+          $cooler_override = $item->get_meta( '_cooler', true );  
+        @endphp
 
           @if(in_array($prod_id, $cooler_array))
             @php

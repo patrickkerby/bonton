@@ -35,6 +35,8 @@ global $wpdb;
 
   $date_selector_date = get_field('list_date');
   $is_packing_list = false;
+  $list_type = "pickup-wholesale";
+  $is_storetodoor = false;
 
   // Users query
   $user_ids = (array) get_users([
@@ -196,6 +198,7 @@ $sorted_orders = array();
               $email = $details->get_billing_email();
               $first_name = $details->get_billing_first_name();
               $last_name = $details->get_billing_last_name();
+              $userid = $details->get_user_id();
               $status = $details->get_status();
               $customer_note = $details->get_customer_note();
               $timeslot = $details->get_meta( 'pickup_timeslot', true );
@@ -204,8 +207,17 @@ $sorted_orders = array();
               $order_pickup_date = $details->get_meta( 'pickup_date', true );
               $order_number = $details->get_id();
               $is_delivery = $details->has_shipping_method('flat_rate');
-            
-              $userid = $details->get_user_id();
+              $payment_method = $details->get_payment_method_title();
+
+              
+              if (in_array( 'wcwp_wholesale', (array) get_user_by('id', $userid)->roles)) { 
+                $is_wholesale_user = true;
+              }
+              else {
+                // return array(); 
+                $is_wholesale_user = false;
+              }
+              
               $userid_var = 'user_'.$userid;
               $special_delivery_instructions = get_field('special_delivery_instructions', $userid_var);
 
@@ -231,7 +243,8 @@ $sorted_orders = array();
             
              @endphp
             <tr>
-              <td>{{ $daily_order_number }}</td>
+              <td>{{ $daily_order_number }}<br>
+              {{ $payment_method }}</td>
               <td class="name">
                 <strong>{{ $last_name }}, {{ $first_name }}</strong>
               </td>
@@ -280,7 +293,6 @@ $sorted_orders = array();
               </td>
               <td class="notes">
                 {{ $customer_note }}
-                
                 @if($is_delivery)
                   {{ $special_delivery_instructions }}
                 @endif

@@ -152,7 +152,10 @@
     <div class="customer">
       <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
       <strong>Phone:</strong> {{ $phone }}<br>
-      <strong>Order #:</strong> {{ $order_number }}<br>
+      <strong>Order #:</strong> {{ $order_number }}<br>      
+      @if($is_wholesale_user)
+        <strong>Paid with:</strong> {{ $payment_method }}
+      @endif
     </div>
 
     @foreach ($details->get_items() as $item_id => $item)
