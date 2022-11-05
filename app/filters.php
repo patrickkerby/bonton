@@ -869,3 +869,7 @@ add_filter( 'woocommerce_available_payment_gateways', function( $available_gatew
     }
 } );
 
+// When a wholesale order is made, switch order status to Wholesale Processing
+add_filter( 'woocommerce_cod_process_payment_order_status', function( $order_status, $order ) {
+    return 'ws-processing';
+}, 10, 2 );
