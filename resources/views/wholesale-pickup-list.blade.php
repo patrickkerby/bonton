@@ -51,7 +51,7 @@ global $wpdb;
     // 'orderby' => 'name',
     // 'order' => 'asc',
     'customer_id' => $user_ids,
-    'status' => array('wc-processing', 'wc-completed'),
+    'status' => array('wc-processing', 'wc-completed', 'ws-processing', 'ws-completed'),
     'pickup_date' => $date_selector_date,
   ) );
 

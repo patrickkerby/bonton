@@ -44,7 +44,7 @@
   $query = new WC_Order_Query( array(  
     'limit' => -1,
     'customer_id' => $user_ids,
-    'status' => array('wc-processing', 'wc-completed'),
+    'status' => array('wc-processing', 'wc-completed', 'ws-processing', 'ws-completed'),
     'pickup_date' => $date_selector_date,
   ) );
   $results = $query->get_orders();
