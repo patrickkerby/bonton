@@ -34,7 +34,7 @@ if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2022-08-13") {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2022-08-13" || $is_wholesale_user) {
 		$delivery_available = true;
 	}
 	else {
