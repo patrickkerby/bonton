@@ -370,3 +370,8 @@ p.demo_store,
 .underline {
   text-decoration: underline;
 }
+
+.woocommerce .col2-set .col-1,
+.woocommerce-page .col2-set .col-1 {
+  max-width: 48%;
+}
