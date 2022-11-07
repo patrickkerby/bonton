@@ -873,3 +873,7 @@ add_filter( 'woocommerce_available_payment_gateways', function( $available_gatew
 add_filter( 'woocommerce_cod_process_payment_order_status', function( $order_status, $order ) {
     return 'ws-processing';
 }, 10, 2 );
+
+add_filter( 'woocommerce_ajax_variation_threshold', function( $threshold ) { 
+    return 0;
+} );

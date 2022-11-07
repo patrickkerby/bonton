@@ -81,7 +81,7 @@ $current_user = wp_get_current_user();
         <h3>The Whole Dang Shebang</h3>
         @php
           wc_the_product_table( array( 
-            'rows_per_page' => 100,
+            'rows_per_page' => 50,
             'lazy_load' => true,
             'variations' => true,
             'filters' => "categories",
