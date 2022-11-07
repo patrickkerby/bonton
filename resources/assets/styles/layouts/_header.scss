@@ -497,6 +497,7 @@ body.is-active {
         position: absolute;
         top: 2rem;
         left: 2rem;
+        max-width: none !important;
 
         &::after {
           content: "Search Products";
