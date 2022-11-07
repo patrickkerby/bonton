@@ -29,18 +29,25 @@ $pickup_day_of_week = "";
 $pickup_date = "";
 $icecream_conflict = false;
 
+if ($is_wholesale_user) {
+	$delivery_available = true;
+}
 
 if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2022-08-13" || $is_wholesale_user) {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2022-08-13") {
+		$delivery_available = true;
+	}
+	elseif ($is_wholesale_user) {
 		$delivery_available = true;
 	}
 	else {
 		$delivery_available = false;
 	}
 }
+
 
 foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
    $cart_product = $cart_item['data'];
