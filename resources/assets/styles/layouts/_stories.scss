@@ -65,9 +65,8 @@ body.stories {
         width: 100%;
       }
 
-      @include media-breakpoint-up(md) {
-        height: auto;
-        max-height: 550px;
+      @include media-breakpoint-up(lg) {
+        height: 550px;
       }
     }
 
