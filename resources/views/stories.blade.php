@@ -26,29 +26,29 @@
           <div class="excerpt">
             <h3>{{ $item['title'] }}</h3>
             {!! $item['story_excerpt'] !!}
-            @if($item['story_link'])
-              <a href="{{ $item['story_link'] }}" class="button btn">{{ $item['story_link_button_label'] }}</a>
-            @endif
             @if($item['modal'])
               <a href="#storyModal{{ $loop->iteration }}" class="button btn" data-toggle="modal" data-target="#storyModal{{ $loop->iteration }}">{{ $item['story_link_button_label'] }}</a>
+            @elseif($item['story_link'])
+              <a href="{{ $item['story_link'] }}" class="button btn">{{ $item['story_link_button_label'] }}</a>            
             @endif            
           </div>
         </div>
+        @if($item['modal'])
+        <div class="modal fade" id="storyModal{{ $loop->iteration }}" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel{{ $loop->iteration }}" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                {!! $item['modal'] !!}
+              </div>                        
+            </div>
+          </div>
+        </div> 
+      @endif 
       </div> 
-      @if($item['modal'])
-              <div class="modal fade" id="storyModal{{ $loop->iteration }}" tabindex="-1" role="dialog" aria-labelledby="storyModalLabel{{ $loop->iteration }}" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                  <div class="modal-content">
-                    <div class="modal-body">
-                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                      </button>
-                      {!! $item['modal'] !!}
-                    </div>                        
-                  </div>
-                </div>
-              </div> 
-            @endif     
+          
     @endforeach
     
     <section class="processes">
