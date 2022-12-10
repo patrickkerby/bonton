@@ -1,5 +1,5 @@
 {{--
-  Template Name: Store To Door Export
+  Template Name: Deelio Export
 --}}
 
 @extends('layouts.lists')
@@ -174,17 +174,19 @@ $cooler_list = array(  '22', '53', '51','107','103' );
       <table id="lists{{ $loop->iteration }}" class="display">
         <thead>
           <tr>
-            <th>Recipient Name (Optional)</th>
-            <th>Recipient Phone (Optional)</th>
-            <th>Street Number</th>
-            <th>Street</th>
-            <th>Apartment / Unit (Optional)</th>
+            <th>Customer name</th>
+            <th>Unit/apt # (Optional)</th>
+            <th>Street Address</th>
             <th>City</th>
-            <th>Province / State</th>
-            <th>Country</th>
+            <th>Province</th>
+            {{-- <th>Country</th> --}}
             <th>Postal / ZIP Code</th>
-            <th>Delivery Notes (Optional)</th>
-            <th>Number of Packages</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>what3words (Optional)</th>
+            <th>Order Number (optional)</th>
+            <th>Deeleeo Details</th>
+            {{-- <th>Number of Packages</th> --}}
             <th class="d-print-none">Order Details to Print</th>   
           </tr>
         </thead>
@@ -213,26 +215,25 @@ $cooler_list = array(  '22', '53', '51','107','103' );
             @if($order_timeslot == $timeslot)
               <tr>
                 <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
-                <td class="phone">{{ $phone }}</td>
-                <td class="">
-                  {{ $address1 }}
-                </td>
-                <td class="">
-                  {{ $address2 }}
-                </td>
                 <td>
                   @if($unitno_shipping)
-                    {{ $unitno_shipping }}
+                  {{ $unitno_shipping }}
                   @else
-                    {{ $unitno_billing }}
+                  {{ $unitno_billing }}
                   @endif
                 </td>
-                <td>{{  $city }}</td>
+                <td class="">
+                  {{ $address1 }} {{ $address2 }}
+                </td>
+                <td>{{ $city }}</td>
                 <td>{{ $state }}</td>
-                <td>Canada</td>
+                {{-- <td>Canada</td> --}}
                 <td>{{ $postcode }}</td>
-                <td class="notes">{{ $customer_note }}</td>
+                <td class="email">{{ $email }}</td>
+                <td class="phone">{{ $phone }}</td>
                 <td></td>
+                <td class="order-number"></td>
+                <td class="notes">{{ $customer_note }}</td>
                 <td class="d-print-none">
                   @include('partials.print-individual-shipping')
                 </td>
