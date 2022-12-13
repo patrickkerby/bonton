@@ -232,7 +232,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
                 <td>Canada</td>
                 <td>{{ $postcode }}</td>
                 <td class="notes">{{ $customer_note }}</td>
-                <td></td>
+                <td>{{ $last_name }}, {{ $first_name }}</td>
                 <td class="d-print-none">
                   @include('partials.print-individual-shipping')
                 </td>
