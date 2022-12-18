@@ -402,7 +402,7 @@ function bulk_pricing( $cart ) {
     if ( did_action( 'woocommerce_before_calculate_totals' ) >= 2 )
         return;
 
-    $bulk_discount_enabled = false;
+    $bulk_discount_enabled = get_field('bulk_discount', 'option');;
 
     if ($bulk_discount_enabled) {
     
@@ -430,7 +430,7 @@ function bulk_pricing( $cart ) {
         // 11723 = Raspberry White Chocolate Filled Croissant
         // 11854 = Beef & Cheddar Swirl 
 
-        $seasonal_pricing_activated = true; // @TODO Hook this up to ACF fiels.
+        $seasonal_pricing_activated = false; // @TODO Hook this up to ACF fiels.
         $regular_discount_small = 0.9; // @TODO hook up to ACF
         $regular_discount_large = 0.8; // @TODO hook up to ACF
         $seasonal_discount_small = 1; // @TODO hook up to ACF

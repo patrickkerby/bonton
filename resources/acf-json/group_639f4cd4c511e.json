@@ -1,0 +1,44 @@
+{
+    "key": "group_639f4cd4c511e",
+    "title": "Bulk Discount Options",
+    "fields": [
+        {
+            "key": "field_639f4ce3a2096",
+            "label": "Enable Bulk Discount",
+            "name": "bulk_discount",
+            "type": "true_false",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 1,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "bonton-general-settings"
+            }
+        ]
+    ],
+    "menu_order": -1,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1671384481
+}
