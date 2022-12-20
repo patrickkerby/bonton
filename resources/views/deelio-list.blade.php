@@ -232,7 +232,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
                 <td class="email">{{ $email }}</td>
                 <td class="phone">{{ $phone }}</td>
                 <td></td>
-                <td class="order-number"></td>
+                <td class="order-number">{{ $last_name }}, {{ $first_name }}</td>
                 <td class="notes">{{ $customer_note }}</td>
                 <td class="d-print-none">
                   @include('partials.print-individual-shipping')
