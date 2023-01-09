@@ -1,6 +1,8 @@
 {{--
-  Template Name: Bread Club List w/addons
+  Template Name: Bread Club List
 --}}
+
+{{-- This template is for breadclub when it has multiday AND multiple addons --}}
 
 @extends('layouts.lists')
 
@@ -8,7 +10,8 @@
   global $wpdb;
   $daily_order_number = 900;
   $date_selector_date = '';
-  $day = 'Thursday';
+  $pickup_day_list = array("Tuesday", "Friday");
+
   $product_id = 18200; //TODO: have this set via ACF incase the product ever changes, or to build new programs.
 
   //Get all orders that contain specific product 
@@ -36,6 +39,7 @@
 
   <div class="row no-gutters justify-content-center">
     <div class="col-10">
+      @foreach($pickup_day_list as $day) 
         @php
           $daily_order_number = 900; 
           $product_sizes_array = array();
@@ -45,8 +49,8 @@
           $addon_pastries_count = 0;
         @endphp
 
-        <h2>Bread Club</h2>
-        <table id="lists" class="display {{ $list_type }}">
+        <h2>{{ $day }} Bread Club</h2>
+        <table id="lists-{{ $day }}" class="display {{ $list_type }}">
           <thead>
             <tr>
               <th width="5%">ID</th>
@@ -75,17 +79,37 @@
                 @php
                   $prod_id = $item['product_id']; 
                   $product = $item->get_product();
-                  $location = $product->get_attribute( 'Location' );
+                  $pickup_day = $product->get_attribute( 'Pickup Day' );
                   $product_size = $product->get_attribute( 'Size' );
                   $sliced_meta = $item->get_meta( 'Sliced Option', true );
+                  $addon_meta_friday = $item->get_meta( 'Friday Addons', true);
+                  $addon_meta_tuesday = $item->get_meta( 'Tuesday Addons', true);
                   $product_meta_objects = $item->get_meta_data();                  
                   $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
                 @endphp
                 
-                @if ($prod_id == 18200 && $date_for_comparison > 1664604000)
+                @if ($prod_id == 18200 && str_contains($pickup_day, $day) && $date_for_comparison > 1650054601)
                 @php 
                   $daily_order_number++; 
-                  $product_sizes_array[] = $product_size;                            
+                  $product_sizes_array[] = $product_size;    
+
+                  if(str_contains($addon_meta_tuesday, 'Cookie')) {
+                    $addon_cookie_count++;
+                  }
+                  if(str_contains($addon_meta_tuesday, 'Bun')) {
+                    $addon_bun_count++;
+                  }
+                  if(str_contains($addon_meta_friday, 'Bun')) {
+                    $addon_bun_count++;
+                  }
+                  if(str_contains($addon_meta_friday, 'Pie')) {
+                    $addon_pie_count++;
+                  }
+                  if(str_contains($addon_meta_friday, 'Pastries')) {
+                    $addon_pastries_count++;
+                  }
+                  
+                        
                 @endphp
                   <tr>
                     <td><strong>{{ $daily_order_number }}</strong><br>{{ $order_id }}</td>
@@ -96,7 +120,13 @@
                       <ul>
                         @if($sliced_meta)
                           <li>{{ $sliced_meta }}</li>
-                        @endif                                                                 
+                        @endif
+                        @if($addon_meta_tuesday)
+                          <li>{!! $addon_meta_tuesday !!}</li>                          
+                        @endif
+                        @if($addon_meta_friday)
+                          <li>{!! $addon_meta_friday !!}</li>                        
+                        @endif                                            
                       </ul>
                     </td>
                     <td class="small">{{ $customer_note }}</td>
@@ -112,9 +142,22 @@
             @foreach (array_count_values($product_sizes_array) as $key => $value)
               <li>{{ $key }}: <strong>{{ $value }}</strong></li>
             @endforeach   
+            @if( $addon_bun_count)  
+              <li>Addon Buns &amp; Bagels: <strong>{{ $addon_bun_count }}</strong></li>     
+            @endif
+            @if( $addon_cookie_count)  
+              <li>Addon Cookies: <strong>{{ $addon_cookie_count }}</strong></li>     
+            @endif
+            @if( $addon_pie_count)  
+              <li>Addon Pie: <strong>{{ $addon_pie_count }}</strong></li>     
+            @endif
+            @if( $addon_pastries_count)  
+              <li>Addon Pastries: <strong>{{ $addon_pastries_count }}</strong></li>     
+            @endif
           </ul>
         </div>
         <br><br>
+      @endforeach
     </div>
   </div>
 @endsection
