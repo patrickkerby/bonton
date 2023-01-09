@@ -76,6 +76,7 @@
                 @php
                   $prod_id = $item['product_id']; 
                   $product = $item->get_product();
+                  $qty = $item->get_quantity();
                   $location = $product->get_attribute( 'Location' );
                   $product_size = $product->get_attribute( 'Size' );
                   $sliced_meta = $item->get_meta( 'Sliced Option', true );
@@ -92,7 +93,7 @@
                     <td><strong>{{ $daily_order_number }}</strong><br>{{ $order_id }}</td>
                     <td>{{ $firstName }} {{ $lastName }}</td>
                     <td>{{ $customer_email }}</td>
-                    <td>{{ $product_size }}</td>
+                    <td>{{ $product_size }} @if($qty>1) x{{ $qty }} @endif</td>
                     <td>{{ $location }}</td>
                     <td>
                       <ul>
