@@ -89,11 +89,11 @@
                   $daily_order_number++; 
                   $product_sizes_array[] = $product_size;
 
-                  if ()$qty === 2) {
+                  if ($qty === 2) {
                     $product_sizes_array[] = $product_size;
                   }
 
-                  if ()$qty === 3) {
+                  if ($qty === 3) {
                     $product_sizes_array[] = $product_size;
                     $product_sizes_array[] = $product_size;
                   }
