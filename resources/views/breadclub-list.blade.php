@@ -83,11 +83,20 @@
                   $product_meta_objects = $item->get_meta_data();                  
                   $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
                 @endphp
-                
+
                 @if ($prod_id == 18200 && $date_for_comparison > 1664604000)
                 @php 
                   $daily_order_number++; 
-                  $product_sizes_array[] = $product_size;                            
+                  $product_sizes_array[] = $product_size;
+
+                  if ()$qty === 2) {
+                    $product_sizes_array[] = $product_size;
+                  }
+
+                  if ()$qty === 3) {
+                    $product_sizes_array[] = $product_size;
+                    $product_sizes_array[] = $product_size;
+                  }
                 @endphp
                   <tr>
                     <td><strong>{{ $daily_order_number }}</strong><br>{{ $order_id }}</td>
