@@ -1,5 +1,5 @@
 {{--
-  Template Name: Bread Club List
+  Template Name: Bread Club List w/addons
 --}}
 
 {{-- This template is for breadclub when it has multiday AND multiple addons --}}

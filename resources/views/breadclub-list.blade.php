@@ -1,5 +1,5 @@
 {{--
-  Template Name: Bread Club List w/addons
+  Template Name: Bread Club List
 --}}
 
 @extends('layouts.lists')
