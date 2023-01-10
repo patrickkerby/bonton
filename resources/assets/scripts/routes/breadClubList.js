@@ -34,6 +34,20 @@ export default {
           ],
         }
       );
+      $('#lists').DataTable(
+        {
+          'paging': false,
+          'info': false,
+          'order': [[1, 'asc']],
+          'dom': 'Bfrtip',
+          'buttons': [
+            'copy',
+            'csv',
+            'pdf',
+            'print',
+          ],
+        }
+      );
   });   
   },
 };

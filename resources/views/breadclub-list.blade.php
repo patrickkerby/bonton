@@ -97,6 +97,7 @@
                     $product_sizes_array[] = $product_size;
                     $product_sizes_array[] = $product_size;
                   }
+
                 @endphp
                   <tr>
                     <td><strong>{{ $daily_order_number }}</strong><br>{{ $order_id }}</td>
