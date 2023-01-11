@@ -376,7 +376,7 @@ defined( 'ABSPATH' ) || exit;
 			</form>
 			<?php do_action( 'woocommerce_before_cart_collaterals' ); ?>
 
-				<div class="cart-collaterals @if($conflict === true) conflict @endif col-sm-12">
+				<div class="cart-collaterals @if($conflict === true) conflict @endif col-sm-12 @if($giftcertificate_only_item_in_cart == true) giftcertificate @endif">
 					<?php
 						/**
 						* Cart collaterals hook.

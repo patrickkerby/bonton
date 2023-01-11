@@ -374,6 +374,11 @@ ul.woocommerce-thankyou-order-details li {
   display: none;
 }
 
+.cart .giftcertificate .woocommerce-shipping-totals,
+.giftcertificate-only .woocommerce-checkout-review-order-table .shipping {
+  display: none;
+}
+
 //Bulk discounts
 .bulk_discounts {
   background: #f8f7f2;
