@@ -143,11 +143,11 @@ function getDatesInRange($dateFromString, $dateToString, $dayOfWeek)
               @if($addons)
                 <td>
                   <ul>
-                    <li>
-                      @foreach ($addons as $addon )
-                        {!! $addon->post_title !!}
-                      @endforeach
-                    </li>
+                    @foreach ($addons as $addon )
+                      <li>
+                        {!! $addon->post_title !!}, {!! $addon->post_excerpt !!}
+                      </li>
+                    @endforeach
                   </ul>
                 </td>  
               @endif 
