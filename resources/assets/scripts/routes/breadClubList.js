@@ -38,7 +38,6 @@ export default {
         {
           'paging': false,
           'info': false,
-          'order': [[1, 'asc']],
           'dom': 'Bfrtip',
           'buttons': [
             'copy',

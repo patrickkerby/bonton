@@ -4,6 +4,29 @@
 
 @extends('layouts.lists')
 
+<script>
+  function printDiv(divName, printSize) {
+
+    var printContents = document.getElementById(divName).innerHTML;
+    var originalContents = document.body.innerHTML;
+
+    document.body.innerHTML = printContents;
+    
+    var body = document.body;
+    body.classList.add(printSize);
+
+    if (body.classList.contains("cardPrint")) {
+      var pageRules = document.getElementById('cardSizes');
+      let pageSizeString = '@page {size: 4in 5.5in;}';
+      pageRules.innerHTML = pageSizeString;
+    }
+
+    window.print();
+
+    document.body.innerHTML = originalContents;
+  }
+</script>
+
 @php  
   global $wpdb;
   $daily_order_number = 900;
@@ -39,10 +62,6 @@
         @php
           $daily_order_number = 900; 
           $product_sizes_array = array();
-          $addon_bun_count = 0;
-          $addon_cookie_count = 0;
-          $addon_pie_count = 0;
-          $addon_pastries_count = 0;
         @endphp
 
         <h2>Bread Club</h2>
@@ -103,7 +122,7 @@
                     <td><strong>{{ $daily_order_number }}</strong><br>{{ $order_id }}</td>
                     <td>{{ $firstName }} {{ $lastName }}</td>
                     <td>{{ $customer_email }}</td>
-                    <td>{{ $product_size }} @if($qty>1) x{{ $qty }} @endif</td>
+                    <td>{{ $product_size }}</td>
                     <td>{{ $location }}</td>
                     <td>
                       <ul>
@@ -114,6 +133,26 @@
                     </td>
                     <td class="small">{{ $customer_note }}</td>
                   </tr>
+                  @if ($qty === 2)
+                  @php
+                    $daily_order_number++; 
+                  @endphp
+                  <tr>
+                    <td><strong>{{ $daily_order_number }}</strong><br>{{ $order_id }}</td>
+                    <td>{{ $firstName }} {{ $lastName }}</td>
+                    <td>{{ $customer_email }}</td>
+                    <td>{{ $product_size }}</td>
+                    <td>{{ $location }}</td>
+                    <td>
+                      <ul>
+                        @if($sliced_meta)
+                          <li>{{ $sliced_meta }}</li>
+                        @endif                                                                 
+                      </ul>
+                    </td>
+                    <td class="small">{{ $customer_note }}</td>
+                  </tr>
+                  @endif
                 @endif
               @endforeach
             @endforeach
@@ -128,6 +167,11 @@
           </ul>
         </div>
         <br><br>
+      <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;">Print All Order Items </i></button>
+
+      <div id="receipt-printer-all" class="d-none">
+        @include('partials.print-all-breadclub')
+      </div> 
     </div>
   </div>
 @endsection
