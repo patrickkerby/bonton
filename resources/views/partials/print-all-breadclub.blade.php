@@ -1,6 +1,10 @@
 {{-- This file controls the print-only content for printing out all orders from the pickup list --}}
 @php 
   $daily_order_number = 900;
+@endphp
+
+@foreach ($results as $order_id)           
+@php 
   $order = wc_get_order($order_id);
   $order_items = $order->get_items();   
   $get_date = $order->get_date_created();             
@@ -11,8 +15,6 @@
   $customer_note = $order->get_customer_note(); 
   $customer_email = $order->get_billing_email(); 
 @endphp
-
-@foreach ($results as $order_id)           
 
   @foreach ($order->get_items() as $item_id => $item)
     @php
@@ -125,7 +127,7 @@
               right: 0;
               font-size: 14px;
               text-align: right;
-              width: 1.5in;
+              width: 1.75in;
               font-weight: 900;
             }
       
@@ -152,49 +154,65 @@
             }
             .receiptPrint .customer {
               margin-bottom: 1rem;
-            }
-
-            .cooler .shelf.print-order,
-            .shelf .cooler.print-order {
-              display: none;
-            }
-            .cooler .shelf.cooler.print-order,
-            .shelf .shelf.cooler.print-order {
-              display: block;
-            }
+            }            
           }
           
         </style>
-
         <div class="print-order">
 
           <p class="date">
-            <strong>{{ $date_selector_date }}</strong> <br> 
             {{ $location }}
           </p>
 
           <h1>{{ $daily_order_number }}</h1>
-          <div class="customer">
-            <strong>{{ $lastName }}, {{ $firstName }}</strong><br>
-          </div>
-
-                  <span class="storage">Shelf Items</span>
-              
-
-                <div class="items">
-                  <div class="item_content">
-                    <strong>{{ $product_size }}</strong><br>
-                    <div class="qty"><span>{{ $qty }}</span></div> 
-                  </div>
-                </div>           
+          
+          <span class="storage">{{ $lastName }}, {{ $firstName }}</span>              
+          <div class="items">
+            <div class="item_content">
+              <strong>{{ $product_size }}</strong><br>
+            </div>
+          </div>           
             
             @if($customer_note)
               <strong>Note:</strong><br>
               {{ $customer_note }}
             @endif
-        
+
           <div class="page-break"></div>
         </div>
+
+        @if ($qty === 2)
+          @php
+            $daily_order_number++; 
+          @endphp
+
+          <div class="print-order">
+
+            <p class="date">
+              <strong>{{ $date_selector_date }}</strong> <br> 
+              {{ $location }}
+            </p>
+
+            <h1>{{ $daily_order_number }}</h1>
+            <div class="customer">
+              <strong>{{ $lastName }}, {{ $firstName }}</strong><br>
+            </div>
+            <span class="storage">Shelf Items</span>              
+            <div class="items">
+              <div class="item_content">
+                <strong>{{ $product_size }}</strong><br>
+                <div class="qty"><span>{{ $qty }}</span></div> 
+              </div>
+            </div>           
+              
+              @if($customer_note)
+                <strong>Note:</strong><br>
+                {{ $customer_note }}
+              @endif
+          
+            <div class="page-break"></div>
+          </div>
+        @endif
       </div>
     @endif
   @endforeach
