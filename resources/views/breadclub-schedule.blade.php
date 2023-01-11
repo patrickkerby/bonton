@@ -147,6 +147,7 @@ function getDatesInRange($dateFromString, $dateToString, $dayOfWeek)
                       <li>
                         {!! $addon->post_title !!}, {!! $addon->post_excerpt !!}
                       </li>
+                      <li>@dump($addon)</li>
                     @endforeach
                   </ul>
                 </td>  
