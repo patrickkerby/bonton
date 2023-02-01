@@ -103,7 +103,7 @@
                   $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
                 @endphp
 
-                @if ($prod_id == 18200 && $date_for_comparison > 1664604000)
+                @if ($prod_id == 18200 && $date_for_comparison > 1664604000 && $date_for_comparison < 1674226526) 
                 @php 
                   $daily_order_number++; 
                   $product_sizes_array[] = $product_size;

@@ -33,7 +33,7 @@
   }
 
 // Get order data!
-  $query = new WC_Order_Query( array(  
+  $query = new WC_Order_Query( array(
       'limit' => -1,
       // 'orderby' => 'name',
       // 'order' => 'asc',
@@ -44,7 +44,7 @@
 //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();
 
-  foreach ( $results as $daily_results ) {    
+  foreach ( $results as $daily_results ) {
     $order_id = $daily_results->get_id();
     $order_pickup_date = $daily_results->get_meta('pickup_date');
           
