@@ -212,7 +212,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
               $order_number = $details->get_id();  
             @endphp
 
-            @if($order_timeslot == $timeslot)
+            {{-- @if($order_timeslot == $timeslot) --}}
               <tr>
                 <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
                 <td>
@@ -238,7 +238,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
                   @include('partials.print-individual-shipping')
                 </td>
               </tr>   
-            @endif
+            {{-- @endif --}}
      
           @endforeach
         </tbody>
