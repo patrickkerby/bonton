@@ -90,15 +90,15 @@ $user_ids = (array) get_users([
   }
 
   // Sort the packing list by timeslot
-  $sorted_orders = array(); 
-  foreach ($filtered_orders as $order) {
-    $timeslot = $order->get_meta( '_timeslot', true );
-    $sorted_orders[] = $timeslot; //any object field
-  }
+  // $sorted_orders = array(); 
+  // foreach ($filtered_orders as $order) {
+  //   $timeslot = $order->get_meta( '_timeslot', true );
+  //   $sorted_orders[] = $timeslot; //any object field
+  // }
 
   
-  $timeslot_array = array_unique($sorted_orders);
-  array_multisort($sorted_orders, SORT_ASC, $filtered_orders);
+  // $timeslot_array = array_unique($sorted_orders);
+  // array_multisort($sorted_orders, SORT_ASC, $filtered_orders);
 
 
 
@@ -167,9 +167,9 @@ $cooler_list = array(  '22', '53', '51','107','103' );
   <div class="row">
     <div class="col-sm-12">
 
-    @foreach ($timeslot_array as $timeslot)
+    {{-- @foreach ($timeslot_array as $timeslot) --}}
               
-      <h2>{!! $timeslot !!}</h2>
+      {{-- <h2>{!! $timeslot !!}</h2> --}}
       
       <table id="lists{{ $loop->iteration }}" class="display">
         <thead>
@@ -245,7 +245,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
       </table>
       
       <br><br>
-      @endforeach    
+      {{-- @endforeach     --}}
       <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;">Print All Order Items </i></button>
 
       <div id="receipt-printer-all" class="d-none">
