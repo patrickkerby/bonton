@@ -172,7 +172,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
       {{-- <h2>{!! $timeslot !!}</h2> --}}
       
       <table id="lists{{ $loop->iteration }}" class="display">
-        <thead>
+        <thead> 
           <tr>
             <th>Customer name</th>
             <th>Unit/apt # (Optional)</th>
