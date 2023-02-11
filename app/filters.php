@@ -651,8 +651,17 @@ add_filter( 'woocommerce_order_data_store_cpt_get_orders_query', 'App\handle_cus
 // Validate session pickup date on place order
 add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validation');
 
-    function is_giftcertificate( ) {
-        $giftcertificate_in_cart = false;
+function after_checkout_validation( $posted ) {
+    date_default_timezone_set('MST');
+	$today = date('Ymd');
+	$currenthour = date('H');
+	$cutoffhour = '15:00';
+    $cutoff = date('H', strtotime($cutoffhour));
+    $tomorrow = date("Ymd", strtotime('tomorrow'));
+    $pickup_date = WC()->session->get('pickup_date');
+	$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
+
+    $giftcertificate_in_cart = false;
         $cart_count = 0;
         $gc_cart_count = 0;
 
@@ -676,18 +685,6 @@ add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validati
         
         return $giftcertificate_in_cart;
         return $giftcertificate_only_item_in_cart;
-
-    }
-
-function after_checkout_validation( $posted ) {
-    date_default_timezone_set('MST');
-	$today = date('Ymd');
-	$currenthour = date('H');
-	$cutoffhour = '15:00';
-    $cutoff = date('H', strtotime($cutoffhour));
-    $tomorrow = date("Ymd", strtotime('tomorrow'));
-    $pickup_date = WC()->session->get('pickup_date');
-	$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
 
 	if ($currenthour > $cutoff) {
         $post3pm = true;
