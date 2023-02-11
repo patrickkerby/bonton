@@ -651,6 +651,34 @@ add_filter( 'woocommerce_order_data_store_cpt_get_orders_query', 'App\handle_cus
 // Validate session pickup date on place order
 add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validation');
 
+    function is_giftcertificate( ) {
+        $giftcertificate_in_cart = false;
+        $cart_count = 0;
+        $gc_cart_count = 0;
+
+        foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+            $giftcertificate_in_cart = false;
+            $cart_count++;
+        
+            $product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
+        
+            if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
+                $giftcertificate_in_cart = true;
+                $gc_cart_count++;
+            }	
+        }
+        
+        $cart_count = $cart_count - $gc_cart_count;
+        
+        if ( $giftcertificate_in_cart && $cart_count < 1) {
+            $giftcertificate_only_item_in_cart = true;
+        }
+        
+        return $giftcertificate_in_cart;
+        return $giftcertificate_only_item_in_cart;
+
+    }
+
 function after_checkout_validation( $posted ) {
     date_default_timezone_set('MST');
 	$today = date('Ymd');
@@ -671,7 +699,10 @@ function after_checkout_validation( $posted ) {
           //
       }
     
-    if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
+    if ($giftcertificate_only_item_in_cart == false) {
+        //carry on
+    }
+    elseif ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
         wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
     }
 }
