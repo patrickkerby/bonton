@@ -174,18 +174,25 @@ $cooler_list = array(  '22', '53', '51','107','103' );
       <table id="lists{{ $loop->iteration }}" class="display">
         <thead> 
           <tr>
-            <th>Customer name</th>
+            <th>Name</th>
+            <th colspan="5">Location ( Unit number / Street Address / City / Province / Postal Code )</th>
+            <th>Email</th>
+            <th>Phone Number</th>
+            <th>what3words (Optional)</th>
+            <th>Deeleeo Details</th>
+          </tr>
+          <tr>
+            <th>Customer name / Order ID</th>
             <th>Unit/apt # (Optional)</th>
             <th>Street Address</th>
             <th>City</th>
-            <th>Province</th>
+            <th>Province (ie: Alberta, not AB)</th>
             {{-- <th>Country</th> --}}
-            <th>Postal / ZIP Code</th>
-            <th>Email</th>
-            <th>Phone</th>
-            <th>what3words (Optional)</th>
-            <th>Order Number (optional)</th>
-            <th>Deeleeo Details</th>
+            <th>Postal code</th>
+            <th>valid email address if no phone provided this becomes mandatory</th>
+            <th>10 digit number of the recipient or shipper - if no email provided this becomes mandatory</th>
+            <th>///optional.data.here</th>
+            <th>Pick up/Drop off instruction (is it a home/apt/office?) and Unit/Buzzer numbers. Info about the package) Other phone numbers, etc. </th>
             {{-- <th>Number of Packages</th> --}}
             <th class="d-print-none">Order Details to Print</th>   
           </tr>
@@ -232,7 +239,6 @@ $cooler_list = array(  '22', '53', '51','107','103' );
                 <td class="email">{{ $email }}</td>
                 <td class="phone">{{ $phone }}</td>
                 <td></td>
-                <td class="order-number">{{ $last_name }}, {{ $first_name }}</td>
                 <td class="notes">{{ $customer_note }}</td>
                 <td class="d-print-none">
                   @include('partials.print-individual-shipping')
