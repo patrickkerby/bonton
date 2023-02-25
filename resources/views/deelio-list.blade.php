@@ -181,6 +181,8 @@ $cooler_list = array(  '22', '53', '51','107','103' );
             <th>what3words (Optional)</th>
             <th>Deeleeo Details</th>
           </tr>
+        </thead>
+        <tbody>  
           <tr>
             <th>Customer name / Order ID</th>
             <th>Unit/apt # (Optional)</th>
@@ -196,8 +198,6 @@ $cooler_list = array(  '22', '53', '51','107','103' );
             {{-- <th>Number of Packages</th> --}}
             <th class="d-print-none">Order Details to Print</th>   
           </tr>
-        </thead>
-        <tbody>  
           @foreach ($filtered_orders as $details)
             @php 
               $phone = $details->get_billing_phone();
