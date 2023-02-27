@@ -1,5 +1,5 @@
 {{--
-  Template Name: Deelio Export
+  Template Name: Delivery Export
 --}}
 
 @extends('layouts.lists')
