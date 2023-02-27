@@ -22,7 +22,7 @@ import oosList from './routes/oosList';
 import groceryList from './routes/groceryList';
 import breadClubList from './routes/breadClubList';
 import breadClubSchedule from './routes/breadClubSchedule';
-import deelioList from './routes/deelioList';
+import deliveryExport from './routes/deliveryExport';
 
 
 /** Populate Router instance with DOM routes */
@@ -35,7 +35,7 @@ const routes = new Router({
   groceryList,
   breadClubList,
   breadClubSchedule,
-  deelioList,
+  deliveryExport,
 });
 
 // Load Events
