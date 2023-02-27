@@ -175,7 +175,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
         <thead> 
           <tr>
             <th>Name</th>
-            <th colspan="4">Location ( Unit number / Street Address / City / Province / Postal Code )</th>
+            <th colspan="5">Location ( Unit number / Street Address / City / Province / Postal Code )</th>
             <th>Email</th>
             <th>Phone Number</th>
             <th>what3words (Optional)</th>
