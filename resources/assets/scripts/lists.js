@@ -1,5 +1,6 @@
 // import external dependencies
 import 'jquery';
+import 'jszip';
 import 'pdfmake';
 import 'datatables.net-bs4';
 import 'datatables.net-buttons-bs4';
