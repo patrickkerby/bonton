@@ -46,7 +46,7 @@
           <a class="nav-link @if(is_page('bread-club-list')) active @endif d-print-none" href="/lists/bread-club-list">Bread Club Packing List</a>
         </li>
         <li class="nav-item d-print-none">
-          <a class="nav-link @if(is_page('delivery')) active @endif d-print-none" href="/lists/storetodoor">Delivery Export</a>
+          <a class="nav-link @if(is_page('deelio-list')) active @endif d-print-none" href="/lists/storetodoor">Delivery Export</a>
         </li>
       </ul>  
       <hr>
