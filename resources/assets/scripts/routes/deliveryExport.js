@@ -12,10 +12,6 @@ export default {
           'paging': false,
           'info': false,
           'order': [[1, 'asc']],
-          'columnDefs': [ {
-            'targets': [0,2,3,4], /* column index */
-            'orderable': true, /* true or false */
-          }],
           'dom': 'Bfrtip',
           'buttons': [
             'copy',
