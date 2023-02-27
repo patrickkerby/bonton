@@ -11,14 +11,15 @@ export default {
         {
           'paging': false,
           'info': false,
+          'order': [[1, 'asc']],
+          'columnDefs': [ {
+            'targets': [0,2,3,4], /* column index */
+            'orderable': true, /* true or false */
+          }],
           'dom': 'Bfrtip',
           'buttons': [
-            {
-                'extend': 'csv',
-                // 'exportOptions': {
-                //     columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-                // },
-            },
+            'copy',
+            'csv',
           ],
         }
       );
