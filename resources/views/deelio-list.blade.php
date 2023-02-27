@@ -184,19 +184,19 @@ $cooler_list = array(  '22', '53', '51','107','103' );
         </thead>
         <tbody>  
           <tr>
-            <th>Customer name / Order ID</th>
-            <th>Unit/apt # (Optional)</th>
-            <th>Street Address</th>
-            <th>City</th>
-            <th>Province (ie: Alberta, not AB)</th>
+            <td>Customer name / Order ID</td>
+            <td>Unit/apt # (Optional)</td>
+            <td>Street Address</td>
+            <td>City</td>
+            <td>Province (ie: Alberta, not AB)</td>
             {{-- <th>Country</th> --}}
-            <th>Postal code</th>
-            <th>valid email address if no phone provided this becomes mandatory</th>
-            <th>10 digit number of the recipient or shipper - if no email provided this becomes mandatory</th>
-            <th>///optional.data.here</th>
-            <th>Pick up/Drop off instruction (is it a home/apt/office?) and Unit/Buzzer numbers. Info about the package) Other phone numbers, etc. </th>
+            <td>Postal code</td>
+            <td>valid email address if no phone provided this becomes mandatory</td>
+            <td>10 digit number of the recipient or shipper - if no email provided this becomes mandatory</td>
+            <td>///optional.data.here</td>
+            <td>Pick up/Drop off instruction (is it a home/apt/office?) and Unit/Buzzer numbers. Info about the package) Other phone numbers, etc. </td>
             {{-- <th>Number of Packages</th> --}}
-            <th class="d-print-none">Order Details to Print</th>   
+            <td class="d-print-none">Order Details to Print</td>
           </tr>
           @foreach ($filtered_orders as $details)
             @php 
