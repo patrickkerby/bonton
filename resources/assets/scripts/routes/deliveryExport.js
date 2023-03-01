@@ -18,16 +18,13 @@ export default {
           }],
           'dom': 'Bfrtip',
           'buttons': [
-            'copy', 'csv', 'excel', 'pdf', 'print',
+            {
+                'extend': 'csv', 
+                'exportOptions': {
+                    columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                },
+            },
           ],
-          // 'buttons': [
-          //   {
-          //       'extend': 'csv', 
-          //       'exportOptions': {
-          //           columns: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-          //       },
-          //   },
-          // ],
         }
       );
   });   
