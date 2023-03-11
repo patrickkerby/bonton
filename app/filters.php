@@ -696,10 +696,10 @@ function after_checkout_validation( $posted ) {
           //
       }
     
-    if ($giftcertificate_only_item_in_cart == false) {
-        //carry on
+    if ($giftcertificate_only_item_in_cart == false && $pickup_date_formatted == null) {
+        wc_add_notice( __( "We seem to have lost your pickup date, please return to cart and select a pickup date", 'woocommerce' ), 'error' );							
     }
-    elseif ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
+    if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
         wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
     }
 }
