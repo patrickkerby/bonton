@@ -648,6 +648,12 @@ function handle_custom_query_var( $query, $query_vars ) {
 add_filter( 'woocommerce_order_data_store_cpt_get_orders_query', 'App\handle_custom_query_var', 10, 2 );
 
 
+function write_my_log( $log ) {
+    if ( true === WP_DEBUG && true === WP_DEBUG_LOG) {
+        error_log( is_array( $log ) || is_object( $log ) ? print_r( $log, true ) : $log );
+    }
+}
+
 // Validate session pickup date on place order
 add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validation');
 
@@ -696,8 +702,9 @@ function after_checkout_validation( $posted ) {
           //
       }
     
-    if ($giftcertificate_only_item_in_cart == false && $pickup_date_formatted == null) {
+    if ($giftcertificate_only_item_in_cart == false && $pickup_date_formatted == "") {
         wc_add_notice( __( "We seem to have lost your pickup date, please return to cart and select a pickup date", 'woocommerce' ), 'error' );							
+        write_my_log( 'Pickup date is empty' );
     }
     if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
         wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
