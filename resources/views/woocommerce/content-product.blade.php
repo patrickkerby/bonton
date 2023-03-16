@@ -34,8 +34,10 @@ defined( 'ABSPATH' ) || exit;
 	$current_url = home_url(add_query_arg($_GET,$wp->request));
 	$terms_post = get_the_terms( $post->cat_ID , 'product_cat' );
 	$cat_slugs = array();
+	$pk_slug = "";
 
 	foreach ($terms_post as $term_cat) { 
+	
 		$term_cat_id = $term_cat->term_id;
 		$cat_slugs[] = $term_cat->slug;
 	}
@@ -46,15 +48,20 @@ defined( 'ABSPATH' ) || exit;
 		}
 	}
 	
-	$category = get_term_by( 'slug', $pk_slug, 'product_cat' );
-	$pk_cat_id = $category->term_id;
+	if($pk_slug) {
+		$category = get_term_by( 'slug', $pk_slug, 'product_cat' );
+		$pk_cat_id = $category->term_id;
+		$rows = get_field('featured_products', 'product_cat_' . $pk_cat_id);
+	}
+	else {
+		$rows = null;
+	}
 //end get current category for filtered shop pages
 
 	$featured_class = "";
 	$prod_id = $product->get_id();
 	$custom_image_check = false;
 	$description = "";
-	$rows = get_field('featured_products', 'product_cat_' . $pk_cat_id);
 	$featured_ids[] = "";
 ?>	
 
