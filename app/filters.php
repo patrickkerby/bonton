@@ -668,8 +668,8 @@ function after_checkout_validation( $posted ) {
 	$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
 
     $giftcertificate_in_cart = false;
-        $cart_count = 0;
-        $gc_cart_count = 0;
+    $cart_count = 0;
+    $gc_cart_count = 0;
 
         foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
             $giftcertificate_in_cart = false;
@@ -702,7 +702,7 @@ function after_checkout_validation( $posted ) {
           //
       }
     
-    if ($giftcertificate_only_item_in_cart == false && $pickup_date_formatted == "") {
+    if ($giftcertificate_only_item_in_cart == false && $pickup_date_formatted == "" || !$giftcertificate_only_item_in_cart && is_empty($pickup_date_formatted)) {
         wc_add_notice( __( "We seem to have lost your pickup date, please return to cart and select a pickup date", 'woocommerce' ), 'error' );							
         write_my_log( 'Pickup date is empty' );
     }
