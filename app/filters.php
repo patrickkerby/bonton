@@ -278,6 +278,7 @@ add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $
 function get_my_terms(){
     return array( 83, 84 );
 }
+ // ToDO add all sub cats of the above
 
 add_action( 'woocommerce_before_calculate_totals', 'App\zero_tax_items_based_on_invoice_choice', 30, 1 );
 function zero_tax_items_based_on_invoice_choice( $cart ) {
