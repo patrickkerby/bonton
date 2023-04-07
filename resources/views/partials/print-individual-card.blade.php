@@ -168,9 +168,30 @@
 
         $cooler_override = $item->get_meta( '_cooler', true );
 
+        // Check to see if line items have been refunded
+        $order = wc_get_order( $order_number );
+        $order_refunds = $order->get_refunds();  
+        $refund_item_id = "";
+        $total_qty = $prod_quantity;
+        if($order_refunds) {
+          foreach( $order_refunds as $refund ){
+            foreach( $refund->get_items() as $item_id => $item ){
+
+                ## --- Using WC_Order_Item_Product methods --- ##
+                $refund_item_id = $item -> get_product_id();
+                $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
+                $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
+            }
+          }
+
+          if($prod_id == $refund_item_id) {
+            $total_qty = $prod_quantity + $refunded_quantity;
+          }    
+        }
+
       @endphp
 
-      @unless($list_type === "shelf" && $is_packing_list == true)
+      @unless($list_type === "shelf" && $is_packing_list == true || $total_qty == 0)
 
         @if(in_array($prod_id, $cooler_array))
           @php
@@ -210,9 +231,30 @@
 
         $cooler_override = $item->get_meta( '_cooler', true );
 
+        // Check to see if line items have been refunded
+        $order = wc_get_order( $order_number );
+        $order_refunds = $order->get_refunds();  
+        $refund_item_id = "";
+        $total_qty = $prod_quantity;
+        if($order_refunds) {
+          foreach( $order_refunds as $refund ){
+            foreach( $refund->get_items() as $item_id => $item ){
+
+                ## --- Using WC_Order_Item_Product methods --- ##
+                $refund_item_id = $item -> get_product_id();
+                $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
+                $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
+            }
+          }
+
+          if($prod_id == $refund_item_id) {
+            $total_qty = $prod_quantity + $refunded_quantity;
+          }    
+        }
+
       @endphp
 
-      @unless($list_type === "cooler" && $is_packing_list == true)
+      @unless($list_type === "cooler" && $is_packing_list == true || $total_qty == 0)
         @if(!in_array($prod_id, $cooler_array))
           @php
             $shelf_count++;
