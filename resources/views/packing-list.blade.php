@@ -80,7 +80,7 @@
   );
 
   $shelf_args = array(
-    'status' => 'publish',
+    'status' => array('publish', 'draft'),
     'category' => $shelf_list_slugs,
     'limit' => -1,
     'return' => 'ids',
