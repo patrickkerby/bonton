@@ -445,8 +445,6 @@ print_r($json_data2);
 
 @endphp
 
-<img src="/app/uploads/pos/ComingSoon.png" />
-
     </div>
   </div>
 
