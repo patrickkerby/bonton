@@ -433,18 +433,16 @@ $json3='[
 
 // Read the JSON file 
 
-include 'app/uploads/pos/test.json';
+// include 'app/uploads/pos/test.json';
 
 
 
 // var_dump($test);
 
-// $json2 = file_get_contents('app/uploads/pos/test.json');
-// $json_data2 = json_decode($json2,true);
-  
-// // Display data
+$json2 = file_get_contents('app/uploads/pos/test.json');
+$json_data2 = json_decode($json2,true);
 
-// print_r($json_data2);
+print_r($json_data2);
 
 @endphp
 
