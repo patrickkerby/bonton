@@ -439,7 +439,7 @@ $json3='[
 
 // var_dump($test);
 
-$json2 = file_get_contents('app/uploads/pos/test2.json');
+$json2 = file_get_contents('app/uploads/pos/uploads/test.json');
 $json_data2 = json_decode($json2,true);
 
 print_r($json_data2);
