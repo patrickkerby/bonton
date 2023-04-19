@@ -432,10 +432,7 @@ $json3='[
 
 
 // Read the JSON file 
-$json = file_get_contents('app/uploads/pos/test.json');
-$json_data = json_decode($json,true);
-
-$json2 = file_get_contents('app/uploads/pos/test4.json');
+$json2 = file_get_contents('app/uploads/pos/test.json');
 $json_data2 = json_decode($json2,true);
   
 // Display data
