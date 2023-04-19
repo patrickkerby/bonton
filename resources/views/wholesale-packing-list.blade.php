@@ -435,11 +435,13 @@ $json3='[
 $json = file_get_contents('/app/uploads/pos/test.json');
 $json_data = json_decode($json,true);
 
-$json2 = file_get_contents('/app/uploads/pos/test2.json', "\xEF\xBB\xBF");
+$json2 = file_get_contents('/app/uploads/pos/test4.json');
 $json_data2 = json_decode($json2,true);
   
 // Display data
-print_r($json3);
+print_r($json2);
+echo "-----";
+print_r($json_data2);
 
 @endphp
 
