@@ -71,8 +71,8 @@ export default {
 
       // remove class from body when close button is clicked  
       $(document).on('click', '.close-product', function(e) {
-        if (!$(e.target).is('.quickview'))
-          $('.quickview-open').removeClass('quickview-open');
+        if (!$(e.target).is('.quickview')) {
+          $('.quickview-open').removeClass('quickview-open'); }
       });
 
       // Enable slick lightbox on appropriate images

@@ -397,6 +397,18 @@ $sorted_orders = array();
       <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Receipt Printer)</i></button>
       <button class="btn btn-default" onclick="printDiv('card-printer-all', 'cardPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Cards)</i></button>
 
+<br><br><br><br>
+@php
+// Read the JSON file 
+$json = file_get_contents('/app/uploads/pos/test.json');
+  
+// Decode the JSON file
+$json_data = json_decode($json,true);
+  
+// Display data
+print_r($json_data);
+
+@endphp
 
     </div>
   </div>
