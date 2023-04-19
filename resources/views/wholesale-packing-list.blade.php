@@ -439,7 +439,7 @@ $json2 = file_get_contents('/app/uploads/pos/test2.json', "\xEF\xBB\xBF");
 $json_data2 = json_decode($json2,true);
   
 // Display data
-print_r($json_data3);
+print_r($json3);
 
 @endphp
 
