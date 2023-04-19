@@ -432,12 +432,19 @@ $json3='[
 
 
 // Read the JSON file 
-$json2 = file_get_contents('app/uploads/pos/test.json');
-$json_data2 = json_decode($json2,true);
-  
-// Display data
 
-print_r($json_data2);
+include 'app/uploads/pos/test.json';
+
+
+
+// var_dump($test);
+
+// $json2 = file_get_contents('app/uploads/pos/test.json');
+// $json_data2 = json_decode($json2,true);
+  
+// // Display data
+
+// print_r($json_data2);
 
 @endphp
 
