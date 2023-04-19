@@ -411,6 +411,8 @@ print_r($json_data2);
 
 @endphp
 
+<img src="/app/uploads/2020/07/Raouf-Djaiz-Photography-223-1-1400x858.jpg" />
+
     </div>
   </div>
 
