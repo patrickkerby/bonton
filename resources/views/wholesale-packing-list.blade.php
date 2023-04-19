@@ -401,9 +401,10 @@ $sorted_orders = array();
 @php
 // Read the JSON file 
 $json = file_get_contents('/app/uploads/pos/test.json');
-  
-// Decode the JSON file
 $json_data = json_decode($json,true);
+
+$json2 = file_get_contents('/app/uploads/pos/test2.json');
+$json_data2 = json_decode($json2,true);
   
 // Display data
 print_r($json_data);
