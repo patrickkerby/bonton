@@ -399,6 +399,38 @@ $sorted_orders = array();
 
 <br><br><br><br>
 @php
+
+$json3='[  
+  {  
+    "fullName":"Shachar Ganot",
+    "address":"Yad Rambam",
+    "phoneNumber":"050-1231233",
+    "email":"",
+    "note":"",
+    "role":"",
+    "area":""
+  },
+  {  
+    "fullName":"Betty Ganot",
+    "address":"Modiin",
+    "phoneNumber":"054-3213211",
+    "email":"",
+    "note":"",
+    "role":"",
+    "area":""
+  },
+  {  
+    "fullName":"Someone Else",
+    "address":"Somewhere",
+    "phoneNumber":"123456789",
+    "email":"",
+    "note":"",
+    "role":"",
+    "area":""
+  }
+]';
+
+
 // Read the JSON file 
 $json = file_get_contents('/app/uploads/pos/test.json');
 $json_data = json_decode($json,true);
@@ -407,7 +439,7 @@ $json2 = file_get_contents('/app/uploads/pos/test2.json', "\xEF\xBB\xBF");
 $json_data2 = json_decode($json2,true);
   
 // Display data
-print_r($json_data2);
+print_r($json_data3);
 
 @endphp
 
