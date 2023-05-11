@@ -711,7 +711,8 @@ body.is-active {
 
 .contact,
 .faq,
-.page-template-wholesale {
+.page-template-wholesale,
+.page-template-wholesale-shop {
   .hero {
     height: 400px;
     display: flex;
@@ -748,7 +749,8 @@ body.is-active {
   }
 }
 
-.page-template-wholesale .hero {
+.page-template-wholesale .hero,
+.page-template-wholesale-shop .hero {
   height: 200px;
   margin-bottom: 6rem;
 }

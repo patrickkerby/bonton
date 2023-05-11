@@ -76,9 +76,11 @@ $current_user = wp_get_current_user();
           ) );        
         @endphp
       @endif
-      <p><a href="https://bonton.ca/my-account/orders/" target="_blank">Visit this page for a complete list of your Order History</a></p>
+      
 
-        <h3>The Whole Dang Shebang</h3>
+      <a href="/shop" class="button btn">Shop all products</a>
+      <a href="https://bonton.ca/my-account/orders/" class="btn button" target="_blank">View Order History</a>
+        {{-- <h3>The Whole Dang Shebang</h3>
         @php
           wc_the_product_table( array( 
             'rows_per_page' => 50,
@@ -89,7 +91,7 @@ $current_user = wp_get_current_user();
             'cf' => "_stock_status:instock",
             'column_breakpoints' => "default,none,default,all"
           ) );
-        @endphp
+        @endphp --}}
       </div>
     </div>
   @endwhile
