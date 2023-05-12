@@ -78,7 +78,7 @@ $current_user = wp_get_current_user();
       @endif
       
 
-      <a href="/shop" class="button btn">Shop all products</a>
+      <a href="https://bonton.ca/wholesale/shop" class="button btn">Shop all products</a>
       <a href="https://bonton.ca/my-account/orders/" class="btn button" target="_blank">View Order History</a>
         {{-- <h3>The Whole Dang Shebang</h3>
         @php
