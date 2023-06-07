@@ -4,28 +4,6 @@
 
 @extends('layouts.lists')
 
-<script>
-  function printDiv(divName, printSize) {
-
-    var printContents = document.getElementById(divName).innerHTML;
-    var originalContents = document.body.innerHTML;
-
-    document.body.innerHTML = printContents;
-    
-    var body = document.body;
-    body.classList.add(printSize);
-
-    if (body.classList.contains("cardPrint")) {
-      var pageRules = document.getElementById('cardSizes');
-      let pageSizeString = '@page {size: 4in 5.5in;}';
-      pageRules.innerHTML = pageSizeString;
-    }
-
-    window.print();
-
-    document.body.innerHTML = originalContents;
-  }
-</script>
 @php
 global $wpdb;
 
@@ -51,11 +29,10 @@ global $wpdb;
       <table id="lists" class="display">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Order #</th>
-            <th>Phone</th>            
-            <td class="d-print-none">Order Details to Print</td>
+            <th>Phone</th>  
+            <th>Pickup date</th>          
           </tr>
         </thead>
         <tbody>  
@@ -73,29 +50,21 @@ global $wpdb;
               $order_number = $details->get_id();
 
             @endphp
+            @if( !$order_pickup_date || $order_pickup_date === "")
             <tr>
-              <td>
-                {{ $daily_order_number }}
-              </td>
               <td class="name">
                 <strong>{{ $last_name }}, {{ $first_name }}</strong>
               </td>
               <td>{{ $order_number }}</td>
-              <td class="phone">{{ $phone }}</td>
-              
-              <td class="d-print-none">
-                @include('partials.print-individual-receipt')
-              </td>
+              <td class="phone">{{ $phone }}</td> 
+              <td>{{ $order_pickup_date }}</td>             
             </tr>        
+            @endif
           @endforeach
 
         </tbody>
       </table>
-      <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;"> Print All Orders (Receipt Printer)</i></button>
-
-      <div id="receipt-printer-all" class="d-none">
-        @include('partials.print-all-receipt')
-      </div>
+  
     </div>
   </div>
 @endsection
