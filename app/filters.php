@@ -918,3 +918,61 @@ add_filter( 'woocommerce_cod_process_payment_order_status', function( $order_sta
 add_filter( 'woocommerce_ajax_variation_threshold', function( $threshold ) { 
     return 0;
 } );
+
+//add a custom dashboard widget for admins
+add_action('wp_dashboard_setup', 'App\my_custom_dashboard_widget');
+  
+function my_custom_dashboard_widget() {
+    global $wp_meta_boxes;
+    wp_add_dashboard_widget('App\custom_help_widget', 'Orders with Missing Pickup Dates', 'App\custom_dashboard_help');
+}
+ 
+function custom_dashboard_help() {
+
+    
+
+    $orders = wc_get_orders( array(  
+      'limit' => -1,
+      'status' => array('wc-processing'),
+      'pickup_date' => '',
+    ) );
+
+
+    echo '<table id="lists" class="display" style="width: 100%;">
+        <thead>
+          <tr>
+            <th style="text-align: left;">Name</th>
+            <th style="text-align: left;">Order #</th>
+            <th style="text-align: left;">Phone</th>  
+          </tr>
+        </thead>
+        <tbody>';
+            foreach ($orders as $details ) {
+            
+                $phone = $details->get_billing_phone();
+                $order_id = $details->get_id();
+                $email = $details->get_billing_email();
+                $first_name = $details->get_billing_first_name();
+                $last_name = $details->get_billing_last_name();
+                $status = $details->get_status();
+                $customer_note = $details->get_customer_note();
+                $location = $details->get_meta( 'pickuplocation', true );
+                $order_pickup_date = $details->get_meta( 'pickup_date', true );
+                $order_number = $details->get_id();
+
+
+                if( !$order_pickup_date || $order_pickup_date === "") {
+                    echo 
+                        '<tr>
+                            <td class="name">
+                                <strong> '. $last_name . ', ' . $first_name . '</strong>
+                            </td>
+                            <td>' . $order_number . '</td>
+                            <td class="phone">' . $phone . '</td> 
+                        </tr>';       
+                }
+            }
+        echo '
+        </tbody>
+      </table>';
+}

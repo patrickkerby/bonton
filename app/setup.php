@@ -205,3 +205,4 @@ if( function_exists('acf_add_options_page') ) {
 add_action('init', function () {
     remove_filter('script_loader_tag', 'Roots\\Soil\\CleanUp\\clean_script_tag');
 });
+
