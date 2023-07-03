@@ -815,6 +815,8 @@ function misha_save_what_we_added( $order_id ){
     update_post_meta( $order_id, 'shipping_unitno', sanitize_text_field( $_POST['shipping_unitno'] ) );
 }
 
+// ----------  ADDITIONAL FEES
+
 // Add fee to cart if delivery contains cooler items
 // add_action('woocommerce_cart_calculate_fees', 'App\delivery_fee');
 
@@ -847,6 +849,21 @@ function misha_save_what_we_added( $order_id ){
 // 		WC()->cart->add_fee(__('Fee for Delivering Cold Item', 'txtdomain'), 2, true);
 // 	}
 // }
+
+// Add bag fee to cart if is delivery
+add_action('woocommerce_cart_calculate_fees', 'App\delivery_bag_fee');
+
+function delivery_bag_fee() {
+	if (is_admin() && !defined('DOING_AJAX')) {
+		return;
+	}
+
+	$chosen_shipping_method = WC()->session->get('chosen_shipping_methods'); 
+
+	if (strpos($chosen_shipping_method[0], 'flat_rate') !== false) {
+		WC()->cart->add_fee(__('Delivery Bag Fee', 'txtdomain'), 0.3, false);
+	}
+}
 
 // change delivery fee for custom wholesale account
 add_action('woocommerce_cart_calculate_fees', 'App\delivery_fee');
