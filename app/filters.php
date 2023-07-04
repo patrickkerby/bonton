@@ -946,14 +946,11 @@ function my_custom_dashboard_widget() {
  
 function custom_dashboard_help() {
 
-    
-
     $orders = wc_get_orders( array(  
       'limit' => -1,
       'status' => array('wc-processing'),
       'pickup_date' => '',
     ) );
-
 
     echo '<table id="lists" class="display" style="width: 100%;">
         <thead>

@@ -275,6 +275,20 @@
       }
     }
   }
+
+  .custom-pickup_bag_fee,
+  .custom-timeslot_pickup {
+    margin: 1rem 0 0 0;
+    padding-left: 2rem;
+  }
+
+  .custom-pickup_bag_fee {
+    border-bottom: solid 1px $cream-dark;
+  }
+
+  ul li p.pickup_options span select {
+    margin: 0 0 0 0.5rem !important;
+  }
 }
 
 .woocommerce-checkout,
