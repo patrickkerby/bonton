@@ -288,6 +288,8 @@
       <strong>Note:</strong><br>
       {{ $customer_note }}
     @endif
+    <br>
+    <span style="font-size: 0.875rem; font-weight:bold; padding-top: 1.5rem;">{{ $bagfee }}</span>
   
     <div class="page-break"></div>
   </div>

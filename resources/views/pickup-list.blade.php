@@ -35,6 +35,7 @@ global $wpdb;
 
   $date_selector_date = get_field('list_date');
   $is_packing_list = false;
+  $is_storetodoor = false;
 
 // Get order data!
   $query = new WC_Order_Query( array(  
@@ -277,6 +278,7 @@ $sorted_orders = array();
             <th>Email</th>
             <th>Order #</th>
             <th>Phone</th>
+            <th>Bags</th>
             <th>Pickup</th>
             <th>Location</th>
             <th>Notes</th>
@@ -299,6 +301,8 @@ $sorted_orders = array();
               $location = $details->get_meta( 'pickuplocation', true );
               $order_pickup_date = $details->get_meta( 'pickup_date', true );
               $order_number = $details->get_id();
+              $bagfee = $details->get_meta( '_pickup_bag_fee', true );
+
 
               if($timeslot_new == '9am - 11am') {
                 $timeslot_new = 'Morning';
@@ -350,6 +354,7 @@ $sorted_orders = array();
               <td>{{ $email }}</td>
               <td>{{ $order_number }}</td>
               <td class="phone">{{ $phone }}</td>
+              <td class="bags">{{ $bagfee }}</td>
               <td class="location">    
                 @if($timeslot)
                   <p class="timeslot {{ $location }}">{{ $timeslot }}</p>  
