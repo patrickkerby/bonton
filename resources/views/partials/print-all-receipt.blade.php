@@ -27,6 +27,7 @@ else {
   $timeslot = $details->get_meta( '_timeslot', true );
   $timeslot_old = $details->get_meta( 'pickup_timeslot', true );
   $timeslot_new = $details->get_meta( '_timeslot_pickup', true );
+  $bagfee = $details->get_meta( '_pickup_bag_fee', true );
 
   if($timeslot_new == '9am - 11am') {
     $timeslot_new = 'Morning';

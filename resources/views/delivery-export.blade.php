@@ -96,7 +96,6 @@ $user_ids = (array) get_users([
   //   $sorted_orders[] = $timeslot; //any object field
   // }
 
-  
   // $timeslot_array = array_unique($sorted_orders);
   // array_multisort($sorted_orders, SORT_ASC, $filtered_orders);
 
