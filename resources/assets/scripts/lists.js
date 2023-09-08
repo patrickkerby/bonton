@@ -1,11 +1,8 @@
 // import external dependencies
-import 'jquery';
 import 'jszip';
-import 'pdfmake';
 import 'datatables.net-bs4';
 import 'datatables.net-buttons-bs4';
 import 'datatables.net-buttons/js/buttons.colVis.js';
-import 'datatables.net-buttons/js/buttons.flash.js';
 import 'datatables.net-buttons/js/buttons.html5.js';
 import 'datatables.net-buttons/js/buttons.print.js';
 import 'datatables.net-fixedheader-bs4';
