@@ -171,7 +171,7 @@ $sorted_orders = array();
     $daily_breadclub_number = 900;
 
     // Hide specific meta data from the details column. List the items by key here:
-    $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
+    $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping", "_wdp_cart_item_key" );
 
     
     ///////// BREAD CLUB!!!!!!

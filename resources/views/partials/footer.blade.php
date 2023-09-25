@@ -16,7 +16,7 @@
     </div>
     
     <div class="col-md-4 order-last order-md-2">
-      <img src="@asset('images/bonton-logo-no-border.svg')" />
+      <img src="@asset('images/bonton-logo-no-border.svg')" alt="Bon Ton Bakery and Patisserie" />
     </div>
     <div class="d-none d-sm-flex col-sm-6 col-md-4 order-md-last">
       <nav class="nav-footer">
@@ -49,3 +49,4 @@
     </div>
   </div>
 </div>
+

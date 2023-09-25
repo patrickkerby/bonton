@@ -17,12 +17,3 @@
   <link rel="stylesheet" rel="preload" href="https://use.typekit.net/wvm4dbv.css" crossorigin>
 
 </head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HTCXG3J87J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-HTCXG3J87J');
-</script>
