@@ -62,7 +62,7 @@
 
   //phone orders: get data from ftp folder created by POS software
   $jsonDataArray = array();
-  foreach (new DirectoryIterator('app/ftpfiles') as $fileInfo) {
+  foreach (new DirectoryIterator('app/uploads/pos') as $fileInfo) {
     if($fileInfo->isDot()) continue;
       $path = $fileInfo->getFilename();
       $jsonString = file_get_contents('app/ftpfiles/'.$path);            
