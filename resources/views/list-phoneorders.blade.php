@@ -103,11 +103,10 @@ class barcode {
 
         $daily_phone_order_number = 700;
 
-        $cooler_array = array( '52', '32', '51','50' );
-        $shelf_array = array( '30', '34', '35','136','172' );
+        $phone_cooler_array = array( '52', '32', '51','50' );
+        $phone_shelf_array = array( '30', '34', '35','136','172' );
 
-
-        $seen_ids = [];
+        $seen_phone_ids = [];
 
         $jsonDataArray = array();
         foreach (new DirectoryIterator('app/ftpfiles') as $fileInfo) {
@@ -145,155 +144,159 @@ class barcode {
         </thead>
         <tbody>
           @foreach($jsonDataArray as $phoneOrder)
-          @php
-            //Dates
+          
+            @php
+              //Dates
               $orderDateRaw = $phoneOrder[0]['OpenTime'];
               $orderDate = substr($orderDateRaw, 0, 10);
               $pickupDateRaw = $phoneOrder[0]['RequestTime'];
               $pickupDate = substr($pickupDateRaw, 0, 10);
-              $pickupTime = substr($pickupDateRaw, 11, 2);
+              $pickupTime = substr($pickupDateRaw, 11, 2); 
               
-          @endphp
-
-          @if($selectedDateComparisonFormat)
-            @php
-              if (in_array($phoneOrder[0]['TxID'], $seen_ids)) {
-                continue;
-              }
-              $seen_ids[] = $phoneOrder[0]['TxID'];
-                               
-              $daily_phone_order_number++;
-              $hasPaid = $phoneOrder[0]['Tenders'];            
-              
-              if($pickupTime <= 11) {
-                $pickupTimeSlot = "Morning";
-              }
-              elseif($pickupTime > 10 && $pickupTime < 14 ) {
-                $pickupTimeSlot = "Midday";
-              }
-              else {
-                $pickupTimeSlot = "Afternoon";
-              }
-              
+              //General Variables
               $is_delivery = false;
               $has_instruction = false;
               $has_ManualDesc = false;
+              $barcode = 'T'.$phoneOrder[0]['TxID'];
+              $daily_phone_order_number++;
+              $hasPaid = $phoneOrder[0]['Tenders'];              
 
-              foreach ($phoneOrder[0]['Details'] as $detail ) {
-                if ($detail['Item']['CategoryID'] === "123") {
-                  $is_delivery = TRUE;
-                }
+              foreach ($phoneOrder[0]['Details'] as $detail ) {                                
                 if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
                   $has_instruction = TRUE;
                 }
+                if($detail['Item']['CategoryID'] === "70") {
+                  $bag_details = $detail['Item']['ItemName'];
+                }
+                else {
+                  $bag_details = "no bag details";
+                }
+                if(in_array("Edmonton Delivery", $detail['Item'])) {
+                  $is_delivery = TRUE;
+                }
               }
-
-              $barcode = 'T'.$phoneOrder[0]['TxID'];
-
-              
             @endphp
-            <tr valign="top">
-              <td>{{ $daily_phone_order_number }}</td>
-              <td>{{ $phoneOrder[0]['Customer']['AccountName'] }}</td>
-              <td>
-                @php barcode::code39($barcode, 'app/themes/bonton/resources/assets/images/barcodes/'.$barcode.'.png'); @endphp  
-                <img src="@asset("images/barcodes/$barcode.png")" />        
-              </td>
-              <td>POS - {{ $phoneOrder[0]['TxID'] }}</td>
-              <td>{{ $phoneOrder[0]['Customer']['Phone'] }}</td>
-              <td></td>
-              <td class="location"><p class="timeslot">{{ $pickupTimeSlot }}</p></td>
-              <td class="location">
-                {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
-                @php 
-                  $responses = array(); @endphp
-                  @foreach ($phoneOrder[0]['Details'] as $item )
+            {{-- @if($selectedDateComparisonFormat == $pickupDate ) --}}
 
-                    @php 
+            @if($selectedDateComparisonFormat && !$is_delivery)
+              @php
+                if (in_array($phoneOrder[0]['TxID'], $seen_phone_ids)) {
+                  continue;
+                }
+                $seen_phone_ids[] = $phoneOrder[0]['TxID'];                              
+                
+                if($pickupTime <= 11) {
+                  $pickupTimeSlot = "Morning";
+                }
+                elseif($pickupTime > 10 && $pickupTime < 14 ) {
+                  $pickupTimeSlot = "Midday";
+                }
+                else {
+                  $pickupTimeSlot = "Afternoon";
+                }              
+              @endphp
+              <tr valign="top">
+                <td>{{ $daily_phone_order_number }}</td>
+                <td>{{ $phoneOrder[0]['Customer']['AccountName'] }}</td>
+                <td>
+                  @php barcode::code39($barcode, 'app/themes/bonton/resources/assets/images/barcodes/'.$barcode.'.png'); @endphp  
+                  <img src="@asset("images/barcodes/$barcode.png")" />        
+                </td>
+                <td>POS - {{ $phoneOrder[0]['TxID'] }}</td>
+                <td>{{ $phoneOrder[0]['Customer']['Phone'] }}</td>
+                <td>@if($bag_details) {{ $bag_details }} @endif</td>
+                <td class="location"><p class="timeslot">{{ $pickupTimeSlot }}</p></td>
+                <td class="location">
+                  {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
+                  @php 
+                    $responses = array(); @endphp
+                    @foreach ($phoneOrder[0]['Details'] as $item )
 
-                      $prod_id = $item['Item']['ItemID'];
-                      $cat_id = $item['Item']['CategoryID'];
-                                        
-                      if(in_array($cat_id, $cooler_array)) {
-                        $responses[] = '<span class="order_location cooler">C</span>';   
-                        $in_cooler = true; 
-                      } 
-                      // Add elseif for freezer list
-                      else {  
-                        $responses[] = '<span class="order_location shelf">S</span>';
-                        $in_shelf = true;
-                      }
-                    @endphp
-                  @endforeach
-                  @php
-                    $responses_unique = array_unique($responses);
-                    $order_location = implode("", $responses_unique);
-                  @endphp
-                  {!! $order_location !!}
-              </td>
-              <td>{{ $phoneOrder[0]['Notes'] }}</td>
-              {{-- <td>{{ $orderDate }}</td> --}}
-              <td>{{ $pickupDate }}</td>
-              {{-- <td>@if($hasPaid) Pre-paid @else - @endif</td> --}}
-              <td>@if($is_delivery) Delivery @else Pickup @endif</td>
-              <td>
-                <table style="width: 100%;">
-                  <thead>
-                    <th>Qty</th>
-                    <th>Item</th>
-                  </thead>
-                  <tbody>
-                    @foreach ($phoneOrder[0]['Details'] as $detail )
-                                        
-                      @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" )
-                        <tr>
-                          <td>
-                            {{ $detail['Qty'] }}
-                          </td>
-                          <td style="margin-right: 1rem;">
-                            {{ $detail['Item']['ItemName'] }}
+                      @php 
 
-                            @php 
-                              $lineNumber = $detail['LineNumber'];
-                              $instruction = "";
-                              $instruction_desc = "";   
-                            
-                            @endphp
-                            @if($has_instruction)
-
-                              <ul>
-                                @foreach($phoneOrder[0]['Details'] as $instructionSearch)
-
-                                  @if($instructionSearch['ItemLineNumber'] === $lineNumber)
-                                  
-                                    @php
-                                      $has_instruction = TRUE;
-                                      $instruction = $instructionSearch['Item']['ItemName'];
-
-                                      if(isset($instructionSearch['ManualDescription'])) {
-                                        $instruction_desc = $instructionSearch['ManualDescription'];
-                                      }
-                                    @endphp
-
-                                    @if($instruction != 'Item Instruction')
-                                      <li>{{ $instruction }}</li>
-                                    @endif
-                                    @if($instruction_desc != '')
-                                      <li>{{ $instruction_desc }}</li> 
-                                    @endif
-                                  @endif                                    
-                                @endforeach
-                              </ul>
-                            @endif
-
-                          </td>
-                        </tr>
-                      @endunless
+                        $prod_id = $item['Item']['ItemID'];
+                        $cat_id = $item['Item']['CategoryID'];
+                                          
+                        if(in_array($cat_id, $phone_cooler_array)) {
+                          $responses[] = '<span class="order_location cooler">C</span>';   
+                          $in_cooler = true; 
+                        } 
+                        // Add elseif for freezer list
+                        else {  
+                          $responses[] = '<span class="order_location shelf">S</span>';
+                          $in_shelf = true;
+                        }
+                      @endphp
                     @endforeach
-                  </tbody>
-                </table>
-              </td>
-            </tr>
+                    @php
+                      $responses_unique = array_unique($responses);
+                      $order_location = implode("", $responses_unique);
+                    @endphp
+                    {!! $order_location !!}
+                </td>
+                <td>{{ $phoneOrder[0]['Notes'] }}</td>
+                {{-- <td>{{ $orderDate }}</td> --}}
+                <td>{{ $pickupDate }}</td>
+                {{-- <td>@if($hasPaid) Pre-paid @else - @endif</td> --}}
+                <td>@if($is_delivery) Delivery @else Pickup @endif</td>
+                <td>
+                  <table style="width: 100%;">
+                    <thead>
+                      <th>Qty</th>
+                      <th>Item</th>
+                    </thead>
+                    <tbody>
+                      @foreach ($phoneOrder[0]['Details'] as $detail )
+                                          
+                        @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" )
+                          <tr>
+                            <td>
+                              {{ $detail['Qty'] }}
+                            </td>
+                            <td style="margin-right: 1rem;">
+                              {{ $detail['Item']['ItemName'] }}
+
+                              @php 
+                                $lineNumber = $detail['LineNumber'];
+                                $instruction = "";
+                                $instruction_desc = "";   
+                              
+                              @endphp
+                              @if($has_instruction)
+
+                                <ul>
+                                  @foreach($phoneOrder[0]['Details'] as $instructionSearch)
+
+                                    @if($instructionSearch['ItemLineNumber'] === $lineNumber)
+                                    
+                                      @php
+                                        $has_instruction = TRUE;
+                                        $instruction = $instructionSearch['Item']['ItemName'];
+
+                                        if(isset($instructionSearch['ManualDescription'])) {
+                                          $instruction_desc = $instructionSearch['ManualDescription'];
+                                        }
+                                      @endphp
+
+                                      @if($instruction != 'Item Instruction')
+                                        <li>{{ $instruction }}</li>
+                                      @endif
+                                      @if($instruction_desc != '')
+                                        <li>{{ $instruction_desc }}</li> 
+                                      @endif
+                                    @endif                                    
+                                  @endforeach
+                                </ul>
+                              @endif
+
+                            </td>
+                          </tr>
+                        @endunless
+                      @endforeach
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
             @endif
           @endforeach
         </tbody>
