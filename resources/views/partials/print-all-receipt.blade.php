@@ -502,10 +502,10 @@
           <strong>Phone:</strong> {{ $phoneOrder[0]['Customer']['Phone'] }}<br>
           <strong>Order #:</strong> POS - {{ $phoneOrder[0]['TxID'] }}<br>
           @if($hasPaid)
-            <strong>Pre-Paid</strong><br>
+            <strong>$$: </strong>Pre-Paid
           @else
-            <strong>Requires Payment</strong>
-          @endif
+            <strong>$$: </strong>Requires Payment
+          @endif        
         </div>
       
         @foreach ($phoneOrder[0]['Details'] as $detail )                                          

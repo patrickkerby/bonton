@@ -223,9 +223,9 @@
       <strong>Phone:</strong> {{ $phoneOrder[0]['Customer']['Phone'] }}<br>
       <strong>Order #:</strong> POS - {{ $phoneOrder[0]['TxID'] }}<br> 
       @if($hasPaid)
-        <strong>Pre-Paid</strong>
+        <strong>$$: </strong>Pre-Paid
       @else
-        <strong>Requires Payment</strong>
+        <strong>$$: </strong>Requires Payment
       @endif        
     </div>
 
