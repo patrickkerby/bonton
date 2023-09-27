@@ -501,6 +501,9 @@
           <strong>{{ $phoneOrder[0]['Customer']['AccountName'] }}</strong><br>
           <strong>Phone:</strong> {{ $phoneOrder[0]['Customer']['Phone'] }}<br>
           <strong>Order #:</strong> POS - {{ $phoneOrder[0]['TxID'] }}<br>
+          @if($hasPaid)
+            <strong>Pre-Paid</strong><br>
+          @endif
         </div>
       
         @foreach ($phoneOrder[0]['Details'] as $detail )                                          
