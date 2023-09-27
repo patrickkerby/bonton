@@ -257,7 +257,7 @@ class barcode {
                               {{ $detail['Qty'] }}
                             </td>
                             <td style="margin-right: 1rem;">
-                              {{ $detail['Item']['ItemName'] }} - {{ $cat_id }}
+                              {{ $detail['Item']['ItemName'] }}
 
                               @php 
                                 $lineNumber = $detail['LineNumber'];
