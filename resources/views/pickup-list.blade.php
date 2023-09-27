@@ -503,7 +503,7 @@ $sorted_orders = array();
                 </td>
                 <td class="notes"></td>
                 <td class="d-print-none">
-                  @include('partials.print-individual-receipt')
+                  @include('partials.print-individual-receipt-phone')
                 </td>                
               </tr>
             @endif
