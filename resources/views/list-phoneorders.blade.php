@@ -199,8 +199,8 @@ class barcode {
                 <td>{{ $daily_phone_order_number }}</td>
                 <td>{{ $phoneOrder[0]['Customer']['AccountName'] }}</td>
                 <td>
-                  @php barcode::code39($barcode, '/app/uploads/barcodes/'.$barcode.'.png'); @endphp  
-                  <img src="/app/uploads/barcodes/{{ $barcode  }}.png" />     
+                  @php barcode::code39($barcode, 'app/uploads/barcodes/'.$barcode.'.png'); @endphp  
+                  <img src="/app/uploads/barcodes/{{ $barcode  }}.png" />    
                 </td>
                 <td>POS - {{ $phoneOrder[0]['TxID'] }}</td>
                 <td>{{ $phoneOrder[0]['Customer']['Phone'] }}</td>
