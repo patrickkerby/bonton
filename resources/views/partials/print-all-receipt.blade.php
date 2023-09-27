@@ -496,16 +496,16 @@
       <div class="print-order">
 
         <p class="date"><strong>{{ $date_selector_date }}</strong> <br> {{ $pickupTimeSlot }}</strong></p>
+        @if($hasPaid)
+            <strong>$$: </strong>Pre-Paid
+          @else
+            <strong>$$: </strong>Requires Payment
+          @endif 
         <h1>{{ $daily_phone_order_number }}</h1>
         <div class="customer">
           <strong>{{ $phoneOrder[0]['Customer']['AccountName'] }}</strong><br>
           <strong>Phone:</strong> {{ $phoneOrder[0]['Customer']['Phone'] }}<br>
-          <strong>Order #:</strong> POS - {{ $phoneOrder[0]['TxID'] }}<br>
-          @if($hasPaid)
-            <strong>$$: </strong>Pre-Paid
-          @else
-            <strong>$$: </strong>Requires Payment
-          @endif        
+          <strong>Order #:</strong> POS - {{ $phoneOrder[0]['TxID'] }}<br>                 
         </div>
       
         @foreach ($phoneOrder[0]['Details'] as $detail )                                          
