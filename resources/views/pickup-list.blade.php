@@ -91,13 +91,15 @@
 //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();
   
-  foreach ( $results as $daily_results ) {    
-    $order_id = $daily_results->get_id();
-    $order_pickup_date = $daily_results->get_meta('pickup_date');
-    $shipping_method = $daily_results->get_shipping_methods();
-          
-    if ($order_pickup_date === $date_selector_date && !$daily_results->has_shipping_method('flat_rate')) {
-      $filtered_orders[] = $daily_results;
+  if ($results) {
+    foreach ( $results as $daily_results ) {    
+      $order_id = $daily_results->get_id();
+      $order_pickup_date = $daily_results->get_meta('pickup_date');
+      $shipping_method = $daily_results->get_shipping_methods();
+            
+      if ($order_pickup_date === $date_selector_date && !$daily_results->has_shipping_method('flat_rate')) {
+        $filtered_orders[] = $daily_results;
+      }
     }
   }
 
@@ -238,15 +240,14 @@ $sorted_orders = array();
       $breadclub_id_list = array();
     
       if($is_today_breadclub) {
+        
         // Limit the list of bread club orders to only those that chose a pickup day equal to the day picked on page. If the date on page is even a breadclub day to begin with
-
         if ($bread_club_results) {      
           foreach ($bread_club_results as $order_id) {
             $order = wc_get_order($order_id);
             $get_date = $order->get_date_created();             
             $order_date_created = $get_date->date('Y-m-d');
             $date_for_comparison = strtotime($order_date_created);
-
 
             foreach ($order->get_items() as $item_id => $item) {
               $product = $item->get_product();
@@ -258,9 +259,7 @@ $sorted_orders = array();
                 $breadclub_id_list[] = $order->get_id();
               }
             }
-
           }
-
         }
         //combine the breadclub orders with the original set of orders for this day
         $combined_orders_raw = array_merge( $breadclub_array, $filtered_orders );

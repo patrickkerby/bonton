@@ -247,6 +247,9 @@ class barcode {
                     </thead>
                     <tbody>
                       @foreach ($phoneOrder[0]['Details'] as $detail )
+                      @php
+                        $cat_id = $detail['Item']['CategoryID'];
+                      @endphp
                                           
                         @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" )
                           <tr>
@@ -254,7 +257,7 @@ class barcode {
                               {{ $detail['Qty'] }}
                             </td>
                             <td style="margin-right: 1rem;">
-                              {{ $detail['Item']['ItemName'] }}
+                              {{ $detail['Item']['ItemName'] }} - {{ $cat_id }}
 
                               @php 
                                 $lineNumber = $detail['LineNumber'];

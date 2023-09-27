@@ -212,18 +212,11 @@
 
   <div class="print-order">
     <p class="date">
-      <strong>{{ $date_selector_date }}</strong> <br>
-        @if($details->has_shipping_method('flat_rate'))
-          {!! $order_location !!}                
-        @endif
+      <strong>{{ $date_selector_date }}</strong> <br>        
         {{ $pickupTimeSlot }}        
     </p>
-    <h1>
-      @if($details->has_shipping_method('flat_rate'))
-        #{{ $daily_delivery_number }}
-      @else
+    <h1>      
         {{ $daily_phone_order_number }}
-      @endif
     </h1>
     <div class="customer">
       <strong>{{ $phoneOrder[0]['Customer']['AccountName'] }}</strong><br>
@@ -235,8 +228,8 @@
       @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" )
         @unless($list_type === "shelf" && $is_packing_list == true)
           @php
-            $prod_id = $item['Item']['ItemID'];
-            $cat_id = $item['Item']['CategoryID'];
+            $prod_id = $detail['Item']['ItemID'];
+            $cat_id = $detail['Item']['CategoryID'];
           @endphp
 
           @if(in_array($cat_id, $phone_cooler_array))
@@ -295,9 +288,10 @@
       
         @unless($list_type === "cooler" && $is_packing_list == true)
           @php
-            $prod_id = $item['Item']['ItemID'];
-            $cat_id = $item['Item']['CategoryID'];
+            $prod_id = $detail['Item']['ItemID'];
+            $cat_id = $detail['Item']['CategoryID'];            
           @endphp
+
 
           @if(!in_array($cat_id, $phone_cooler_array))
             @php
@@ -319,7 +313,6 @@
                   @if($has_instruction)
                     <ul>
                       @foreach($phoneOrder[0]['Details'] as $instructionSearch)
-
                         @if($instructionSearch['ItemLineNumber'] === $lineNumber)
                         
                           @php
@@ -349,10 +342,6 @@
       @endunless
     @endforeach
     
-    @if($customer_note)
-      <strong>Note:</strong><br>
-      {{ $customer_note }}
-    @endif
     <br>
     <span style="font-size: 0.875rem; font-weight:bold; padding: 1.5rem 0;">{{ $bag_details }}</span>
     <br><br>
