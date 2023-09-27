@@ -225,7 +225,7 @@
     </div>
 
     @foreach ($phoneOrder[0]['Details'] as $detail )                                          
-      @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" )
+      @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" || $detail['Item']['CategoryID'] == "70" )
         @unless($list_type === "shelf" && $is_packing_list == true)
           @php
             $prod_id = $detail['Item']['ItemID'];
@@ -284,7 +284,7 @@
     @endforeach
     
     @foreach ($phoneOrder[0]['Details'] as $detail )                                          
-      @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" )
+      @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" || $detail['Item']['CategoryID'] == "70" )
       
         @unless($list_type === "cooler" && $is_packing_list == true)
           @php
@@ -330,7 +330,7 @@
                           @if($instruction_desc != '')
                             <li>{{ $instruction_desc }}</li> 
                           @endif
-                        @endif                                    
+                        @endif
                       @endforeach
                     </ul>
                   @endif
@@ -346,7 +346,7 @@
     <span style="font-size: 0.875rem; font-weight:bold; padding: 1.5rem 0;">{{ $bag_details }}</span>
     <br><br>
     @php barcode::code39($barcode, 'app/uploads/barcodes/'.$barcode.'.png'); @endphp  
-    <img src="/app/uploads/barcodes/{{ $barcode  }}.png" />
+    <img src="/app/uploads/barcodes/{{ $barcode }}.png" />
     <div class="page-break"></div>
   </div>
 </div>

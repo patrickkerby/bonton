@@ -240,7 +240,7 @@ $sorted_orders = array();
       $breadclub_id_list = array();
     
       if($is_today_breadclub) {
-        
+
         // Limit the list of bread club orders to only those that chose a pickup day equal to the day picked on page. If the date on page is even a breadclub day to begin with
         if ($bread_club_results) {      
           foreach ($bread_club_results as $order_id) {
@@ -435,7 +435,7 @@ $sorted_orders = array();
                 if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
                   $has_instruction = TRUE;
                 }
-                if($detail['Item']['CategoryID'] === "70") {
+                if($detail['Item']['CategoryID'] == "70") {
                   $bag_details = $detail['Item']['ItemName'];
                 }
                 else {

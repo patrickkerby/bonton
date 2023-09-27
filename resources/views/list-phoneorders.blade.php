@@ -118,10 +118,8 @@ class barcode {
           if($jsonData) {
             $jsonDataArray[] = json_decode($jsonString, true);              
           }          
-        } 
-                        
+        }  
       @endphp
-      
 
       <table id="lists" class="display">
         <thead>
@@ -159,17 +157,14 @@ class barcode {
               $has_ManualDesc = false;
               $barcode = 'T'.$phoneOrder[0]['TxID'];
               $daily_phone_order_number++;
-              $hasPaid = $phoneOrder[0]['Tenders'];              
-
+              $hasPaid = $phoneOrder[0]['Tenders'];
+              $bag_details = "";              
               foreach ($phoneOrder[0]['Details'] as $detail ) {                                
                 if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
                   $has_instruction = TRUE;
                 }
-                if($detail['Item']['CategoryID'] === "70") {
-                  $bag_details = $detail['Item']['ItemName'];
-                }
-                else {
-                  $bag_details = "no bag details";
+                if($detail['Item']['CategoryID'] == "70") {
+                  $bag_details = $detail['Item']['ItemName'];                  
                 }
                 if(in_array("Edmonton Delivery", $detail['Item'])) {
                   $is_delivery = TRUE;
@@ -204,7 +199,7 @@ class barcode {
                 </td>
                 <td>POS - {{ $phoneOrder[0]['TxID'] }}</td>
                 <td>{{ $phoneOrder[0]['Customer']['Phone'] }}</td>
-                <td>@if($bag_details) {{ $bag_details }} @endif</td>
+                <td>{{ $bag_details }}</td>
                 <td class="location"><p class="timeslot">{{ $pickupTimeSlot }}</p></td>
                 <td class="location">
                   {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
