@@ -224,7 +224,9 @@
       <strong>Order #:</strong> POS - {{ $phoneOrder[0]['TxID'] }}<br> 
       @if($hasPaid)
         <strong>Pre-Paid</strong>
-      @endif
+      @else
+        <strong>Requires Payment</strong>
+      @endif        
     </div>
 
     @foreach ($phoneOrder[0]['Details'] as $detail )                                          

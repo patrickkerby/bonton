@@ -503,6 +503,8 @@
           <strong>Order #:</strong> POS - {{ $phoneOrder[0]['TxID'] }}<br>
           @if($hasPaid)
             <strong>Pre-Paid</strong><br>
+          @else
+            <strong>Requires Payment</strong>
           @endif
         </div>
       
