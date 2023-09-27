@@ -356,8 +356,8 @@
     <br>
     <span style="font-size: 0.875rem; font-weight:bold; padding: 1.5rem 0;">{{ $bag_details }}</span>
     <br><br>
-    @php barcode::code39($barcode, 'app/uploads/barcodes/'.$barcode.'.png'); @endphp  
-    <img src="@asset("images/barcodes/$barcode.png")" />
+    @php barcode::code39($barcode, '/app/uploads/barcodes/'.$barcode.'.png'); @endphp  
+    <img src="/app/uploads/barcodes/{{ $barcode  }}.png" />
     <div class="page-break"></div>
   </div>
 </div>
