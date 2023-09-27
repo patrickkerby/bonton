@@ -135,7 +135,7 @@ class barcode {
             <th>Notes</th>
             {{-- <th>Order Date</th> --}}
             <th>Pickup Date</th>
-            {{-- <th>Payment</th> --}}
+            <th>Payment</th>
             <th>Delivery/Pickup</th>
             <th>Details</th>
           </tr>
@@ -232,7 +232,7 @@ class barcode {
                 <td>{{ $phoneOrder[0]['Notes'] }}</td>
                 {{-- <td>{{ $orderDate }}</td> --}}
                 <td>{{ $pickupDate }}</td>
-                {{-- <td>@if($hasPaid) Pre-paid @else - @endif</td> --}}
+                <td>@if($hasPaid) Pre-paid @else - @endif</td>
                 <td>@if($is_delivery) Delivery @else Pickup @endif</td>
                 <td>
                   <table style="width: 100%;">
