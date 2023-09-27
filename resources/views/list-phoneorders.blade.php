@@ -109,10 +109,10 @@ class barcode {
         $seen_phone_ids = [];
 
         $jsonDataArray = array();
-        foreach (new DirectoryIterator('app/ftpfiles') as $fileInfo) {
+        foreach (new DirectoryIterator('app/uploads/pos') as $fileInfo) {
           if($fileInfo->isDot()) continue;
             $path = $fileInfo->getFilename();
-            $jsonString = file_get_contents('app/ftpfiles/'.$path);            
+            $jsonString = file_get_contents('app/uploads/pos/'.$path);            
             $jsonData = json_decode($jsonString, true);
             
           if($jsonData) {
