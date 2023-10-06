@@ -142,7 +142,6 @@ class barcode {
         </thead>
         <tbody>
           @foreach($jsonDataArray as $phoneOrder)
-          
             @php
               //Dates
               $orderDateRaw = $phoneOrder[0]['OpenTime'];
@@ -173,7 +172,7 @@ class barcode {
             @endphp
             {{-- @if($selectedDateComparisonFormat == $pickupDate ) --}}
 
-            @if($selectedDateComparisonFormat && !$is_delivery)
+            @if($selectedDateComparisonFormat)
               @php
                 if (in_array($phoneOrder[0]['TxID'], $seen_phone_ids)) {
                   continue;

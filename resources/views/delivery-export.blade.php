@@ -34,6 +34,11 @@
   $date_selector_date = get_field('list_date');
   $is_packing_list = false;
   $is_storetodoor = true;
+  date_default_timezone_set('MST');
+  $dateformat = "l, F j, Y";
+  $pickupdate_object = DateTime::createFromFormat($dateformat, $date_selector_date);      
+  $selectedDateComparisonFormat = $pickupdate_object->format('Y-m-d'); //This is to compare agains POS date format
+
 
   //function for creating unique arrays from a key/value set
   function unique_multidim_array($array, $key) {
@@ -52,12 +57,11 @@
 }
 
 // Users query
-$user_ids = (array) get_users([
-      'role'       => 'customer',
-      'number'     => -1,
-      'fields'     => 'ID',
+  $user_ids = (array) get_users([
+    'role'       => 'customer',
+    'number'     => -1,
+    'fields'     => 'ID',
   ]);
-
 
 // Get order data!
   $query = new WC_Order_Query( array(  
@@ -244,9 +248,88 @@ $cooler_list = array(  '22', '53', '51','107','103' );
                   @include('partials.print-individual-shipping')
                 </td>
               </tr>   
-            {{-- @endif --}}
-     
+            {{-- @endif --}}     
           @endforeach
+
+          {{-- Begin phone orders for delivery --}}
+          @php
+            $seen_phone_ids = [];
+
+            //phone orders: get data from ftp folder created by POS software
+            $jsonDataArray = array();
+            foreach (new DirectoryIterator('app/uploads/pos') as $fileInfo) {
+              if($fileInfo->isDot()) continue;
+                $path = $fileInfo->getFilename();
+                $jsonString = file_get_contents('app/uploads/pos/'.$path);            
+                $jsonData = json_decode($jsonString, true);
+                
+              if($jsonData) {
+                $jsonDataArray[] = json_decode($jsonString, true);              
+              }          
+            } 
+
+          @endphp
+          @foreach($jsonDataArray as $phoneOrder)
+          @php
+            //Dates            
+            $pickupDateRaw = $phoneOrder[0]['RequestTime'];
+            $pickupDate = substr($pickupDateRaw, 0, 10);
+            
+            //General Variables
+            $is_delivery = false;
+            $has_instruction = false;
+            $has_ManualDesc = false;
+            $barcode = 'T'.$phoneOrder[0]['TxID'];
+            $hasPaid = $phoneOrder[0]['Tenders'];              
+
+            foreach ($phoneOrder[0]['Details'] as $detail ) {                                
+              if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
+                $has_instruction = TRUE;
+              }
+              if(in_array("Edmonton Delivery", $detail['Item'])) {
+                $is_delivery = TRUE;
+              }
+            }              
+          @endphp
+          
+          @if($selectedDateComparisonFormat == $pickupDate && $is_delivery )
+            @php
+              if (in_array($phoneOrder[0]['TxID'], $seen_phone_ids)) {
+                continue;
+              }
+              $seen_phone_ids[] = $phoneOrder[0]['TxID'];
+
+              $email = $phoneOrder[0]['Customer']['EMail'];
+              $phone = $phoneOrder[0]['Customer']['Phone'];
+              $postal = $phoneOrder[0]['Customer']['Postal'];
+              $province = $phoneOrder[0]['Customer']['Province'];
+              $city = $phoneOrder[0]['Customer']['City'];
+              $address = $phoneOrder[0]['Customer']['Address'];
+            @endphp
+            <tr valign="top">              
+              <td class="name"><strong>{{ $phoneOrder[0]['Customer']['AccountName'] }}</strong></td>
+              <td>
+                
+              </td>
+              <td class="">
+                @if($address) {{ $address }} @endif
+              </td>
+              <td>@if($city) {{ $city }} @endif</td>
+              <td>@if($province) {{ $province }} @endif</td>
+              {{-- <td>Canada</td> --}}
+              <td>@if($postal) {{ $postal }} @endif</td>
+              <td class="email">@if($email) {{ $email }} @endif</td>
+              <td class="phone">@if($phone) {{ $phone }} @endif</td>
+              <td></td>
+              <td class="notes"></td>
+              <td class="d-print-none">
+                @include('partials.print-individual-shipping')
+              </td>
+
+            </tr>
+          @endif
+        @endforeach
+
         </tbody>
       </table>
       

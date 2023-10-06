@@ -29,11 +29,13 @@ else {
         $cooler_count = 0;
         $shelf_count = 0;
         $daily_order_number++;
-
     @endphp
     <style>
       @media print {
-        .page-break	{ display: block; page-break-after: always; }
+        .page-break	{ 
+          display: block; 
+          page-break-after: always;
+        }
         @page {
           margin: 0;
           padding: 0!important;
@@ -107,7 +109,6 @@ else {
         .receiptPrint .meta:before {
           opacity: 1 !important;
         }
-  
         .receiptPrint .date {
           position: absolute;
           top: 0;
@@ -117,7 +118,6 @@ else {
           width: 1.5in;
           font-weight: 900;
         }
-  
         .receiptPrint .item_content {
           width: 85%;   
           padding: 3mm 0;
@@ -142,7 +142,6 @@ else {
         .receiptPrint .customer {
           margin-bottom: 1rem;
         }
-
         .cooler .shelf.print-order,
         .shelf .cooler.print-order {
           display: none;
@@ -162,137 +161,130 @@ else {
         <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
         <strong>Phone:</strong> {{ $phone }}<br>
         <strong>Order #:</strong> {{ $order_number }}<br>
-        @if ($is_storetodoor)
-      @endif
       </div>
           
-     
-      @foreach ($details->get_items() as $item_id => $item)
-      @php                      
-            $prod_id = $item->get_product_id(); 
-            $quantity = $item->get_quantity();
-            $prod_quantity = $item->get_quantity();
+        @php                      
+          $prod_id = $item->get_product_id(); 
+          $quantity = $item->get_quantity();
+          $prod_quantity = $item->get_quantity();
 
-            $product_name = $item->get_name();
-            $product_meta_objects = $item->get_meta_data();
-            
-            $cooler_override = $item->get_meta( '_cooler', true );
+          $product_name = $item->get_name();
+          $product_meta_objects = $item->get_meta_data();
+          
+          $cooler_override = $item->get_meta( '_cooler', true );
 
-            // Check to see if line items have been refunded
-            $order = wc_get_order( $order_number );
-            $order_refunds = $order->get_refunds();  
-            $refund_item_id = "";
-            $total_qty = $prod_quantity;
-            if($order_refunds) {
-              foreach( $order_refunds as $refund ){
-                foreach( $refund->get_items() as $item_id => $item ){
+          // Check to see if line items have been refunded
+          $order = wc_get_order( $order_number );
+          $order_refunds = $order->get_refunds();  
+          $refund_item_id = "";
+          $total_qty = $prod_quantity;
+          if($order_refunds) {
+            foreach( $order_refunds as $refund ){
+              foreach( $refund->get_items() as $item_id => $item ){
 
-                    ## --- Using WC_Order_Item_Product methods --- ##
-                    $refund_item_id = $item -> get_product_id();
-                    $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
-                    $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
-                }
+                  ## --- Using WC_Order_Item_Product methods --- ##
+                  $refund_item_id = $item -> get_product_id();
+                  $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
+                  $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
               }
-
-              if($prod_id == $refund_item_id) {
-                $total_qty = $prod_quantity + $refunded_quantity;
-              }    
             }
-            
-            @endphp
-          @unless($total_qty == 0)
-            @if(in_array($prod_id, $cooler_array))
-              @php
-                $cooler_count++;
-              @endphp
 
-              @if($cooler_count == 1)
-                <span class="storage">Cooler Items</span>
-              @endif
-              
-              <div class="items">
-                <div class="item_content">
-                  <strong>{{ $product_name }}</strong><br>                          
-                  @foreach ( $product_meta_objects as $meta )
-                    @unless(in_array($meta->key, $hidden_meta))
-                      @if(!is_array($meta->value))
-                        <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
-                      @endif                      
-                    @endunless
-                  @endforeach
-                </div>
+            if($prod_id == $refund_item_id) {
+              $total_qty = $prod_quantity + $refunded_quantity;
+            }    
+          }  
+        @endphp
+        @unless($total_qty == 0)
+          @if(in_array($prod_id, $cooler_array))
+            @php
+              $cooler_count++;
+            @endphp
+
+            @if($cooler_count == 1)
+              <span class="storage">Cooler Items</span>
+            @endif
+            
+            <div class="items">
+              <div class="item_content">
+                <strong>{{ $product_name }}</strong><br>                          
+                @foreach ( $product_meta_objects as $meta )
+                  @unless(in_array($meta->key, $hidden_meta))
+                    @if(!is_array($meta->value))
+                      <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
+                    @endif                      
+                  @endunless
+                @endforeach
+              </div>
+              <div class="qty"><span>{{ $quantity }}</span></div> 
+            </div>
+          @endif
+        @endunless
+      @endforeach
+        
+      @foreach ($details->get_items() as $item_id => $item)
+        @php                                         
+          $prod_id = $item->get_product_id(); 
+          $quantity = $item->get_quantity();
+          $prod_quantity = $item->get_quantity();
+
+          $product_name = $item->get_name();
+          $product_meta_objects = $item->get_meta_data();
+          
+          $cooler_override = $item->get_meta( '_cooler', true );
+
+          // Check to see if line items have been refunded
+          $order = wc_get_order( $order_number );
+          $order_refunds = $order->get_refunds();  
+          $refund_item_id = "";
+          $total_qty = $prod_quantity;
+          if($order_refunds) {
+            foreach( $order_refunds as $refund ){
+              foreach( $refund->get_items() as $item_id => $item ){
+                ## --- Using WC_Order_Item_Product methods --- ##
+                $refund_item_id = $item -> get_product_id();
+                $refunded_quantity = $item->get_quantity(); // Quantity: zero or negative integer
+                $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
+              }
+            }
+
+            if($prod_id == $refund_item_id) {
+              $total_qty = $prod_quantity + $refunded_quantity;
+            }    
+          }
+
+        @endphp
+        @unless($total_qty == 0)
+          @if(!in_array($prod_id, $cooler_array))
+            @php
+              $shelf_count++;
+            @endphp     
+
+            @if($shelf_count == 1)
+              <span class="storage">Shelf Items</span>
+            @endif
+
+            <div class="items">
+              <div class="item_content">
+                <strong>{{ $product_name }}</strong><br>                          
+                @foreach ( $product_meta_objects as $meta )
+                  @unless(in_array($meta->key, $hidden_meta))
+                    @if(!is_array($meta->value))
+                      <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
+                    @endif                      
+                  @endunless
+                @endforeach
                 <div class="qty"><span>{{ $quantity }}</span></div> 
               </div>
-            @endif
-          @endunless
+            </div>            
+          @endif
+        @endunless
       @endforeach
         
-        @foreach ($details->get_items() as $item_id => $item)
-          @php                                         
-            $prod_id = $item->get_product_id(); 
-            $quantity = $item->get_quantity();
-            $prod_quantity = $item->get_quantity();
-
-            $product_name = $item->get_name();
-            $product_meta_objects = $item->get_meta_data();
-            
-            $cooler_override = $item->get_meta( '_cooler', true );
-
-            // Check to see if line items have been refunded
-            $order = wc_get_order( $order_number );
-            $order_refunds = $order->get_refunds();  
-            $refund_item_id = "";
-            $total_qty = $prod_quantity;
-            if($order_refunds) {
-              foreach( $order_refunds as $refund ){
-                foreach( $refund->get_items() as $item_id => $item ){
-
-                    ## --- Using WC_Order_Item_Product methods --- ##
-                    $refund_item_id = $item -> get_product_id();
-                    $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
-                    $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
-                }
-              }
-
-              if($prod_id == $refund_item_id) {
-                $total_qty = $prod_quantity + $refunded_quantity;
-              }    
-            }
-
-          @endphp
-          @unless($total_qty == 0)
-            @if(!in_array($prod_id, $cooler_array))
-              @php
-                $shelf_count++;
-              @endphp     
-
-              @if($shelf_count == 1)
-                <span class="storage">Shelf Items</span>
-              @endif
-
-              <div class="items">
-                <div class="item_content">
-                  <strong>{{ $product_name }}</strong><br>                          
-                  @foreach ( $product_meta_objects as $meta )
-                    @unless(in_array($meta->key, $hidden_meta))
-                      @if(!is_array($meta->value))
-                        <span class="{!! $meta->key !!} meta"> {!! $meta->value !!}</span>
-                      @endif                      
-                    @endunless
-                  @endforeach
-                  <div class="qty"><span>{{ $quantity }}</span></div> 
-                </div>
-              </div>            
-            @endif
-          @endunless
-      @endforeach
-        
-        @if($customer_note)
-          <strong>Note:</strong><br>
-          {{ $customer_note }}
-        @endif
+      @if($customer_note)
+        <strong>Note:</strong><br>
+        {{ $customer_note }}
+      @endif
       
-    
     <div class="page-break"></div>
     </div>
   </div>
