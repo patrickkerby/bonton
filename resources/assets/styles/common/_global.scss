@@ -377,3 +377,9 @@ p.demo_store,
 .woocommerce-page .col2-set .col-2 {
   max-width: 48%;
 }
+
+@media print {
+  .usfw-wrapper {
+    display: none;
+  }
+}
