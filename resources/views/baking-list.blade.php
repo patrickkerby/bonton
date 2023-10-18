@@ -13,6 +13,8 @@
   $date_selector_date = get_field('list_date');
   $pickupdate_object = DateTime::createFromFormat($dateformat, $date_selector_date);
   $selectedDateComparisonFormatted = $pickupdate_object->format('Y-m-d'); //This is to compare agains POS date format
+  $prod = array();
+  $phone_prod = array();
 
   //Get phone orders data
   $seen_phone_ids = [];
@@ -61,6 +63,7 @@
 
   //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();
+  $filtered_phone_orders = array();
 
   foreach ( $results as $daily_results ) {
     $order_id = $daily_results->get_id();
