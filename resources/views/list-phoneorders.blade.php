@@ -5,15 +5,15 @@
 @extends('layouts.lists')
 
 @php
-/*
- * Barcode Encoder tool
- * (C) 2008, Eric Stern
- * http://www.firehed.net, http://www.eric-stern.com
- *
- * This code may be re-used or re-distributed in any application, commercial
- * or non-commercial, free of charge provided that this credit remains intact.
- *
- */
+  /*
+  * Barcode Encoder tool
+  * (C) 2008, Eric Stern
+  * http://www.firehed.net, http://www.eric-stern.com
+  *
+  * This code may be re-used or re-distributed in any application, commercial
+  * or non-commercial, free of charge provided that this credit remains intact.
+  *
+  */
 
 class barcode {
 	protected static $code39 = array(
@@ -39,7 +39,6 @@ class barcode {
 	' ' => 'bwwwbbbwbwbbbwbw','*' => 'bwwwbwbbbwbbbwbw',
 	'$' => 'bwwwbwwwbwwwbwbw','/' => 'bwwwbwwwbwbwwwbw',
 	'+' => 'bwwwbwbwwwbwwwbw','%' => 'bwbwwwbwwwbwwwbw');
-
 
   public static function code39($text, $filename=null, $height = 50, $widthScale = 1) {
   		if (!preg_match('/^[A-Z0-9-. $+\/%]+$/i', $text)) {
@@ -70,8 +69,6 @@ class barcode {
 			}
 		}
 
-		//16px per bar-set, halved, minus 6px per char, halved (5*length)
-		// $textcenter = $length * 5 * $widthScale;
 		$textcenter = ($length * 8 * $widthScale) - ($length * 3);
 		
 		imageString($barcode, 2, $textcenter, $height-13, $text, $black);
@@ -91,7 +88,6 @@ class barcode {
 @section('content')
   <div class="row">
     <div class="col-sm-12">
-
       @php
         $date_selector_date = get_field('list_date');
         // $date_selector_date = '31/08/2023';
@@ -133,7 +129,7 @@ class barcode {
             <th>Pickup</th>
             <th>Location</th>
             <th>Notes</th>
-            {{-- <th>Order Date</th> --}}
+            <th>Order Date</th>
             <th>Pickup Date</th>
             <th>Payment</th>
             <th>Delivery/Pickup</th>
@@ -229,7 +225,7 @@ class barcode {
                     {!! $order_location !!}
                 </td>
                 <td>{{ $phoneOrder[0]['Notes'] }}</td>
-                {{-- <td>{{ $orderDate }}</td> --}}
+                <td>{{ $orderDate }}</td>
                 <td>{{ $pickupDate }}</td>
                 <td>@if($hasPaid) Pre-paid @else - @endif</td>
                 <td>@if($is_delivery) Delivery @else Pickup @endif</td>
