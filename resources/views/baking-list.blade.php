@@ -15,6 +15,7 @@
   $selectedDateComparisonFormatted = $pickupdate_object->format('Y-m-d'); //This is to compare agains POS date format
   $prod = array();
   $phone_prod = array();
+  $warning = false;
 
   //Get phone orders data
   $seen_phone_ids = [];
@@ -142,34 +143,34 @@
 
         //size, option, topping
         if (!empty($option) && !empty($product_size) && !empty($topping)) {
-          $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
         }
         //option, topping
         if (!empty($option) && empty($product_size) && !empty($topping)) {
-          $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
         }
         //size, topping
         if (empty($option) && !empty($product_size) && !empty($topping)) {
-          $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
         }
         //option, size
         if (!empty($option) && !empty($product_size)) {
-          $phone_prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $phone_prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
         }
         //option
         elseif (!empty($option) && empty($product_size)) {
-          $phone_prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $phone_prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
         }
         //size
         elseif (!empty($product_size) && empty($option)) {
-          $phone_prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $phone_prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
         }
         else {
-          $phone_prod[] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $phone_prod[] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
         }                
       }      
       else {
-        $phone_prod[] = array('name' => $prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+        $phone_prod[] = array('name' => $prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => true); 
       } 
     }
   }
@@ -250,34 +251,34 @@
         if (!empty($variation_id)) {  
           //size, option, topping
           if (!empty($option) && !empty($product_size) && !empty($topping)) {
-            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
           }
           //option, topping
           if (!empty($option) && empty($product_size) && !empty($topping)) {
-            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
           }
           //size, topping
           if (empty($option) && !empty($product_size) && !empty($topping)) {
-            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
           }
           //option, size
           if (!empty($option) && !empty($product_size)) {
-            $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
           }
           //option
           elseif (!empty($option) && empty($product_size)) {
-            $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
           }
           //size
           elseif (!empty($product_size) && empty($option)) {
-            $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
           }
           else {
-            $prod[] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+            $prod[] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
           }
         }
         else {
-          $prod[] = array('name' => $prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => $categories, 'category_parent' => $parent_cat_id); 
+          $prod[] = array('name' => $prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false); 
         }
       }
     }
@@ -309,7 +310,8 @@
           'category' => $aArray['category'],
           'category_parent' => $aArray['category_parent'],
           'product_id' => $aArray['product_id'],
-          'variation_id' => $aArray['variation_id']
+          'variation_id' => $aArray['variation_id'],
+          'warning' => false
           );
       }
     }
@@ -334,7 +336,8 @@
           'category' => $aArray['category'],
           'category_parent' => $aArray['category_parent'],
           'product_id' => $aArray['product_id'],
-          'variation_id' => $aArray['variation_id']
+          'variation_id' => $aArray['variation_id'],
+          'warning' => $aArray['warning']
         );
       }
     }
@@ -359,13 +362,12 @@
           'category' => $aArray['category'],
           'category_parent' => $aArray['category_parent'],
           'product_id' => $aArray['product_id'],
-          'variation_id' => $aArray['variation_id']
+          'variation_id' => $aArray['variation_id'],
+          'warning' => $aArray['warning']
         );
       }
     }
   }
-
-
 
 @endphp
 
@@ -391,9 +393,14 @@
               $variation_id = $item['variation_id'];
               $category_parent = $item['category_parent'];
               $total_quantity = $item['total_quantity'];
+              $warning = $item['warning'];
             @endphp
             <tr>
-              <td>{!! $name !!} - <em><strong>Merged</strong></em></td>
+              <td>
+                @if($warning)
+                  <strong>(!)</strong>
+                @endif
+                {!! $name !!}</td>
               <td>{{ $product_id }} / {{ $variation_id }}</td>
               <td>
                 @if (strpos($category_parent, '94') !== false)
@@ -412,68 +419,6 @@
               <td>{{ $total_quantity }}</td>
             </tr>
           @endforeach
-
-          {{--
-          @foreach ($aSortedArray_Phone as $item )
-            @php 
-             $name = $item['name'];
-              $category = $item['category'];
-              $product_id = $item['product_id'];
-              $variation_id = $item['variation_id'];
-              $category_parent = $item['category_parent'];
-              $total_quantity = $item['total_quantity'];
-            @endphp
-            <tr>
-              <td>{!! $name !!} - <em><strong>Phone</strong></em></td>
-              <td>{{ $product_id }}</td>
-              <td>
-                @unless(
-                  $category == "picnic" || 
-                  $category == "charcuterie" ||
-                  $category == "date night" ||
-                  $category == "gift ideas"
-                )
-                  {!! $category !!}
-                @endunless
-              </td>
-              <td>{{ $total_quantity }}</td>
-            </tr>
-          @endforeach --}}
-
-          {{-- Let's merge this bitch! --}}
-          {{-- @foreach ($aSortedArray_Merged as $item )
-            @php 
-              $name = $item['name'];
-              $category = $item['category'];
-              $product_id = $item['product_id'];
-              $variation_id = $item['variation_id'];
-              $category_parent = $item['category_parent'];
-              $total_quantity = $item['total_quantity'];           
-            @endphp
-            @foreach ($aSortedArray_Merged as $merged_item)
-              @php
-                  $merged_product_id = $merged_item['product_id'];
-                  $merged_total_quantity = $merged_item['total_quantity'];
-              @endphp
-              @if ($merged_product_id == $product_id)
-              <tr>
-                <td> {!! $name !!} - <em><strong>Merged</strong></em></td>
-                <td>{{ $product_id }}</td>
-                <td>
-                  @unless(
-                    $category == "picnic" || 
-                    $category == "charcuterie" ||
-                    $category == "date night" ||
-                    $category == "gift ideas"
-                  )
-                    {!! $category !!}
-                  @endunless
-                </td>
-                <td>{{ $total_quantity }}</td>
-              </tr>
-              @endif
-            @endforeach
-          @endforeach --}}
         </tbody>
       </table>
     </div><br><br><br><br>
@@ -497,9 +442,14 @@
               $variation_id = $item['variation_id'];
               $category_parent = $item['category_parent'];
               $total_quantity = $item['total_quantity'];
+              $warning = $item['warning'];
             @endphp
             <tr>
-              <td>{!! $name !!} - <em><strong>Phone</strong></em></td>
+              <td>
+                @if($warning)
+                  <strong>(!)</strong>
+                @endif
+                {!! $name !!}</td>
               <td>{{ $product_id }} / {{ $variation_id }}</td>
               <td>
                 @if (strpos($category_parent, '94') !== false)
@@ -543,7 +493,7 @@
               $total_quantity = $item['total_quantity'];
             @endphp
             <tr>
-              <td>{!! $name !!} - <em><strong>Web</strong></em></td>
+              <td>{!! $name !!}</td>
               <td>{{ $product_id }} / {{ $variation_id }}</td>
               <td>
                 @if (strpos($category_parent, '94') !== false)
