@@ -94,7 +94,7 @@
       continue;
     }
     $seen_phone_ids[] = $details[0]['TxID']; 
-
+    
     foreach ($details[0]['Details'] as $item) {
       $cat_id = $item['Item']['CategoryID'];
       $cat_name = $item['Item']['CategoryName'];
@@ -103,6 +103,7 @@
       $itemNumber = $item['Item']['ItemNumber'];
       $prod_object = wc_get_product($itemNumber);
       $total_qty = $prod_quantity;
+      $prod_id = '';
 
 
       if($cat_id == "123" || $cat_id == "163" || $item['Item']['DepartmentName'] === "Modifier" ) {
@@ -401,7 +402,15 @@
                   <strong>(!)</strong>
                 @endif
                 {!! $name !!}</td>
-              <td>{{ $product_id }} / {{ $variation_id }}</td>
+              <td>
+                @if($variation_id)
+                  {{ $product_id }} / {{ $variation_id }}
+                @elseif($product_id)
+                  {{ $product_id }} /
+                @else
+                  --
+                @endif
+              </td>
               <td>
                 @if (strpos($category_parent, '94') !== false)
 
@@ -450,7 +459,15 @@
                   <strong>(!)</strong>
                 @endif
                 {!! $name !!}</td>
-              <td>{{ $product_id }} / {{ $variation_id }}</td>
+              <td>
+                @if($variation_id)
+                  {{ $product_id }} / {{ $variation_id }}
+                @elseif($product_id)
+                  {{ $product_id }} /
+                @else
+                  --
+                @endif
+              </td>
               <td>
                 @if (strpos($category_parent, '94') !== false)
 
