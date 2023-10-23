@@ -33,11 +33,21 @@ if ($is_wholesale_user) {
 	$delivery_available = true;
 }
 
+foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+   $cart_product = $cart_item['data'];
+   $cart_product_id = $cart_item['product_id'];
+
+	 if ($cart_product_id === 2045) {
+		// $delivery_available = false;
+		$icecream_conflict = true;
+	 }
+}
+
 if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2022-08-13") {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2022-08-13" && !$icecream_conflict) {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -48,15 +58,9 @@ if($session_date_object) {
 	}
 }
 
-
-foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-   $cart_product = $cart_item['data'];
-   $cart_product_id = $cart_item['product_id'];
-
-	 if ($cart_product_id === 2045) {
-		// $delivery_available = false;
-		$icecream_conflict = true;
-	 }
+if($icecream_conflict) {
+	delete_user_meta( get_current_user_id(), 'shipping_method' );
+	WC()->session->__unset( 'chosen_shipping_methods' );
 }
 
 
@@ -69,6 +73,7 @@ foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 			<ul id="shipping_method" class="woocommerce-shipping-methods">
 				<?php foreach ( $available_methods as $method ) : ?>
 
+				
 				@if($delivery_available)
 					<li>
 						<?php
