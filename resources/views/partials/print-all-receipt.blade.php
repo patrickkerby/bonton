@@ -318,9 +318,9 @@
 @foreach($jsonDataArray as $phoneOrder)
   @php 
     //Dates
-    $orderDateRaw = $phoneOrder[0]['OpenTime'];
+    $orderDateRaw = $phoneOrder['OpenTime'];
     $orderDate = substr($orderDateRaw, 0, 10);
-    $pickupDateRaw = $phoneOrder[0]['RequestTime'];
+    $pickupDateRaw = $phoneOrder['RequestTime'];
     $pickupDate = substr($pickupDateRaw, 0, 10);
     $pickupTime = substr($pickupDateRaw, 11, 2); 
     
@@ -328,10 +328,10 @@
     $is_delivery = false;
     $has_instruction = false;
     $has_ManualDesc = false;
-    $barcode = 'T'.$phoneOrder[0]['TxID'];
-    $hasPaid = $phoneOrder[0]['Tenders'];              
+    $barcode = 'T'.$phoneOrder['TxID'];
+    $hasPaid = $phoneOrder['Tenders'];              
 
-    foreach ($phoneOrder[0]['Details'] as $detail ) {                                
+    foreach ($phoneOrder['Details'] as $detail ) {                                
       if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
         $has_instruction = TRUE;
       }
@@ -348,10 +348,10 @@
   @endphp
   @if($selectedDateComparisonFormat == $pickupDate && !$is_delivery )
     @php
-      if (in_array($phoneOrder[0]['TxID'], $seen_phone_ids)) {
+      if (in_array($phoneOrder['TxID'], $seen_phone_ids)) {
         continue;
       }
-      $seen_phone_ids[] = $phoneOrder[0]['TxID'];                                
+      $seen_phone_ids[] = $phoneOrder['TxID'];                                
           
       $daily_phone_order_number++;
 
@@ -365,7 +365,7 @@
         $pickupTimeSlot = "Afternoon";
       }   
     @endphp
-    <div id="order-{{ $phoneOrder[0]['TxID'] }}" class="">
+    <div id="order-{{ $phoneOrder['TxID'] }}" class="">
       @php
         $cooler_count = 0;
         $shelf_count = 0;
@@ -503,12 +503,12 @@
           @endif 
         <h1>{{ $daily_phone_order_number }}</h1>
         <div class="customer">
-          <strong>{{ $phoneOrder[0]['Customer']['AccountName'] }}</strong><br>
-          <strong>Phone:</strong> {{ $phoneOrder[0]['Customer']['Phone'] }}<br>
-          <strong>Order #:</strong> POS - {{ $phoneOrder[0]['TxID'] }}<br>                 
+          <strong>{{ $phoneOrder['Customer']['AccountName'] }}</strong><br>
+          <strong>Phone:</strong> {{ $phoneOrder['Customer']['Phone'] }}<br>
+          <strong>Order #:</strong> POS - {{ $phoneOrder['TxID'] }}<br>                 
         </div>
       
-        @foreach ($phoneOrder[0]['Details'] as $detail )                                          
+        @foreach ($phoneOrder['Details'] as $detail )                                          
           @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" || $detail['Item']['CategoryID'] == "70" )
             @unless($list_type === "shelf" && $is_packing_list == true)
               @php
@@ -535,7 +535,7 @@
                     @endphp
                     @if($has_instruction)
                       <ul>
-                        @foreach($phoneOrder[0]['Details'] as $instructionSearch)
+                        @foreach($phoneOrder['Details'] as $instructionSearch)
 
                           @if($instructionSearch['ItemLineNumber'] === $lineNumber)
                           
@@ -566,7 +566,7 @@
           @endunless
         @endforeach
         
-        @foreach ($phoneOrder[0]['Details'] as $detail )                                          
+        @foreach ($phoneOrder['Details'] as $detail )                                          
           @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" || $detail['Item']['CategoryID'] == "70" )
           
             @unless($list_type === "cooler" && $is_packing_list == true)
@@ -594,7 +594,7 @@
                       @endphp
                       @if($has_instruction)
                         <ul>
-                          @foreach($phoneOrder[0]['Details'] as $instructionSearch)
+                          @foreach($phoneOrder['Details'] as $instructionSearch)
                             @if($instructionSearch['ItemLineNumber'] === $lineNumber)
                             
                               @php
