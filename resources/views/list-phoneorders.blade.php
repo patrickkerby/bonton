@@ -181,7 +181,6 @@ class barcode {
                 $has_instruction = false;
                 $has_ManualDesc = false;
                 $barcode = 'T'.$phoneOrder['TxID'];
-                $daily_phone_order_number++;
                 $hasPaid = $phoneOrder['Tenders'];
                 $bag_details = "";              
                 foreach ($phoneOrder['Details'] as $detail ) {                                
@@ -213,7 +212,9 @@ class barcode {
                   }
                   else {
                     $pickupTimeSlot = "Afternoon";
-                  }              
+                  }  
+                  $daily_phone_order_number++;
+            
                 @endphp
                 <tr valign="top">
                   <td>
