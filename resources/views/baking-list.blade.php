@@ -19,17 +19,35 @@
 
   //Get phone orders data
   $seen_phone_ids = [];
+  function removeUselessArrays($array) {
+    $newArray = [];
+    foreach ($array as $key => $value) {
+      if (is_array($value)) {
+          if (array_keys($value) === [ 0 ]) {
+              $newArray[$key] = removeUselessArrays($value);
+          } else {
+              $newArray[$key] = removeUselessArrays($value);
+          }
+      } else {
+          $newArray[$key] = $value;
+      }
+    }
+    return $newArray;
+  }
+
   $jsonDataArray = array();
   foreach (new DirectoryIterator('app/uploads/pos') as $fileInfo) {
     if($fileInfo->isDot()) continue;
       $path = $fileInfo->getFilename();
       $jsonString = file_get_contents('app/uploads/pos/'.$path);            
       $jsonData = json_decode($jsonString, true);
-      
-    if($jsonData) {
-      $jsonDataArray[] = json_decode($jsonString, true);              
-    }          
-  }  
+                  
+      if($jsonData) {
+        $jsonDataArray[] = json_decode($jsonString, true);              
+      }              
+  }
+
+  $jsonDataArray = array_merge(...$jsonDataArray); 
 
   //Normalize quantities into individual items based on package size
   function itemQuantity($package_size) {
@@ -77,7 +95,7 @@
 
   //Now do the same for phone orders
   foreach($jsonDataArray as $phoneOrder) {    
-    $pickupDateRaw = $phoneOrder[0]['RequestTime'];
+    $pickupDateRaw = $phoneOrder['RequestTime'];
     $pickupDate = substr($pickupDateRaw, 0, 10);
 
     if($selectedDateComparisonFormatted == $pickupDate ) {
@@ -87,12 +105,12 @@
 
   //Get line item info from phone orders
   foreach($filtered_phone_orders as $details) {
-    if (in_array($details[0]['TxID'], $seen_phone_ids)) {
+    if (in_array($details['TxID'], $seen_phone_ids)) {
       continue;
     }
-    $seen_phone_ids[] = $details[0]['TxID']; 
+    $seen_phone_ids[] = $details['TxID']; 
     
-    foreach ($details[0]['Details'] as $item) {
+    foreach ($details['Details'] as $item) {
       $cat_id = $item['Item']['CategoryID'];
       $cat_name = $item['Item']['CategoryName'];
       $prod_quantity = $item['Qty'];
@@ -138,6 +156,9 @@
         }
         $categories = implode(', ', $category_names);            
         $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
+
+        $item_quantity = call_user_func('itemQuantity', $package_size);
+        $total_qty = $item_quantity * $total_qty;
 
         //size, option, topping
         if (!empty($option) && !empty($product_size) && !empty($topping)) {

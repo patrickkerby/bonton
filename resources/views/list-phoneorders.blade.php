@@ -104,11 +104,8 @@ class barcode {
 
         $seen_phone_ids = [];
 
-         
-
         function removeUselessArrays($array) {
             $newArray = [];
-
             foreach ($array as $key => $value) {
                 if (is_array($value)) {
                     if (array_keys($value) === [ 0 ]) {
