@@ -138,20 +138,22 @@
         $category_names = array();
         $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
 
-        foreach ($term_obj_list as $term) {
-          $baking_exlusion = get_field('baking_list_exclusion', 'product_cat_' . $term->term_id); //Gets the ACF field using term_id
-          
-          //Create an array of IDs to be excluded
-          if($baking_exlusion == true) {
-            array_push($excluded_category_ids, $term->term_id);
-          }
+        if ($term_obj_list) {
+          foreach ($term_obj_list as $term) {
+            $baking_exlusion = get_field('baking_list_exclusion', 'product_cat_' . $term->term_id); //Gets the ACF field using term_id
+            
+            //Create an array of IDs to be excluded
+            if($baking_exlusion == true) {
+              array_push($excluded_category_ids, $term->term_id);
+            }
 
-          //Remove the duplicates created by the loop
-          $excluded_categories = array_unique($excluded_category_ids);
+            //Remove the duplicates created by the loop
+            $excluded_categories = array_unique($excluded_category_ids);
 
-          //While we're looping the terms, create array of term names
-          if(!in_array($term->term_id, $excluded_categories)) {
-            array_push($category_names, $term->name);
+            //While we're looping the terms, create array of term names
+            if(!in_array($term->term_id, $excluded_categories)) {
+              array_push($category_names, $term->name);
+            }
           }
         }
         $categories = implode(', ', $category_names);            
