@@ -1,8 +1,8 @@
 {{-- This file controls the print-only content for printing out an individual order from the pickup list --}}
 
-<button class="btn btn-default" onclick="printDiv('order-{{ $phoneOrder[0]['TxID'] }}','receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="font-size: 17px;"> Print Receipt</i></button>
+<button class="btn btn-default" onclick="printDiv('order-{{ $phoneOrder['TxID'] }}','receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="font-size: 17px;"> Print Receipt</i></button>
                                 
-<div id="order-{{ $phoneOrder[0]['TxID'] }}" class="d-none">
+<div id="order-{{ $phoneOrder['TxID'] }}" class="d-none">
   @php
     $cooler_count = 0;
     $shelf_count = 0;
@@ -92,7 +92,7 @@
     } // function code39
   } // class barcode
 
-  $barcode = 'T'.$phoneOrder[0]['TxID'];
+  $barcode = 'T'.$phoneOrder['TxID'];
 
 @endphp
   <style>
@@ -224,12 +224,12 @@
       @else
         <strong>$$: </strong>Requires Payment
       @endif        
-      <strong>{{ $phoneOrder[0]['Customer']['AccountName'] }}</strong><br>
-      <strong>Phone:</strong> {{ $phoneOrder[0]['Customer']['Phone'] }}<br>
-      <strong>Order #:</strong> POS - {{ $phoneOrder[0]['TxID'] }}<br>       
+      <strong>{{ $phoneOrder['Customer']['AccountName'] }}</strong><br>
+      <strong>Phone:</strong> {{ $phoneOrder['Customer']['Phone'] }}<br>
+      <strong>Order #:</strong> POS - {{ $phoneOrder['TxID'] }}<br>       
     </div>
 
-    @foreach ($phoneOrder[0]['Details'] as $detail )                                          
+    @foreach ($phoneOrder['Details'] as $detail )                                          
       @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" || $detail['Item']['CategoryID'] == "70" )
         @unless($list_type === "shelf" && $is_packing_list == true)
           @php
@@ -256,7 +256,7 @@
                 @endphp
                 @if($has_instruction)
                   <ul>
-                    @foreach($phoneOrder[0]['Details'] as $instructionSearch)
+                    @foreach($phoneOrder['Details'] as $instructionSearch)
 
                       @if($instructionSearch['ItemLineNumber'] === $lineNumber)
                       
@@ -288,7 +288,7 @@
       @endunless
     @endforeach
     
-    @foreach ($phoneOrder[0]['Details'] as $detail )                                          
+    @foreach ($phoneOrder['Details'] as $detail )                                          
       @unless($detail['Item']['CategoryID'] === "123" || $detail['Item']['DepartmentName'] === "Modifier" || $detail['Item']['CategoryID'] == "70" )
       
         @unless($list_type === "cooler" && $is_packing_list == true)
@@ -317,7 +317,7 @@
                   @endphp
                   @if($has_instruction)
                     <ul>
-                      @foreach($phoneOrder[0]['Details'] as $instructionSearch)
+                      @foreach($phoneOrder['Details'] as $instructionSearch)
                         @if($instructionSearch['ItemLineNumber'] === $lineNumber)
                         
                           @php

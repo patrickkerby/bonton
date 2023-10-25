@@ -135,7 +135,7 @@ class barcode {
             }              
           }
         
-          $jsonDataArray = array_merge(...$jsonDataArray)
+          $jsonDataArray = array_merge(...$jsonDataArray);
       @endphp
 
       <table id="lists" class="display">

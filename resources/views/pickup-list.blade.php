@@ -50,6 +50,8 @@
   $phone_cooler_array = array( '52', '32', '51','50' );
   $phone_shelf_array = array( '30', '34', '35','136','172' );
 
+ 
+
 // ---- ALL THE QUERIES!  ----- //
 
   //main products
@@ -61,17 +63,36 @@
   $results = $query->get_orders();
 
   //phone orders: get data from ftp folder created by POS software
-  $jsonDataArray = array();
-  foreach (new DirectoryIterator('app/uploads/pos') as $fileInfo) {
-    if($fileInfo->isDot()) continue;
-      $path = $fileInfo->getFilename();
-      $jsonString = file_get_contents('app/uploads/pos/'.$path);            
-      $jsonData = json_decode($jsonString, true);
-      
+  function removeUselessArrays($array) {
+    $newArray = [];
+
+    foreach ($array as $key => $value) {
+        if (is_array($value)) {
+            if (array_keys($value) === [ 0 ]) {
+                $newArray[$key] = removeUselessArrays($value);
+            } else {
+                $newArray[$key] = removeUselessArrays($value);
+            }
+        } else {
+            $newArray[$key] = $value;
+        }
+    }
+    return $newArray;
+}
+
+$jsonDataArray = array();
+foreach (new DirectoryIterator('app/uploads/pos') as $fileInfo) {
+  if($fileInfo->isDot()) continue;
+    $path = $fileInfo->getFilename();
+    $jsonString = file_get_contents('app/uploads/pos/'.$path);            
+    $jsonData = json_decode($jsonString, true);
+                
     if($jsonData) {
       $jsonDataArray[] = json_decode($jsonString, true);              
-    }          
-  } 
+    }              
+  }
+
+  $jsonDataArray = array_merge(...$jsonDataArray);
 
   //Get all orders that contain breadclub product
   if ($breadcblub_enabled) {
@@ -417,10 +438,19 @@ $sorted_orders = array();
           {{-- PHONE ORDERES --}}
           @foreach($jsonDataArray as $phoneOrder)
             @php
+
+
+              if ($phoneOrder['STS'] == 'Voided') {
+                $has_items = false;
+              }
+              else {
+                $has_items = true;
+              }
+          
               //Dates
-              $orderDateRaw = $phoneOrder[0]['OpenTime'];
+              $orderDateRaw = $phoneOrder['OpenTime'];
               $orderDate = substr($orderDateRaw, 0, 10);
-              $pickupDateRaw = $phoneOrder[0]['RequestTime'];
+              $pickupDateRaw = $phoneOrder['RequestTime'];
               $pickupDate = substr($pickupDateRaw, 0, 10);
               $pickupTime = substr($pickupDateRaw, 11, 2); 
               
@@ -428,10 +458,10 @@ $sorted_orders = array();
               $is_delivery = false;
               $has_instruction = false;
               $has_ManualDesc = false;
-              $barcode = 'T'.$phoneOrder[0]['TxID'];
-              $hasPaid = $phoneOrder[0]['Tenders'];              
+              $barcode = 'T'.$phoneOrder['TxID'];
+              $hasPaid = $phoneOrder['Tenders'];              
 
-              foreach ($phoneOrder[0]['Details'] as $detail ) {                                
+              foreach ($phoneOrder['Details'] as $detail ) {                                
                 if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
                   $has_instruction = TRUE;
                 }
@@ -444,16 +474,17 @@ $sorted_orders = array();
                 if(in_array("Edmonton Delivery", $detail['Item'])) {
                   $is_delivery = TRUE;
                 }
-              }              
-            @endphp
+              }      
+              
+              @endphp
             
-            @if($selectedDateComparisonFormat == $pickupDate && !$is_delivery )
-              @php
-                if (in_array($phoneOrder[0]['TxID'], $seen_phone_ids)) {
+            @if($selectedDateComparisonFormat == $pickupDate && !$is_delivery )            
+            @php
+                if (in_array($phoneOrder['TxID'], $seen_phone_ids)) {
                   continue;
                 }
-                $seen_phone_ids[] = $phoneOrder[0]['TxID'];                                
-                    
+                $seen_phone_ids[] = $phoneOrder['TxID'];                                
+
                 $daily_phone_order_number++;
 
                 if($pickupTime <= 11) {
@@ -468,17 +499,17 @@ $sorted_orders = array();
               @endphp
               <tr valign="top">
                 <td>{{ $daily_phone_order_number }}</td>
-                <td class="name"><strong>{{ $phoneOrder[0]['Customer']['AccountName'] }}</strong></td>
+                <td class="name"><strong>{{ $phoneOrder['Customer']['AccountName'] }}</strong></td>
                 <td></td>
-                <td>POS - {{ $phoneOrder[0]['TxID'] }}</td>
-                <td class="phone">{{ $phoneOrder[0]['Customer']['Phone'] }}</td>
+                <td>POS - {{ $phoneOrder['TxID'] }}</td>
+                <td class="phone">{{ $phoneOrder['Customer']['Phone'] }}</td>
                 <td class="bags">{{ $bag_details }}</td>
                 <td class="location"><p class="timeslot">{{ $pickupTimeSlot }}</p></td>
                 <td class="location">
                   {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
                   @php 
                     $responses = array(); @endphp
-                    @foreach ($phoneOrder[0]['Details'] as $item )
+                    @foreach ($phoneOrder['Details'] as $item )
                       @php 
                         $prod_id = $item['Item']['ItemID'];
                         $cat_id = $item['Item']['CategoryID'];
