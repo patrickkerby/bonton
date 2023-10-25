@@ -76,9 +76,7 @@
   }
 
   //Now do the same for phone orders
-  foreach($jsonDataArray as $phoneOrder) {
-    $orderDateRaw = $phoneOrder[0]['OpenTime'];
-    $orderDate = substr($orderDateRaw, 0, 10);
+  foreach($jsonDataArray as $phoneOrder) {    
     $pickupDateRaw = $phoneOrder[0]['RequestTime'];
     $pickupDate = substr($pickupDateRaw, 0, 10);
 
@@ -86,7 +84,6 @@
       $filtered_phone_orders[] = $phoneOrder;
     }
   }
-
 
   //Get line item info from phone orders
   foreach($filtered_phone_orders as $details) {
@@ -171,7 +168,7 @@
         }                
       }      
       else {
-        $phone_prod[] = array('name' => $prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => true); 
+        $phone_prod[] = array('name' => $prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => null, 'category_parent' => null, 'warning' => true); 
       } 
     }
   }
