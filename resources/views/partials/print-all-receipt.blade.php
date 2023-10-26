@@ -317,6 +317,14 @@
 {{-- // PHONE ORDERS!! --}}
 @foreach($jsonDataArray as $phoneOrder)
   @php 
+
+  if ($phoneOrder['STS'] == 'Voided') {
+    $has_items = false;
+  }
+  else {
+    $has_items = true;
+  }
+
     //Dates
     $orderDateRaw = $phoneOrder['OpenTime'];
     $orderDate = substr($orderDateRaw, 0, 10);
@@ -354,7 +362,11 @@
       if (in_array($phoneOrder['TxID'], $seen_phone_ids)) {
         continue;
       }
-      $seen_phone_ids[] = $phoneOrder['TxID'];                                
+      $seen_phone_ids[] = $phoneOrder['TxID'];         
+      
+      if ($has_items == false) {
+        continue;
+      }
           
       $daily_phone_order_number++;
 

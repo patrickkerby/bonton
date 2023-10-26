@@ -203,7 +203,11 @@ class barcode {
                     continue;
                   }
 
-                  $seen_phone_ids[] = $phoneOrder['TxID'];                              
+                  $seen_phone_ids[] = $phoneOrder['TxID'];       
+                  
+                  if ($has_items == false) {
+                    continue;
+                  }
                                                   
                   if($pickupTime <= 11) {
                     $pickupTimeSlot = "Morning";
