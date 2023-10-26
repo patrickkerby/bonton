@@ -486,6 +486,11 @@ $sorted_orders = array();
                 if (in_array($phoneOrder['TxID'], $seen_phone_ids)) {
                   continue;
                 }
+
+                if ($has_items == false) {
+                  continue;
+                }
+
                 $seen_phone_ids[] = $phoneOrder['TxID'];                                
 
                 $daily_phone_order_number++;
