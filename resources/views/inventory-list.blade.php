@@ -125,8 +125,9 @@
         $seen_phone_ids[] = $details[0]['TxID']; 
         $order_pickup_date = $details[0]['RequestTime'];
 
-        $pickupdate_object = DateTime::createFromFormat($order_pickup_date, $day);
+        $pickupdate_object = DateTime::createFromFormat($dateformat, $day);
         $selectedDateComparisonFormatted = $pickupdate_object->format('Y-m-d');
+        var_dump($pickupdate_object);
 
         foreach ($details[0]['Details'] as $item) {
           $cat_id = $item['Item']['CategoryID'];

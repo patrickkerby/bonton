@@ -133,6 +133,7 @@ class barcode {
           }
         
           $jsonDataArray = array_merge(...$jsonDataArray);
+          
       @endphp
 
       <table id="lists" class="display">
@@ -189,6 +190,9 @@ class barcode {
                   }
                   if(in_array("Edmonton Delivery", $detail['Item'])) {
                     $is_delivery = TRUE;
+                  }
+                  else {
+                    $is_delivery = FALSE;
                   }
                 }
               @endphp

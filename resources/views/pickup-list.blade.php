@@ -474,6 +474,9 @@ $sorted_orders = array();
                 if(in_array("Edmonton Delivery", $detail['Item'])) {
                   $is_delivery = TRUE;
                 }
+                else {
+                  $is_delivery = FALSE;
+                }
               }      
               
               @endphp
