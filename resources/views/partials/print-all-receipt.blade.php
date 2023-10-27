@@ -338,7 +338,8 @@
     $has_ManualDesc = false;
     $barcode = 'T'.$phoneOrder['TxID'];
     $hasPaid = $phoneOrder['Tenders'];    
-    $bag_details = "no bags";                
+    $bag_details = "no bags";  
+    $bag_quantity = "";              
   @endphp
   @if($selectedDateComparisonFormat == $pickupDate && !$is_delivery )
     @php
@@ -375,6 +376,7 @@
         }
         if($detail['Item']['CategoryID'] == "70") {
           $bag_details = $detail['Item']['ItemName'];
+          $bag_quantity = $detail['Qty'];
         }
       }
     @endphp
@@ -637,7 +639,7 @@
         @endforeach
         
         <br>
-        <span style="font-size: 0.875rem; font-weight:bold; padding: 1.5rem 0;">{{ $bag_details }}</span>
+        <span style="font-size: 0.875rem; font-weight:bold; padding: 1.5rem 0;">{{ $bag_details }} @if($bag_quantity)({{ $bag_quantity }})@endif</span>
         <br><br>
         @php barcode::code39($barcode, 'app/uploads/barcodes/'.$barcode.'.png'); @endphp  
         <img src="/app/uploads/barcodes/{{ $barcode  }}.png" />

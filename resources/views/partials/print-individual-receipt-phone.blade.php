@@ -348,7 +348,7 @@
     @endforeach
     
     <br>
-    <span style="font-size: 0.875rem; font-weight:bold; padding: 1.5rem 0;">{{ $bag_details }}</span>
+    <span style="font-size: 0.875rem; font-weight:bold; padding: 1.5rem 0;">{{ $bag_details }} @if($bag_quantity)({{ $bag_quantity }})@endif</span>
     <br><br>
     @php barcode::code39($barcode, 'app/uploads/barcodes/'.$barcode.'.png'); @endphp  
     <img src="/app/uploads/barcodes/{{ $barcode }}.png" />

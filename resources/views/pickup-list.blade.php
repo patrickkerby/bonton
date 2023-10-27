@@ -50,8 +50,6 @@
   $phone_cooler_array = array( '52', '32', '51','50' );
   $phone_shelf_array = array( '30', '34', '35','136','172' );
 
- 
-
 // ---- ALL THE QUERIES!  ----- //
 
   //main products
@@ -460,7 +458,8 @@ $sorted_orders = array();
               $has_ManualDesc = false;
               $barcode = 'T'.$phoneOrder['TxID'];
               $hasPaid = $phoneOrder['Tenders'];    
-              $bag_details = 'No bags';                          
+              $bag_details = 'No bags';  
+              $bag_quantity = "";                        
               
               @endphp
             
@@ -500,6 +499,7 @@ $sorted_orders = array();
                   }
                   if($detail['Item']['CategoryID'] == '70') {
                     $bag_details = $detail['Item']['ItemName'];
+                    $bag_quantity = $detail['Qty'];
                   }
                 }    
               @endphp
@@ -509,7 +509,7 @@ $sorted_orders = array();
                 <td></td>
                 <td>POS - {{ $phoneOrder['TxID'] }}</td>
                 <td class="phone">{{ $phoneOrder['Customer']['Phone'] }}</td>
-                <td class="bags">{{ $bag_details }}</td>
+                <td class="bags">{{ $bag_details }} @if($bag_quantity)({{ $bag_quantity }})@endif</td>
                 <td class="location"><p class="timeslot">{{ $pickupTimeSlot }}</p></td>
                 <td class="location">
                   {{-- Check to see if the products associated with the order are shelf or cooler.      --}}
