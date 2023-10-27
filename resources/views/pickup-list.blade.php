@@ -489,17 +489,17 @@ $sorted_orders = array();
                 }
 
                 foreach ($phoneOrder['Details'] as $detail ) {                                
-                  if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
-                    $has_instruction = TRUE;
-                  }
-                  if($detail['Item']['CategoryID'] == '70') {
-                    $bag_details = $detail['Item']['ItemName'];
-                  }                  
                   if(in_array("Edmonton Delivery", $detail['Item'])) {
                     $is_delivery = TRUE;
                   }
                   else {
                     $is_delivery = FALSE;
+                  }
+                  if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
+                    $has_instruction = TRUE;
+                  }
+                  if($detail['Item']['CategoryID'] == '70') {
+                    $bag_details = $detail['Item']['ItemName'];
                   }
                 }    
               @endphp

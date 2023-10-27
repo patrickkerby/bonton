@@ -315,7 +315,7 @@
                     $instruction = "";
                     $instruction_desc = "";
                   @endphp
-                  @if($has_instruction)
+                  {{-- @if($has_instruction) --}}
                     <ul>
                       @foreach($phoneOrder['Details'] as $instructionSearch)
                         @if($instructionSearch['ItemLineNumber'] === $lineNumber)
@@ -338,7 +338,7 @@
                         @endif
                       @endforeach
                     </ul>
-                  @endif
+                  {{-- @endif --}}
               </div>
               <div class="qty"><span>{{ $detail['Qty'] }}</span></div> 
             </div>

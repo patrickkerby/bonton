@@ -364,17 +364,17 @@
       }   
 
       foreach ($phoneOrder['Details'] as $detail ) {                                
-        if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
-          $has_instruction = TRUE;
-        }
-        if($detail['Item']['CategoryID'] == "70") {
-          $bag_details = $detail['Item']['ItemName'];
-        }
         if(in_array("Edmonton Delivery", $detail['Item'])) {
           $is_delivery = TRUE;
         }
         else {
           $is_delivery = FALSE;
+        }
+        if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
+          $has_instruction = TRUE;
+        }
+        if($detail['Item']['CategoryID'] == "70") {
+          $bag_details = $detail['Item']['ItemName'];
         }
       }
     @endphp
@@ -546,7 +546,7 @@
                       $instruction = "";
                       $instruction_desc = "";
                     @endphp
-                    @if($has_instruction)
+                    {{-- @if($has_instruction) --}}
                       <ul>
                         @foreach($phoneOrder['Details'] as $instructionSearch)
 
@@ -570,7 +570,7 @@
                           @endif                                    
                         @endforeach
                       </ul>
-                    @endif
+                    {{-- @endif --}}
                   </div>
                   <div class="qty"><span>{{ $detail['Qty'] }}</span></div> 
                 </div> 
@@ -605,11 +605,10 @@
                         $instruction = "";
                         $instruction_desc = "";
                       @endphp
-                      @if($has_instruction)
+                      {{-- @if($has_instruction) --}}
                         <ul>
                           @foreach($phoneOrder['Details'] as $instructionSearch)
-                            @if($instructionSearch['ItemLineNumber'] === $lineNumber)
-                            
+                            @if($instructionSearch['ItemLineNumber'] === $lineNumber)                            
                               @php
                                 $has_instruction = TRUE;
                                 $instruction = $instructionSearch['Item']['ItemName'];
@@ -628,7 +627,7 @@
                             @endif                                    
                           @endforeach
                         </ul>
-                      @endif
+                      {{-- @endif --}}
                   </div>
                   <div class="qty"><span>{{ $detail['Qty'] }}</span></div> 
                 </div>
