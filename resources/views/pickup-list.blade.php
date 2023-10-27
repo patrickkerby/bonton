@@ -459,25 +459,8 @@ $sorted_orders = array();
               $has_instruction = false;
               $has_ManualDesc = false;
               $barcode = 'T'.$phoneOrder['TxID'];
-              $hasPaid = $phoneOrder['Tenders'];              
-
-              foreach ($phoneOrder['Details'] as $detail ) {                                
-                if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
-                  $has_instruction = TRUE;
-                }
-                if($detail['Item']['CategoryID'] == "70") {
-                  $bag_details = $detail['Item']['ItemName'];
-                }
-                else {
-                  $bag_details = "no bags";
-                }
-                if(in_array("Edmonton Delivery", $detail['Item'])) {
-                  $is_delivery = TRUE;
-                }
-                else {
-                  $is_delivery = FALSE;
-                }
-              }      
+              $hasPaid = $phoneOrder['Tenders'];    
+              $bag_details = 'No bags';                          
               
               @endphp
             
@@ -503,7 +486,22 @@ $sorted_orders = array();
                 }
                 else {
                   $pickupTimeSlot = "Afternoon";
-                }            
+                }
+
+                foreach ($phoneOrder['Details'] as $detail ) {                                
+                  if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
+                    $has_instruction = TRUE;
+                  }
+                  if($detail['Item']['CategoryID'] == '70') {
+                    $bag_details = $detail['Item']['ItemName'];
+                  }                  
+                  if(in_array("Edmonton Delivery", $detail['Item'])) {
+                    $is_delivery = TRUE;
+                  }
+                  else {
+                    $is_delivery = FALSE;
+                  }
+                }    
               @endphp
               <tr valign="top">
                 <td>{{ $daily_phone_order_number }}</td>

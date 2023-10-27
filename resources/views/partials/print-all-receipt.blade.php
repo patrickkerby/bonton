@@ -337,25 +337,8 @@
     $has_instruction = false;
     $has_ManualDesc = false;
     $barcode = 'T'.$phoneOrder['TxID'];
-    $hasPaid = $phoneOrder['Tenders'];              
-
-    foreach ($phoneOrder['Details'] as $detail ) {                                
-      if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
-        $has_instruction = TRUE;
-      }
-      if($detail['Item']['CategoryID'] == "70") {
-        $bag_details = $detail['Item']['ItemName'];
-      }
-      else {
-        $bag_details = "no bags";
-      }
-      if(in_array("Edmonton Delivery", $detail['Item'])) {
-        $is_delivery = TRUE;
-      }
-      else {
-        $is_delivery = FALSE;
-      }
-    }  
+    $hasPaid = $phoneOrder['Tenders'];    
+    $bag_details = "no bags";                
   @endphp
   @if($selectedDateComparisonFormat == $pickupDate && !$is_delivery )
     @php
@@ -379,6 +362,21 @@
       else {
         $pickupTimeSlot = "Afternoon";
       }   
+
+      foreach ($phoneOrder['Details'] as $detail ) {                                
+        if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
+          $has_instruction = TRUE;
+        }
+        if($detail['Item']['CategoryID'] == "70") {
+          $bag_details = $detail['Item']['ItemName'];
+        }
+        if(in_array("Edmonton Delivery", $detail['Item'])) {
+          $is_delivery = TRUE;
+        }
+        else {
+          $is_delivery = FALSE;
+        }
+      }
     @endphp
     <div id="order-{{ $phoneOrder['TxID'] }}" class="">
       @php
