@@ -77,6 +77,22 @@
     $date_range = false;
   }
 
+  function removeUselessArrays($array) {
+            $newArray = [];
+            foreach ($array as $key => $value) {
+                if (is_array($value)) {
+                    if (array_keys($value) === [ 0 ]) {
+                        $newArray[$key] = removeUselessArrays($value);
+                    } else {
+                        $newArray[$key] = removeUselessArrays($value);
+                    }
+                } else {
+                    $newArray[$key] = $value;
+                }
+            }
+            return $newArray;
+        }
+
   //Get phone orders data
   $seen_phone_ids = [];
   $jsonDataArray = array();
@@ -90,46 +106,43 @@
       $jsonDataArray[] = json_decode($jsonString, true);              
     }          
   } 
+
+  $jsonDataArray = array_merge(...$jsonDataArray);
+
+  // Filter the phone orders based on dates
+  $filtered_phone_orders = array();
+
+
 @endphp
 
 @if($date_range == true)
   @php
-    foreach($date_range as $day) {
-      // This uses a custom filter that allows us to query the customvar 'pickup_date' rather than looping through all processing orders and date matching.
-      $filtered_orders = wc_get_orders( 
-      array( 
-        'pickup_date' => $day,
-        'status' => array('wc-processing', 'wc-completed'),
-        'limit' => -1
-      ) );
-
-      $pickupdate_object = DateTime::createFromFormat($dateformat, $day);
-      $selectedDateComparisonFormatted = $pickupdate_object->format('Y-m-d'); //This is to compare agains POS date format
-
-      // Filter the phone orders based on dates
-      $filtered_phone_orders = array();
-
+      
       foreach($jsonDataArray as $phoneOrder) {
-        $pickupDateRaw = $phoneOrder[0]['RequestTime'];
+        $pickupDateRaw = $phoneOrder['RequestTime'];
         $pickupDate = substr($pickupDateRaw, 0, 10);
 
-        if($selectedDateComparisonFormatted == $pickupDate ) {
-          $filtered_phone_orders[] = $phoneOrder;
-        }      
+        $pickupdate_object = DateTime::createFromFormat('Y-m-d', $pickupDate);
+        $selectedDateComparisonFormatted = $pickupdate_object->format('l, F j, Y');
+        
+          if(in_array($selectedDateComparisonFormatted, $date_range)) {
+            $filtered_phone_orders[] = $phoneOrder;
+          }
+
       }
 
       foreach($filtered_phone_orders as $details) {
-        if (in_array($details[0]['TxID'], $seen_phone_ids)) {
+        if (in_array($details['TxID'], $seen_phone_ids)) {
           continue;
         }
-        $seen_phone_ids[] = $details[0]['TxID']; 
-        $order_pickup_date = $details[0]['RequestTime'];
+        $seen_phone_ids[] = $details['TxID']; 
 
-        $pickupdate_object = DateTime::createFromFormat($dateformat, $day);
-        $selectedDateComparisonFormatted = $pickupdate_object->format('Y-m-d');
-        var_dump($pickupdate_object);
+        $order_pickup_date = $details['RequestTime'];
+        $order_pickup_date = date('l, F j, Y', strtotime($order_pickup_date));
+        $order_pickup_date_unix = strtotime($order_pickup_date);
 
-        foreach ($details[0]['Details'] as $item) {
+
+        foreach ($details['Details'] as $item) {
           $cat_id = $item['Item']['CategoryID'];
           $cat_name = $item['Item']['CategoryName'];
           $prod_quantity = $item['Qty'];
@@ -167,42 +180,56 @@
 
             //size, option, topping
             if (!empty($option) && !empty($product_size) && !empty($topping)) {
-              $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date); 
+              $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
             }
             //option, topping
             if (!empty($option) && empty($product_size) && !empty($topping)) {
-              $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date); 
+              $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
             }
             //size, topping
             if (empty($option) && !empty($product_size) && !empty($topping)) {
-              $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date); 
+              $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
             }
             //option, size
             if (!empty($option) && !empty($product_size)) {
-              $phone_prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date); 
+              $phone_prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
             }
             //option
             elseif (!empty($option) && empty($product_size)) {
-              $phone_prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date); 
+              $phone_prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
             }
             //size
             elseif (!empty($product_size) && empty($option)) {
-              $phone_prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date); 
+              $phone_prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
             }
             else {
-              $phone_prod[] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date); 
+              $phone_prod[] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => false, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
             }                
           }      
           else {
-            $phone_prod[] = array('name' => $prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => null, 'category_parent' => null, 'warning' => true, 'day' => $order_pickup_date); 
+            $phone_prod[] = array('name' => $prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => null, 'category_parent' => null, 'warning' => true, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
           } 
         }
       }
+
+
+
+    foreach($date_range as $day) {
+      // This uses a custom filter that allows us to query the customvar 'pickup_date' rather than looping through all processing orders and date matching.
+      $filtered_orders = wc_get_orders( 
+      array( 
+        'pickup_date' => $day,
+        'status' => array('wc-processing', 'wc-completed'),
+        'limit' => -1
+      ) );
+
+      $pickupdate_object = DateTime::createFromFormat($dateformat, $day);
 
       // Begin web orders
 
       foreach($filtered_orders as $details) {
         $order_pickup_date = $details->get_meta('pickup_date');
+        $order_pickup_date_unix = strtotime($order_pickup_date);
 
         foreach ($details->get_items() as $item_id => $item) {        
           $prod_id = $item->get_product_id(); 
@@ -237,42 +264,42 @@
             if (!empty($variation_id)) {  
                 //size, option, topping
               if (!empty($option) && !empty($product_size) && !empty($topping)) {
-                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
               }
               //option, topping
               if (!empty($option) && empty($product_size) && !empty($topping)) {
-                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
               }
               //size, topping
               if (empty($option) && !empty($product_size) && !empty($topping)) {
-                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
               }
               //option, size
               if (!empty($option) && !empty($product_size)) {
-                $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id,'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id,'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
               }
               //option
               elseif (!empty($option) && empty($product_size)) {
-                $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
               }
               //size
               elseif (!empty($product_size) && empty($option)) {
-                $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
               }
               else {
-                $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix); 
               }
             }
             else {
-              $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
+              $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'datestamp' => $order_pickup_date_unix, 'is_bundle_parent' => $is_bundle_parent); 
             }
           }
         }
       }
+    }
 
-      $merged_prod = array_merge($prod, $phone_prod);
-      $prod = $merged_prod;
-        // print("<pre>".print_r($merged_prod,true)."</pre>");
+      // $merged_prod = array_merge($prod, $phone_prod);
+      $prod = array_merge($phone_prod, $prod);      
 
       if(isset($prod)) {
         // Reduce the products array down so that any duplicates per day are combined with their totals summed
@@ -281,7 +308,7 @@
           $prod,
           function($filteredProducts, $value) {
             
-            $key = $value['name']." - ".$value['day'];
+            $key = $value['name']." - ".$value['datestamp'];
 
             if (!isset($filteredProducts[$key])) {
               $filteredProducts[$key] = $value;
@@ -300,21 +327,28 @@
         foreach($productsPerDay as $value){
 
           if(isset($value['is_bundle_parent'])) {
-            $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category'], 'is_bundle_parent' => $bundle_parent_value);
+            $dailyProducts[$value['datestamp']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category'], 'is_bundle_parent' => $bundle_parent_value);
           }
           else {
-            $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category']);
+            $dailyProducts[$value['datestamp']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category']);
           }
         }
+
+
+        
 
         // Array of ALL products ordered in time range
         $listedProducts = array_column($productsPerDay, 'name');
         $uniqueListedProducts = array_unique($listedProducts);
 
+        ksort($dailyProducts);
+
+        
+
         // print("<pre>".print_r($prod,true)."</pre>");
-        print("<pre>".print_r($dailyProducts,true)."</pre>");
+        // print("<pre>".print_r($dailyProducts,true)."</pre>");
       }
-    }
+    
   @endphp
   <div class="container-fluid">
     <div class="row no-gutters">        
@@ -325,7 +359,10 @@
             <th>Category</th>
             @isset($dailyProducts)
               @foreach ($dailyProducts as $key => $value)
-                <th>{{ $key }}</th>
+                @php
+                    $date = date('l, F j, Y', $key);
+                @endphp
+                <th>{{ $date }}</th>
               @endforeach
             @endisset
             <th>Total</th>
