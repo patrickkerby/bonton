@@ -78,20 +78,6 @@
     return $newArray;
 }
 
-$jsonDataArray = array();
-foreach (new DirectoryIterator('app/uploads/pos') as $fileInfo) {
-  if($fileInfo->isDot()) continue;
-    $path = $fileInfo->getFilename();
-    $jsonString = file_get_contents('app/uploads/pos/'.$path);            
-    $jsonData = json_decode($jsonString, true);
-                
-    if($jsonData) {
-      $jsonDataArray[] = json_decode($jsonString, true);              
-    }              
-  }
-
-  $jsonDataArray = array_merge(...$jsonDataArray);
-
   //Get all orders that contain breadclub product
   if ($breadcblub_enabled) {
     $bread_club_results = $wpdb->get_col("
@@ -434,7 +420,7 @@ $sorted_orders = array();
           @endforeach
 
           {{-- PHONE ORDERES --}}
-          @foreach($jsonDataArray as $phoneOrder)
+          @foreach($phonedata as $phoneOrder)
             @php
 
 

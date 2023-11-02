@@ -120,19 +120,7 @@ class barcode {
             return $newArray;
         }
 
-        $jsonDataArray = array();
-        foreach (new DirectoryIterator('app/uploads/pos') as $fileInfo) {
-          if($fileInfo->isDot()) continue;
-            $path = $fileInfo->getFilename();
-            $jsonString = file_get_contents('app/uploads/pos/'.$path);            
-            $jsonData = json_decode($jsonString, true);
-                        
-            if($jsonData) {
-              $jsonDataArray[] = json_decode($jsonString, true);              
-            }              
-          }
         
-          $jsonDataArray = array_merge(...$jsonDataArray);
           
       @endphp
 
@@ -156,7 +144,7 @@ class barcode {
           </tr>
         </thead>
         <tbody>
-          @foreach($jsonDataArray as $phoneOrder)          
+          @foreach($phonedata as $phoneOrder)          
             @php
                 if ($phoneOrder['STS'] == 'Voided') {
                   $has_items = false;
@@ -241,7 +229,6 @@ class barcode {
                         @foreach ($phoneOrder['Details'] as $item )
 
                           @php 
-
                             $prod_id = $item['Item']['ItemID'];
                             $cat_id = $item['Item']['CategoryID'];
                                               
@@ -290,8 +277,7 @@ class barcode {
                                 @php 
                                   $lineNumber = $detail['LineNumber'];
                                   $instruction = "";
-                                  $instruction_desc = "";   
-                                
+                                  $instruction_desc = "";                                   
                                 @endphp
                                 @if($has_instruction)
 

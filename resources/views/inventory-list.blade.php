@@ -28,7 +28,7 @@
 		$date1_cal = date('l, F j, Y', strtotime($date1));
 		$date2_cal = date('l, F j, Y', strtotime($date2));
 
-    $date_time1 = date('l, F j, Y', strtotime($date1));
+    $date_time1 = date('l, F j, Y', strtotime($date1)); 
     $date_time2 = date('l, F j, Y', strtotime($date2));
     
     function createRange($start, $end, $format = 'l, F j, Y') {
@@ -78,57 +78,41 @@
   }
 
   function removeUselessArrays($array) {
-            $newArray = [];
-            foreach ($array as $key => $value) {
-                if (is_array($value)) {
-                    if (array_keys($value) === [ 0 ]) {
-                        $newArray[$key] = removeUselessArrays($value);
-                    } else {
-                        $newArray[$key] = removeUselessArrays($value);
-                    }
-                } else {
-                    $newArray[$key] = $value;
-                }
+    $newArray = [];
+    foreach ($array as $key => $value) {
+        if (is_array($value)) {
+            if (array_keys($value) === [ 0 ]) {
+                $newArray[$key] = removeUselessArrays($value);
+            } else {
+                $newArray[$key] = removeUselessArrays($value);
             }
-            return $newArray;
+        } else {
+            $newArray[$key] = $value;
         }
+    }
+    return $newArray;
+  }
 
   //Get phone orders data
   $seen_phone_ids = [];
-  $jsonDataArray = array();
-  foreach (new DirectoryIterator('app/uploads/pos') as $fileInfo) {
-    if($fileInfo->isDot()) continue;
-      $path = $fileInfo->getFilename();
-      $jsonString = file_get_contents('app/uploads/pos/'.$path);            
-      $jsonData = json_decode($jsonString, true);
-      
-    if($jsonData) {
-      $jsonDataArray[] = json_decode($jsonString, true);              
-    }          
-  } 
-
-  $jsonDataArray = array_merge(...$jsonDataArray);
 
   // Filter the phone orders based on dates
   $filtered_phone_orders = array();
-
 
 @endphp
 
 @if($date_range == true)
   @php
-      
-      foreach($jsonDataArray as $phoneOrder) {
+      foreach($phonedata as $phoneOrder) {
         $pickupDateRaw = $phoneOrder['RequestTime'];
         $pickupDate = substr($pickupDateRaw, 0, 10);
 
         $pickupdate_object = DateTime::createFromFormat('Y-m-d', $pickupDate);
         $selectedDateComparisonFormatted = $pickupdate_object->format('l, F j, Y');
         
-          if(in_array($selectedDateComparisonFormatted, $date_range)) {
-            $filtered_phone_orders[] = $phoneOrder;
-          }
-
+        if(in_array($selectedDateComparisonFormatted, $date_range)) {
+          $filtered_phone_orders[] = $phoneOrder;
+        }
       }
 
       foreach($filtered_phone_orders as $details) {
@@ -211,8 +195,6 @@
           } 
         }
       }
-
-
 
     foreach($date_range as $day) {
       // This uses a custom filter that allows us to query the customvar 'pickup_date' rather than looping through all processing orders and date matching.
@@ -334,16 +316,11 @@
           }
         }
 
-
-        
-
         // Array of ALL products ordered in time range
         $listedProducts = array_column($productsPerDay, 'name');
         $uniqueListedProducts = array_unique($listedProducts);
 
         ksort($dailyProducts);
-
-        
 
         // print("<pre>".print_r($prod,true)."</pre>");
         // print("<pre>".print_r($dailyProducts,true)."</pre>");
