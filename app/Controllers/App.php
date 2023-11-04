@@ -81,5 +81,49 @@ class App extends Controller
 
 		return $jsonDataArray;
 	}
+
+    public static function itemquantity($package_size) {
+        if($package_size == "Dozen"){
+          return 12;
+        } 
+        elseif($package_size == "1/2 Dozen"){
+          return 6;
+        } 
+        elseif($package_size == "6 Pack"){
+          return 6;
+        } 
+        elseif($package_size == "Bag of 10"){
+          return 10;
+        } 
+        elseif($package_size == "Pack of 8"){
+          return 8;
+        } 
+        else{
+          return 1;
+        }
+    }
+
+    public static function removeUselessArrays($array) {
+        $newArray = [];
+    
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                if (array_keys($value) === [ 0 ]) {
+                    $newArray[$key] = removeUselessArrays($value);
+                } else {
+                    $newArray[$key] = removeUselessArrays($value);
+                }
+            } else {
+                $newArray[$key] = $value;
+            }
+        }
+        return $newArray;
+    }
+
+    public function test() {
+        $test_text = "hello you";
+
+        return $test_text;
+    }
 }
 

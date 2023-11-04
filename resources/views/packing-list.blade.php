@@ -42,34 +42,208 @@
 
   $seen_phone_ids = [];
 
-// Get order data!
+// Get web order data!
   $query = new WC_Order_Query( array(  
     'limit' => -1,
     'status' => array('wc-processing', 'wc-completed'),
     'pickup_date' => $date_selector_date,
   ) );
   $results = $query->get_orders();
+  
+// ------ PHONE ORDERS
+// Phone order data is passed from the App.php controller
 
-  //phone orders: get data from ftp folder created by POS software
-  function removeUselessArrays($array) {
-    $newArray = [];
-
-    foreach ($array as $key => $value) {
-        if (is_array($value)) {
-            if (array_keys($value) === [ 0 ]) {
-                $newArray[$key] = removeUselessArrays($value);
-            } else {
-                $newArray[$key] = removeUselessArrays($value);
-            }
-        } else {
-            $newArray[$key] = $value;
-        }
+  foreach($phonedata as $phoneOrder) {  
+    // Ignore voided orders          
+    if ($phoneOrder['STS'] == 'Voided') {
+      $has_items_PO = false;
     }
-    return $newArray;
-  }  
+    else {
+      $has_items_PO = true;
+    }
 
-//THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
-//THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
+    //Date Variables
+    $pickupDateRaw_PO = $phoneOrder['RequestTime'];
+    $pickupDate_PO = substr($pickupDateRaw_PO, 0, 10);
+    $pickupTime_PO = substr($pickupDateRaw_PO, 11, 2);
+
+    if($selectedDateComparisonFormat == $pickupDate_PO ) {
+      // Order will be duplicated and listed in each daily export until they're picked up. This only uses the most recent order data based on TxID field
+      if (in_array($phoneOrder['TxID'], $seen_phone_ids)) {
+        continue;
+      }
+      if ($has_items_PO == false) {
+        continue;
+      }
+      $seen_phone_ids[] = $phoneOrder['TxID'];
+
+      //General Phone Order Variables
+      $daily_phone_order_number++;
+      $is_delivery_PO = false;
+      $has_instruction_PO = false;
+      $has_ManualDesc_PO = false;
+      $barcode_PO = 'T'.$phoneOrder['TxID'];
+      $hasPaid_PO = $phoneOrder['Tenders'];
+      $bag_details_PO = 'No bags';  
+      $bag_quantity_PO = ""; 
+      $account_name_PO = $phoneOrder['Customer']['AccountName'];
+      $order_id__PO = $phoneOrder['TxID'];
+      $phone_number_PO = $phoneOrder['Customer']['Phone'];
+
+      //  Pickup time
+      if($pickupTime_PO <= 11) {
+        $pickupTimeSlot_PO = "Morning";
+      }
+      elseif($pickupTime_PO > 10 && $pickupTime_PO < 14 ) {
+        $pickupTimeSlot_PO = "Midday";
+      }
+      else {
+        $pickupTimeSlot_PO = "Afternoon";
+      }
+
+      // Get product specific details
+      foreach ($phoneOrder['Details'] as $detail ) {
+        $prod_id_PO = $detail['Item']['ItemID'];
+        $wc_match_PO = $detail['Item']['ItemNumber'];
+        $prod_object_PO = wc_get_product($wc_match_PO);
+        $POS_prod_name = $detail['Item']['ItemName'];
+        $lineNumber = $detail['LineNumber'];
+        $instruction = "";
+        $instruction_desc = "";
+        $quantity_PO = $detail['Qty'];
+
+        // Has the woocommerce variation ID been entered into the POS ItemNumber field?
+        if (empty($wc_match)) {
+          $warning = true;
+        }
+        else {
+          $warning = false;
+        }
+        
+        // Is the order for delivery?
+        if(in_array("Edmonton Delivery", $detail['Item'])) {
+          $is_delivery = TRUE;
+        }
+        else {
+          $is_delivery = FALSE;
+        }
+        
+        // Does the order have products with special instructions?
+        if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
+          $has_instruction_PO = TRUE;
+        }
+        else
+
+        // Check to see if there are any bags for the order
+        if($detail['Item']['CategoryID'] == '70') {
+          $bag_details = $detail['Item']['ItemName'];
+          $bag_quantity = $detail['Qty'];
+        }
+
+        if($has_instruction_PO) {
+          foreach($phoneOrder['Details'] as $instructionSearch) {
+            if($instructionSearch['ItemLineNumber'] === $lineNumber) {
+              $has_instruction_PO = TRUE;
+              $instruction_title = $instructionSearch['Item']['ItemName'];
+
+              if(isset($instructionSearch['ManualDescription'])) {
+                $instruction_desc = $instructionSearch['ManualDescription'];
+              }
+            }
+          }
+        }
+
+        if($prod_object_PO && $detail['Item']['CategoryID'] != "123" || $prod_object_PO && $detail['Item']['DepartmentName'] !== "Modifier" || $prod_object_PO && $detail['Item']['CategoryID'] !== "70" ) {
+          $variation_id = $wc_match_PO; // because all of these should already be variations
+          $prod_id = $prod_object_PO->get_parent_id(); // get the variation parent product id. not sure if we need it
+          
+          if ($prod_id) {
+            $prod_parent_object = wc_get_product($prod_id);            
+          }
+          else {
+            $prod_parent_object = $prod_object_PO;
+          }
+          $prod_name = $prod_parent_object->get_name();
+          $option = $prod_object_PO->get_attribute( 'variety' );
+          $topping = $prod_object_PO->get_attribute( 'topping' );
+          $package_size = $prod_object_PO->get_attribute( 'package-size' );
+          $product_size = $prod_object_PO->get_attribute( 'size' );
+          $product_type = $prod_object_PO->get_type();
+          $item_quantity = App::itemquantity($package_size);
+          $total_qty = $item_quantity * $quantity_PO; //This is calculated using a function in App.php controller
+
+          //Filter the list of categories to exclude terms that have been excluded via ACF
+          $category_names = array();
+          $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
+
+          if ($term_obj_list) {
+            foreach ($term_obj_list as $term) {
+              //While we're looping the terms, create array of term names
+                array_push($category_names, $term->name);
+            }
+          }
+          $categories = implode(', ', $category_names);
+          $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
+
+          // Push product details to Phone Orders array
+
+          //size, option, topping
+          if (!empty($option) && !empty($product_size) && !empty($topping)) {
+            $phone_prod[] = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+          }
+          //option, topping
+          if (!empty($option) && empty($product_size) && !empty($topping)) {
+            $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+          }
+          //size, topping
+          if (empty($option) && !empty($product_size) && !empty($topping)) {
+            $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+          }
+          //option, size
+          if (!empty($option) && !empty($product_size)) {
+            $phone_prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+          }
+          //option
+          elseif (!empty($option) && empty($product_size)) {
+            $phone_prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+          }
+          //size
+          elseif (!empty($product_size) && empty($option)) {
+            $phone_prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+          }
+          else {
+            $phone_prod[] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+          }
+        }
+        else {
+          $phone_prod[] = array('name' => $POS_prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => null, 'category_parent' => null, 'warning' => $warning); 
+        }
+      }
+    }
+  }
+
+print('<pre>'.print_r($phone_prod,true).'</pre>');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // BEGIN FILTERING THE DATA -- DO THIS *AFTER* COMBINING PHONE AND WEB ORDERS
+
+            //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
+            //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
 //Product pages give an option to override the natural category and assign the product as cooler. Add to cooler array:
 // ***IMPORTANT: for these to work, there is a custom filter in filters.php
@@ -412,195 +586,7 @@
           @endforeach
 
           {{-- PHONE ORDERS --}}
-          @foreach($phonedata as $phoneOrder)
-          @php
-
-            if ($phoneOrder['STS'] == 'Voided') {
-              $has_items = false;
-            }
-            else {
-              $has_items = true;
-            }
-        
-            //Dates
-            $orderDateRaw = $phoneOrder['OpenTime'];
-            $orderDate = substr($orderDateRaw, 0, 10);
-            $pickupDateRaw = $phoneOrder['RequestTime'];
-            $pickupDate = substr($pickupDateRaw, 0, 10);
-            $pickupTime = substr($pickupDateRaw, 11, 2); 
-            
-            //General Variables
-            $is_delivery = false;
-            $has_instruction = false;
-            $has_ManualDesc = false;
-            $barcode = 'T'.$phoneOrder['TxID'];
-            $hasPaid = $phoneOrder['Tenders'];    
-            $bag_details = 'No bags';  
-            $bag_quantity = "";                                    
-            @endphp
-
-          @if($selectedDateComparisonFormat == $pickupDate )            
-          @php
-              if (in_array($phoneOrder['TxID'], $seen_phone_ids)) {
-                continue;
-              }
-
-              if ($has_items == false) {
-                continue;
-              }
-
-              $seen_phone_ids[] = $phoneOrder['TxID'];                                
-
-              $daily_phone_order_number++;
-
-              if($pickupTime <= 11) {
-                $pickupTimeSlot = "Morning";
-              }
-              elseif($pickupTime > 10 && $pickupTime < 14 ) {
-                $pickupTimeSlot = "Midday";
-              }
-              else {
-                $pickupTimeSlot = "Afternoon";
-              }
-
-              foreach ($phoneOrder['Details'] as $detail ) {                                
-                if(in_array("Edmonton Delivery", $detail['Item'])) {
-                  $is_delivery = TRUE;
-                }
-                else {
-                  $is_delivery = FALSE;
-                }
-                if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
-                  $has_instruction = TRUE;
-                }
-                if($detail['Item']['CategoryID'] == '70') {
-                  $bag_details = $detail['Item']['ItemName'];
-                  $bag_quantity = $detail['Qty'];
-                }
-                
-                $cat_id = $detail['Item']['CategoryID'];
-                $in_cooler = false;
-                $in_shelf = false;
-                // $location_class = "";
-                                  
-                if(in_array($cat_id, $phone_cooler_array)) {
-                  $in_cooler = true;
-                  $location_class = "cooler";
-                } 
-                elseif(in_array($cat_id, $phone_shelf_array)) {  
-                  $in_shelf = true;
-                  $location_class = "shelf";
-                }
-                else {}
-              }    
-            @endphp
-            <tr valign="top" class="{{ $location_class }} processing pack">
-              <td class="id">
-                <span class="check"></span>
-                <span class="id">                            
-                  #{{ $daily_phone_order_number }}
-                </span>
-              </td>
-              <td class="location">
-                @if($is_delivery)
-                  <p class="timeslot delivery">Delivery</p>              
-                @else                          
-                  <p class="timeslot">{{ $pickupTimeSlot }}</p>   
-                @endif                          
-              </td>
-              <td> 
-                <strong>{{ $phoneOrder['Customer']['AccountName'] }} (POS - {{ $phoneOrder['TxID'] }})</strong>
-                <p>{{ $phoneOrder['Customer']['Phone'] }}</p>                
-              </td>
-              <td class="details_table">
-                <table>
-                  @foreach ($phoneOrder['Details'] as $item )
-                    @php
-                    // print('<pre>'.print_r($item,true).'</pre>');
-                                                     
-                      $prod_id = $item['Item']['ItemID'];
-                      $cat_id = $item['Item']['CategoryID'];
-                      $wc_match = $item['Item']['ItemNumber'];
-                      if (empty($wc_match)) {
-                        $warning = true;
-                        $warning_msg = "Missing ItemNumber!!!";
-                      }
-                      else {
-                        $warning = false;
-                      }
-                      
-                      $in_cooler = false;
-                      $in_shelf = false;
-                                        
-                      if(in_array($cat_id, $phone_cooler_array)) {
-                        $in_cooler = true; 
-                      } 
-                      elseif(in_array($cat_id, $phone_shelf_array)) {  
-                        $in_shelf = true;
-                      }
-                      else {}
-                    @endphp
-                    {{-- @if($in_cooler && $list_type == "cooler") --}}
-                    @unless($item['Item']['CategoryID'] == "123" || $item['Item']['DepartmentName'] == "Modifier" || $item['Item']['CategoryID'] == "70" )
-                      <tr>
-                        <td class="qty_cell">
-                          <span class="qty">
-                            {{ $item['Qty'] }}
-                          </span>  
-                        </td>
-                        <td class="prod_name_cell">
-                          <span class="prod_name">{{ $item['Item']['ItemName'] }}</span>                          
-                        </td>
-                        <td class="details_cell">
-                          @php 
-                            $lineNumber = $item['LineNumber'];
-                            $instruction = "";
-                            $instruction_desc = "";                                   
-                          @endphp
-                           @if($warning)
-                            <strong style="color: red;">{{ $warning_msg }}</strong>
-                          @endif
-                          @if($has_instruction)
-                            <ul>
-                              @foreach($phoneOrder['Details'] as $instructionSearch)
-
-                                @if($instructionSearch['ItemLineNumber'] === $lineNumber)
-                                
-                                  @php
-                                    $has_instruction = TRUE;
-                                    $instruction = $instructionSearch['Item']['ItemName'];
-
-                                    if(isset($instructionSearch['ManualDescription'])) {
-                                      $instruction_desc = $instructionSearch['ManualDescription'];
-                                    }
-                                  @endphp
-
-                                  @if($instruction != 'Item Instruction')
-                                    <li>{{ $instruction }}</li>
-                                  @endif
-                                  @if($instruction_desc != '')
-                                    <li>{{ $instruction_desc }}</li> 
-                                  @endif
-                                @endif                                    
-                              @endforeach
-                            </ul>
-                          @endif
-                        </td> 
-                      </tr>
-                    @endunless
-                    {{-- @endif --}}
-                  @endforeach  
-                </table>                       
-              </td>
-              <td class="d-print-none">
-                <div id="hiddenPrint">
-                  {{-- @include('partials.print-individual-receipt') --}}
-                  {{-- @include('partials.print-individual-card') --}}
-                </div>                
-              </td>
-            </tr>
-          @endif
-        @endforeach
+          
         </tbody>
       </table>
       <div id="receipt-printer-all" class="d-none">
@@ -615,6 +601,4 @@
 
     </div>
   </div>
-
-
 @endsection

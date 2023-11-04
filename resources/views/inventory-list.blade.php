@@ -48,49 +48,12 @@
     $range = createRange($date_time1, $date_time2);
   }
 
-  function itemQuantity($package_size) {
-    if($package_size == "Dozen"){
-      return 12;
-    } 
-    elseif($package_size == "1/2 Dozen"){
-      return 6;
-    } 
-    elseif($package_size == "6 Pack"){
-      return 6;
-    } 
-    elseif($package_size == "Bag of 10"){
-      return 10;
-    } 
-    elseif($package_size == "Pack of 8"){
-      return 8;
-    } 
-    else{
-      return 1;
-    }
-  }
-
   if (isset($range)) {
     $date_range = $range;
   }
   else {
     // $date_range = array();
     $date_range = false;
-  }
-
-  function removeUselessArrays($array) {
-    $newArray = [];
-    foreach ($array as $key => $value) {
-        if (is_array($value)) {
-            if (array_keys($value) === [ 0 ]) {
-                $newArray[$key] = removeUselessArrays($value);
-            } else {
-                $newArray[$key] = removeUselessArrays($value);
-            }
-        } else {
-            $newArray[$key] = $value;
-        }
-    }
-    return $newArray;
   }
 
   //Get phone orders data
@@ -123,8 +86,7 @@
 
         $order_pickup_date = $details['RequestTime'];
         $order_pickup_date = date('l, F j, Y', strtotime($order_pickup_date));
-        $order_pickup_date_unix = strtotime($order_pickup_date);
-
+        $order_pickup_date_unix = strtotime($order_pickup_date);        
 
         foreach ($details['Details'] as $item) {
           $cat_id = $item['Item']['CategoryID'];
@@ -149,16 +111,19 @@
             $product_size = $prod_object->get_attribute( 'size' );
             $product_type = $prod_object->get_type();
 
+            // $item_quantity = call_user_func('itemQuantity', $package_size);
+            $item_quantity = App::itemquantity($package_size);
+            $total_qty = $item_quantity * $prod_quantity;
+
             //Filter the list of categories to exclude terms that have been excluded via ACF
             $category_names = array();
             $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
 
             foreach ($term_obj_list as $term) {              
               //While we're looping the terms, create array of term names
-              
-                array_push($category_names, $term->name);
-              
+              array_push($category_names, $term->name);
             }
+
             $categories = implode(', ', $category_names);            
             $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
 
@@ -239,7 +204,8 @@
             $is_bundle_parent = false;
           }
 
-          $item_quantity = call_user_func('itemQuantity', $package_size);
+          // $item_quantity = call_user_func('itemQuantity', $package_size);
+          $item_quantity = App::itemquantity($package_size);
           $quantity = $item_quantity * $prod_quantity;  
 
           if (empty($is_bundle_parent)) {  
