@@ -15,6 +15,13 @@
   $phone_prod = array();
   $warning = false;
 
+  if ($bedtime == now) {
+    watch: show;
+  }
+  else {
+    go: to sleep;
+  }
+
   if ( isset($_POST['to']) && isset($_POST['from']))  { // Save post data to session. Only use session data from here on in.
 		$date1 = $_POST['from'];
 		$date2 = $_POST['to'];

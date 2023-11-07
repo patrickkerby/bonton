@@ -87,7 +87,7 @@
       $bag_details_PO = 'No bags';  
       $bag_quantity_PO = ""; 
       $account_name_PO = $phoneOrder['Customer']['AccountName'];
-      $order_id__PO = $phoneOrder['TxID'];
+      $order_id_PO = $phoneOrder['TxID'];
       $phone_number_PO = $phoneOrder['Customer']['Phone'];
 
       //  Pickup time
@@ -101,13 +101,21 @@
         $pickupTimeSlot_PO = "Afternoon";
       }
 
+      //Create order details array. Later we'll push product items to this as well
+      // $phone_prod[$order_id_PO]['customer_name'] = $account_name_PO; 
+
+      $phone_prod[$order_id_PO] = array(
+        'customer_name' => $account_name_PO,
+        'timeslot' => $pickupTimeSlot_PO
+      );
+
+
       // Get product specific details
       foreach ($phoneOrder['Details'] as $detail ) {
         $prod_id_PO = $detail['Item']['ItemID'];
         $wc_match_PO = $detail['Item']['ItemNumber'];
         $prod_object_PO = wc_get_product($wc_match_PO);
         $POS_prod_name = $detail['Item']['ItemName'];
-        $lineNumber = $detail['LineNumber'];
         $instruction = "";
         $instruction_desc = "";
         $quantity_PO = $detail['Qty'];
@@ -129,29 +137,50 @@
         }
         
         // Does the order have products with special instructions?
-        if ($detail['Item']['ItemName'] === "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
+        if ($detail['Item']['ItemName'] == "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
           $has_instruction_PO = TRUE;
         }
-        else
-
-        // Check to see if there are any bags for the order
-        if($detail['Item']['CategoryID'] == '70') {
-          $bag_details = $detail['Item']['ItemName'];
-          $bag_quantity = $detail['Qty'];
+        else {
+          $has_instruction_PO = FALSE;
         }
 
-        if($has_instruction_PO) {
+        $lineNumber = $detail['LineNumber'];
+        $instruction_title = "";
+        $instruction_desc = "";
+
           foreach($phoneOrder['Details'] as $instructionSearch) {
+            
+            
             if($instructionSearch['ItemLineNumber'] === $lineNumber) {
+            echo "YEP!";
               $has_instruction_PO = TRUE;
               $instruction_title = $instructionSearch['Item']['ItemName'];
+              // $phone_prod[$order_id_PO]['instruction_title'] = $instruction_title;
 
               if(isset($instructionSearch['ManualDescription'])) {
                 $instruction_desc = $instructionSearch['ManualDescription'];
-              }
+                var_dump($instruction_desc);
+
+                $phone_prod[$order_id_PO]['instruction'] = $instruction_desc;
+              }              
             }
           }
+
+        
+
+        // Check to see if there are any bags for the order
+        if($detail['Item']['CategoryID'] == '70') {
+          $bag_details_PO = $detail['Item']['ItemName'];
+          $bag_quantity_PO = $detail['Qty'];
         }
+        else {
+
+        }
+
+        $phone_prod[$order_id_PO]['delivery'] = $is_delivery;
+        $phone_prod[$order_id_PO]['bag_details'] = $bag_details_PO;
+        $phone_prod[$order_id_PO]['bag_quantity'] = $bag_quantity_PO;
+        
 
         if($prod_object_PO && $detail['Item']['CategoryID'] != "123" || $prod_object_PO && $detail['Item']['DepartmentName'] !== "Modifier" || $prod_object_PO && $detail['Item']['CategoryID'] !== "70" ) {
           $variation_id = $wc_match_PO; // because all of these should already be variations
@@ -185,44 +214,49 @@
           $categories = implode(', ', $category_names);
           $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
 
+         
+
           // Push product details to Phone Orders array
 
           //size, option, topping
           if (!empty($option) && !empty($product_size) && !empty($topping)) {
-            $phone_prod[] = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
           }
           //option, topping
           if (!empty($option) && empty($product_size) && !empty($topping)) {
-            $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
           }
           //size, topping
           if (empty($option) && !empty($product_size) && !empty($topping)) {
-            $phone_prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
           }
           //option, size
           if (!empty($option) && !empty($product_size)) {
-            $phone_prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
           }
           //option
           elseif (!empty($option) && empty($product_size)) {
-            $phone_prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
           }
           //size
           elseif (!empty($product_size) && empty($option)) {
-            $phone_prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
           }
           else {
-            $phone_prod[] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning); 
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
           }
         }
         else {
-          $phone_prod[] = array('name' => $POS_prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => null, 'category_parent' => null, 'warning' => $warning); 
+          $phone_prod[$order_id_PO]['items'][] = array('name' => $POS_prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => null, 'category_parent' => null, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
         }
       }
     }
   }
-
-print('<pre>'.print_r($phone_prod,true).'</pre>');
+  
+  
+  
+  print('<pre>'.print_r($phone_prod,true).'</pre>');
+  // print('<pre>'.print_r($phone_orders,true).'</pre>');
 
 
 
