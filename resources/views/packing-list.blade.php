@@ -27,7 +27,8 @@
   }
 </script>
  
-@php  
+@php
+
   $daily_order_number = 100;
   $daily_delivery_number = 500;
   $daily_phone_order_number = 700;
@@ -83,13 +84,21 @@
       $has_instruction_PO = false;
       $has_ManualDesc_PO = false;
       $barcode_PO = 'T'.$phoneOrder['TxID'];
-      $hasPaid_PO = $phoneOrder['Tenders'];
       $bag_details_PO = 'No bags';  
-      $bag_quantity_PO = ""; 
+      $bag_quantity_PO = "0"; 
       $account_name_PO = $phoneOrder['Customer']['AccountName'];
       $order_id_PO = $phoneOrder['TxID'];
       $phone_number_PO = $phoneOrder['Customer']['Phone'];
 
+      // Payment owed?
+      
+      if ($phoneOrder['Tenders']) {
+        $hasPaid_PO = true;
+      }
+      else {
+        $hasPaid_PO = false;
+      }
+      
       //  Pickup time
       if($pickupTime_PO <= 11) {
         $pickupTimeSlot_PO = "Morning";
@@ -106,9 +115,10 @@
 
       $phone_prod[$order_id_PO] = array(
         'customer_name' => $account_name_PO,
-        'timeslot' => $pickupTimeSlot_PO
+        'pickup_date' => $pickupDate_PO,
+        'timeslot' => $pickupTimeSlot_PO,
+        'paid' => $hasPaid_PO
       );
-
 
       // Get product specific details
       foreach ($phoneOrder['Details'] as $detail ) {
@@ -131,57 +141,42 @@
         // Is the order for delivery?
         if(in_array("Edmonton Delivery", $detail['Item'])) {
           $is_delivery = TRUE;
+          $pickup_details = "delivery";
         }
         else {
           $is_delivery = FALSE;
+          $pickup_details = "pickup";
         }
         
-        // Does the order have products with special instructions?
-        if ($detail['Item']['ItemName'] == "Item Instruction" || isset($detail['ManualDescription']) && $detail['ManualDescription'] != '') {
-          $has_instruction_PO = TRUE;
-        }
-        else {
-          $has_instruction_PO = FALSE;
-        }
-
+        // Check to see if a product has special instructions
+        // this one is weird because Instructions are store as an item just like a product purchased. But it has a LineNumber that references the product it's referencing
         $lineNumber = $detail['LineNumber'];
         $instruction_title = "";
         $instruction_desc = "";
 
-          foreach($phoneOrder['Details'] as $instructionSearch) {
-            
-            
-            if($instructionSearch['ItemLineNumber'] === $lineNumber) {
-            echo "YEP!";
-              $has_instruction_PO = TRUE;
-              $instruction_title = $instructionSearch['Item']['ItemName'];
-              // $phone_prod[$order_id_PO]['instruction_title'] = $instruction_title;
+        foreach($phoneOrder['Details'] as $instructionSearch) {            
+          if($instructionSearch['ItemLineNumber'] === $lineNumber) {
+            $has_instruction_PO = TRUE;
+            $instruction_title = $instructionSearch['Item']['ItemName'];
 
-              if(isset($instructionSearch['ManualDescription'])) {
-                $instruction_desc = $instructionSearch['ManualDescription'];
-                var_dump($instruction_desc);
-
-                $phone_prod[$order_id_PO]['instruction'] = $instruction_desc;
-              }              
-            }
+            if(isset($instructionSearch['ManualDescription'])) {
+              $instruction_desc = $instructionSearch['ManualDescription'];
+            }              
           }
-
-        
+        }
 
         // Check to see if there are any bags for the order
         if($detail['Item']['CategoryID'] == '70') {
           $bag_details_PO = $detail['Item']['ItemName'];
           $bag_quantity_PO = $detail['Qty'];
         }
-        else {
-
-        }
-
-        $phone_prod[$order_id_PO]['delivery'] = $is_delivery;
+        
+        $phone_prod[$order_id_PO]['order_type'] = "phone";        
+        $phone_prod[$order_id_PO]['delivery'] = $pickup_details;
         $phone_prod[$order_id_PO]['bag_details'] = $bag_details_PO;
         $phone_prod[$order_id_PO]['bag_quantity'] = $bag_quantity_PO;
-        
 
+        // Find the equivalent product in the woocommerce database. Use this info to get all of the 
         if($prod_object_PO && $detail['Item']['CategoryID'] != "123" || $prod_object_PO && $detail['Item']['DepartmentName'] !== "Modifier" || $prod_object_PO && $detail['Item']['CategoryID'] !== "70" ) {
           $variation_id = $wc_match_PO; // because all of these should already be variations
           $prod_id = $prod_object_PO->get_parent_id(); // get the variation parent product id. not sure if we need it
@@ -190,7 +185,7 @@
             $prod_parent_object = wc_get_product($prod_id);            
           }
           else {
-            $prod_parent_object = $prod_object_PO;
+            $prod_parent_object = $prod_object_PO; //If there isn't a parent, then this is a single product. Just use the id we already have.
           }
           $prod_name = $prod_parent_object->get_name();
           $option = $prod_object_PO->get_attribute( 'variety' );
@@ -212,42 +207,40 @@
             }
           }
           $categories = implode(', ', $category_names);
-          $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
-
-         
+          $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));         
 
           // Push product details to Phone Orders array
 
           //size, option, topping
           if (!empty($option) && !empty($product_size) && !empty($topping)) {
-            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option, topping
           if (!empty($option) && empty($product_size) && !empty($topping)) {
-            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //size, topping
           if (empty($option) && !empty($product_size) && !empty($topping)) {
-            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option, size
           if (!empty($option) && !empty($product_size)) {
-            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option
           elseif (!empty($option) && empty($product_size)) {
-            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //size
           elseif (!empty($product_size) && empty($option)) {
-            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           else {
-            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
+            $phone_prod[$order_id_PO]['items'][] = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
         }
         else {
-          $phone_prod[$order_id_PO]['items'][] = array('name' => $POS_prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => null, 'category_parent' => null, 'warning' => $warning, 'instruction_description' => $instruction_desc, 'instruction_title' => $instruction_title);
+          $phone_prod[$order_id_PO]['items'][] = array('name' => $POS_prod_name, 'total_quantity' => $total_qty, 'product_id' => $prod_id, 'variation_id' => null, 'category' => null, 'category_parent' => null, 'warning' => $warning, 'instruction' => $instruction_desc);
         }
       }
     }
@@ -635,4 +628,5 @@
 
     </div>
   </div>
+  @debug
 @endsection

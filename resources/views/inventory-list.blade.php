@@ -15,13 +15,6 @@
   $phone_prod = array();
   $warning = false;
 
-  if ($bedtime == now) {
-    watch: show;
-  }
-  else {
-    go: to sleep;
-  }
-
   if ( isset($_POST['to']) && isset($_POST['from']))  { // Save post data to session. Only use session data from here on in.
 		$date1 = $_POST['from'];
 		$date2 = $_POST['to'];
@@ -119,7 +112,7 @@
             $product_type = $prod_object->get_type();
 
             // $item_quantity = call_user_func('itemQuantity', $package_size);
-            $item_quantity = App::itemquantity($package_size);
+            $item_quantity = InventoryList::itemquantity($package_size);
             $total_qty = $item_quantity * $prod_quantity;
 
             //Filter the list of categories to exclude terms that have been excluded via ACF
@@ -212,7 +205,7 @@
           }
 
           // $item_quantity = call_user_func('itemQuantity', $package_size);
-          $item_quantity = App::itemquantity($package_size);
+          $item_quantity = InventoryList::itemquantity($package_size);
           $quantity = $item_quantity * $prod_quantity;  
 
           if (empty($is_bundle_parent)) {  

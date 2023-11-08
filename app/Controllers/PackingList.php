@@ -6,6 +6,7 @@ use Sober\Controller\Controller;
 
 class PackingList extends Controller
 {
+	use Partials\PhoneOrders;
 
 	protected $acf = true;
 

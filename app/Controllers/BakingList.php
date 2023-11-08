@@ -7,6 +7,8 @@ use Sober\Controller\Controller;
 class BakingList extends Controller
 {
 
+	use Partials\PhoneOrders;
+
 	protected $acf = true;
 
 	public function acf()

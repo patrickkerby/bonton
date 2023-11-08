@@ -4,9 +4,8 @@ namespace App\Controllers;
 
 use Sober\Controller\Controller;
 
-class PickupList extends Controller
+class ListPhoneorders extends Controller
 {
-
 	use Partials\PhoneOrders;
 
 	protected $acf = true;
