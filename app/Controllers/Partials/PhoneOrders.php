@@ -108,6 +108,8 @@ trait PhoneOrders
 
   public static function ordersarray($phonedata, $webdata) {
     
+    $web_order = array();
+    $phone_order = array();
 
     foreach($phonedata as $order) {  
       // Phone order data is passed from the App.php controller
@@ -620,19 +622,23 @@ trait PhoneOrders
     }
 
     //Now let's sort by timeslot
-    $sorted_web_orders = array ();
-    foreach ($web_order as $order) {
-      $timeslot = $order['timeslot'];
-      $sorted_web_orders[] = $timeslot;
+    if ($web_order) {
+      $sorted_web_orders = array ();
+      foreach ($web_order as $order) {
+        $timeslot = $order['timeslot'];
+        $sorted_web_orders[] = $timeslot;
+      }
+      array_multisort($sorted_web_orders, SORT_DESC, $web_order);
     }
-    array_multisort($sorted_web_orders, SORT_DESC, $web_order);
 
-    $sorted_phone_orders = array ();
-    foreach ($phone_order as $order) {
-      $timeslot = $order['timeslot'];
-      $sorted_phone_orders[] = $timeslot;
+    if ($phone_order) {
+      $sorted_phone_orders = array ();
+      foreach ($phone_order as $order) {
+        $timeslot = $order['timeslot'];
+        $sorted_phone_orders[] = $timeslot;
+      }
+      array_multisort($sorted_phone_orders, SORT_DESC, $phone_order);
     }
-    array_multisort($sorted_phone_orders, SORT_DESC, $phone_order);
    
     $output['phone_orders'] = $phone_order;
     $output['web_orders'] = $web_order;
