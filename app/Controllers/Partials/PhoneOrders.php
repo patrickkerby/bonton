@@ -259,6 +259,7 @@ trait PhoneOrders
             $prod_parent_object = wc_get_product($prod_object_PO->get_parent_id());
             $variation_id = $wc_match_PO; // because all of these should already be variations.
             $prod_name = $prod_parent_object->get_name();
+            $prod_id = $wc_match_PO;
           }
           else {
             $prod_id = $wc_match_PO;
