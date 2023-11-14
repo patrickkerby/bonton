@@ -164,7 +164,7 @@
 
   
   @foreach ( $order['items'] as $item )
-    @if ($item['shelf_type'] == $list_type || $item['shelf_type'] == 'unknown')
+    @if ($item['shelf_type'] == $list_type || $item['shelf_type'] == 'unknown' || $item['shelf_type'] == 'mixed')
       @php
         if ($item['shelf_type'] == "shelf") {
           $shelf_count++;
