@@ -132,7 +132,7 @@
                   <td class="d-print-none">
                     <div id="hiddenPrint">
                       @include('partials.print-individual-receipt')
-                      {{-- @include('partials.print-individual-card') --}}
+                      @include('partials.print-individual-card')
                     </div>
                   </td>
                 </tr>
@@ -200,7 +200,7 @@
                   <td class="d-print-none">
                     <div id="hiddenPrint">
                       @include('partials.print-individual-receipt')
-                      {{-- @include('partials.print-individual-card') --}}
+                      @include('partials.print-individual-card')
                     </div>
                   </td>
                 </tr>
