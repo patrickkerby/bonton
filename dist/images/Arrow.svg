@@ -1,1 +1,12 @@
-<svg width="32" height="20" viewBox="0 0 32 20" version="1.1" xmlns="http://www.w3.org/2000/svg"><g id="Design-V1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g id="Product-Single-2" transform="translate(-46 -54)" fill="#53C999"><g id="Group-13" transform="translate(46 54)"><path d="M22.005.293l9.613 9.613-9.613 9.614-1.415-1.415 7.199-7.2-27.312.001v-2h27.312L20.59 1.707 22.005.293z" id="Combined-Shape"/></g></g></g></svg>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="20px" viewBox="0 0 32 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 62 (91390) - https://sketch.com -->
+    <title>Arrow</title>
+    <g id="Design-V1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Product-Single-2" transform="translate(-46.000000, -54.000000)" fill="#53C999">
+            <g id="Group-13" transform="translate(46.000000, 54.000000)">
+                <path d="M22.0046831,0.292893219 L31.6180399,9.90625 L22.0046831,19.5196068 L20.5904696,18.1053932 L27.788779,10.9058932 L0.476778969,10.90625 L0.476778969,8.90625 L27.788779,8.90589322 L20.5904696,1.70710678 L22.0046831,0.292893219 Z" id="Combined-Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -436,21 +436,40 @@
 }
 
 table.cooler {
-  tr.shelf {
+  tr.shelf,
+  tr.freezer {
     display: none;
   }
 
-  tr.shelf.cooler {
+  tr.shelf.cooler,
+  tr.freezer.cooler,
+  tr.shelf.freezer.cooler {
     display: table-row;
   }
 }
 
 table.shelf {
-  tr.cooler {
+  tr.cooler,
+  tr.freezer {
     display: none;
   }
 
-  tr.cooler.shelf {
+  tr.cooler.shelf,
+  tr.freezer.shelf,
+  tr.cooler.freezer.shelf {
+    display: table-row;
+  }
+}
+
+table.freezer {
+  tr.cooler,
+  tr.shelf {
+    display: none;
+  }
+
+  tr.cooler.freezer,
+  tr.shelf.freezer,
+  tr.cooler.shelf.freezer {
     display: table-row;
   }
 }

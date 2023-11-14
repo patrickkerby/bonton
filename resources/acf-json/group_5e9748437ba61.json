@@ -63,6 +63,25 @@
             "ui_off_text": ""
         },
         {
+            "key": "field_655291557c01d",
+            "label": "Freezer Storage?",
+            "name": "freezer",
+            "type": "true_false",
+            "instructions": "Is this product stored for pickup in the freezer?",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
+        },
+        {
             "key": "field_60789abf2d33d",
             "label": "Exclude from bulk discount?",
             "name": "bulk_discount_exclusion",
@@ -135,5 +154,6 @@
     ],
     "active": true,
     "description": "",
-    "modified": 1618516984
+    "show_in_rest": 0,
+    "modified": 1699909993
 }

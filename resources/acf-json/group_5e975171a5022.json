@@ -18,8 +18,7 @@
             "choices": {
                 "cooler": "Cooler",
                 "shelf": "Shelf",
-                "freezer": "Freezer",
-                "mixed": "Mixed"
+                "freezer": "Freezer"
             },
             "allow_null": 0,
             "other_choice": 0,
@@ -68,5 +67,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1666286246
+    "modified": 1699909939
 }
