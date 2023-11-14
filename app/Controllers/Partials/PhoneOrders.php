@@ -553,6 +553,7 @@ trait PhoneOrders
         
         if ($list_type == '' || $list_type == 'mixed' ) {
           $warning = "This product is not designated shelf or cooler";
+          $list_type = "shelf";
         }
 
         // We need to know if this is our first product being added or not
