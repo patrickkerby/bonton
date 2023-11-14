@@ -183,6 +183,7 @@ trait PhoneOrders
 
       foreach ($order['Details'] as $detail ) {
         $prod_id_PO = $detail['Item']['ItemID'];
+        $prod_id = "";
         $department_name = $detail['Item']['DepartmentName'];
         $wc_match_PO = $detail['Item']['ItemNumber'];
         $prod_object_PO = wc_get_product($wc_match_PO);
