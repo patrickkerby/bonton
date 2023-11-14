@@ -276,13 +276,15 @@ trait PhoneOrders
 
           //Get category names for the product. While we're at it, get the shelf/list type info from the category page
           $category_names = array();
-          $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
+          if($prod_id) {
+            $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
 
-          if ($term_obj_list) {
-            foreach ($term_obj_list as $term) {
-              //While we're looping the terms, create array of term names
-              array_push($category_names, $term->name);
-              $list_type = get_field('list_type', $term);
+            if ($term_obj_list) {
+              foreach ($term_obj_list as $term) {
+                //While we're looping the terms, create array of term names
+                array_push($category_names, $term->name);
+                $list_type = get_field('list_type', $term);
+              }
             }
           }
 
@@ -515,14 +517,16 @@ trait PhoneOrders
         }
         
         //Get category names for the product. While we're at it, get the shelf/list type info from the category page
-        $category_names = array();
-        $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
+        if($prod_id) {
+          $category_names = array();
+          $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
 
-        if ($term_obj_list) {
-          foreach ($term_obj_list as $term) {
-            //While we're looping the terms, create array of term names
-            array_push($category_names, $term->name);
-            $list_type = get_field('list_type', $term);
+          if ($term_obj_list) {
+            foreach ($term_obj_list as $term) {
+              //While we're looping the terms, create array of term names
+              array_push($category_names, $term->name);
+              $list_type = get_field('list_type', $term);
+            }
           }
         }
 
