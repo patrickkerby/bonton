@@ -51,7 +51,7 @@
   
   $orders = PackingList::ordersarray($phonedata, $results);  
 
-  print('<pre>'.print_r($orders,true).'</pre>');
+  // print('<pre>'.print_r($orders,true).'</pre>');
 
 @endphp
 @section('content')
