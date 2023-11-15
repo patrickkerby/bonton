@@ -154,6 +154,8 @@
             @if($order['delivery_method'] == "delivery")
               @php $daily_delivery_number++; @endphp
               #{{ $daily_delivery_number }}
+            @elseif($is_wholesale_user)
+              $daily_wholesale_number++;
             @else
               @php $daily_order_number++; @endphp
               #{{ $daily_order_number }}
