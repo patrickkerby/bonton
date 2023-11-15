@@ -145,7 +145,7 @@
           @foreach ($orders['phone_orders'] as $order)  
             @if($selectedDateComparisonFormat == $order['pickup_date'] )
             {{-- @if(in_array($list_type, $order['product_locations']) ||  in_array('unknown', $order['product_locations']) )   --}}
-                <tr class="pack {{ $status }} {{ $list_class_marker }}">
+                <tr class="pack @foreach($order['product_locations'] as $location){{ $location }} @endforeach">
                   <td class="id">
                     <span class="check"></span>
                     <span class="id">
@@ -210,7 +210,7 @@
         </tbody>
       </table>
       <div id="receipt-printer-all" class="d-none">
-        {{-- @include('partials.print-shelf-cooler-receipt') --}}
+        @include('partials.print-shelf-cooler-receipt')
       </div>
       <div id="card-printer-all" class="d-none">
         {{-- @include('partials.print-shelf-cooler-cards') --}}
