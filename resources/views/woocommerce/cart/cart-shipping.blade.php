@@ -119,7 +119,7 @@ if($icecream_conflict) {
 					?>
 				</p>
 			@else
-				<p class="small">(Delivery is currently only available on Saturdays)</p>								
+				<p class="small">(Delivery is currently only available on Saturdays + no delivery December 23) </p>								
 			@endif
 
 			<?php
