@@ -404,6 +404,32 @@ function bulk_pricing( $cart ) {
         return;
 
     $bulk_discount_enabled = get_field('bulk_discount', 'option');;
+    $blackoutdates = get_field('bulk_discount_blackout_dates', 'option');
+
+    if ($blackoutdates) {
+        $blackout_array = array();
+
+        foreach($blackoutdates as $blackout) {
+            $date = $blackout['date'];
+            $blackout_array[] = $date;
+        }
+
+        $session_pickup_date = WC()->session->get('pickup_date_formatted');
+        
+        if ( isset($_POST['date']) || isset($session_pickup_date))  { 
+            
+            if ( isset($_POST['date'])) {
+                $pickupdate = $_POST['date'];
+            }
+            else {
+                $pickupdate = $session_pickup_date;
+            } 
+
+            if (in_array($pickupdate, $blackout_array)) {
+                $bulk_discount_enabled = false;
+            }
+        }
+    }
 
     if ($bulk_discount_enabled) {
     
