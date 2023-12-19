@@ -38,12 +38,12 @@
   "vendor/ui-icons_777777_256x240.png": "vendor/ui-icons_777777_256x240_6d28e77d.png",
   "vendor/ui-icons_cc0000_256x240.png": "vendor/ui-icons_cc0000_256x240_bd6996f9.png",
   "vendor/ui-icons_ffffff_256x240.png": "vendor/ui-icons_ffffff_256x240_e33c878c.png",
-  "scripts/customizer.js": "scripts/customizer_49d6ef48.js",
-  "styles/home.css": "styles/home_49d6ef48.css",
-  "scripts/home.js": "scripts/home_49d6ef48.js",
-  "scripts/lists.js": "scripts/lists_49d6ef48.js",
-  "styles/main.css": "styles/main_49d6ef48.css",
-  "scripts/main.js": "scripts/main_49d6ef48.js",
-  "styles/woo.css": "styles/woo_49d6ef48.css",
-  "scripts/woo.js": "scripts/woo_49d6ef48.js"
+  "scripts/customizer.js": "scripts/customizer_908fee73.js",
+  "styles/home.css": "styles/home_908fee73.css",
+  "scripts/home.js": "scripts/home_908fee73.js",
+  "scripts/lists.js": "scripts/lists_908fee73.js",
+  "styles/main.css": "styles/main_908fee73.css",
+  "scripts/main.js": "scripts/main_908fee73.js",
+  "styles/woo.css": "styles/woo_908fee73.css",
+  "scripts/woo.js": "scripts/woo_908fee73.js"
 }
