@@ -51,7 +51,7 @@
   
   $orders = PackingList::ordersarray($phonedata, $results);  
 
-  print('<pre>'.print_r($orders,true).'</pre>');
+  // print('<pre>'.print_r($orders,true).'</pre>');
 
 @endphp
 @section('content')
@@ -172,6 +172,12 @@
                   <td class="details_table">
                     <table>
                       @foreach ( $order['items'] as $item )
+
+@php
+    // print('<pre>'.print_r($item,true).'</pre>');
+    
+@endphp
+
                       @if ($item['shelf_type'] == $list_type || $item['shelf_type'] == 'unknown' || $item['shelf_type'] == 'mixed')
                         <tr>
                           <td class="qty_cell">

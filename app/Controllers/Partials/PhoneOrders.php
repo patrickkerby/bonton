@@ -273,6 +273,13 @@ trait PhoneOrders
           $item_quantity = PhoneOrders::itemquantity($package_size);
           $total_qty = $item_quantity * $quantity_PO; //This is calculated using a function in App.php controller
 
+          $attributes_array = array(
+            'option' => $option,
+            'topping' => $topping,
+            'package_size' => $package_size,
+            'product_size' => $product_size,
+          );
+
           //Get category names for the product. While we're at it, get the shelf/list type info from the category page
           $category_names = array();
           $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
@@ -315,8 +322,21 @@ trait PhoneOrders
 
           //See if previous items listed share the same name
           if ($existing_prod_list) {            
-            foreach ($existing_prod_list as $key => $existing_item) {              
-              if ($prod_name == $existing_item['name']) { 
+            foreach ($existing_prod_list as $key => $existing_item) {               
+              
+              $stub_option = "";
+              $stub_topping = "";
+              $stub_package_size = "";
+              $stub_product_size = "";
+
+              if ($option) { $stub_option = " - " .$option;}
+              if ($topping) { $stub_topping = " - " .$topping;}
+              if ($package_size) { $stub_package_size = " (" .$package_size .") ";}
+              if ($product_size) { $stub_product_size = " (" .$product_size .") ";}
+
+              $prod_name_with_attributes = $prod_name . $stub_option . $stub_topping . $stub_product_size;
+              
+              if ($prod_name_with_attributes == $existing_item['name']) { 
                 $is_duplicate = true;
                 $total_qty = $existing_item['total_quantity'] + $total_qty; // Combine the quantities of the matched products
                 $duplicate_index = $key; // Get the key so later we know which product line to replace
@@ -346,7 +366,7 @@ trait PhoneOrders
           }
           //option only
           elseif (!empty($option) && empty($product_size)) {
-            $product_items = array('name' => $prod_name ." -  " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //size only
           elseif (!empty($product_size) && empty($option)) {
@@ -467,6 +487,13 @@ trait PhoneOrders
           $topping = $variable_product_object->get_attribute( 'topping' );
           $package_size = $variable_product_object->get_attribute( 'package-size' );
           $product_size = $variable_product_object->get_attribute( 'size' );
+
+          $attributes_array = array(
+            'option' => $option,
+            'topping' => $topping,
+            'package_size' => $package_size,
+            'product_size' => $product_size,
+          );
         }
         else {
           $is_variation = false;
@@ -563,8 +590,21 @@ trait PhoneOrders
 
         //See if previous items listed share the same name
         if ($existing_prod_list) {            
-          foreach ($existing_prod_list as $key => $existing_item) {              
-            if ($prod_name == $existing_item['name']) { 
+          foreach ($existing_prod_list as $key => $existing_item) {   
+            
+            $stub_option = "";
+            $stub_topping = "";
+            $stub_package_size = "";
+            $stub_product_size = "";
+
+            if ($option) { $stub_option = " - " .$option;}
+            if ($topping) { $stub_topping = " - " .$topping;}
+            if ($package_size) { $stub_package_size = " (" .$package_size .")";}
+            if ($product_size) { $stub_product_size = " (" .$product_size .")";}
+
+            $prod_name_with_attributes = $prod_name . $stub_option . $stub_topping . $stub_product_size;
+            
+            if ($prod_name_with_attributes == $existing_item['name']) {
               $is_duplicate = true;
               $total_qty = $existing_item['total_quantity'] + $total_qty; // Combine the quantities of the matched products
               $duplicate_index = $key; // Get the key so later we know which product line to replace
@@ -595,7 +635,7 @@ trait PhoneOrders
             }
             //option only
             elseif (!empty($option) && empty($product_size)) {
-              $product_items = array('name' => $prod_name ." -  " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //size only
             elseif (!empty($product_size) && empty($option)) {
