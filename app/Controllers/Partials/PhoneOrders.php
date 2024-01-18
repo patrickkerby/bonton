@@ -293,7 +293,8 @@ trait PhoneOrders
           }
 
           $categories = implode(', ', $category_names);
-          $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));         
+          $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
+          
 
           // Now check the product to see if it has a product level shelf-type override
           $product_cooler_override = get_field('cooler', $prod_id);
@@ -350,30 +351,30 @@ trait PhoneOrders
           // Ex. trying to match "Buns 1/2 dozen" vs "Buns Single"
 
           if (!empty($option) && !empty($product_size) && !empty($topping)) {
-            $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option, topping
           if (!empty($option) && empty($product_size) && !empty($topping)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //size, topping
           if (empty($option) && !empty($product_size) && !empty($topping)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option, size
           if (!empty($option) && !empty($product_size)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option only
           elseif (!empty($option) && empty($product_size)) {
-            $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //size only
           elseif (!empty($product_size) && empty($option)) {
-            $product_items = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           else {
-            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
 
           // If this item is a duplicate product, replace the existing item. If it's not, just add the item normally
@@ -619,35 +620,35 @@ trait PhoneOrders
         if (!$is_bundle_parent && $total_qty > 0) {
           if ($is_variation) {
             if (!empty($option) && !empty($product_size) && !empty($topping)) {
-              $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //option, topping
             if (!empty($option) && empty($product_size) && !empty($topping)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //size, topping
             if (empty($option) && !empty($product_size) && !empty($topping)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //option, size
             if (!empty($option) && !empty($product_size)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //option only
             elseif (!empty($option) && empty($product_size)) {
-              $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //size only
             elseif (!empty($product_size) && empty($option)) {
-              $product_items = array('name' => $prod_name ." (" .$product_size .")", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." (" .$product_size .")", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             else {
-              $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
 
             }
           }
           else {
-            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
           }
 
           // If this item is a duplicate product, replace the existing item. If it's not, just add the item normally
