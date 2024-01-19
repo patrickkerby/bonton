@@ -151,6 +151,9 @@ trait PhoneOrders
       $order_id_PO = $order['TxID'];
       $phone_number_PO = $order['Customer']['Phone'];
       $existing_prod_list = "";
+      $excluded_categories = array();
+      $excluded_category_ids = array();
+      $categories = array();
 
       // Payment owed?      
       if ($order['Tenders']) {
@@ -272,6 +275,7 @@ trait PhoneOrders
           $product_size = $prod_object_PO->get_attribute( 'size' );
           $item_quantity = PhoneOrders::itemquantity($package_size);
           $total_qty = $item_quantity * $quantity_PO; //This is calculated using a function in App.php controller
+        
 
           $attributes_array = array(
             'option' => $option,
@@ -286,12 +290,27 @@ trait PhoneOrders
 
           if ($term_obj_list) {
             foreach ($term_obj_list as $term) {
+              //Check for baking list exclusions
+              $baking_exlusion = get_field('baking_list_exclusion', 'product_cat_' . $term->term_id); //Gets the ACF field using term_id
+              
+              if($baking_exlusion == true) {
+                $excluded_from_bakinglist = "excluded";
+                array_push($excluded_category_ids, $term->term_id);
+              }
+              else {
+                $excluded_from_bakinglist = "included";
+              }
+
+              //Remove the duplicates created by the loop
+              $excluded_categories = array_unique($excluded_category_ids);
+
               //While we're looping the terms, create array of term names
-              array_push($category_names, $term->name);
-              $list_type = get_field('list_type', $term);
+              if(!in_array($term->term_id, $excluded_categories)) {
+                array_push($category_names, $term->name);
+              }
             }
           }
-
+          
           $categories = implode(', ', $category_names);
           $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
           
@@ -351,30 +370,30 @@ trait PhoneOrders
           // Ex. trying to match "Buns 1/2 dozen" vs "Buns Single"
 
           if (!empty($option) && !empty($product_size) && !empty($topping)) {
-            $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option, topping
           if (!empty($option) && empty($product_size) && !empty($topping)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //size, topping
           if (empty($option) && !empty($product_size) && !empty($topping)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option, size
           if (!empty($option) && !empty($product_size)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option only
           elseif (!empty($option) && empty($product_size)) {
-            $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //size only
           elseif (!empty($product_size) && empty($option)) {
-            $product_items = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           else {
-            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
 
           // If this item is a duplicate product, replace the existing item. If it's not, just add the item normally
@@ -547,9 +566,24 @@ trait PhoneOrders
 
         if ($term_obj_list) {
           foreach ($term_obj_list as $term) {
+            //Check for baking list exclusions
+            $baking_exlusion = get_field('baking_list_exclusion', 'product_cat_' . $term->term_id); //Gets the ACF field using term_id
+            
+            if($baking_exlusion == true) {
+              $excluded_from_bakinglist = "excluded";
+              array_push($excluded_category_ids, $term->term_id);
+            }
+            else {
+              $excluded_from_bakinglist = "included";
+            }
+
+            //Remove the duplicates created by the loop
+            $excluded_categories = array_unique($excluded_category_ids);
+
             //While we're looping the terms, create array of term names
-            array_push($category_names, $term->name);
-            $list_type = get_field('list_type', $term);
+            if(!in_array($term->term_id, $excluded_categories)) {
+              array_push($category_names, $term->name);
+            }
           }
         }
 
@@ -620,35 +654,35 @@ trait PhoneOrders
         if (!$is_bundle_parent && $total_qty > 0) {
           if ($is_variation) {
             if (!empty($option) && !empty($product_size) && !empty($topping)) {
-              $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //option, topping
             if (!empty($option) && empty($product_size) && !empty($topping)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //size, topping
             if (empty($option) && !empty($product_size) && !empty($topping)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //option, size
             if (!empty($option) && !empty($product_size)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //option only
             elseif (!empty($option) && empty($product_size)) {
-              $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //size only
             elseif (!empty($product_size) && empty($option)) {
-              $product_items = array('name' => $prod_name ." (" .$product_size .")", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." (" .$product_size .")", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             else {
-              $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
 
             }
           }
           else {
-            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
           }
 
           // If this item is a duplicate product, replace the existing item. If it's not, just add the item normally
