@@ -255,13 +255,14 @@ trait PhoneOrders
 
         // Find the equivalent product in the woocommerce database. Use this info to get all of the 
         if($prod_object_PO && $detail['Item']['CategoryID'] != "123" || $prod_object_PO && $detail['Item']['DepartmentName'] !== "Modifier" || $prod_object_PO && $detail['Item']['CategoryID'] !== "70" ) {
-          
+
           $is_variation = $prod_object_PO->get_parent_id(); //if the product has a parent, then it is a variation not a single
           
           if( $is_variation ){
             $prod_parent_object = wc_get_product($prod_object_PO->get_parent_id());
             $variation_id = $wc_match_PO; // because all of these should already be variations.
             $prod_name = $prod_parent_object->get_name();
+            $prod_id = $prod_parent_object->get_id();
           }
           else {
             $prod_id = $wc_match_PO;
@@ -275,7 +276,6 @@ trait PhoneOrders
           $product_size = $prod_object_PO->get_attribute( 'size' );
           $item_quantity = PhoneOrders::itemquantity($package_size);
           $total_qty = $item_quantity * $quantity_PO; //This is calculated using a function in App.php controller
-        
 
           $attributes_array = array(
             'option' => $option,
@@ -290,6 +290,7 @@ trait PhoneOrders
 
           if ($term_obj_list) {
             foreach ($term_obj_list as $term) {
+                            
               //Check for baking list exclusions
               $baking_exlusion = get_field('baking_list_exclusion', 'product_cat_' . $term->term_id); //Gets the ACF field using term_id
               
@@ -303,17 +304,16 @@ trait PhoneOrders
 
               //Remove the duplicates created by the loop
               $excluded_categories = array_unique($excluded_category_ids);
-
+              
               //While we're looping the terms, create array of term names
               if(!in_array($term->term_id, $excluded_categories)) {
-                array_push($category_names, $term->name);
+                array_push($category_names, $term->name);                
               }
             }
           }
           
           $categories = implode(', ', $category_names);
           $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
-          
 
           // Now check the product to see if it has a product level shelf-type override
           $product_cooler_override = get_field('cooler', $prod_id);
