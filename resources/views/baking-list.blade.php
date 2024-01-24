@@ -108,13 +108,7 @@
   }
   
 $order_data = array_merge($phone_orders, $web_orders);
-
-
-
-  // print('<pre>'.print_r($order_data,true).'</pre>');
   
-
-
 
   // // Create filtered list of orders based on the date selected on list page.
   // $filtered_orders = array();

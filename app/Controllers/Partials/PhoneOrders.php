@@ -290,7 +290,7 @@ trait PhoneOrders
 
           if ($term_obj_list) {
             foreach ($term_obj_list as $term) {
-                            
+
               //Check for baking list exclusions
               $baking_exlusion = get_field('baking_list_exclusion', 'product_cat_' . $term->term_id); //Gets the ACF field using term_id
               
@@ -367,7 +367,7 @@ trait PhoneOrders
           //create the array structure for the Items, before pushing it to the final array
           // We have all these options because WC is inconsistent in how it names the product, sometimes it uses attributes, sometimes it doesn't
           // This normalizes all product titles so that we can actually match them up later. 
-          // Ex. trying to match "Buns 1/2 dozen" vs "Buns Single"
+          // Ex. trying to match "Buns 1/2 dozen" vs "Buns Single"          
 
           if (!empty($option) && !empty($product_size) && !empty($topping)) {
             $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
@@ -382,7 +382,7 @@ trait PhoneOrders
           }
           //option, size
           if (!empty($option) && !empty($product_size)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+            $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
           }
           //option only
           elseif (!empty($option) && empty($product_size)) {
@@ -410,8 +410,8 @@ trait PhoneOrders
         else {
           //Add items straight from the POS. They get to bypass all of the above manipulations because we don't know their WC match
           $phone_order[$order_id_PO]['product_locations'] = array('unknown');
-          $phone_order[$order_id_PO]['items'][] = array('name' => $POS_prod_name, 'total_quantity' => $quantity_PO, 'product_id' => 'POS-'.$prod_id_PO, 'variation_id' => $variation_id, 'category' => null, 'shelf_type' => 'unknown', 'warning' => true, 'instruction' => $instruction_desc);
-        }      
+          $phone_order[$order_id_PO]['items'][] = array('name' => $POS_prod_name, 'total_quantity' => $quantity_PO, 'product_id' => 'POS-'.$prod_id_PO, 'variation_id' => $variation_id, 'category' => null, 'category_parent' => null, 'shelf_type' => 'unknown', 'warning' => true, 'instruction' => $instruction_desc);
+        }
       }
     }
     
@@ -666,7 +666,7 @@ trait PhoneOrders
             }
             //option, size
             if (!empty($option) && !empty($product_size)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'product_id' => $variation_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+              $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
             }
             //option only
             elseif (!empty($option) && empty($product_size)) {
