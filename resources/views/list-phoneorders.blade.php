@@ -263,6 +263,8 @@ class barcode {
                       <tbody>
                         @foreach ($phoneOrder['Details'] as $detail )
                         @php
+                        print('<pre>'.print_r($detail,true).'</pre>');
+                        
                           $cat_id = $detail['Item']['CategoryID'];
                         @endphp
                                             
