@@ -143,6 +143,10 @@
           {{-- PHONE ORDERS --}}
           @if ($orders['phone_orders'])
           @foreach ($orders['phone_orders'] as $order)  
+          @php
+              print('<pre>'.print_r($order,true).'</pre>');
+              
+          @endphp
             @if($selectedDateComparisonFormat == $order['pickup_date'] )
             {{-- @if(in_array($list_type, $order['product_locations']) ||  in_array('unknown', $order['product_locations']) )   --}}
                 <tr class="pack @foreach($order['product_locations'] as $location){{ $location }} @endforeach">
