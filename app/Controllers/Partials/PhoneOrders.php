@@ -327,13 +327,14 @@ trait PhoneOrders
             $list_type = "shelf";
           }
           if ($product_freezer_override) {
-            $list_type = "shelf";
+            $list_type = "freezer";
           }
 
           // Make an array of the packing locations for each product, then show at an order level where they are
           $product_locations[] = $list_type;
           $product_locations = array_unique($product_locations);
           $phone_order[$order_id_PO]['product_locations'] = $product_locations;
+
 
           // We need to know if this is our first product being added or not
           if (isset($phone_order[$order_id_PO]['items'])) {
@@ -410,7 +411,7 @@ trait PhoneOrders
         else {
           //Add items straight from the POS. They get to bypass all of the above manipulations because we don't know their WC match
           $phone_order[$order_id_PO]['product_locations'] = array('unknown');
-          $phone_order[$order_id_PO]['items'][] = array('name' => $POS_prod_name, 'total_quantity' => $quantity_PO, 'product_id' => 'POS-'.$prod_id_PO, 'variation_id' => $variation_id, 'category' => null, 'category_parent' => null, 'shelf_type' => 'unknown', 'warning' => true, 'instruction' => $instruction_desc);
+          $phone_order[$order_id_PO]['items'][] = array('name' => $POS_prod_name, 'total_quantity' => $quantity_PO, 'product_id' => 'POS-'.$prod_id_PO, 'variation_id' => $variation_id, 'category' => null, 'category_parent' => null,  'shelf_type' => 'unknown', 'warning' => true, 'instruction' => $instruction_desc);
         }
       }
     }
@@ -609,6 +610,7 @@ trait PhoneOrders
         $product_locations[] = $list_type;
         $product_locations = array_unique($product_locations);
         $web_order[$order_id]['product_locations'] = $product_locations;
+
 
         //Some full categories are listed as mixed for shelf location. Products inherit this, but should have their own override for cooler or shelf
         // Check for mixed, allow it to show up in both lists, but flag it with a warning so it can be updated on the product level
