@@ -110,10 +110,10 @@ trait PhoneOrders
     
     $web_order = array();
     $phone_order = array();
+    $seen_phone_ids = [];
 
     foreach($phonedata as $order) {  
       // Phone order data is passed from the App.php controller
-      $seen_phone_ids = [];
 
       //General Variables that apply to both phone and web, and need to be stated early
       $existing_prod_list = array();
@@ -141,6 +141,7 @@ trait PhoneOrders
         continue;
       }
       $seen_phone_ids[] = $order['TxID'];
+      
       //General Phone Order Variables
       $has_instruction_PO = false;
       $has_ManualDesc_PO = false;
