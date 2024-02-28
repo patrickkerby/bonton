@@ -26,7 +26,7 @@
       body.receiptPrint {
         margin: 0;
         padding: 0 !important;
-        width: 3in;
+        width: 3in; 
         max-width: 3in;
         min-width: 3in !important;
       }
@@ -161,6 +161,9 @@
     @foreach ( $order['items'] as $item )
       @if ($item['shelf_type'] == $list_type || $item['shelf_type'] == 'unknown' || $item['shelf_type'] == 'mixed')
         @php
+
+        
+        
           if ($item['shelf_type'] == "shelf") {
             $shelf_count++;
           }

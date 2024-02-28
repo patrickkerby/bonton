@@ -48,62 +48,37 @@ trait PhoneOrders
   }
 
   public function shelf_type() {
-    //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
-    //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
+        // ***IMPORTANT: for these to work, there is a custom filter in filters.php
 
-    //Product pages give an option to override the natural category and assign the product as cooler. Add to cooler array:
-    // ***IMPORTANT: for these to work, there is a custom filter in filters.php
+    $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries', 'gluten-free-baked-goods');
+    $shelf_list_slugs = array('buns-bagels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients', 'savoury-treats');
 
-      //Cooler List
-      $cooler_list = array( '22, 53, 51, 107, 103' );
-      $cooler_list_slugs = array('cakes', 'pies-flans', 'dips-salsa', 'individual-pastries', 'gluten-free-baked-goods');
+    $args = array(
+      'status' => 'publish',
+      'limit' => -1,
+      'return' => 'ids',
+      'category' => array_merge($cooler_list_slugs, $shelf_list_slugs)
+    );
 
-      $shelf_list = array( '91, 83, 52, 104, 13, 105, 135, 94, 102, 106, 54, 10, 67, 285, 289, 662' );
-      $shelf_list_slugs = array('buns-bagels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients', 'savoury-treats');
+    $products = wc_get_products($args);
 
-      $cooler_override_args = array(
-        'status' => 'publish',
-        'cooler' => '1',
-        'return' => 'ids',
-        'limit' => '-1'
-      );
+    $shelf_type = array(
+      'cooler_product_ids' => array(),
+      'shelf_product_ids' => array()
+    );
 
-      $shelf_override_args = array(
-        'status' => 'publish',
-        'shelf' => '1',
-        'return' => 'ids',
-        'limit' => '-1'
-      );
+    foreach ($products as $product_id) {
+      $product = wc_get_product($product_id);
+      $categories = $product->get_category_ids();
 
-      $cooler_overrides = wc_get_products( $cooler_override_args );
-      $shelf_overrides = wc_get_products( $shelf_override_args );
+      if (array_intersect($categories, $cooler_list_slugs)) {
+        $shelf_type['cooler_product_ids'][] = $product_id;
+      } elseif (array_intersect($categories, $shelf_list_slugs)) {
+        $shelf_type['shelf_product_ids'][] = $product_id;
+      }
+    }
 
-      $cooler_args = array(
-        'status' => 'publish',
-        'category' => $cooler_list_slugs,
-        'limit' => -1,
-        'return' => 'ids',
-        'exclude' => $shelf_overrides
-      );
-
-      $shelf_args = array(
-        'status' => array('publish', 'draft'),
-        'category' => $shelf_list_slugs,
-        'limit' => -1,
-        'return' => 'ids',
-        'exclude' => $cooler_overrides
-      );
-
-      $cooler_array = wc_get_products( $cooler_args );
-      $cooler_array = array_merge($cooler_array,$cooler_overrides);
-
-      $shelf_array = wc_get_products( $shelf_args );
-      $shelf_array = array_merge($shelf_array,$shelf_overrides);
-
-      $shelf_type['cooler_product_ids'] = $cooler_array;
-      $shelf_type['shelf_product_ids'] = $shelf_array;
-
-      return $shelf_type;
+    return $shelf_type;
   }
 
   public static function ordersarray($phonedata, $webdata) {
@@ -335,6 +310,11 @@ trait PhoneOrders
           $product_locations = array_unique($product_locations);
           $phone_order[$order_id_PO]['product_locations'] = $product_locations;
 
+          if ($list_type == '' || $list_type == 'mixed' ) {
+            $warning = "This product is not designated shelf/cooler/freezer";
+            $list_type = "unknown";
+          }
+
 
           // We need to know if this is our first product being added or not
           if (isset($phone_order[$order_id_PO]['items'])) {
@@ -368,34 +348,34 @@ trait PhoneOrders
           //create the array structure for the Items, before pushing it to the final array
           // We have all these options because WC is inconsistent in how it names the product, sometimes it uses attributes, sometimes it doesn't
           // This normalizes all product titles so that we can actually match them up later. 
-          // Ex. trying to match "Buns 1/2 dozen" vs "Buns Single"          
+          // Ex. trying to match "Buns 1/2 dozen" vs "Buns Single"
 
-          if (!empty($option) && !empty($product_size) && !empty($topping)) {
-            $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+          $name = $prod_name;
+
+          if (!empty($option)) {
+              $name .= " - " . $option;
           }
-          //option, topping
-          if (!empty($option) && empty($product_size) && !empty($topping)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+
+          if (!empty($product_size)) {
+              $name .= " (" . $product_size . ")";
           }
-          //size, topping
-          if (empty($option) && !empty($product_size) && !empty($topping)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
+
+          if (!empty($topping)) {
+              $name .= " - " . $topping;
           }
-          //option, size
-          if (!empty($option) && !empty($product_size)) {
-            $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
-          }
-          //option only
-          elseif (!empty($option) && empty($product_size)) {
-            $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
-          }
-          //size only
-          elseif (!empty($product_size) && empty($option)) {
-            $product_items = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
-          }
-          else {
-            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $instruction_desc);
-          }
+
+          $product_items = array(
+              'name' => $name,
+              'total_quantity' => $total_qty,
+              'variation_id' => $variation_id,
+              'product_id' => $prod_id,
+              'category' => $categories,
+              'category_parent' => $parent_cat_id,
+              'excluded_from_bakinglist' => $excluded_from_bakinglist,
+              'shelf_type' => $list_type,
+              'warning' => $warning,
+              'instruction' => $instruction_desc
+          );
 
           // If this item is a duplicate product, replace the existing item. If it's not, just add the item normally
           if ($is_duplicate) {
@@ -416,284 +396,279 @@ trait PhoneOrders
       }
     }
     
+    if($webdata) {
+      foreach($webdata as $order) {
+        //General Variables that apply to both phone and web, and need to be stated early
+        $existing_prod_list = array();
+        $delivery_methods = array();
+        $product_locations = array();
+        
+        $order_id = $order->get_id();
+        $pickup_date = $order->get_meta('pickup_date');
+        $first_name = $order->get_billing_first_name();
+        $last_name = $order->get_billing_last_name();
+        $phone_number = $order->get_billing_phone();
+        $customer_note = $order->get_customer_note();
+        $pickup_location = $order->get_meta( 'pickuplocation', true ); // This is for curbside vs instore
+        $existing_prod_list = "";
+        $bagfee = $order->get_meta( '_pickup_bag_fee', true );
 
-    foreach($webdata as $order) {
-      //General Variables that apply to both phone and web, and need to be stated early
-      $existing_prod_list = array();
-      $delivery_methods = array();
-      $product_locations = array();
-      
-      $order_id = $order->get_id();
-      $pickup_date = $order->get_meta('pickup_date');
-      $first_name = $order->get_billing_first_name();
-      $last_name = $order->get_billing_last_name();
-      $phone_number = $order->get_billing_phone();
-      $customer_note = $order->get_customer_note();
-      $pickup_location = $order->get_meta( 'pickuplocation', true ); // This is for curbside vs instore
-      $existing_prod_list = "";
-      $bagfee = $order->get_meta( '_pickup_bag_fee', true );
+        // Convert the date as it's stored in the WC database to be the same as the POS (Y-m-d)
+        date_default_timezone_set('MST');
+        $dateformat = "l, F j, Y";
+        $pickupdate_object = DateTime::createFromFormat($dateformat, $pickup_date);      
+        $pickup_date = $pickupdate_object->format('Y-m-d'); //This is to compare agains POS date format
 
+        // Pickup or Delivery?
+        if($order->has_shipping_method('flat_rate')) {
+          $delivery_method = 'delivery';
+          $timeslot = $order->get_meta( '_timeslot', true );
+        }
+        else {
+          $delivery_method = 'pickup';
+          $timeslot = $order->get_meta( '_timeslot_pickup', true );
+        } 
 
-      // Convert the date as it's stored in the WC database to be the same as the POS (Y-m-d)
-      date_default_timezone_set('MST');
-      $dateformat = "l, F j, Y";
-      $pickupdate_object = DateTime::createFromFormat($dateformat, $pickup_date);      
-      $pickup_date = $pickupdate_object->format('Y-m-d'); //This is to compare agains POS date format
+        //Simplify output for timeslots
+        if($timeslot == '9am - 11am') {
+          $timeslot = 'Morning';
+        }
+        elseif ($timeslot == '11am - 2pm') {
+          $timeslot = 'Midday';
+        }
+        elseif ($timeslot == '2pm - 5pm') {
+          $timeslot = 'Afternoon';
+        }
+        elseif($timeslot == 'Between 10 am &amp; 1 pm') {
+          $timeslot = '10 - 1';
+        }
+        elseif ($timeslot == 'Between 3 pm &amp; 6 pm') {
+          $timeslot = '4 - 7';
+        }
+        else {
+          $timeslot = '';
+        }
 
-      // Pickup or Delivery?
-      if($order->has_shipping_method('flat_rate')) {
-        $delivery_method = 'delivery';
-        $timeslot = $order->get_meta( '_timeslot', true );
-      }
-      else {
-        $delivery_method = 'pickup';
-        $timeslot = $order->get_meta( '_timeslot_pickup', true );
-      } 
+        //Create order details array. Later we'll push product items to this as well
+        $web_order[$order_id] = array(
+          'customer_name' => $last_name.", ".$first_name,
+          'phone' => $phone_number,
+          'order_id' => $order_id,
+          'pickup_date' => $pickup_date,
+          'timeslot' => $timeslot,
+          'paid' => true,
+          'order_type' => 'web',
+          'delivery_method' => $delivery_method,
+          'bag_details' => $bagfee,
+          'pickup_location' => $pickup_location,
+          'customer_note' => $customer_note
+        );
+        
+        //Get product details from order
+        foreach ($order->get_items() as $item_id => $detail) {
+          $prod_id = $detail->get_product_id();
+          $prod_object = wc_get_product($prod_id);
+          $variation_id = $detail->get_variation_id();
+          $prod_name = $prod_object->get_name();
+          $quantity = $detail->get_quantity();
+          $list_type = "";
+          $warning = false;
+          $is_duplicate = false;
+          $instruction = $detail->get_meta( 'Sliced Option', true );
+          $product_meta_objects = $detail->get_meta_data();
+          $product_items = "";  
+            
+          if ($variation_id != 0 || $variation_id = false) {
+            $is_variation = true;
+            $variable_product_object = wc_get_product($variation_id);
+            $prod_parent_object = wc_get_product($variable_product_object->get_parent_id());
+            $prod_name = $prod_parent_object->get_name();
+            $option = $variable_product_object->get_attribute( 'variety' );
+            $topping = $variable_product_object->get_attribute( 'topping' );
+            $package_size = $variable_product_object->get_attribute( 'package-size' );
+            $product_size = $variable_product_object->get_attribute( 'size' );
 
-      //Simplify output for timeslots
-      if($timeslot == '9am - 11am') {
-        $timeslot = 'Morning';
-      }
-      elseif ($timeslot == '11am - 2pm') {
-        $timeslot = 'Midday';
-      }
-      elseif ($timeslot == '2pm - 5pm') {
-        $timeslot = 'Afternoon';
-      }
-      elseif($timeslot == 'Between 10 am &amp; 1 pm') {
-        $timeslot = '10 - 1';
-      }
-      elseif ($timeslot == 'Between 3 pm &amp; 6 pm') {
-        $timeslot = '4 - 7';
-      }
-      else {
-        $timeslot = '';
-      }
-
-      //Create order details array. Later we'll push product items to this as well
-      $web_order[$order_id] = array(
-        'customer_name' => $last_name.", ".$first_name,
-        'phone' => $phone_number,
-        'order_id' => $order_id,
-        'pickup_date' => $pickup_date,
-        'timeslot' => $timeslot,
-        'paid' => true,
-        'order_type' => 'web',
-        'delivery_method' => $delivery_method,
-        'bag_details' => $bagfee,
-        'pickup_location' => $pickup_location,
-        'customer_note' => $customer_note
-      );
-      
-      //Get product details from order
-      foreach ($order->get_items() as $item_id => $detail) {
-        $prod_id = $detail->get_product_id();
-        $prod_object = wc_get_product($prod_id);
-        $variation_id = $detail->get_variation_id();
-        $prod_name = $prod_object->get_name();
-        $quantity = $detail->get_quantity();
-        $list_type = "";
-        $warning = false;
-        $is_duplicate = false;
-        $instruction = $detail->get_meta( 'Sliced Option', true );
-        $product_meta_objects = $detail->get_meta_data();
-        $product_items = "";  
+            $attributes_array = array(
+              'option' => $option,
+              'topping' => $topping,
+              'package_size' => $package_size,
+              'product_size' => $product_size,
+            );
+          }
+          else {
+            $is_variation = false;
+          }
           
-        if ($variation_id != 0 || $variation_id = false) {
-          $is_variation = true;
-          $variable_product_object = wc_get_product($variation_id);
-          $prod_parent_object = wc_get_product($variable_product_object->get_parent_id());
-          $prod_name = $prod_parent_object->get_name();
-          $option = $variable_product_object->get_attribute( 'variety' );
-          $topping = $variable_product_object->get_attribute( 'topping' );
-          $package_size = $variable_product_object->get_attribute( 'package-size' );
-          $product_size = $variable_product_object->get_attribute( 'size' );
-
-          $attributes_array = array(
-            'option' => $option,
-            'topping' => $topping,
-            'package_size' => $package_size,
-            'product_size' => $product_size,
-          );
-        }
-        else {
-          $is_variation = false;
-        }
-        
-        //If the product is a bundled product, we want to hide the parent. We only want to see the items that require packing.
-        $bundle_mode = $detail->get_meta( '_bundle_group_mode', true);
-        if ($bundle_mode == "parent") {
-          $is_bundle_parent = true;
-        }
-        else {
-          $is_bundle_parent = false;
-        }
-
-        // Hide specific meta data from the details column. List the items by key here:
-        $hidden_meta = array( "pa_package-size", "_WCPA_order_meta_data", "pa_variety", "pa_size", "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
-        $product_meta = array();
-        foreach ( $product_meta_objects as $meta ) {
-          if (!in_array($meta->key, $hidden_meta)) {              
-            $product_meta[$meta->key] = $meta->value;
+          //If the product is a bundled product, we want to hide the parent. We only want to see the items that require packing.
+          $bundle_mode = $detail->get_meta( '_bundle_group_mode', true);
+          if ($bundle_mode == "parent") {
+            $is_bundle_parent = true;
           }
-        }
+          else {
+            $is_bundle_parent = false;
+          }
 
-        // Check to see if line items have been refunded, then update quantity
-        $order_refunds = $order->get_refunds();  
-        $refund_item_id = "";
-        $total_qty = $quantity;
-        if ($order_refunds) {
-          foreach ($order_refunds as $refund) {
-            foreach ($refund->get_items() as $item_id => $item) {
-                $refund_item_id = $item -> get_product_id();
-                $refunded_quantity = $item->get_quantity(); 
-                $refunded_line_subtotal = $item->get_subtotal();
+          // Hide specific meta data from the details column. List the items by key here:
+          $hidden_meta = array( "pa_package-size", "_WCPA_order_meta_data", "pa_variety", "pa_size", "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
+          $product_meta = array();
+          foreach ( $product_meta_objects as $meta ) {
+            if (!in_array($meta->key, $hidden_meta)) {              
+              $product_meta[$meta->key] = $meta->value;
             }
           }
-          if($prod_id == $refund_item_id) {
-            $total_qty = $quantity + $refunded_quantity;
-          }
-        }
 
-        // Rather than establishing this with the other variation variables above, we need to do it after the refund check.
-        if ($is_variation) {
-          $item_quantity = PhoneOrders::itemquantity($package_size);
-          $total_qty = $item_quantity * $total_qty; //This is calculated using a function in App.php controller
-        }
-        
-        //Get category names for the product. While we're at it, get the shelf/list type info from the category page
-        $category_names = array();
-        $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
-
-        if ($term_obj_list) {
-          foreach ($term_obj_list as $term) {
-            //Check for baking list exclusions
-            $baking_exlusion = get_field('baking_list_exclusion', 'product_cat_' . $term->term_id); //Gets the ACF field using term_id
-            
-            if($baking_exlusion == true) {
-              $excluded_from_bakinglist = "excluded";
-              array_push($excluded_category_ids, $term->term_id);
+          // Check to see if line items have been refunded, then update quantity
+          $order_refunds = $order->get_refunds();  
+          $refund_item_id = "";
+          $total_qty = $quantity;
+          if ($order_refunds) {
+            foreach ($order_refunds as $refund) {
+              foreach ($refund->get_items() as $item_id => $item) {
+                  $refund_item_id = $item -> get_product_id();
+                  $refunded_quantity = $item->get_quantity(); 
+                  $refunded_line_subtotal = $item->get_subtotal();
+              }
             }
-            else {
-              $excluded_from_bakinglist = "included";
-            }
-
-            //Remove the duplicates created by the loop
-            $excluded_categories = array_unique($excluded_category_ids);
-
-            //While we're looping the terms, create array of term names
-            if(!in_array($term->term_id, $excluded_categories)) {
-              array_push($category_names, $term->name);
+            if($prod_id == $refund_item_id) {
+              $total_qty = $quantity + $refunded_quantity;
             }
           }
-        }
 
-        $categories = implode(', ', $category_names);
-        $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));         
-
-        // Now check the product to see if it has a product level shelf-type override
-        $product_cooler_override = get_field('cooler', $prod_id);
-        $product_shelf_override = get_field('shelf', $prod_id);
-        $product_freezer_override = get_field('freezer', $prod_id);
-        
-        if ($product_cooler_override) {
-          $list_type = "cooler";
-        }
-        if ($product_shelf_override) {
-          $list_type = "shelf";
-        }
-        if ($product_freezer_override) {
-          $list_type = "freezer";
-        }
-
-        // Make an array of the packing locations for each product, then show at an order level where they are
-        $product_locations[] = $list_type;
-        $product_locations = array_unique($product_locations);
-        $web_order[$order_id]['product_locations'] = $product_locations;
-
-
-        //Some full categories are listed as mixed for shelf location. Products inherit this, but should have their own override for cooler or shelf
-        // Check for mixed, allow it to show up in both lists, but flag it with a warning so it can be updated on the product level
-        
-        if ($list_type == '' || $list_type == 'mixed' ) {
-          $warning = "This product is not designated shelf or cooler";
-          $list_type = "shelf";
-        }
-
-        // We need to know if this is our first product being added or not
-        if (isset($web_order[$order_id]['items'])) {
-          $existing_prod_list = $web_order[$order_id]['items'];            
-        }
-
-        //See if previous items listed share the same name
-        if ($existing_prod_list) {            
-          foreach ($existing_prod_list as $key => $existing_item) {   
-            
-            $stub_option = "";
-            $stub_topping = "";
-            $stub_package_size = "";
-            $stub_product_size = "";
-
-            if ($option) { $stub_option = " - " .$option;}
-            if ($topping) { $stub_topping = " - " .$topping;}
-            if ($package_size) { $stub_package_size = " (" .$package_size .")";}
-            if ($product_size) { $stub_product_size = " (" .$product_size .")";}
-
-            $prod_name_with_attributes = $prod_name . $stub_option . $stub_topping . $stub_product_size;
-            
-            if ($prod_name_with_attributes == $existing_item['name']) {
-              $is_duplicate = true;
-              $total_qty = $existing_item['total_quantity'] + $total_qty; // Combine the quantities of the matched products
-              $duplicate_index = $key; // Get the key so later we know which product line to replace
-            }
-          }
-        }
-        
-        //create the array structure for the Items, before pushing it to the final array
-        // We have all these options because WC is inconsistent in how it names the product, sometimes it uses attributes, sometimes it doesn't
-        // This normalizes all product titles so that we can actually match them up later. 
-        // Ex. trying to match "Buns 1/2 dozen" vs "Buns Single"
-        if (!$is_bundle_parent && $total_qty > 0) {
+          // Rather than establishing this with the other variation variables above, we need to do it after the refund check.
           if ($is_variation) {
-            if (!empty($option) && !empty($product_size) && !empty($topping)) {
-              $product_items = array('name' => $prod_name ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
-            }
-            //option, topping
-            if (!empty($option) && empty($product_size) && !empty($topping)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
-            }
-            //size, topping
-            if (empty($option) && !empty($product_size) && !empty($topping)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
-            }
-            //option, size
-            if (!empty($option) && !empty($product_size)) {
-              $product_items = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
-            }
-            //option only
-            elseif (!empty($option) && empty($product_size)) {
-              $product_items = array('name' => $prod_name ." - " .$option, 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
-            }
-            //size only
-            elseif (!empty($product_size) && empty($option)) {
-              $product_items = array('name' => $prod_name ." (" .$product_size .")", 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
-            }
-            else {
-              $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+            $item_quantity = PhoneOrders::itemquantity($package_size);
+            $total_qty = $item_quantity * $total_qty; //This is calculated using a function in App.php controller
+          }
+          
+          //Get category names for the product. While we're at it, get the shelf/list type info from the category page
+          $category_names = array();
+          $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
 
+          if ($term_obj_list) {
+            foreach ($term_obj_list as $term) {
+              //Check for baking list exclusions
+              $baking_exlusion = get_field('baking_list_exclusion', 'product_cat_' . $term->term_id); //Gets the ACF field using term_id
+              
+              if($baking_exlusion == true) {
+                $excluded_from_bakinglist = "excluded";
+                array_push($excluded_category_ids, $term->term_id);
+              }
+              else {
+                $excluded_from_bakinglist = "included";
+              }
+
+              //Remove the duplicates created by the loop
+              $excluded_categories = array_unique($excluded_category_ids);
+
+              //While we're looping the terms, create array of term names
+              if(!in_array($term->term_id, $excluded_categories)) {
+                array_push($category_names, $term->name);
+              }
             }
           }
-          else {
-            $product_items = array('name' => $prod_name , 'total_quantity' => $total_qty, 'variation_id' => $variation_id, 'product_id' => $prod_id, 'category' => $categories, 'category_parent' => $parent_cat_id, 'excluded_from_bakinglist' => $excluded_from_bakinglist, 'shelf_type' => $list_type, 'warning' => $warning, 'instruction' => $product_meta);
+
+          $categories = implode(', ', $category_names);
+          $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));         
+
+          // Now check the product to see if it has a product level shelf-type override
+          $product_cooler_override = get_field('cooler', $prod_id);
+          $product_shelf_override = get_field('shelf', $prod_id);
+          $product_freezer_override = get_field('freezer', $prod_id);
+          
+          if ($product_cooler_override) {
+            $list_type = "cooler";
+          }
+          if ($product_shelf_override) {
+            $list_type = "shelf";
+          }
+          if ($product_freezer_override) {
+            $list_type = "freezer";
           }
 
-          // If this item is a duplicate product, replace the existing item. If it's not, just add the item normally
-          if ($is_duplicate) {
-            $web_order[$order_id]['items'][$duplicate_index] = array_replace($web_order[$order_id]['items'][$duplicate_index], $product_items);                        
-            // $web_order[$order_id]['items'][] = $product_items;
+          // Make an array of the packing locations for each product, then show at an order level where they are
+          $product_locations[] = $list_type;
+          $product_locations = array_unique($product_locations);
+          $web_order[$order_id]['product_locations'] = $product_locations;
+
+
+          //Some full categories are listed as mixed for shelf location. Products inherit this, but should have their own override for cooler or shelf
+          // Check for mixed, allow it to show up in both lists, but flag it with a warning so it can be updated on the product level
+          
+          if ($list_type == '' || $list_type == 'mixed' ) {
+            $warning = "This product is not designated shelf/cooler/freezer";
+            $list_type = "unknown";
           }
-          else {
-            $web_order[$order_id]['items'][] = $product_items;
+
+          // We need to know if this is our first product being added or not
+          if (isset($web_order[$order_id]['items'])) {
+            $existing_prod_list = $web_order[$order_id]['items'];            
+          }
+
+          //See if previous items listed share the same name
+          if ($existing_prod_list) {            
+            foreach ($existing_prod_list as $key => $existing_item) {   
+              
+              $stub_option = "";
+              $stub_topping = "";
+              $stub_package_size = "";
+              $stub_product_size = "";
+
+              if ($option) { $stub_option = " - " .$option;}
+              if ($topping) { $stub_topping = " - " .$topping;}
+              if ($package_size) { $stub_package_size = " (" .$package_size .")";}
+              if ($product_size) { $stub_product_size = " (" .$product_size .")";}
+
+              $prod_name_with_attributes = $prod_name . $stub_option . $stub_topping . $stub_product_size;
+              
+              if ($prod_name_with_attributes == $existing_item['name']) {
+                $is_duplicate = true;
+                $total_qty = $existing_item['total_quantity'] + $total_qty; // Combine the quantities of the matched products
+                $duplicate_index = $key; // Get the key so later we know which product line to replace
+              }
+            }
+          }
+          
+          //create the array structure for the Items, before pushing it to the final array
+          // We have all these options because WC is inconsistent in how it names the product, sometimes it uses attributes, sometimes it doesn't
+          // This normalizes all product titles so that we can actually match them up later. 
+          // Ex. trying to match "Buns 1/2 dozen" vs "Buns Single"
+          if (!$is_bundle_parent && $total_qty > 0) {
+            $product_items = array(
+              'name' => $prod_name,
+              'total_quantity' => $total_qty,
+              'variation_id' => $variation_id,
+              'product_id' => $prod_id,
+              'category' => $categories,
+              'category_parent' => $parent_cat_id,
+              'excluded_from_bakinglist' => $excluded_from_bakinglist,
+              'shelf_type' => $list_type,
+              'warning' => $warning,
+              'instruction' => $product_meta
+            );
+
+            if ($is_variation) {
+              $attributes = array();
+
+              if (!empty($option)) {
+                $attributes[] = $option;
+              }
+              if (!empty($product_size)) {
+                $attributes[] = $product_size;
+              }
+              if (!empty($topping)) {
+                $attributes[] = $topping;
+              }
+
+              $product_items['name'] .= ' - ' . implode(' - ', $attributes);
+            }
+
+            $web_order_items = &$web_order[$order_id]['items'];
+
+            if ($is_duplicate) {
+              $web_order_items[$duplicate_index] = array_replace($web_order_items[$duplicate_index], $product_items);
+            } else {
+              $web_order_items[] = $product_items;
+            }
           }
         }
       }
@@ -701,23 +676,17 @@ trait PhoneOrders
 
     //Now let's sort by timeslot
     if ($web_order) {
-      $sorted_web_orders = array ();
-      foreach ($web_order as $order) {
-        $timeslot = $order['timeslot'];
-        $sorted_web_orders[] = $timeslot;
-      }
-      array_multisort($sorted_web_orders, SORT_DESC, $web_order);
+      usort($web_order, function($a, $b) {
+        return strcmp($b['timeslot'], $a['timeslot']);
+      });
     }
 
     if ($phone_order) {
-      $sorted_phone_orders = array ();
-      foreach ($phone_order as $order) {
-        $timeslot = $order['timeslot'];
-        $sorted_phone_orders[] = $timeslot;
-      }
-      array_multisort($sorted_phone_orders, SORT_DESC, $phone_order);
+      usort($phone_order, function($a, $b) {
+        return strcmp($b['timeslot'], $a['timeslot']);
+      });
     }
-   
+
     $output['phone_orders'] = $phone_order;
     $output['web_orders'] = $web_order;
 
