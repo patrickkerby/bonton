@@ -55,7 +55,7 @@ export default {
         const minDateFormatted = dayjs(minDate, 'DD/MM/YYYY');
         const maxDateFormatted = dayjs(maxDate, 'DD/MM/YYYY');
 
-        const vacationDays = ['2024-03-30', '2024-04-02'];
+        const vacationDays = ['2024-03-29', '2024-04-02'];
         const enableDays = ['2022-03-14'];
 
         $('#datepicker').datepicker({
