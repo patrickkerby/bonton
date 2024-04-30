@@ -53,9 +53,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 	<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
 
-	<div id="order_review" class="woocommerce-checkout-review-order">
-		<?php do_action( 'woocommerce_checkout_order_review' ); ?>
-	</div>
+	
 	@php
 	date_default_timezone_set('MST');
  $today = date('Ymd');
@@ -66,13 +64,16 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	 $pickup_date = WC()->session->get('pickup_date');
  $pickup_date_formatted = date("Ymd", strtotime($pickup_date));
  $post3pm = "";
+ @endphp
  
- if ($pickup_date == "" || $pickup_date == null) {
-	 echo "<div>WARNING NO DATE SET</div>";
- }
- else {
-	 do_action( 'woocommerce_checkout_after_order_review' );
- }
+ @if ($pickup_date == "" || $pickup_date == null)
+	 <div>WARNING NO DATE SET</div>
+ @else
+	<div id="order_review" class="woocommerce-checkout-review-order">
+		<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+	</div>
+	@endif
+	@php
 
 	 if ($currenthour > $cutoff) {
 			 $post3pm = true;
@@ -101,6 +102,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 
 @endphp
+@php do_action( 'woocommerce_checkout_after_order_review' ); @endphp
 
 </form>
 
