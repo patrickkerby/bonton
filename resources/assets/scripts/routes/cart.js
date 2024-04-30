@@ -146,7 +146,7 @@ export default {
 
           // set preset date if it exists (in cache, etc.) 
           if(presetDate != null && presetDate != '' ){
-            
+            alert('preset date is', presetDate);
             const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');                            
 
             if(presetDateFormatted > standardFormulaMinDateFormatted) {
