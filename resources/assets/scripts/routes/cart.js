@@ -141,7 +141,7 @@ export default {
 
             
             if(presetDateFormatted.isBefore(minDateFormatted) || presetDateFormatted.isAfter(maxDateFormatted)) {
-              presetDate = 'null';
+              // presetDate = 'null';
             }
             else {
               //
