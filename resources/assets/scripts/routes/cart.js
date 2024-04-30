@@ -137,11 +137,11 @@ export default {
                         alert(minDateFormatted);
                         alert(maxDateFormatted);
                         alert(presetDateFormatted);
-                        //test
+                        alert(presetDate);
 
             
             if(presetDateFormatted.isBefore(minDateFormatted) || presetDateFormatted.isAfter(maxDateFormatted)) {
-              presetDate = null;
+              presetDate = 'null';
             }
             else {
               //
