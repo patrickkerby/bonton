@@ -72,7 +72,9 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	 <div>WARNING NO DATE SET <a href="">click here to return to cart and select a pickup date</a></div>
  @else
 	<div id="order_review" class="woocommerce-checkout-review-order">
-		<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+		<?php 
+			// do_action( 'woocommerce_checkout_order_review' ); 
+			?>
 	</div>
 	@endif --}}
 	@php
