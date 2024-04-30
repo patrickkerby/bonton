@@ -19,6 +19,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+//variables
+date_default_timezone_set('MST');
+$today = date('Ymd');
+$currenthour = date('H');
+$cutoffhour = '15:00';
+$cutoff = date('H', strtotime($cutoffhour));
+$tomorrow = date("Ymd", strtotime('tomorrow'));
+$pickup_date = WC()->session->get('pickup_date');
+$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
+$post3pm = "";
+
 do_action( 'woocommerce_before_checkout_form', $checkout );
 
 // If checkout registration is disabled and not logged in, the user cannot checkout.
@@ -26,7 +37,6 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	echo esc_html( apply_filters( 'woocommerce_checkout_must_be_logged_in_message', __( 'You must be logged in to checkout.', 'woocommerce' ) ) );
 	return;
 }
-
 ?>
 
 <form name="checkout" method="post" class="checkout woocommerce-checkout" action="<?php echo esc_url( wc_get_checkout_url() ); ?>" enctype="multipart/form-data">
@@ -51,58 +61,43 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 	<h3 id="order_review_heading"><?php esc_html_e( 'Your order', 'woocommerce' ); ?></h3>
 
-	<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
-
+	<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>	
+	
+	@if ($pickup_date == "" || $pickup_date == null)
+		<div id="warning_takover">WARNING NO DATE SET <a href="">click here to return to cart and select a pickup date</a></div>
+	@else
+		<div id="order_review" class="woocommerce-checkout-review-order">
+			@php do_action( 'woocommerce_checkout_order_review' ); @endphp
+		</div>	
+	@endif
 	
 	@php
-	date_default_timezone_set('MST');
- $today = date('Ymd');
- $currenthour = date('H');
- $cutoffhour = '15:00';
-	 $cutoff = date('H', strtotime($cutoffhour));
-	 $tomorrow = date("Ymd", strtotime('tomorrow'));
-	 $pickup_date = WC()->session->get('pickup_date');
- $pickup_date_formatted = date("Ymd", strtotime($pickup_date));
- $post3pm = "";
- @endphp
- 
- @if ($pickup_date == "" || $pickup_date == null)
-	 <div>WARNING NO DATE SET <a href="">click here to return to cart and select a pickup date</a></div>
- @else
-	<div id="order_review" class="woocommerce-checkout-review-order">
-		<?php do_action( 'woocommerce_checkout_order_review' ); ?>
-	</div>
-	@endif
-	@php
-
 	 if ($currenthour > $cutoff) {
-			 $post3pm = true;
-			 echo "<div style=\"display:none;\">Current hour IS after cutoff</div>";
-		 }
-		 elseif ($currenthour < $cutoff) {
-			 $post3pm = false;
-			 echo "<div style=\"display:none;\">Current hour is NOT after cutoff</div>";
-		 }
-		 else {
-				 //
-		 }
+			$post3pm = true;
+			echo "<div style=\"display:none;\">Current hour IS after cutoff</div>";
+		}
+		elseif ($currenthour < $cutoff) {
+			$post3pm = false;
+			echo "<div style=\"display:none;\">Current hour is NOT after cutoff</div>";
+		}
+		else {
+				//
+		}
+	@endphp
 	 
-	 if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
-		 echo "<div style=\"display:none;\">It's after 3 and the pickup day is equal to or less than tomorrow OR the pickup day is today</div>";
-	 }
+	 @if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today)
+		 <div style="display:none;">It's after 3 and the pickup day is equal to or less than tomorrow OR the pickup day is today</div>
+	 @endif
 
-	 if ($pickup_date_formatted <= $tomorrow) {
-		 echo "<div style=\"display:none;\">pickup date is less than or equal to tomorrow</div>";
-	 }
+	 @if ($pickup_date_formatted <= $tomorrow)
+		 <div style="display:none;">pickup date is less than or equal to tomorrow</div>
+	 @endif
 
-	 if ($pickup_date_formatted >= $tomorrow) {
-		 echo "<div style=\"display:none;\">pickup date is greater than or equal to tomorrow</div>";
-	 }
-
-
-
-@endphp
-@php do_action( 'woocommerce_checkout_after_order_review' ); @endphp
+	 @if ($pickup_date_formatted >= $tomorrow)
+		 <div style="display:none;">pickup date is greater than or equal to tomorrow</div>
+	 @endif
+	
+	@php do_action( 'woocommerce_checkout_after_order_review' ); @endphp
 
 </form>
 
