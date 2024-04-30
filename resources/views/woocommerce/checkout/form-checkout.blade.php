@@ -52,7 +52,9 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	<h3 id="order_review_heading"><?php esc_html_e( 'Your order', 'woocommerce' ); ?></h3>
 
 	<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>
-
+	<div id="order_review" class="woocommerce-checkout-review-order">
+		<?php do_action( 'woocommerce_checkout_order_review' ); ?>
+	</div>
 	
 	@php
 	date_default_timezone_set('MST');
@@ -66,13 +68,13 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
  $post3pm = "";
  @endphp
  
- @if ($pickup_date == "" || $pickup_date == null)
-	 <div>WARNING NO DATE SET <a>click here to return to cart and select a pickup date</a></div>
+ {{-- @if ($pickup_date == "" || $pickup_date == null)
+	 <div>WARNING NO DATE SET <a href="">click here to return to cart and select a pickup date</a></div>
  @else
 	<div id="order_review" class="woocommerce-checkout-review-order">
 		<?php do_action( 'woocommerce_checkout_order_review' ); ?>
 	</div>
-	@endif
+	@endif --}}
 	@php
 
 	 if ($currenthour > $cutoff) {
