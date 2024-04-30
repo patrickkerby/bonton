@@ -67,7 +67,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
  @endphp
  
  @if ($pickup_date == "" || $pickup_date == null)
-	 <div>WARNING NO DATE SET</div>
+	 <div>WARNING NO DATE SET <a>click here to return to cart and select a pickup date</a></div>
  @else
 	<div id="order_review" class="woocommerce-checkout-review-order">
 		<?php do_action( 'woocommerce_checkout_order_review' ); ?>
