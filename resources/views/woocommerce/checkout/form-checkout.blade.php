@@ -71,6 +71,10 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
 	$post3pm = "";
 	
+	if ($pickup_date == "" || $pickup_date == null) {
+		echo "<div>WARNING NO DATE SET</div>";
+	}
+
 		if ($currenthour > $cutoff) {
         $post3pm = true;
         echo "<div style=\"display:none;\">Current hour IS after cutoff</div>";
