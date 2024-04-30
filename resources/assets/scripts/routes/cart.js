@@ -133,7 +133,8 @@ export default {
 
           //Check for pickup restrictions, and either preserve or kill the preset Date
           if(pickup_restriction_check == true && presetDate != null) {
-            
+                        alert(presetDate);
+
             const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');
             
             if(presetDateFormatted.isBefore(minDateFormatted) || presetDateFormatted.isAfter(maxDateFormatted)) {
@@ -146,7 +147,6 @@ export default {
 
           // set preset date if it exists (in cache, etc.) 
           if(presetDate != null && presetDate != '' ){
-            alert(presetDate);
             const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');                            
 
             if(presetDateFormatted > standardFormulaMinDateFormatted) {
