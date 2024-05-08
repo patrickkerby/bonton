@@ -47,7 +47,7 @@ if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2024-03-30" && !$icecream_conflict) {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2024-05-11" && !$icecream_conflict) {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -119,7 +119,7 @@ if($icecream_conflict) {
 					?>
 				</p>
 			@else
-				<p class="small">(Delivery is currently only available on Saturdays + no delivery March 30) </p>								
+				<p class="small">(Delivery is currently only available on Saturdays) </p>								
 			@endif
 
 			<?php
