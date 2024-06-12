@@ -56,6 +56,12 @@ if($session_date_object) {
 	else {
 		$delivery_available = false;
 	}
+	if ($pickup_date == "2024-06-15") {
+		$delivery_message = "Sorry! we're at capacity for delivery on June 15, but we'd love to see your face in the store!";
+	}
+	else {
+		$delivery_message = "(Delivery is currently only available on Saturdays)";
+	}
 }
 
 if($icecream_conflict) {
@@ -119,7 +125,7 @@ if($icecream_conflict) {
 					?>
 				</p>
 			@else
-				<p class="small">(Delivery is currently only available on Saturdays) </p>								
+				<p class="small">{{  $delivery_message }}</p>						
 			@endif
 
 			<?php
