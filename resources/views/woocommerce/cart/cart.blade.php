@@ -490,7 +490,7 @@ defined( 'ABSPATH' ) || exit;
 				<div class="modal-body">
 					<p>On July 1, 2023, the City of Edmonton is implementing the Single-use Item Reduction Bylaw (20117). As a result, Bon Ton Bakery & Patisserie is making the following changes for all online orders to comply with this bylaw. When placing an order for pickup, you will be required to choose from one of three options related to shopping bags:</p>
 					<ol>
-						<li>Paper shopping bag fixed charge of $0.30 – all items in your cart will be delivered to your vehicle in paper shopping bags.</li>
+						<li>Paper shopping bag fixed charge of $0.25 – all items in your cart will be delivered to your vehicle in paper shopping bags.</li>
 						<li>Bon Ton reusable shopping bag at $2.50 each – you can purchase as many reusable bags as you would like. We will bring your items out to your vehicle in the reusable shopping bags. If you have additional items that do not fit, we will bring those out to your vehicle without being packed in a shopping bag and you can pack them in your own reusable bag or other container.</li>
 						<li>No bags required (no extra charges) – all items will be delivered to your vehicle without being packed in a shopping bag. We will place the items in your vehicle and you will be able to pack them in your own reusable bag or other container.</li>
 					</ol>
