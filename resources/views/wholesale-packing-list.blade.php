@@ -23,8 +23,10 @@
 
     window.print();
 
-    document.body.innerHTML = originalContents;
-  }
+
+    window.addEventListener("afterprint", (event) => {
+      document.body.innerHTML = originalContents;
+    });  }
 </script>
 
 @php  
