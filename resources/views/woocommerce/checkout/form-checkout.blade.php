@@ -28,7 +28,9 @@ $cutoff = date('H', strtotime($cutoffhour));
 $tomorrow = date("Ymd", strtotime('tomorrow'));
 $pickup_date = WC()->session->get('pickup_date');
 $pickup_date_formatted = date("Ymd", strtotime($pickup_date));
+$session_date_object = WC()->session->get('pickup_date_object');
 $post3pm = "";
+$conflict = false;
 
 do_action( 'woocommerce_before_checkout_form', $checkout );
 
@@ -62,8 +64,42 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	<h3 id="order_review_heading"><?php esc_html_e( 'Your order', 'woocommerce' ); ?></h3>
 
 	<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>	
+
+
+	@foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item )
+		@php
+			if ($pickup_date) {
+				if ($session_date_object) {
+					$pickup_day_of_week = $session_date_object->format('l');
+				}
+			}
+			$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
+			$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
+			
+			//Check if there is a conflict for availability. This should happen at cart level, but for sneaky people, this catches at checkout stage.
+			$availability = get_field('availability', $product_id );
+			$prefix = $days_available = '';
+			if (is_array($availability) || is_object($availability)) {
+					
+				foreach ($availability as $term) {
+						$days = $term->name;
+						$days_available .= $prefix . '' . $days . '';
+						$prefix = ', ';
+				}
+			}
+			$days_available = explode(", ",$days_available);
+
+			if(isset($pickup_date) && !in_array($pickup_day_of_week, $days_available)){
+				$conflict = true;
+			}
+			
+		@endphp
+	@endforeach
+
+
+
 	
-	@if ($pickup_date == "" || $pickup_date == null)
+	@if ($pickup_date == "" || $pickup_date == null || $conflict == true)
 		<div id="warning_takeover">
 			<h3>Oops, something went wrong</h3>
 			<p>Please re-enter your pickup date</p>

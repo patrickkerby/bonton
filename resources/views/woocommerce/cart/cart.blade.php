@@ -288,10 +288,6 @@ defined( 'ABSPATH' ) || exit;
 									$pickup_restriction_check = true;
 									$restricted_in_cart = true;									
 								}
-								// else {
-								// 	$pickup_restriction_check = false;
-								// 	$restricted_in_cart = false;									
-								// }
 								
 								if ($pickup_restriction_end_data) {
 									$pickup_restriction_end_check = true;
@@ -301,8 +297,7 @@ defined( 'ABSPATH' ) || exit;
 								}
 
 								// Prevent cart from proceeding with old session data selected. Force a new date selection according to restrictions
-								// Except if the previously chosen date is within the restricted range, then leave it as is.
-								
+								// Except if the previously chosen date is within the restricted range, then leave it as is.								
 								if ($pickup_restriction_data) {
 									if ($session_date_object < $restricted_start_date || $session_date_object > $restricted_end_date){
 										$conflict = true;
