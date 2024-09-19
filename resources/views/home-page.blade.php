@@ -42,7 +42,7 @@
           <div class="col-10 col-sm-8 col-lg-6 feature-intro">
             <h2>{{ $featured_products->heading }}</h2>
             <p>{{ $featured_products->sub_heading }}</p>
-            <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=bread" class="button btn">View our products</a>
+            <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=specials" class="button btn">View our products</a>
           </div>
         </div>
         <div class="row justify-content-center no-gutters">
