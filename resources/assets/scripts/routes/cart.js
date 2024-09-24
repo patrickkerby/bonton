@@ -93,7 +93,7 @@ export default {
         const maxDateFormatted = dayjs(maxDate, 'DD/MM/YYYY');
 
         // The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
-        var vacationDays = ['2024-03-28', '2024-03-29', '2024-04-02', '2024-03-30', '2024-10-15'];
+        var vacationDays = ['2024-10-15','2024-12-25','2024-12-26','2024-12-27','2024-12-28','2024-12-29','2024-12-30','2024-12-31','2025-01-01','2025-01-02','2025-01-03'];
         var enableDays = ['2022-03-14'];
 
         $( function() {

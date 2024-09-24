@@ -698,6 +698,7 @@ function after_checkout_validation( $posted ) {
     $cart_count = 0;
     $gc_cart_count = 0;
 
+
         foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
             $giftcertificate_in_cart = false;
             $cart_count++;
@@ -714,6 +715,7 @@ function after_checkout_validation( $posted ) {
         
         if ( $giftcertificate_in_cart && $cart_count < 1) {
             $giftcertificate_only_item_in_cart = true;
+            WC()->session->set('giftcertificate_only_item_in_cart', $giftcertificate_only_item_in_cart);
         }
         
         return $giftcertificate_in_cart;

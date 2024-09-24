@@ -32,6 +32,32 @@ $session_date_object = WC()->session->get('pickup_date_object');
 $post3pm = "";
 $conflict = false;
 
+
+// Is Gift Certificate the only item in Cart? if so, thne we don't need to check for pickup date
+
+$giftcertificate_in_cart = false;
+$cart_count = 0;
+$gc_cart_count = 0;
+
+foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+		$cart_count++;
+
+		$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
+
+		if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
+				$giftcertificate_in_cart = true;
+				$gc_cart_count++;
+		}	
+}
+
+$cart_count = $cart_count - $gc_cart_count;
+
+if ( $giftcertificate_in_cart && $cart_count < 1) {
+		$giftcertificate_only_item_in_cart = true;		
+} else {
+		$giftcertificate_only_item_in_cart = false;
+}
+
 do_action( 'woocommerce_before_checkout_form', $checkout );
 
 // If checkout registration is disabled and not logged in, the user cannot checkout.
@@ -99,7 +125,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 
 
 	
-	@if ($pickup_date == "" || $pickup_date == null || $conflict == true)
+	@if ($giftcertificate_only_item_in_cart == false && $pickup_date == "" || $giftcertificate_only_item_in_cart == false && $pickup_date == null || $conflict == true)
 		<div id="warning_takeover">
 			<h3>Oops, something went wrong</h3>
 			<p>Please re-enter your pickup date</p>
