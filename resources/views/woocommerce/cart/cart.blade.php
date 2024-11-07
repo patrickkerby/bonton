@@ -129,17 +129,21 @@ defined( 'ABSPATH' ) || exit;
 								// Check availability
 								$availability = get_field('availability', $product_id );
 
-								$prefix = $days_available = '';
+								usort($availability, function($a, $b) {
+									return strcmp($a->term_id, $b->term_id);
+								});
+
+								$days_available_string = join(', ', wp_list_pluck($availability, 'name'));
+
 								if (is_array($availability) || is_object($availability)) {
 										
 									foreach ($availability as $term) {
 											$days = $term->name;
-											$days_available .= $prefix . '' . $days . '';
-											$prefix = ', ';
+											$days_available_array[] = $days;
+
 									}
 								}
-								$days_available = explode(", ",$days_available);															
-
+								
 								//Pickup Restriction!!
 								if (!wc_pb_is_bundled_cart_item($cart_item)) {
 									$pickup_restriction_data = get_field('restricted_pickup', $product_id);
@@ -155,7 +159,7 @@ defined( 'ABSPATH' ) || exit;
 								}								
 
 								//Is the product available on the day selected? 
-								if(isset($session_pickup_date) && !in_array($pickup_day_of_week, $days_available)){
+								if(isset($session_pickup_date) && !in_array($pickup_day_of_week, $days_available_array)){
 									$availability_status = "not-available";
 									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
 								}								
@@ -221,12 +225,11 @@ defined( 'ABSPATH' ) || exit;
 									<?php
 									if (!wc_pb_is_bundled_cart_item($cart_item)) {
 
-										if (in_array('Everyday', $days_available)) {
+										if (in_array('Everyday', $days_available_array)) {
 											echo '<span class="availability"><strong>Availability: </strong> All week!</span>';
 										}
 										else {
-												$days = implode(', ', $days_available);
-												echo '<span class="availability"><strong>Availability: </strong>' . $days . '</span>';
+												echo '<span class="availability"><strong>Availability: </strong>' . $days_available_string . '</span>';
 										}
 									}
 									?>
