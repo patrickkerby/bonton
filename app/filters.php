@@ -964,7 +964,7 @@ add_filter( 'woocommerce_ajax_variation_threshold', function( $threshold ) {
     return 0;
 } );
 
-//add a custom dashboard widget for admins
+//add a custom dashboard widget for admins: display orders with missing pickup dates
 add_action('wp_dashboard_setup', 'App\my_custom_dashboard_widget');
   
 function my_custom_dashboard_widget() {
@@ -1018,3 +1018,56 @@ function custom_dashboard_help() {
         </tbody>
       </table>';
 }
+
+// add ACF fields to product variations
+
+/* ACF filter for Variations */
+
+/**
+ * @snippet       Add Custom Field to Product Variations - WooCommerce
+ * @how-to        businessbloomer.com/woocommerce-customization
+ * @author        Rodolfo Melogli, Business Bloomer
+ * @compatible    WooCommerce 4.6
+ * @community     https://businessbloomer.com/club/
+ */
+ 
+// -----------------------------------------
+// 1. Add custom field input @ Product Data > Variations > Single Variation
+ 
+add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variation_data, $variation ) {
+    wp_enqueue_script( 'variation-options', asset_path('scripts/variation-options.js'), array(), '1.0', true );
+
+    woocommerce_wp_text_input( array(
+        'id' => 'sold_out[' . $loop . ']',
+        'type' => 'date',
+        'class' => 'short date-picker',
+        'label' => __( 'Select Sold Out Dates', 'woocommerce' ),
+        'value' => get_post_meta( $variation->ID, 'sold_out', true ),
+        'wrapper_class' => 'form-row form-row-first'
+    ) );
+
+    echo '<div id="mdp-demo"></div>';
+
+ }, 10, 3 );
+ 
+
+ 
+// -----------------------------------------
+// 2. Save custom field on product variation save
+ 
+add_action( 'woocommerce_save_product_variation', function ( $variation_id, $i ) {
+    $sold_out = $_POST['sold_out'][$i];
+    if ( isset( $sold_out ) ) update_post_meta( $variation_id, 'sold_out', esc_attr( $sold_out ) );
+ }, 10, 2 );
+ 
+
+ 
+// -----------------------------------------
+// 3. Store custom field value into variation data
+ 
+add_filter( 'woocommerce_available_variation', function ( $variations ) {
+    $variations['sold_out'] = '<div class="woocommerce_custom_field">Sold Out: <span>' . get_post_meta( $variations[ 'variation_id' ], 'sold_out', true ) . '</span></div>';
+    return $variations;
+ } );
+ 
+

@@ -5,6 +5,7 @@ import 'typeturajs';
 import 'dayjs/dayjs.min.js';
 import 'slick-carousel/slick/slick.min.js';
 import 'slick-lightbox/dist/slick-lightbox.min.js';
+import 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js';
 
 // Import everything from autoload
 import './autoload/**/*'
