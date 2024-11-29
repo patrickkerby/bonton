@@ -467,7 +467,7 @@ div.pp_woocommerce_quick_view {
           width: 100%;
           font-weight: 600;
           color: $highlight;
-          background: url(../images/edit.svg) no-repeat 1.25rem center;
+          background: url(../../images/edit.svg) no-repeat 1.25rem center;
           background-color: $cream;
         }
 
@@ -613,7 +613,7 @@ div.pp_woocommerce_quick_view {
       margin: 1rem 0;
       display: inline-flex;
       font-weight: 600;
-      background: url(../images/eye.svg) no-repeat 0.5rem center;
+      background: url(../../images/eye.svg) no-repeat 0.5rem center;
       background-color: #f8f7f2;
     }
   }
@@ -654,7 +654,7 @@ div.pp_woocommerce_quick_view {
           content: "";
           width: 30px;
           height: 19px;
-          background: url(../images/check.svg) no-repeat center center;
+          background: url(../../images/check.svg) no-repeat center center;
         }
       }
     }
@@ -669,7 +669,7 @@ div.pp_woocommerce_quick_view {
         content: "";
         width: 30px;
         height: 20px;
-        background: url(../images/exclaim.svg) no-repeat center center;
+        background: url(../../images/exclaim.svg) no-repeat center center;
       }
     }
   }
@@ -726,7 +726,7 @@ form.cart .qib-container + button[type="submit"]:not(#qib_id):not(#qib_id) {
   text-indent: -99999px;
 
   &::before {
-    background: url(../images/Arrow.svg) no-repeat center center;
+    background: url(../../images/Arrow.svg) no-repeat center center;
     width: 50px;
     height: 50px;
     position: absolute;
@@ -737,7 +737,7 @@ form.cart .qib-container + button[type="submit"]:not(#qib_id):not(#qib_id) {
 
     @include media-breakpoint-down(sm) {
       // background-size: 14px 7px;
-      background: url(../images/arrow-sm.svg) no-repeat center center;
+      background: url(../../images/arrow-sm.svg) no-repeat center center;
       width: 42px;
       height: 42px;
       background-color: #fff;

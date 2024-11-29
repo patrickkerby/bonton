@@ -102,7 +102,10 @@ export default {
         $('.woocommerce-variation-description').addClass('hide');
       });
 
-
+      $('.input-group.date').datepicker({
+        multidate: true,
+        multidateSeparator:',',
+    });
     });
   },
 };

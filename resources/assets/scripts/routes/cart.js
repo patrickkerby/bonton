@@ -41,6 +41,14 @@ export default {
 
     var longFermentationTarget = document.getElementById('long_fermentation_in_cart');
     var longFermentation = longFermentationTarget.textContent;
+
+    // var soldOutDatesTarget = document.getElementById('sold_out_dates_in_cart');
+    // var soldOutDates = soldOutDatesTarget.textContent;
+
+    var AvailableDatesTarget = document.getElementById('sold_out_dates_in_cart');
+    var AvailableDates = AvailableDatesTarget.textContent;
+
+    console.log(AvailableDates);
     
     jQuery(function($) {
 
@@ -94,7 +102,8 @@ export default {
 
         // The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
         var vacationDays = ['2024-10-15','2024-12-25','2024-12-26','2024-12-27','2024-12-28','2024-12-29','2024-12-30','2024-12-31','2025-01-01','2025-01-02','2025-01-03'];
-        var enableDays = ['2022-03-14'];
+                
+        var enableDays = ['2024-11-29','2024-11-30'];
 
         $( function() {
           

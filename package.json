@@ -78,8 +78,6 @@
   },
   "dependencies": {
     "bootstrap": "^4.5.3",
-    "jquery": "^3.5.0",
-    "popper.js": "^1.14.7",
     "bootstrap-datepicker": "^1.10.0",
     "custom-event-polyfill": "^1.0.7",
     "datatables": "^1.10.18",
@@ -93,9 +91,11 @@
     "dayjs": "^1.8.36",
     "eslint-plugin-exclude-php-tags": "^0.0.1",
     "hamburgers": "^1.1.3",
+    "jquery": "^3.5.0",
     "jquery-ui-bundle": "1.12.1-migrate",
     "jszip": "^3.4.0",
     "pdfmake": "^0.1.65",
+    "popper.js": "^1.14.7",
     "slick-carousel": "^1.8.1",
     "slick-lightbox": "^0.2.12",
     "typeturajs": "^1.2.2"
