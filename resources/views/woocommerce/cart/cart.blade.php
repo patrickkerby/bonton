@@ -219,7 +219,7 @@ defined( 'ABSPATH' ) || exit;
 								if ($sold_out_dates) {	
 									sort($sold_out_dates);
 									$sold_out_dates_msg = implode(", ", $sold_out_dates);
-									$sold_out_msg = '<span class="special-availability sold-out ' . $sold_out_conflict . '"><strong>Sold out: </strong> ' . $sold_out_dates_msg . '</span>';	
+									$sold_out_msg = '<span class="special-availability sold-out ' . $sold_out_conflict . '"><strong>Sold out: </strong> ' . $sold_out_dates_msg . '</span><br>';	
 								}
 								else {
 									$sold_out_msg = "";
@@ -230,24 +230,27 @@ defined( 'ABSPATH' ) || exit;
 								$availableDateObjects = array_map(function($dateStr) {
 									return DateTime::createFromFormat('y-m-d', $dateStr);
 								}, $availability_override);
-
 								
 								foreach ($availableDateObjects as $available_day) {
 									if ($available_day) {
 										$available_dates_shortened[] = $available_day->format('M j');
 										$available_dates[] = $available_day->format('l, F j, Y');
+										
+										// Create an array of dates formatted for comparison
+										$all_available_dates[] = $available_day->format('y-m-d');
 									}
 								}
 								
 								if(isset($session_pickup_date) && in_array($session_pickup_date, $available_dates)){
 									$availability_msg = "";
 									$availability_status = "available";
+									$conflict = false;
 								}
 								
 								if($available_dates_shortened){	
-									sort($available_dates_shortened);
+									// sort($available_dates_shortened);
 									$available_dates_shortened = implode(', ', $available_dates_shortened);							
-									$special_availability_msg = '<span class="special-availability available"><strong>Special Availability: </strong> ' . $available_dates_shortened . '</span>';
+									$special_availability_msg = '<span class="special-availability available"><strong>Special Availability: </strong> ' . $available_dates_shortened . '</span><br>';
 								}
 								else {
 									$special_availability_msg = "";
@@ -385,6 +388,9 @@ defined( 'ABSPATH' ) || exit;
 									if ($session_date_object < $restricted_start_date || $session_date_object > $restricted_end_date){
 										$conflict = true;
 									}	
+									if(isset($session_pickup_date) && in_array($session_pickup_date, $available_dates)){
+										$conflict = false;
+									}
 								}
 
 								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
@@ -594,7 +600,7 @@ defined( 'ABSPATH' ) || exit;
 		@if($all_sold_out_dates)
 			<div id="sold_out_dates_in_cart">@php echo json_encode($all_sold_out_dates); @endphp</div>
 		@endif
-		@if($available_dates)
-			<div id="sold_out_dates_in_cart">@php echo json_encode($available_dates); @endphp</div>
+		@if($all_available_dates)
+			<div id="available_dates_in_cart">@php echo json_encode($all_available_dates); @endphp</div>
 		@endif
 	</div>

@@ -121,9 +121,6 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			
 		@endphp
 	@endforeach
-
-
-
 	
 	@if ($giftcertificate_only_item_in_cart == false && $pickup_date == "" || $giftcertificate_only_item_in_cart == false && $pickup_date == null || $conflict == true)
 		<div id="warning_takeover">
