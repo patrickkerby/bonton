@@ -91,6 +91,7 @@
     @foreach($filtered_orders as $details)
       @php
         $order_pickup_date = $details->get_meta('pickup_date');
+        $order_id = $details->get_id();      
       @endphp
           
       @foreach ($details->get_items() as $item_id => $item)
@@ -100,18 +101,35 @@
           $variation_id = $item->get_variation_id(); 
           $product = $item->get_product();
           $prod_name = $item->get_name();
-
-          // $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
-              
+          // $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.              
           $categories = wc_get_product_category_list($prod_id);
-
           $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
           $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
-
           $option = $product->get_attribute( 'variety' );
           $topping = $product->get_attribute( 'topping' );
           $package_size = $product->get_attribute( 'package-size' );
           $product_size = $product->get_attribute( 'size' );
+
+          // Check to see if line items have been refunded
+          $order = wc_get_order( $order_id );
+            $order_refunds = $order->get_refunds();
+            $refund_item_id = "";
+            $total_qty = $prod_quantity;
+            $line_item_id = $item->get_id();
+
+            if($order_refunds) {
+              foreach( $order_refunds as $refund ){
+                foreach( $refund->get_items() as $item_id => $item ){
+                  ## --- Using WC_Order_Item_Product methods --- ##
+                  $refund_item_id = $item->get_meta('_refunded_item_id');
+                  $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
+                  $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
+                }
+              }
+              if($line_item_id == $refund_item_id) {
+                $total_qty = $prod_quantity + $refunded_quantity;
+              }    
+            }
 
           if (wc_pb_is_bundle_container_order_item($item)) {
             $is_bundle_parent = true;
@@ -121,7 +139,7 @@
           }
 
           $item_quantity = call_user_func('itemQuantity', $package_size);
-          $quantity = $item_quantity * $prod_quantity;  
+          $quantity = $item_quantity * $total_qty;  
 
           if (empty($is_bundle_parent)) {  
             if (!empty($variation_id)) {  
