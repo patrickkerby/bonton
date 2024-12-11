@@ -72,8 +72,8 @@
       $product_size = $product->get_attribute( 'size' );
 
       // Check to see if line items have been refunded
-      $order = wc_get_order( $order_number );
-        $order_refunds = $order->get_refunds();  
+      $order = wc_get_order( $order_id );
+        $order_refunds = $order->get_refunds();
         $refund_item_id = "";
         $total_qty = $prod_quantity;
         $line_item_id = $item->get_id();
