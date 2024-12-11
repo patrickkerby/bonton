@@ -48,7 +48,6 @@
   $filtered_orders = array();
 
   foreach ( $results as $daily_results ) {
-    $order_id = $daily_results->get_id();
     $order_pickup_date = $daily_results->get_meta('pickup_date');
           
     if ($order_pickup_date === $date_selector_date) {
@@ -57,8 +56,8 @@
   }
   
   foreach($filtered_orders as $details) {
-    $order_id = $details->get_id();
-    
+    $order_id = $details->get_id();      
+        
     foreach ($details->get_items() as $item_id => $item) {
 
       $prod_id = $item->get_product_id(); 
@@ -72,6 +71,7 @@
       $product_size = $product->get_attribute( 'size' );
 
       // Check to see if line items have been refunded
+
       $order = wc_get_order( $order_id );
         $order_refunds = $order->get_refunds();
         $refund_item_id = "";
@@ -81,6 +81,7 @@
         if($order_refunds) {
           foreach( $order_refunds as $refund ){
             foreach( $refund->get_items() as $item_id => $item ){
+
 
                 ## --- Using WC_Order_Item_Product methods --- ##
                 $refund_item_id = $item->get_meta('_refunded_item_id');
