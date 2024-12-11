@@ -318,31 +318,29 @@ $sorted_orders = array();
 
                       // Hide specific meta data from the details column. List the items by key here:
                         $hidden_meta = array( "_bundled_by", "_bundled_item_id", "_bundled_item_priced_individually", "_stamp", "_bundle_cart_key", "_bundled_item_needs_shipping" );
+                        $product_meta_objects = $item->get_meta_data();
+                        $item_product_data_array = $item->get_data();
 
-                      $product_meta_objects = $item->get_meta_data();
+                      // Check to see if line items have been refunded                      
+                        $order = wc_get_order( $order_number );
+                        $order_refunds = $order->get_refunds();
+                        $refund_item_id = "";
+                        $total_qty = $prod_quantity;
+                        $line_item_id = $item->get_id();
 
-                      $item_product_data_array = $item->get_data();
-
-                      // Check to see if line items have been refunded
-                      $order = wc_get_order( $order_number );
-                      $order_refunds = $order->get_refunds();  
-                      $refund_item_id = "";
-                      $total_qty = $prod_quantity;
-                      if($order_refunds) {
-                        foreach( $order_refunds as $refund ){
-                          foreach( $refund->get_items() as $item_id => $item ){
-
+                        if($order_refunds) {
+                          foreach( $order_refunds as $refund ){
+                            foreach( $refund->get_items() as $item_id => $item ){
                               ## --- Using WC_Order_Item_Product methods --- ##
-                              $refund_item_id = $item -> get_product_id();
+                              $refund_item_id = $item->get_meta('_refunded_item_id');
                               $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
                               $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
+                            }
                           }
+                          if($line_item_id == $refund_item_id) {
+                            $total_qty = $prod_quantity + $refunded_quantity;
+                          }                        
                         }
-
-                        if($prod_id == $refund_item_id) {
-                          $total_qty = $prod_quantity + $refunded_quantity;
-                        }                        
-                      }
                     @endphp
 
                     @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
