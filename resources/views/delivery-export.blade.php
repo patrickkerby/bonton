@@ -175,13 +175,26 @@ $cooler_list = array(  '22', '53', '51','107','103' );
       <table id="lists{{ $loop->iteration }}" class="display">
         <thead> 
           <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr>
             <th>Name</th>
             <th colspan="5">Location ( Unit number / Street Address / City / Province / Postal Code )</th>
             <th>Email</th>
             <th>Phone Number</th>
             <th>what3words (Optional)</th>
             <th>Deeleeo Details</th>
-            <th class="d-print-none">Order Details to Print</th>
+            <td class="d-print-none">Order Details to Print</td>
           </tr>
         </thead>
         <tbody>  
