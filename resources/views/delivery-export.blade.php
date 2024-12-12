@@ -199,7 +199,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
         </thead>
         <tbody>  
           <tr>
-            <td>Customer name / Order ID</td>
+            <td>*Customer name / Order ID</td>
             <td>Unit/apt # (Optional)</td>
             <td>Street Address</td>
             <td>City</td>
