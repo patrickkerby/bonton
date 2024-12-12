@@ -11,7 +11,7 @@ export default {
         {
           'paging': false,
           'info': false,
-          'order': [[1, 'asc']],
+          'order': [[0, 'asc']],
           'columnDefs': [ {
             'targets': [0,2,3,4], /* column index */
             'orderable': true, /* true or false */
