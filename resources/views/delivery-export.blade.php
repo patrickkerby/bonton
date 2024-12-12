@@ -181,7 +181,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
             <th>Phone Number</th>
             <th>what3words (Optional)</th>
             <th>Deeleeo Details</th>
-            <td class="d-print-none">Order Details to Print</td>
+            <th class="d-print-none">Order Details to Print</th>
           </tr>
         </thead>
         <tbody>  

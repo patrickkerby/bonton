@@ -60,6 +60,18 @@ let webpackConfig = {
         ],
       },
       {
+        test: /datatables\.net\.*/,
+        use: [
+            {
+              loader: "imports-loader",
+              options: {
+                additionalCode:
+                  "var define = false; /* Disable AMD for misbehaving libraries */",
+              },
+            },
+        ],
+      },
+      {
         test: /\.css$/,
         include: config.paths.assets,
         use: [
