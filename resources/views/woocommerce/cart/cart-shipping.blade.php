@@ -47,7 +47,7 @@ if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2024-12-21" && !$icecream_conflict) {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2024-12-21" && !$icecream_conflict && $pickup_date != "2024-12-14") {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -56,7 +56,7 @@ if($session_date_object) {
 	else {
 		$delivery_available = false;
 	}
-	if ($pickup_date == "2024-10-12") {
+	if ($pickup_date == "2024-12-14" || $pickup_date == "2024-12-21" ) {
 		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, October 12, but we'd love to see your face in the store!";
 	}
 	else {
