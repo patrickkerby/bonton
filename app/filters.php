@@ -1030,76 +1030,76 @@ function custom_dashboard_help() {
 // -----------------------------------------
 // 1. Add custom field input @ Product Data > Variations > Single Variation
  
-// add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variation_data, $variation ) {
+add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variation_data, $variation ) {
 
-//     echo '<script>
-//         jQuery(document).ready(function($) {
-//             $(".datepicker").multiDatesPicker({
-//                 minDate: 0,
-//                 dateFormat: "y-m-d",
-//                 showButtonPanel: true,
-//                 changeMonth: true,
-//                 changeYear: true,
-//                 onSelect: function(dateText, inst) {
-//                     inst.settings.defaultDate = dateText;
-//                 },
-//             });
-//         });
-//     </script>';
+    echo '<script>
+        jQuery(document).ready(function($) {
+            $(".datepicker").multiDatesPicker({
+                minDate: 0,
+                dateFormat: "y-m-d",
+                showButtonPanel: true,
+                changeMonth: true,
+                changeYear: true,
+                onSelect: function(dateText, inst) {
+                    inst.settings.defaultDate = dateText;
+                },
+            });
+        });
+    </script>';
     
-//     $existing_soldout_value = get_post_meta( $variation->ID, 'sold_out', true );
-//     $available_override = get_post_meta( $variation->ID, 'available_override', true );
+    $existing_soldout_value = get_post_meta( $variation->ID, 'sold_out', true );
+    $available_override = get_post_meta( $variation->ID, 'available_override', true );
 
-//     echo '<p class="input-group date form-field form-row form-row-full">
-//             <label for="sold_out[' . $loop . ']">Sold Out / Unavailable Dates</label>
-//             <input
-//                 type="text" 
-//                 class="datepicker form-control"
-//                 id="sold_out[' . $loop . ']"
-//                 name="sold_out[' . $loop . ']"
-//                 value="' . $existing_soldout_value . '"
-//             >
-//                 <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-//             </p>
+    echo '<p class="input-group date form-field form-row form-row-full">
+            <label for="sold_out[' . $loop . ']">Sold Out / Unavailable Dates</label>
+            <input
+                type="text" 
+                class="datepicker form-control"
+                id="sold_out[' . $loop . ']"
+                name="sold_out[' . $loop . ']"
+                value="' . $existing_soldout_value . '"
+            >
+                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+            </p>
             
-//             <p class="input-group date form-field form-row form-row-full">
-//             <label for="available_override[' . $loop . ']">Availability Override</label>
-//             <input
-//                 type="text" 
-//                 class="datepicker form-control"
-//                 id="available_override[' . $loop . ']"
-//                 name="available_override[' . $loop . ']"
-//                 value="' . $available_override . '"
-//             >
-//                 <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
-//             </p>';
+            <p class="input-group date form-field form-row form-row-full">
+            <label for="available_override[' . $loop . ']">Availability Override</label>
+            <input
+                type="text" 
+                class="datepicker form-control"
+                id="available_override[' . $loop . ']"
+                name="available_override[' . $loop . ']"
+                value="' . $available_override . '"
+            >
+                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+            </p>';
 
-//  }, 10, 3 );
+ }, 10, 3 );
  
 
  
 // -----------------------------------------
 // 2. Save custom field on product variation save
  
-// add_action( 'woocommerce_save_product_variation', function ( $variation_id, $i ) {
-//     $sold_out = $_POST['sold_out'][$i];
-//     $available_override = $_POST['available_override'][$i];
+add_action( 'woocommerce_save_product_variation', function ( $variation_id, $i ) {
+    $sold_out = $_POST['sold_out'][$i];
+    $available_override = $_POST['available_override'][$i];
         
-//     if ( isset( $sold_out ) ) update_post_meta( $variation_id, 'sold_out', esc_attr( $sold_out ) );
-//     if ( isset( $available_override ) ) update_post_meta( $variation_id, 'available_override', esc_attr( $available_override ) );
+    if ( isset( $sold_out ) ) update_post_meta( $variation_id, 'sold_out', esc_attr( $sold_out ) );
+    if ( isset( $available_override ) ) update_post_meta( $variation_id, 'available_override', esc_attr( $available_override ) );
     
-//  }, 10, 2 );
+ }, 10, 2 );
 
  
 // -----------------------------------------
 // 3. Store custom field value into variation data
  
-// add_filter( 'woocommerce_available_variation', function ( $variations ) {
-//     $variations['sold_out'] = '<div class="woocommerce_custom_field">Sold Out: <span>' . get_post_meta( $variations[ 'variation_id' ], 'sold_out', true ) . '</span></div>';
-//     $variations['available_override'] = '<div class="woocommerce_custom_field">Availability Override: <span>' . get_post_meta( $variations[ 'variation_id' ], 'available_override', true ) . '</span></div>';
+add_filter( 'woocommerce_available_variation', function ( $variations ) {
+    $variations['sold_out'] = '<div class="woocommerce_custom_field">Sold Out: <span>' . get_post_meta( $variations[ 'variation_id' ], 'sold_out', true ) . '</span></div>';
+    $variations['available_override'] = '<div class="woocommerce_custom_field">Availability Override: <span>' . get_post_meta( $variations[ 'variation_id' ], 'available_override', true ) . '</span></div>';
 
-//     return $variations;
-//  } );
+    return $variations;
+ } );
  
 
 

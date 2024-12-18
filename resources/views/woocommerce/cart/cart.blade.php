@@ -190,6 +190,8 @@ defined( 'ABSPATH' ) || exit;
 								$sold_out_conflict = "";
 								$available_dates = array();
 								$available_dates_shortened = array();
+								$all_sold_out_dates = array();
+								$all_available_dates = array();
 								
 								$sold_out = array_diff($sold_out, $availability_override);
 								
