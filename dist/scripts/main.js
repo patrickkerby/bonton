@@ -4555,7 +4555,7 @@ __webpack_require__.r(__webpack_exports__);
         var endDate = maxDateFormatted.format('YYYY-MM-DD');
         var daterange = getDatesBetweenDates(startDate, endDate);
 
-        var vacationDays = ['2024-12-20', '2024-12-21', '2024-12-24', '2024-12-25', '2024-12-26', '2024-12-27', '2024-12-28', '2024-12-29', '2024-12-30', '2024-12-31', '2025-01-01', '2025-01-02', '2025-01-03'];
+        var vacationDays = ['2025-01-01', '2025-04-21', '2025-04-18'];
         var enableDays = ['']; 
 
         var allowedDates = daterange.filter(function (date) { return !vacationDays.includes(date); }).concat(enableDays, availableDatesFormatted);
