@@ -57,7 +57,7 @@ if($session_date_object) {
 		$delivery_available = false;
 	}
 	if ($pickup_date == "2025-04-19" ) {
-		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, December 14 and 21, but we'd love to see your face in the store!";
+		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, April 19, but we'd love to see your face in the store!";
 	}
 	else {
 		$delivery_message = "(Delivery is currently only available on Saturdays)";
