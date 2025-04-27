@@ -83,9 +83,16 @@ $user_ids = (array) get_users([
     $order_pickup_date = $daily_results->get_meta('pickup_date');
     $shipping_method = $daily_results->get_shipping_methods();
     // $timeslot = $daily_restuls->get_meta('_timeslot');
+    
+    if($daily_results->has_shipping_method('flat_rate') || $daily_results->has_shipping_method('free_shipping')) {
+      $is_shipped = true;
+    }
+    else {
+      $is_shipped = false;
+    }
 
     //Create array of pickup timeslots, then loop through them to create two sets of filtered orders
-    if ($order_pickup_date === $date_selector_date && $daily_results->has_shipping_method('flat_rate')) {
+    if ($order_pickup_date === $date_selector_date && $is_shipped) {
       $filtered_orders[] = $daily_results;
       $filtered_orders_print[] = $daily_results;
     }
