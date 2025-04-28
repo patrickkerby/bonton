@@ -239,7 +239,7 @@ $sorted_orders = array();
               $list_class_unique = array_unique($list_class);
               $list_class_marker = implode(" ", $list_class_unique);
               
-              if($details->has_shipping_method('flat_rate')) {
+              if($details->has_shipping_method('flat_rate') || $details->has_shipping_method('free_shipping')) {
                 $order_location = 'Delivery';
               }
               else {
@@ -259,7 +259,7 @@ $sorted_orders = array();
                 <span class="check"></span>
                 <span class="id">
                   
-                  @if($details->has_shipping_method('flat_rate'))
+                  @if($details->has_shipping_method('flat_rate') || $details->has_shipping_method('free_shipping'))
                     #{{ $daily_delivery_number }}
                   @else
                     #{{ $daily_order_number }}
@@ -267,7 +267,7 @@ $sorted_orders = array();
                 </span>
               </td>
               <td class="location">
-                @if($details->has_shipping_method('flat_rate'))
+                @if($details->has_shipping_method('flat_rate') || $details->has_shipping_method('free_shipping'))
                   {!! $order_location !!}                
                 @endif
                 @if($timeslot)

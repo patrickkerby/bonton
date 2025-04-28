@@ -129,7 +129,7 @@
   <div class="print-order">
     <p class="date">
       <strong>{{ $date_selector_date }}</strong> <br>
-        @if($details->has_shipping_method('flat_rate'))
+        @if($details->has_shipping_method('flat_rate') && $details->has_shipping_method('free_shipping'))
           {!! $order_location !!}                
         @endif
         @if($timeslot)
@@ -143,7 +143,7 @@
         @endif
     </p>
     <h1>
-      @if($details->has_shipping_method('flat_rate'))
+      @if($details->has_shipping_method('flat_rate') && $details->has_shipping_method('free_shipping'))
         #{{ $daily_delivery_number }}
       @else
         #{{ $daily_order_number }}

@@ -71,8 +71,15 @@ global $wpdb;
     $order_pickup_date = $daily_results->get_meta('pickup_date');
     $shipping_method = $daily_results->get_shipping_methods();
 
+    if($daily_results->has_shipping_method('flat_rate') || $daily_results->has_shipping_method('free_shipping')) {
+      $is_shipped = true;
+    }
+    else {
+      $is_shipped = false;
+    }
+    
           
-    if ($order_pickup_date === $date_selector_date && !$daily_results->has_shipping_method('flat_rate')) {
+    if ($order_pickup_date === $date_selector_date && !$is_shipped) {
       $filtered_orders[] = $daily_results;
     }
   }

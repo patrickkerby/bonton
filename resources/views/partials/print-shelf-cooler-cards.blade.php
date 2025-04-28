@@ -10,7 +10,7 @@
 
 @php 
 
-  if($details->has_shipping_method('flat_rate')) {
+  if($details->has_shipping_method('flat_rate') || $details->has_shipping_method('free_shipping')) {
     $daily_delivery_number++;
   }
   elseif($is_wholesale_user)
@@ -192,7 +192,8 @@
     <div class="print-order {{ $list_class_marker }}">
       <p class="date">
         <strong>{{ $date_selector_date }}</strong> <br> 
-        @if($details->has_shipping_method('flat_rate'))
+        @if($details->has_shipping_method('flat_rate') || $details->has_shipping_method('free_shipping'))
+          {{ $location }}<br>
           Delivery                
         @endif
         {!! $timeslot !!}
@@ -200,7 +201,8 @@
         {{ $timeslot_old }}
       </p>
       <h1>
-        @if($details->has_shipping_method('flat_rate'))
+        @if($details->has_shipping_method('flat_rate') || $details->has_shipping_method('free_shipping'))
+          {{-- {{ $location }}<br> --}}
           {{  $daily_delivery_number  }}
         @elseif($is_wholesale_user)
           {{ $daily_wholesale_number }}

@@ -207,7 +207,7 @@ $sorted_orders = array();
               $location = $details->get_meta( 'pickuplocation', true );
               $order_pickup_date = $details->get_meta( 'pickup_date', true );
               $order_number = $details->get_id();
-              $is_delivery = $details->has_shipping_method('flat_rate');
+              $is_delivery = $details->has_shipping_method('flat_rate') || $details->has_shipping_method('free_shipping');
               $payment_method = $details->get_payment_method_title();
 
               
