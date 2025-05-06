@@ -22,12 +22,12 @@ export default {
 
     //Initialise popovers
     $(function () {
-      $('[data-toggle="tooltip"]').tooltip()
+      $('[data-toggle="tooltip"]').tooltip();
     })
 
     //fake the radio buttons for product filter
     $( '.wpf_submenu label' ).click(function() {
-      $('.checked').removeClass('checked')
+      $('.checked').removeClass('checked');
       $( this ).addClass( 'checked' );
       $('.wpf_submenu input').prop('checked',false);
       //.checkboxradio('refresh')  add this to end of line 26. maybe.
@@ -102,7 +102,10 @@ export default {
         $('.woocommerce-variation-description').addClass('hide');
       });
 
-
+      $('.input-group.date').datepicker({
+        multidate: true,
+        multidateSeparator:',',
+    });
     });
   },
 };

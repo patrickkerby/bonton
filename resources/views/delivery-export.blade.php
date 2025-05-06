@@ -23,7 +23,9 @@
 
     window.print();
 
-    document.body.innerHTML = originalContents;
+    window.addEventListener("afterprint", (event) => {
+      document.body.innerHTML = originalContents;
+    });
   }
 </script>
 
@@ -85,9 +87,16 @@
     $order_pickup_date = $daily_results->get_meta('pickup_date');
     $shipping_method = $daily_results->get_shipping_methods();
     // $timeslot = $daily_restuls->get_meta('_timeslot');
+    
+    if($daily_results->has_shipping_method('flat_rate') || $daily_results->has_shipping_method('free_shipping')) {
+      $is_shipped = true;
+    }
+    else {
+      $is_shipped = false;
+    }
 
     //Create array of pickup timeslots, then loop through them to create two sets of filtered orders
-    if ($order_pickup_date === $date_selector_date && $daily_results->has_shipping_method('flat_rate')) {
+    if ($order_pickup_date === $date_selector_date && $is_shipped) {
       $filtered_orders[] = $daily_results;
       $filtered_orders_print[] = $daily_results;
     }
@@ -177,6 +186,19 @@ $cooler_list = array(  '22', '53', '51','107','103' );
       <table id="lists{{ $loop->iteration }}" class="display">
         <thead> 
           <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th></th>
+          </tr>
+          <tr>
             <th>Name</th>
             <th colspan="5">Location ( Unit number / Street Address / City / Province / Postal Code )</th>
             <th>Email</th>
@@ -188,7 +210,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
         </thead>
         <tbody>  
           <tr>
-            <td>Customer name / Order ID</td>
+            <td>*Customer name / Order ID</td>
             <td>Unit/apt # (Optional)</td>
             <td>Street Address</td>
             <td>City</td>

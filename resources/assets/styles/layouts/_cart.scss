@@ -247,19 +247,32 @@ ul.woocommerce-thankyou-order-details li {
     border-radius: 5px;
   }
 
+  .special-availability {
+    font-size: 13px;
+    line-height: 15px;
+    display: inline-block;
+    border-left: solid 3px red;
+    padding-left: 0.5rem;
+
+    &.available {
+      border-left: solid 3px $highlight;
+    }
+  }
+
   .not-available {
     td {
-      border: none !important;
       padding-top: 0 !important;
     }
 
     .not-available-message {
-      color: red;
       font-size: 13px;
       line-height: 15px;
-      display: flex;
-      text-align: center;
-      justify-content: center;
+      display: inline-block;
+      border-left: solid 3px red;
+      color: red;
+      padding-left: 0.5rem;
+      // text-align: center;
+      // justify-content: center;
     }
   }
 
@@ -350,6 +363,7 @@ ul.woocommerce-thankyou-order-details li {
   padding: 1rem;
   font-weight: 500;
   margin-top: -2.1rem;
+  margin-bottom: 0.5rem;
   font-size: 0.9rem;
   line-height: 1.25rem;
 

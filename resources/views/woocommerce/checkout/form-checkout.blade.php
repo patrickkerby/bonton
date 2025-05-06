@@ -28,7 +28,35 @@ $cutoff = date('H', strtotime($cutoffhour));
 $tomorrow = date("Ymd", strtotime('tomorrow'));
 $pickup_date = WC()->session->get('pickup_date');
 $pickup_date_formatted = date("Ymd", strtotime($pickup_date));
+$session_date_object = WC()->session->get('pickup_date_object');
 $post3pm = "";
+$conflict = false;
+
+
+// Is Gift Certificate the only item in Cart? if so, thne we don't need to check for pickup date
+
+$giftcertificate_in_cart = false;
+$cart_count = 0;
+$gc_cart_count = 0;
+
+foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+	$cart_count++;
+
+	$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
+
+	if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
+		$giftcertificate_in_cart = true;
+		$gc_cart_count++;
+	}	
+}
+
+$cart_count = $cart_count - $gc_cart_count;
+
+if ( $giftcertificate_in_cart && $cart_count < 1) {
+		$giftcertificate_only_item_in_cart = true;		
+} else {
+		$giftcertificate_only_item_in_cart = false;
+}
 
 do_action( 'woocommerce_before_checkout_form', $checkout );
 
@@ -62,9 +90,41 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	<h3 id="order_review_heading"><?php esc_html_e( 'Your order', 'woocommerce' ); ?></h3>
 
 	<?php do_action( 'woocommerce_checkout_before_order_review' ); ?>	
+
+	@foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item )
+		@php
+			if ($pickup_date) {
+				if ($session_date_object) {
+					$pickup_day_of_week = $session_date_object->format('l');
+				}
+			}
+			$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
+			$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
+			
+			//Check if there is a conflict for availability. This should happen at cart level, but for sneaky people, this catches at checkout stage.
+			$availability = get_field('availability', $product_id );
+			$prefix = $days_available = '';
+			if (is_array($availability) || is_object($availability)) {
+					
+				foreach ($availability as $term) {
+					$days = $term->name;
+					$days_available .= $prefix . '' . $days . '';
+					$prefix = ', ';
+				}
+			}
+			$days_available = explode(", ",$days_available);
+
+			if(isset($pickup_date) && !in_array($pickup_day_of_week, $days_available)){
+				$conflict = true;
+			}	
+		@endphp
+	@endforeach
 	
-	@if ($pickup_date == "" || $pickup_date == null)
-		<div id="warning_takover">WARNING NO DATE SET <a href="">click here to return to cart and select a pickup date</a></div>
+	@if ($giftcertificate_only_item_in_cart == false && $pickup_date == "" || $giftcertificate_only_item_in_cart == false && $pickup_date == null || $conflict == true)
+		<div id="warning_takeover">
+			<h3>Oops, something went wrong</h3>
+			<p>Please re-enter your pickup date</p>
+			<a href="/cart" class="button">Return to cart</a></div>
 	@else
 		<div id="order_review" class="woocommerce-checkout-review-order">
 			@php do_action( 'woocommerce_checkout_order_review' ); @endphp
@@ -100,6 +160,5 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	@php do_action( 'woocommerce_checkout_after_order_review' ); @endphp
 
 </form>
-
 
 <?php do_action( 'woocommerce_after_checkout_form', $checkout ); ?>

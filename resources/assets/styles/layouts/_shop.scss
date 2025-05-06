@@ -401,7 +401,7 @@
   box-shadow: #666 0 20px 24px;
   display: none;
   flex-direction: column;
-  padding: 20% 11%;
+  padding: 7rem 11% 0 11%;
 
   a.closebutton {
     position: absolute;
@@ -438,4 +438,19 @@
   }
 }
 
+#warning_takeover {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000000000002;
+  background: rgba(255, 255, 255, 0.96);
+  padding: 3rem;
+  overflow: hidden;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 /* stylelint-enable no-descending-specificity */

@@ -698,6 +698,7 @@ function after_checkout_validation( $posted ) {
     $cart_count = 0;
     $gc_cart_count = 0;
 
+
         foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
             $giftcertificate_in_cart = false;
             $cart_count++;
@@ -714,6 +715,7 @@ function after_checkout_validation( $posted ) {
         
         if ( $giftcertificate_in_cart && $cart_count < 1) {
             $giftcertificate_only_item_in_cart = true;
+            WC()->session->set('giftcertificate_only_item_in_cart', $giftcertificate_only_item_in_cart);
         }
         
         return $giftcertificate_in_cart;
@@ -887,7 +889,7 @@ function delivery_bag_fee() {
 	$chosen_shipping_method = WC()->session->get('chosen_shipping_methods'); 
 
 	if (strpos($chosen_shipping_method[0], 'flat_rate') !== false) {
-		WC()->cart->add_fee(__('Delivery Bag Fee (includes tax)', 'txtdomain'), 0.3, true);
+		WC()->cart->add_fee(__('Delivery Bag Fee (includes tax)', 'txtdomain'), 0.5, true);
 	}
 }
 
@@ -962,7 +964,7 @@ add_filter( 'woocommerce_ajax_variation_threshold', function( $threshold ) {
     return 0;
 } );
 
-//add a custom dashboard widget for admins
+//add a custom dashboard widget for admins: display orders with missing pickup dates
 add_action('wp_dashboard_setup', 'App\my_custom_dashboard_widget');
   
 function my_custom_dashboard_widget() {
@@ -1016,3 +1018,89 @@ function custom_dashboard_help() {
         </tbody>
       </table>';
 }
+
+// add ACF fields to product variations
+
+/* ACF filter for Variations */
+
+/**
+ * @snippet       Add Custom Field to Product Variations - WooCommerce
+ */
+ 
+// -----------------------------------------
+// 1. Add custom field input @ Product Data > Variations > Single Variation
+ 
+add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variation_data, $variation ) {
+
+    echo '<script>
+        jQuery(document).ready(function($) {
+            $(".datepicker").multiDatesPicker({
+                minDate: 0,
+                dateFormat: "y-m-d",
+                showButtonPanel: true,
+                changeMonth: true,
+                changeYear: true,
+                onSelect: function(dateText, inst) {
+                    inst.settings.defaultDate = dateText;
+                },
+            });
+        });
+    </script>';
+    
+    $existing_soldout_value = get_post_meta( $variation->ID, 'sold_out', true );
+    $available_override = get_post_meta( $variation->ID, 'available_override', true );
+
+    echo '<p class="input-group date form-field form-row form-row-full">
+            <label for="sold_out[' . $loop . ']">Sold Out / Unavailable Dates</label>
+            <input
+                type="text" 
+                class="datepicker form-control"
+                id="sold_out[' . $loop . ']"
+                name="sold_out[' . $loop . ']"
+                value="' . $existing_soldout_value . '"
+            >
+                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+            </p>
+            
+            <p class="input-group date form-field form-row form-row-full">
+            <label for="available_override[' . $loop . ']">Availability Override</label>
+            <input
+                type="text" 
+                class="datepicker form-control"
+                id="available_override[' . $loop . ']"
+                name="available_override[' . $loop . ']"
+                value="' . $available_override . '"
+            >
+                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+            </p>';
+
+ }, 10, 3 );
+ 
+
+ 
+// -----------------------------------------
+// 2. Save custom field on product variation save
+ 
+add_action( 'woocommerce_save_product_variation', function ( $variation_id, $i ) {
+    $sold_out = $_POST['sold_out'][$i];
+    $available_override = $_POST['available_override'][$i];
+        
+    if ( isset( $sold_out ) ) update_post_meta( $variation_id, 'sold_out', esc_attr( $sold_out ) );
+    if ( isset( $available_override ) ) update_post_meta( $variation_id, 'available_override', esc_attr( $available_override ) );
+    
+ }, 10, 2 );
+
+ 
+// -----------------------------------------
+// 3. Store custom field value into variation data
+ 
+add_filter( 'woocommerce_available_variation', function ( $variations ) {
+    $variations['sold_out'] = '<div class="woocommerce_custom_field">Sold Out: <span>' . get_post_meta( $variations[ 'variation_id' ], 'sold_out', true ) . '</span></div>';
+    $variations['available_override'] = '<div class="woocommerce_custom_field">Availability Override: <span>' . get_post_meta( $variations[ 'variation_id' ], 'available_override', true ) . '</span></div>';
+
+    return $variations;
+ } );
+ 
+
+
+ 

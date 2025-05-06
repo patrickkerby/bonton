@@ -420,7 +420,7 @@ trait PhoneOrders
         $pickup_date = $pickupdate_object->format('Y-m-d'); //This is to compare agains POS date format
 
         // Pickup or Delivery?
-        if($order->has_shipping_method('flat_rate')) {
+        if($order->has_shipping_method('flat_rate') || $order->has_shipping_method('free_shipping')) {
           $delivery_method = 'delivery';
           $timeslot = $order->get_meta( '_timeslot', true );
         }

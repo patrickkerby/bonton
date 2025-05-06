@@ -48,51 +48,52 @@ if(isset($pickup_restriction_end_data_check)) {
 		 * @hooked woocommerce_show_product_images - 20
 		 */
 		do_action( 'woocommerce_before_single_product_summary' );
+			
+		/**
+		 * Add availability display to product single page and product modal - MOBILE VIEW
+		 */
+
+			$terms = get_the_terms( $product_id, 'pa_availability' );
+
+			usort($terms, function($a, $b) {
+				return strcmp($a->term_id, $b->term_id);
+			});
+
+			$days_available_string = join(', ', wp_list_pluck($terms, 'name'));
+			$long_fermentation = '';
+			$bulk_discount = '';
+
+			if (is_array($terms) || is_object($terms)) {
+				foreach ($terms as $term) {
+					$days = $term->name;
+					$days_available_array[] = $days;
+				}
+			}
+			//Check if requires long fermentation lead time
+			if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
+				$long_fermentation = "<span class=\"long_fermentation\">* Not available for next-day orders</span>";
+			}
+
+			//Check if qualifies for Bulk Ordering
+			if ( has_term( array('bulk-discount'), 'product_tag', $product_id ) ){
+				$bulk_discount = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Eligible for Bulk Discount</a>";
+			}
+
+			//Check if qualifies for buy 5 get 1 free
+			if ( has_term( array('6th-item-free'), 'product_tag', $product_id ) ){
+				$sixth_item_free = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Sixth item is free when you buy 1/2 dozen!</a>";
+			}
+
 		?>
 		<div class="availability-mobile d-md-none">
 			<?php
-			
-			/**
-			 * Add availability display to product single page and product modal - MOBILE VIEW
-			 */
-
-				$terms = get_the_terms( $product_id, 'pa_availability' );
-				$prefix = $days_available = '';
-				$long_fermentation = '';
-				$bulk_discount = '';
-
-				if (is_array($terms) || is_object($terms)) {
-						
-						foreach ($terms as $term) {
-								$days = $term->name;
-								$days_available .= $prefix . '' . $days . '';
-								$prefix = ', ';
-						}
-				}
-				$days_available = explode(",",$days_available);
-				
-				//Check if requires long fermentation lead time
-				if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
-					$long_fermentation = "<span class=\"long_fermentation\">* Not available for next-day orders</span>";
-				}
-
-				//Check if qualifies for Bulk Ordering
-				if ( has_term( array('bulk-discount'), 'product_tag', $product_id ) ){
-					$bulk_discount = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Eligible for Bulk Discount</a>";
-				}
-
-				//Check if qualifies for buy 5 get 1 free
-				if ( has_term( array('6th-item-free'), 'product_tag', $product_id ) ){
-					$sixth_item_free = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Sixth item is free when you buy 1/2 dozen!</a>";
-				}
-
-				if (in_array('Everyday', $days_available)) {
+				if (in_array('Everyday', $days_available_array)) {
 					$days = "";
 					echo '<strong>Available:</strong> <span>Every day! (Tuesday - Saturday) '.$long_fermentation.'</span>';
 				}
 				else {
-						$days = implode(', ', $days_available);
-						echo '<strong>Available:</strong> <span>'.$days . $long_fermentation.'</span>';
+						// $days = implode(', ', $days_available_);
+						echo '<strong>Available:</strong> <span>.'.$days_available_string . $long_fermentation.'</span>';
 				}				
 			?>
 		</div>
@@ -107,19 +108,20 @@ if(isset($pickup_restriction_end_data_check)) {
 			?>
 		<div class="sidebar d-none d-md-block">
 			<ul>
+
+			
 				<?php
-				
 				/**
 				 * Add availability display to product single page and product modal
 				 */
 					
-					if (in_array('Everyday', $days_available)) {
+					if (in_array('Everyday', $days_available_array)) {
 						$days = "";
 						echo '<li>Available: <span>Every day! (Tuesday - Saturday)</span></li>';
 					}
 					else {
-							$days = implode(', ', $days_available);
-							echo '<li>Available: <span>'.$days .'</span></li>';
+							// $days = implode(', ', $days_available);
+							echo '<li>Available: <span>'.$days_available_string .'</span></li>';
 					}
 					
 					// get product_tags of the current product

@@ -42,7 +42,7 @@
           <div class="col-10 col-sm-8 col-lg-6 feature-intro">
             <h2>{{ $featured_products->heading }}</h2>
             <p>{{ $featured_products->sub_heading }}</p>
-            <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=bread" class="button btn">View our products</a>
+            <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=specials" class="button btn">View our products</a>
           </div>
         </div>
         <div class="row justify-content-center no-gutters">
@@ -83,6 +83,11 @@
         </div>
         <div class="row justify-content-center no-gutters">
           <div class="col-sm-11">
+
+            <div class="input-group date">
+              <input type="text" class="form-control"><span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+            </div>
+
             <div id="featuredProducts2" class="carousel slide carousel-fade row no-gutters" data-ride="carousel" data-interval="6000">
               <div class="carousel-inner col-sm-10">
                 @foreach ($featured_products->featured_row_1->product_2 as $item)                                      

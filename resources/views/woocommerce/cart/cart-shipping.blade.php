@@ -26,7 +26,7 @@ $calculator_text = '';
 $session_date_object = WC()->session->get('pickup_date_object');
 $delivery_available = false;
 $pickup_day_of_week = "";
-$pickup_date = "";
+$pickup_date = ""; 
 $icecream_conflict = false;
 
 if ($is_wholesale_user) {
@@ -47,7 +47,7 @@ if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2022-08-13" && !$icecream_conflict) {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-04-19" && !$icecream_conflict) {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -55,6 +55,12 @@ if($session_date_object) {
 	}
 	else {
 		$delivery_available = false;
+	}
+	if ($pickup_date == "2025-04-19" ) {
+		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, April 19, but we'd love to see your face in the store!";
+	}
+	else {
+		$delivery_message = "(Delivery is currently only available on Saturdays)";
 	}
 }
 
@@ -119,7 +125,7 @@ if($icecream_conflict) {
 					?>
 				</p>
 			@else
-				<p class="small">(Delivery is currently only available on Saturdays + no delivery December 16 or 23) </p>								
+				<p class="small">{{  $delivery_message }}</p>						
 			@endif
 
 			<?php

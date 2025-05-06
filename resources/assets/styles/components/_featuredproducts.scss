@@ -93,7 +93,7 @@
 
       &.active {
         color: $highlight;
-        background: url(../images/product-arrow.svg) no-repeat center right;
+        background: url("../../images/product-arrow.svg") no-repeat center right;
 
         @include slowfade;
       }
@@ -121,7 +121,7 @@
           width: 30px;
           height: 16px;
           display: inline-block;
-          background: url(../images/product-arrow.svg) no-repeat center left;
+          background: url("../../images/product-arrow.svg") no-repeat center left;
           transform: scaleX(-1);
           position: absolute;
           left: -5px;

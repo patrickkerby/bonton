@@ -117,6 +117,7 @@ defined( 'ABSPATH' ) || exit;
 							$long_fermentation = "";
 							$giftcertificate_in_cart = false;
 							$cart_count++;
+							$days_available_array = array();
 
 							$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 							$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
@@ -124,22 +125,25 @@ defined( 'ABSPATH' ) || exit;
 							if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 								$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 							?>
-
-							<?php
+							<?php 
+								
 								// Check availability
 								$availability = get_field('availability', $product_id );
 
-								$prefix = $days_available = '';
+								usort($availability, function($a, $b) {
+									return strcmp($a->term_id, $b->term_id);
+								});
+
+								$days_available_string = join(', ', wp_list_pluck($availability, 'name'));
+
 								if (is_array($availability) || is_object($availability)) {
-										
+
 									foreach ($availability as $term) {
-											$days = $term->name;
-											$days_available .= $prefix . '' . $days . '';
-											$prefix = ', ';
+										$days = $term->name;
+										$days_available_array[] = $days;
 									}
 								}
-								$days_available = explode(", ",$days_available);															
-
+								
 								//Pickup Restriction!!
 								if (!wc_pb_is_bundled_cart_item($cart_item)) {
 									$pickup_restriction_data = get_field('restricted_pickup', $product_id);
@@ -155,7 +159,7 @@ defined( 'ABSPATH' ) || exit;
 								}								
 
 								//Is the product available on the day selected? 
-								if(isset($session_pickup_date) && !in_array($pickup_day_of_week, $days_available)){
+								if(isset($session_pickup_date) && !in_array($pickup_day_of_week, $days_available_array)){
 									$availability_status = "not-available";
 									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
 								}								
@@ -174,7 +178,86 @@ defined( 'ABSPATH' ) || exit;
 								if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
 									$giftcertificate_in_cart = true;
 									$gc_cart_count++; 
-								}									
+								}	
+
+							// SOLD OUT! -- Does the variation have a soldout override?
+								$variation_id = $cart_item['variation_id'];
+								$sold_out_dates = array();
+								$sold_out = get_post_meta( $variation_id, 'sold_out', true );							
+								$sold_out = explode(', ', $sold_out);
+								$availability_override = get_post_meta( $variation_id, 'available_override', true );							
+								$availability_override = explode(', ', $availability_override);
+								$sold_out_conflict = "";
+								$available_dates = array();
+								$available_dates_shortened = array();
+								$all_sold_out_dates = array();
+								$all_available_dates = array();
+								
+								$sold_out = array_diff($sold_out, $availability_override);
+								
+								$soldOutDateObjects = array_map(function($dateStr) {
+									return DateTime::createFromFormat('Y-m-d', $dateStr);
+								}, $sold_out);
+								
+								foreach($soldOutDateObjects as $sold_out_day) {
+									// If the sold out date is in the future, add it to the array
+									if ($sold_out_day && $sold_out_day->format('y-m-d') > $today->format('y-m-d')) {
+										// Create an array of dates formatted for display in cart page
+										$sold_out_dates[] = $sold_out_day->format('M j');
+										
+										// Create an array of dates formatted for comparison
+										$all_sold_out_dates[] = $sold_out_day->format('y-m-d');
+										
+										// If the session date is the same as the sold out date, set the conflict flag
+										if ($session_date_object && $session_date_object->format('y-m-d') == $sold_out_day->format('y-m-d')) {
+											$conflict = true;
+											$sold_out_conflict = "sold_out_conflict";
+											$availability_status = "not-available";
+											$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
+										}
+									}
+								}
+
+								if ($sold_out_dates) {	
+									sort($sold_out_dates);
+									$sold_out_dates_msg = implode(", ", $sold_out_dates);
+									$sold_out_msg = '<span class="special-availability sold-out ' . $sold_out_conflict . '"><strong>Sold out: </strong> ' . $sold_out_dates_msg . '</span><br>';	
+								}
+								else {
+									$sold_out_msg = "";
+								}
+
+								// Use availability override to override the day of week availability check:
+
+								$availableDateObjects = array_map(function($dateStr) {
+									return DateTime::createFromFormat('y-m-d', $dateStr);
+								}, $availability_override);
+								
+								foreach ($availableDateObjects as $available_day) {
+									if ($available_day) {
+										$available_dates_shortened[] = $available_day->format('M j');
+										$available_dates[] = $available_day->format('l, F j, Y');
+										
+										// Create an array of dates formatted for comparison
+										$all_available_dates[] = $available_day->format('y-m-d');
+									}
+								}
+								
+								if(isset($session_pickup_date) && in_array($session_pickup_date, $available_dates)){
+									$availability_msg = "";
+									$availability_status = "available";
+									$conflict = false;
+								}
+								
+								if($available_dates_shortened){	
+									// sort($available_dates_shortened);
+									$available_dates_shortened = implode(', ', $available_dates_shortened);							
+									$special_availability_msg = '<span class="special-availability available"><strong>Special Availability: </strong> ' . $available_dates_shortened . '</span><br>';
+								}
+								else {
+									$special_availability_msg = "";
+								}								
+
 							?>
 							<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
 								<td class="product-remove">
@@ -211,34 +294,37 @@ defined( 'ABSPATH' ) || exit;
 									<?php
 									// Meta data.
 									echo wc_get_formatted_cart_item_data( $cart_item ); // PHPCS: XSS ok.
-
+									
 									// Backorder notification.
 									if ( $_product->backorders_require_notification() && $_product->is_on_backorder( $cart_item['quantity'] ) ) {
 										echo wp_kses_post( apply_filters( 'woocommerce_cart_item_backorder_notification', '<p class="backorder_notification">' . esc_html__( 'Available on backorder', 'woocommerce' ) . '</p>', $product_id ) );
 									}
 									?>
-
 									<?php
 									if (!wc_pb_is_bundled_cart_item($cart_item)) {
 
-										if (in_array('Everyday', $days_available)) {
+										if (in_array('Everyday', $days_available_array)) {
 											echo '<span class="availability"><strong>Availability: </strong> All week!</span>';
 										}
 										else {
-												$days = implode(', ', $days_available);
-												echo '<span class="availability"><strong>Availability: </strong>' . $days . '</span>';
+												echo '<span class="availability"><strong>Availability: </strong>' . $days_available_string . '</span>';
 										}
 									}
 									?>
 									@if($long_fermentation === 'yes')
 										<span class="availability"><strong>*Note:</strong> Not available for next-day pickup</span>										
 									@endif
-									
-									@if (!wc_pb_is_bundled_cart_item($cart_item))
 
-									@if($pickup_restriction_data)
-									{!! $restriction_msg !!}
+									@if($special_availability_msg)
+										{!! $special_availability_msg !!}
 									@endif
+									
+									{!! $sold_out_msg !!}
+
+									@if (!wc_pb_is_bundled_cart_item($cart_item))
+										@if($pickup_restriction_data)
+										{!! $restriction_msg !!}
+										@endif
 									@endif
 																		
 									</td>
@@ -277,21 +363,19 @@ defined( 'ABSPATH' ) || exit;
 										?>
 									</td>
 								</tr>
-								@if($availability_msg)
+								
+								@if($availability_msg || $sold_out_conflict == "sold_out_conflict")
 									<tr class="not-available">
+										<td></td>
 										<td colspan="5">{!! $availability_msg !!}</td>
-									</tr>
-								@endif
-
+									</tr>									
+								@endif	
+				
 								@php									
 								if ($pickup_restriction_data) {
 									$pickup_restriction_check = true;
 									$restricted_in_cart = true;									
 								}
-								// else {
-								// 	$pickup_restriction_check = false;
-								// 	$restricted_in_cart = false;									
-								// }
 								
 								if ($pickup_restriction_end_data) {
 									$pickup_restriction_end_check = true;
@@ -301,12 +385,14 @@ defined( 'ABSPATH' ) || exit;
 								}
 
 								// Prevent cart from proceeding with old session data selected. Force a new date selection according to restrictions
-								// Except if the previously chosen date is within the restricted range, then leave it as is.
-								
+								// Except if the previously chosen date is within the restricted range, then leave it as is.								
 								if ($pickup_restriction_data) {
 									if ($session_date_object < $restricted_start_date || $session_date_object > $restricted_end_date){
 										$conflict = true;
 									}	
+									if(isset($session_pickup_date) && in_array($session_pickup_date, $available_dates)){
+										$conflict = false;
+									}
 								}
 
 								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
@@ -333,9 +419,8 @@ defined( 'ABSPATH' ) || exit;
 						}
 
 						if ($availability_msg == TRUE) {
-								$conflict = true;
+							$conflict = true;
 						}
-
 
 						//If date has been chosen, change language for update button
 						if (isset($session_pickup_date) ) {
@@ -443,16 +528,6 @@ defined( 'ABSPATH' ) || exit;
 			</div>
 		@endunless
 	</div>
-
-	<div id="pickup-details" style="display: none;">
-
-		<div id="pickup_restriction_data">@if($restricted_start_date)@php echo htmlspecialchars($restricted_start_date_js); @endphp@endif</div>			
-		<div id="pickup_restriction_end_data">@if($restricted_end_date)@php echo htmlspecialchars($restricted_end_date_js); @endphp@endif</div>		
-		<div id="session_pickup_date">@if($session_date_object)@php echo htmlspecialchars($session_date_object->format('d/m/Y')); @endphp@endif</div>
-		<div id="session_pickup_date_object">@php var_dump($session_pickup_date); @endphp</div>
-		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
-	</div>
-
 	<div class="modal fade" id="delivery" tabindex="-1" role="dialog" aria-labelledby="bontonDelivery" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 			<div class="modal-content">
@@ -490,11 +565,11 @@ defined( 'ABSPATH' ) || exit;
 				<div class="modal-body">
 					<p>On July 1, 2023, the City of Edmonton is implementing the Single-use Item Reduction Bylaw (20117). As a result, Bon Ton Bakery & Patisserie is making the following changes for all online orders to comply with this bylaw. When placing an order for pickup, you will be required to choose from one of three options related to shopping bags:</p>
 					<ol>
-						<li>Paper shopping bag fixed charge of $0.30 – all items in your cart will be delivered to your vehicle in paper shopping bags.</li>
+						<li>Paper shopping bag fixed charge of $0.50 – all items in your cart will be delivered to your vehicle in paper shopping bags.</li>
 						<li>Bon Ton reusable shopping bag at $2.50 each – you can purchase as many reusable bags as you would like. We will bring your items out to your vehicle in the reusable shopping bags. If you have additional items that do not fit, we will bring those out to your vehicle without being packed in a shopping bag and you can pack them in your own reusable bag or other container.</li>
 						<li>No bags required (no extra charges) – all items will be delivered to your vehicle without being packed in a shopping bag. We will place the items in your vehicle and you will be able to pack them in your own reusable bag or other container.</li>
 					</ol>
-					<p>If you choose delivery, rather than pickup, when you place your order, we will automatically add a $0.30 paper shopping bag charge to your order to ensure that your items arrive at your destination in good condition.</p>
+					<p>If you choose delivery, rather than pickup, when you place your order, we will automatically add a $0.50 paper shopping bag charge to your order to ensure that your items arrive at your destination in good condition.</p>
 				</div>
 			</div>
 		</div>
@@ -511,3 +586,23 @@ defined( 'ABSPATH' ) || exit;
 		</button>
 	</div>
 	@endif
+
+	{{-- The following are solely for passing variables through to js --}}
+	@php
+		if($all_sold_out_dates) {
+			sort($all_sold_out_dates);
+		}
+	@endphp
+	<div id="pickup-details" style="display: none;">
+		<div id="pickup_restriction_data">@if($restricted_start_date)@php echo htmlspecialchars($restricted_start_date_js); @endphp@endif</div>			
+		<div id="pickup_restriction_end_data">@if($restricted_end_date)@php echo htmlspecialchars($restricted_end_date_js); @endphp@endif</div>		
+		<div id="session_pickup_date">@if($session_date_object)@php echo htmlspecialchars($session_date_object->format('d/m/Y')); @endphp@endif</div>
+		<div id="session_pickup_date_object">@php var_dump($session_pickup_date); @endphp</div>
+		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
+		@if($all_sold_out_dates)
+			<div id="sold_out_dates_in_cart">@php echo json_encode($all_sold_out_dates); @endphp</div>
+		@endif
+		@if($all_available_dates)
+			<div id="available_dates_in_cart">@php echo json_encode($all_available_dates); @endphp</div>
+		@endif
+	</div>

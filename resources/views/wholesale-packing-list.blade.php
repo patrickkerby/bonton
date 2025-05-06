@@ -23,8 +23,10 @@
 
     window.print();
 
-    document.body.innerHTML = originalContents;
-  }
+
+    window.addEventListener("afterprint", (event) => {
+      document.body.innerHTML = originalContents;
+    });  }
 </script>
 
 @php  
@@ -253,7 +255,7 @@ $sorted_orders = array();
               $list_class_unique = array_unique($list_class);
               $list_class_marker = implode(" ", $list_class_unique);
               
-              if($details->has_shipping_method('flat_rate')) {
+              if($details->has_shipping_method('flat_rate') || $details->has_shipping_method('free_shipping')) {
                 $order_location = 'Delivery';
               }
               else {
@@ -270,7 +272,7 @@ $sorted_orders = array();
                 <span class="id">#{{ $daily_order_number }}</span>
               </td>
               <td class="location">
-                @if($details->has_shipping_method('flat_rate'))
+                @if($details->has_shipping_method('flat_rate') || $details->has_shipping_method('free_shipping'))
                   <p class="timeslot">Delivery: {!! $shipping_data_name !!}</p>
                 @endif
                 @if($timeslot)
@@ -327,25 +329,26 @@ $sorted_orders = array();
                       $item_product_data_array = $item->get_data();
 
                       // Check to see if line items have been refunded
-                      $order = wc_get_order( $order_number );
-                      $order_refunds = $order->get_refunds();  
-                      $refund_item_id = "";
-                      $total_qty = $prod_quantity;
-                      if($order_refunds) {
-                        foreach( $order_refunds as $refund ){
-                          foreach( $refund->get_items() as $item_id => $item ){
+                        $order = wc_get_order( $order_number );
+                        $order_refunds = $order->get_refunds();  
+                        $refund_item_id = "";
+                        $total_qty = $prod_quantity;
+                        $line_item_id = $item->get_id();
 
-                              ## --- Using WC_Order_Item_Product methods --- ##
-                              $refund_item_id = $item -> get_product_id();
-                              $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
-                              $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
+                        if($order_refunds) {
+                          foreach( $order_refunds as $refund ){
+                            foreach( $refund->get_items() as $item_id => $item ){
+
+                                ## --- Using WC_Order_Item_Product methods --- ##
+                                $refund_item_id = $item->get_meta('_refunded_item_id');
+                                $refunded_quantity      = $item->get_quantity(); // Quantity: zero or negative integer
+                                $refunded_line_subtotal = $item->get_subtotal(); // line subtotal: zero or negative number
+                            }
                           }
+                          if($line_item_id == $refund_item_id) {
+                            $total_qty = $prod_quantity + $refunded_quantity;
+                          }    
                         }
-
-                        if($prod_id == $refund_item_id) {
-                          $total_qty = $prod_quantity + $refunded_quantity;
-                        }                        
-                      }
                     @endphp
 
                     @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
@@ -439,10 +442,10 @@ $json3='[
 
 // var_dump($test);
 
-$json2 = file_get_contents('app/uploads/pos/uploads/test.json');
-$json_data2 = json_decode($json2,true);
+// $json2 = file_get_contents('app/uploads/pos/uploads/test.json');
+// $json_data2 = json_decode($json2,true);
 
-print_r($json_data2);
+// print_r($json_data2);
 
 @endphp
 

@@ -2,16 +2,15 @@ export default {
   init() {
     // JavaScript to be fired on the cart page
     $.noConflict();
-
   },
   finalize() {
     // JavaScript to be fired on the cart page, after the init JS
 
-    var dayjs = require('dayjs');
-    var customParseFormat = require('dayjs/plugin/customParseFormat');
-    var utc = require('dayjs/plugin/utc');
-    var timezone = require('dayjs/plugin/timezone');
-    var advancedFormat = require('dayjs/plugin/advancedFormat');
+    const dayjs = require('dayjs');
+    const customParseFormat = require('dayjs/plugin/customParseFormat');
+    const utc = require('dayjs/plugin/utc');
+    const timezone = require('dayjs/plugin/timezone');
+    const advancedFormat = require('dayjs/plugin/advancedFormat');
     dayjs.extend(customParseFormat);
     dayjs.extend(utc);
     dayjs.extend(timezone);
@@ -19,141 +18,114 @@ export default {
 
     dayjs.tz.setDefault('America/Edmonton');
 
-    //get variables from cart PHP
-  
-    var pickupRestrictionTarget = document.getElementById('pickup_restriction_data');
-    var pickupRestriction = pickupRestrictionTarget.textContent;
-    var pickupRestrictionFormatted = dayjs(pickupRestriction, 'DD/MM/YYYY');
+    // Functions
+    function getDatesBetweenDates(rangeStartDate, rangeEndDate) {
+      const dates = [];
+      let start = dayjs(rangeStartDate);
+      const end = dayjs(rangeEndDate);
 
-    if (pickupRestriction) {
-      var pickup_restriction_check = true;
+      while (start.isSame(end) || start.isBefore(end)) {
+        dates.push(start.clone().format('YYYY-MM-DD'));
+        start = start.add(1, 'day');
+      }
+
+      return dates;
     }
 
-    var pickupRestrictionEndTarget = document.getElementById('pickup_restriction_end_data');
-    var pickupRestrictionEnd = pickupRestrictionEndTarget.textContent;
-  
-    var presetDateTarget = document.getElementById('session_pickup_date');
-  
-    if(presetDateTarget) {
-      var presetDate = presetDateTarget.textContent;
-      // var presetDateFormatted = dayjs(presetDate);
-    }
+    function initializeDatePicker(allowedDates, selectedDate, standardFormulaMinDateFormatted) {
+      jQuery(function ($) {
+        $('#datepicker').datepicker({
+          onSelect: function (dateText) {
+            $('#dateInput').val(dateText);
+          },
+          dateFormat: 'dd/mm/yy',
+          beforeShowDay: function (date) {
+            const string = jQuery.datepicker.formatDate('yy-mm-dd', date);
+            var day = date.getDay();              
 
-    var longFermentationTarget = document.getElementById('long_fermentation_in_cart');
-    var longFermentation = longFermentationTarget.textContent;
-    
-    jQuery(function($) {
+            // Disable all other Saturdays and Sundays           
+            if (day == 0 || day == 1){
+              return [false];
+            }
 
-      $('body').on('updated_cart_totals',function() {
-        location.reload(); // uncomment this line to refresh the page.
-      });	
-      
-      $(document).ready(function() {
+            // Disable all dates before the standard formula min date
+            if (date < standardFormulaMinDateFormatted){
+              return [false];
+            }
 
-        //get variable from php. Do we need extra lead time due to long fermentation products in the cart?
-  
-          if(longFermentation == 1){
-            var time = 57;
-          }
-          else {
-            time = 33;
-          }
+            return [allowedDates.includes(string)];
+          },
+        }).find('.ui-state-active').removeClass('ui-state-active');
 
-        // Products with restricted availability dates. If product with resctrictions exists, use their min and max dates. 
-        // If the minDate for the restricted product is set for a day earlier than our caluclated current day + lead time, then ignore the restricted minDate, and use our standard formula
-        // convert date format for comparison's sake
-        
-        // var standardFormulaMinDate = new Date(((new Date).getTime() + time * 60 * 60 * 1000) );
-        var standardFormulaMinDate = dayjs().add(time, 'hour').format('DD/MM/YYYY H:mm:ss');
-        var standardFormulaMinDateFormatted = dayjs(standardFormulaMinDate, 'DD/MM/YYYY');
-        
-        if(pickupRestriction == null || pickupRestriction == ''){
-          var minDate = standardFormulaMinDate;
-        } 
-
-        if(pickup_restriction_check == true) {
-          if(pickupRestrictionFormatted.isBefore(standardFormulaMinDateFormatted)) {				
-            minDate = standardFormulaMinDate;
-          } 
-          else if(pickupRestrictionFormatted.isAfter(standardFormulaMinDateFormatted)) {
-            minDate = pickupRestriction;
-          }
-          else {
-            minDate = pickupRestriction;
-          }
-
-          if(pickupRestrictionEnd == null){
-            var maxDate = '01/01/2030';
+        if (selectedDate) {
+          const selectedDateFormatted = dayjs(selectedDate, 'DD/MM/YYYY');
+          if (selectedDateFormatted.isAfter(standardFormulaMinDateFormatted)) {
+            $('#datepicker').datepicker('setDate', selectedDate);
           } else {
+            $('#datepicker').datepicker('setDate', standardFormulaMinDateFormatted.format('DD/MM/YYYY'));
+          }
+        }
+      });
+    }
+
+    // Get variables from cart PHP
+    const pickupRestrictionTarget = document.getElementById('pickup_restriction_data');
+    const pickupRestriction = pickupRestrictionTarget ? pickupRestrictionTarget.textContent : null;
+    const pickupRestrictionFormatted = pickupRestriction ? dayjs(pickupRestriction, 'DD/MM/YYYY') : null;
+
+    const pickupRestrictionEndTarget = document.getElementById('pickup_restriction_end_data');
+    const pickupRestrictionEnd = pickupRestrictionEndTarget ? pickupRestrictionEndTarget.textContent : null;
+
+    const selectedDateTarget = document.getElementById('session_pickup_date');
+    const selectedDate = selectedDateTarget ? selectedDateTarget.textContent : null;
+
+    const longFermentationTarget = document.getElementById('long_fermentation_in_cart');
+    const longFermentation = longFermentationTarget ? longFermentationTarget.textContent : null;
+
+    const AvailableDatesTarget = document.getElementById('available_dates_in_cart');
+    const AvailableDates = AvailableDatesTarget ? AvailableDatesTarget.textContent : null;
+    const availableDatesArray = AvailableDates ? JSON.parse(AvailableDates) : [];
+    const availableDatesFormatted = availableDatesArray.map(date => dayjs(date, 'YY-MM-DD').format('YYYY-MM-DD'));
+
+    jQuery(function ($) {
+      $('body').on('updated_cart_totals', function () {
+        location.reload(); // uncomment this line to refresh the page.
+      });
+
+      $(document).ready(function () {
+        const time = longFermentation == 1 ? 57 : 33;
+
+        // the "standard formula" is the current date + 33 hours or 57 hours if long fermentation. This prevents anyone from purchasing tomorrow (if it's past 3pm) and adds extra time if there's sourdough in the car.
+        const standardFormulaMinDate = dayjs().add(time, 'hour').format('DD/MM/YYYY H:mm:ss');
+        const standardFormulaMinDateFormatted = dayjs(standardFormulaMinDate, 'DD/MM/YYYY');
+
+        let minDate = standardFormulaMinDate;
+        let maxDate = '01/01/2030';
+
+        if (pickupRestriction) {
+          if (pickupRestrictionFormatted.isBefore(standardFormulaMinDateFormatted)) {
+            minDate = standardFormulaMinDate;
+          } else {
+            minDate = pickupRestriction;
+          }
+
+          if (pickupRestrictionEnd) {
             maxDate = pickupRestrictionEnd;
           }
         }
 
         const minDateFormatted = dayjs(minDate, 'DD/MM/YYYY');
         const maxDateFormatted = dayjs(maxDate, 'DD/MM/YYYY');
+        const startDate = minDateFormatted.format('YYYY-MM-DD');
+        const endDate = maxDateFormatted.format('YYYY-MM-DD');
+        const daterange = getDatesBetweenDates(startDate, endDate);
 
-        // The next line is for an array of dates that shouldn't be available. Use this for holidays, etc.
-        var vacationDays = ['2023-11-11','2023-12-26','2023-12-27','2023-12-28','2023-12-29','2023-12-30', '2024-01-02','2024-01-03','2024-01-04','2023-12-23','2023-12-22'];
-        var enableDays = ['2022-03-14'];
+        const vacationDays = ['2025-01-01', '2025-04-22', '2025-04-18', '2025-04-19', '2025-04-17'];
+        const enableDays = ['']; 
 
-        $( function() {
-          
-          $('#datepicker').datepicker({
-            onSelect: function(dateText) { 
-                var dateAsString = dateText; //the first parameter of this function
-                // var dateAsObject = $(this).datepicker( 'getDate' ); //the getDate method
-                $('#dateInput').val(dateAsString);
-            },
-  
-            minDate: minDate,
-            maxDate: maxDate,
-            dateFormat: 'dd/mm/yy',
+        const allowedDates = daterange.filter(date => !vacationDays.includes(date)).concat(enableDays, availableDatesFormatted);
 
-            beforeShowDay: function(date) {
-              var day = date.getDay();              
-              var string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-              
-              // enable days listed in enableDays above
-              if(enableDays.indexOf(string) != -1){
-                return [true, ''];
-              }   
-              // Disable all other Saturdays and Sundays           
-              if (day == 0 || day == 1){
-                return [false];
-              }
-              // Disable any holiday dates listed in vacationDays variable above            
-              if(vacationDays.indexOf(string) != -1){
-                return [false];
-              }
-              else{
-                return [true];
-              }
-            },		
-          }).find('.ui-state-active').removeClass('ui-state-active');             
-
-          //Check for pickup restrictions, and either preserve or kill the preset Date
-          if(pickup_restriction_check == true && presetDate != null) {
-            const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');
-            if(presetDateFormatted.isBefore(minDateFormatted) || presetDateFormatted.isAfter(maxDateFormatted)) {
-              presetDate = null;
-            }
-            else {
-              //
-            }
-          }
-
-          // set preset date if it exists (in cache, etc.) 
-          if(presetDate != null && presetDate != '' ){
-            const presetDateFormatted = dayjs(presetDate, 'DD/MM/YYYY');                            
-
-            if(presetDateFormatted > standardFormulaMinDateFormatted) {
-              $('#datepicker').datepicker('setDate', presetDate);
-            }
-            else {
-              $('#datepicker').datepicker('setDate', standardFormulaMinDate);
-            }
-          }		
-        });
+        initializeDatePicker(allowedDates, selectedDate, standardFormulaMinDateFormatted);
       });
     });
   },

@@ -84,15 +84,15 @@ body.is-active {
 
       &.map a {
         padding: 0.5rem 0 0.5rem 1rem;
-        background: url("../images/map.svg") left center no-repeat;
+        background: url("../../images/map.svg") left center no-repeat;
       }
 
       &.contact a {
-        background: url("../images/envelope.svg") left center no-repeat;
+        background: url("../../images/envelope.svg") left center no-repeat;
       }
 
       &.schedule a {
-        background: url("../images/schedule.svg") left center no-repeat;
+        background: url("../../images/schedule.svg") left center no-repeat;
       }
 
       &.menu-dgwt_wcas_search_box {
@@ -289,7 +289,7 @@ body.is-active {
         width: 311px;
         height: 93px;
         text-indent: -999999px;
-        background: url(../images/BonTon-Logo.png) no-repeat center center;
+        background: url("../../images/BonTon-Logo.png") no-repeat center center;
         background-size: cover;
 
         @include media-breakpoint-down(lg) {
@@ -360,7 +360,7 @@ body.is-active {
           display: block;
           position: relative;
           overflow: hidden;
-          background: url("../images/chevron.svg") no-repeat left center;
+          background: url("../../images/chevron.svg") no-repeat left center;
 
           &::after {
             content: ".................................";
@@ -418,7 +418,7 @@ body.is-active {
     width: 240px;
     height: 88px;
     text-indent: -999999px;
-    background: url(../images/BonTon-Logo.png) no-repeat center center $charcoal;
+    background: url(../../images/BonTon-Logo.png) no-repeat center center $charcoal;
     background-size: cover;
     margin: 1rem auto -1rem auto;
     border: solid #fff 7px;
