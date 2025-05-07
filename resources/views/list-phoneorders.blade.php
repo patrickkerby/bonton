@@ -96,6 +96,9 @@ $orders = ListPhoneorders::ordersarray($phonedata, $results);
     <div class="col-sm-12">
       @php
         $date_selector_date = get_field('list_date');
+        if(!$date_selector_date){
+          $date_selector_date = date('l, F j, Y');
+        }
         // $date_selector_date = '31/08/2023';
         date_default_timezone_set('MST');
         $dateformat = "l, F j, Y";
@@ -125,7 +128,7 @@ $orders = ListPhoneorders::ordersarray($phonedata, $results);
 
           @if ($orders['phone_orders'])
             @foreach ($orders['phone_orders'] as $order)  
-              {{-- @if($selectedDateComparisonFormat == $order['pickup_date']) --}}
+              @if($selectedDateComparisonFormat == $order['pickup_date'])
 
                 <tr valign="top">
                   <td>
@@ -201,7 +204,7 @@ $orders = ListPhoneorders::ordersarray($phonedata, $results);
                 @php
                     $daily_phone_order_number++;
                 @endphp
-            {{-- @endif --}}
+            @endif
           @endforeach
           @endif
         </tbody>

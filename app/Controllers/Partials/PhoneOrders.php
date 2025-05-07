@@ -4,24 +4,42 @@ namespace App\Controllers\Partials;
 
 use DateTime;
 
-
 trait PhoneOrders
 {
   public function phonedata() 
 	{
 		$jsonDataArray = array();
-		foreach (new \DirectoryIterator('app/uploads/pos') as $fileInfo) {
-			if($fileInfo->isDot()) continue;
+    $directoryPath = 'app/uploads/pos';
+
+    // Ensure the directory exists
+    if (!is_dir($directoryPath)) {
+      return $jsonDataArray; // Return an empty array if the directory doesn't exist
+    }
+
+		foreach (new \DirectoryIterator($directoryPath) as $fileInfo) {
+      // Skip if it's not a file or not readable
+      if (!$fileInfo->isFile() || !$fileInfo->isReadable()) {
+        continue;
+      }
 			
-			$path = $fileInfo->getFilename();
-			$jsonString = file_get_contents('app/uploads/pos/'.$path);            
+      $path = $fileInfo->getPathname(); // Use getPathname() for the full path
+      $jsonString = file_get_contents($path);
+
+      // Check if file_get_contents() succeeded
+      if ($jsonString === false) {
+        continue; // Skip this file if it couldn't be read
+      }
+
 			$jsonData = json_decode($jsonString, true);
-									
-			if($jsonData) {
-				$jsonDataArray[] = json_decode($jsonString, true);              
-			}              
-		}
-		$jsonDataArray = array_merge(...$jsonDataArray);
+				
+      if ($jsonData) {
+        $jsonDataArray[] = $jsonData;              
+      }
+    }
+    // Flatten the array
+    if (!empty($jsonDataArray)) {
+      $jsonDataArray = array_merge(...$jsonDataArray);
+    }
 
 		return $jsonDataArray;
 	}
@@ -249,7 +267,10 @@ trait PhoneOrders
           $topping = $prod_object_PO->get_attribute( 'topping' );
           $package_size = $prod_object_PO->get_attribute( 'package-size' );
           $product_size = $prod_object_PO->get_attribute( 'size' );
-          $item_quantity = PhoneOrders::itemquantity($package_size);
+          // $item_quantity = PhoneOrders::itemquantity($package_size);
+
+          $item_quantity = (new class { use PhoneOrders; })::itemquantity($package_size);
+
           $total_qty = $item_quantity * $quantity_PO; //This is calculated using a function in App.php controller
 
           $attributes_array = array(
@@ -536,7 +557,9 @@ trait PhoneOrders
 
           // Rather than establishing this with the other variation variables above, we need to do it after the refund check.
           if ($is_variation) {
-            $item_quantity = PhoneOrders::itemquantity($package_size);
+            // $item_quantity = PhoneOrders::itemquantity($package_size);
+            $item_quantity = (new class { use PhoneOrders; })::itemquantity($package_size);
+
             $total_qty = $item_quantity * $total_qty; //This is calculated using a function in App.php controller
           }
           

@@ -6,6 +6,7 @@
             "key": "field_5e97484ce1bea",
             "label": "Availability",
             "name": "availability",
+            "aria-label": "",
             "type": "taxonomy",
             "instructions": "",
             "required": 1,
@@ -22,12 +23,14 @@
             "load_terms": 1,
             "return_format": "object",
             "multiple": 0,
-            "allow_null": 0
+            "allow_null": 0,
+            "bidirectional_target": []
         },
         {
             "key": "field_5e98ae16284ca",
             "label": "Cooler Storage?",
             "name": "cooler",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "Is this product stored for pickup in the cooler?",
             "required": 0,
@@ -47,6 +50,7 @@
             "key": "field_5f5c391b6562c",
             "label": "Shelf Storage?",
             "name": "shelf",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "Is this product stored for pickup in the shelf?",
             "required": 0,
@@ -66,6 +70,7 @@
             "key": "field_655291557c01d",
             "label": "Freezer Storage?",
             "name": "freezer",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "Is this product stored for pickup in the freezer?",
             "required": 0,
@@ -85,6 +90,7 @@
             "key": "field_65b7ee732183f",
             "label": "Storage Location",
             "name": "storage_location",
+            "aria-label": "",
             "type": "button_group",
             "instructions": "",
             "required": 0,
@@ -108,6 +114,7 @@
             "key": "field_60789abf2d33d",
             "label": "Exclude from bulk discount?",
             "name": "bulk_discount_exclusion",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "If this item is in a category eligible for bulk discounts, you may override eligibility here.",
             "required": 0,
@@ -127,6 +134,7 @@
             "key": "field_5f5165cc85dc7",
             "label": "Restricted Pickup Dates (Start Date)",
             "name": "restricted_pickup",
+            "aria-label": "",
             "type": "date_picker",
             "instructions": "Select which date(s) this product is available to be picked up.",
             "required": 0,
@@ -144,6 +152,7 @@
             "key": "field_5f5d114bcae85",
             "label": "Restricted Pickup Dates (End Date)",
             "name": "restricted_pickup_end",
+            "aria-label": "",
             "type": "date_picker",
             "instructions": "Select which date(s) this product is available to be picked up.",
             "required": 0,
@@ -178,5 +187,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1706553058
+    "modified": 1746592740
 }
