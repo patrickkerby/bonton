@@ -1,3 +1,37 @@
+{{-- 
+	WooCommerce Cart Shipping Methods Display Template
+
+	This Blade template customizes the display of shipping methods in the WooCommerce cart.
+	It handles special business logic for delivery availability based on user type, cart contents,
+	and selected pickup date. Notable features include:
+
+	- Delivery is only available on Saturdays, except for specific blackout dates (e.g., June 14, 2025).
+	- Wholesale users are always eligible for delivery.
+	- If the cart contains a product with ID 2045 (ice cream), delivery is disabled and a message is shown.
+	- The template dynamically updates the available shipping methods and displays context-aware messages.
+	- If delivery is not available, only local pickup is shown as a shipping method.
+	- User and session meta are manipulated to enforce delivery restrictions.
+	- Shipping calculator is conditionally displayed based on delivery availability and cart contents.
+	- Custom messages are shown for delivery blackout dates and when ice cream is in the cart.
+
+	Variables:
+	- $formatted_destination: Formatted shipping address.
+	- $has_calculated_shipping: Whether shipping has been calculated.
+	- $show_shipping_calculator: Whether to show the shipping calculator.
+	- $session_date_object: Date object for the selected pickup date.
+	- $delivery_available: Boolean indicating if delivery is available.
+	- $pickup_day_of_week, $pickup_date: Day and date of pickup.
+	- $icecream_conflict: Boolean indicating if ice cream is in the cart.
+	- $delivery_message: Message shown when delivery is not available.
+
+	Usage:
+	- Override this template in your theme at: yourtheme/woocommerce/cart/cart-shipping.php
+	- Ensure compatibility with WooCommerce updates by tracking template version changes.
+
+	@see https://docs.woocommerce.com/document/template-structure/
+	@package WooCommerce\Templates
+	@version 3.6.0
+--}}
 <?php
 /**
  * Shipping Methods Display
@@ -47,7 +81,7 @@ if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-06-14" && !$icecream_conflict) {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-06-28" && !$icecream_conflict) {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -56,8 +90,8 @@ if($session_date_object) {
 	else {
 		$delivery_available = false;
 	}
-	if ($pickup_date == "2025-06-14" ) {
-		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, June 14, but we'd love to see your face in the store!";
+	if ($pickup_date == "2025-06-28" ) {
+		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, June 28, but we'd love to see your face in the store!";
 	}
 	else {
 		$delivery_message = "(Delivery is currently only available on Saturdays)";
