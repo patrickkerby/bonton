@@ -14,12 +14,17 @@ global $wpdb;
   $is_packing_list = false;
 
 // Get order data!
-  $query = new WC_Order_Query( array(  
-      'limit' => -1,
-      'status' => array('wc-processing'),
-      'pickup_date' => '',
-  ) );
-  $results = $query->get_orders();
+  $results = wc_get_orders([
+  'limit' => -1,
+  'status' => ['processing'],
+  'meta_query' => [
+    [
+      'key'     => 'pickup_date',
+      'value'   => '',
+      'compare' => '='
+    ],
+  ],
+]);
 
 @endphp
 

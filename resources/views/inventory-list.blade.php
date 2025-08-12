@@ -82,10 +82,18 @@
       // This uses a custom filter that allows us to query the customvar 'pickup_date' rather than looping through all processing orders and date matching.
       $filtered_orders = wc_get_orders( 
       array( 
-        'pickup_date' => $day,
-        'status' => array('wc-processing', 'wc-completed'),
-        'limit' => -1
+        // 'pickup_date' => $day,
+        'status' => array('processing', 'completed'),
+        'limit' => -1,
+        'meta_query' => [
+          [
+            'key'     => 'pickup_date',
+            'value'   => $day,
+            'compare' => '='
+          ],
+        ],
       ) );
+
     @endphp
   
     @foreach($filtered_orders as $details)

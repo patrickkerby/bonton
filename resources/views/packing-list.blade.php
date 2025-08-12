@@ -1,12 +1,13 @@
 {{--
   Template Name: Packing List
+  Description: Generates packing lists for orders by date
+  TODO: Replace manual category IDs with dynamic category options
 --}}
 
 @extends('layouts.lists')
 
 <script>
   function printDiv(divName, printSize) {
-
     var printContents = document.getElementById(divName).innerHTML;
     var originalContents = document.body.innerHTML;
 
@@ -17,50 +18,72 @@
 
     if (body.classList.contains("cardPrint")) {
       var pageRules = document.getElementById('cardSizes');
-      let pageSizeString = '@page {size: 4in 5.5in;}';
-      pageRules.innerHTML = pageSizeString;
+      if (pageRules) {
+        let pageSizeString = '@page {size: 4in 5.5in;}';
+        pageRules.innerHTML = pageSizeString;
+      }
     }
 
     window.print();
 
-    window.addEventListener("afterprint", (event) => {
+    // Use a more reliable method for afterprint
+    function restoreContent() {
       document.body.innerHTML = originalContents;
-    });  }
+      window.removeEventListener("afterprint", restoreContent);
+    }
+    
+    window.addEventListener("afterprint", restoreContent);
+  }
 </script>
 
 @php  
+  // Constants
   $daily_order_number = 100;
   $daily_delivery_number = 500;
+  
+  // Get page data
   $post_id = get_the_ID();
   $date_selector_date = get_field('list_date');
   $is_packing_list = true;
 
-// Get order data!
-  $query = new WC_Order_Query( array(  
+  // Get order data
+  $results = wc_get_orders([
     'limit' => -1,
-    'status' => array('wc-processing', 'wc-completed'),
-    'pickup_date' => $date_selector_date,
-  ) );
-  $results = $query->get_orders();
+    'status' => ['processing', 'completed'],
+    'meta_query' => [
+      [
+        'key'     => 'pickup_date',
+        'value'   => $date_selector_date,
+        'compare' => '='
+      ],
+    ],
+  ]);
 
-//THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
-//THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
+
+  //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
+  //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.
 
 //Product pages give an option to override the natural category and assign the product as cooler. Add to cooler array:
 // ***IMPORTANT: for these to work, there is a custom filter in filters.php
-  $cooler_override_args = array(
+  // that checks for the 'cooler' or 'shelf' meta key and returns the product IDs.
+  // This is used to override the natural category of the product.
+  // If you want to add a product to the cooler or shelf list, you need to
+  // add the 'cooler' or 'shelf' meta key to the product with a value of '1'.     
+
+  // Product override arguments
+  $cooler_override_args = [
     'status' => 'publish',
     'cooler' => '1',
     'return' => 'ids',
-    'limit' => '-1'
-  );
+    'limit'  => '-1'
+  ];
 
-   $shelf_override_args = array(
+  $shelf_override_args = [
     'status' => 'publish',
     'shelf' => '1',
     'return' => 'ids',
     'limit' => '-1'
-  );
+  ];
 
 //Cooler List
   $cooler_list = array( '22, 53, 51, 107, 103' );
@@ -158,6 +181,19 @@ $sorted_orders = array();
 
 @endphp
 
+@php
+  // Validate required data
+  if (empty($date_selector_date)) {
+    // Handle missing date
+    $error_message = 'No date selected for packing list';
+  }
+
+  // Validate orders exist
+  if (empty($results)) {
+    $no_orders_message = 'No orders found for selected date';
+  }
+@endphp
+
 @section('content')
   <div class="row no-gutters">
     <div class="col-12">      
@@ -253,7 +289,7 @@ $sorted_orders = array();
                 $daily_order_number++;
               }              
               @endphp
-
+          
             <tr class="pack {{ $status }} {{ $list_class_marker }}">
               <td class="id">
                 <span class="check"></span>
@@ -292,6 +328,7 @@ $sorted_orders = array();
                 <table>
                   @foreach ($details->get_items() as $item_id => $item)
                     @php 
+
 
                       $prod_id = $item->get_product_id(); 
 
@@ -343,7 +380,7 @@ $sorted_orders = array();
                         }
                     @endphp
 
-                    @if(in_array($prod_id, $pickup_list_selection)) {{-- check to see if product is in cooler or shelf array --}}
+                    @if(in_array($prod_id, $pickup_list_selection))
                       @unless($is_bundle_parent || $total_qty == 0)
                         <tr>
                           <td class="qty_cell"><span class="qty">

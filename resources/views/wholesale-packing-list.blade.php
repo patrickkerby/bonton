@@ -43,13 +43,18 @@
   ]);
 
 // Get order data!
-  $query = new WC_Order_Query( array(  
-    'limit' => -1,
-    'customer_id' => $user_ids,
-    'status' => array('wc-processing', 'wc-completed', 'ws-processing', 'ws-completed'),
-    'pickup_date' => $date_selector_date,
-  ) );
-  $results = $query->get_orders();
+$results = wc_get_orders([
+  'limit' => -1,
+  'customer_id' => $user_ids,
+  'status' => ['processing', 'completed', 'ws-processing', 'ws-completed'],
+  'meta_query' => [
+    [
+      'key'     => 'pickup_date',
+      'value'   => $date_selector_date,
+      'compare' => '='
+    ],
+  ],
+]);
 
 //THIS IS NOT FUTURE PROOF. INSTEAD OF MANUAL IDS BELOW, PUT AN OPTION IN THE CATEGORY FOR FREEZER, SHELF, OR COOLER.
 //THEN GET ALL CATEGORIES (ONCE). USE LIST TYPE (SHELF/COOLER/FREEZER) TO ONLY QUERY APPROPRIATE PRODUCTS THE FIREST TIME AROUND.

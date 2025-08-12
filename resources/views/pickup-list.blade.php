@@ -40,15 +40,31 @@ global $wpdb;
   $is_storetodoor = false;
 
 // Get order data!
-  $query = new WC_Order_Query( array(  
-    'limit' => -1,
-    // 'orderby' => 'name',
-    // 'order' => 'asc',
-    'status' => array('wc-processing', 'wc-completed'),
-    'pickup_date' => $date_selector_date,
-  ) );
 
-  $results = $query->get_orders();
+  // $query = new WC_Order_Query( array(  
+  //   'limit' => -1,
+  //   // 'orderby' => 'name',
+  //   // 'order' => 'asc',
+  //   'status' => array('wc-processing', 'wc-completed'),
+  //   'pickup_date' => $date_selector_date,
+  // ) );
+  // $results = $query->get_orders();
+
+  $results = wc_get_orders(
+    array(
+        'limit' => -1,
+        'orderby' => 'name',
+        'order' => 'asc',
+        'status' => array('processing', 'completed'),
+        'meta_query' => array(
+          array(
+            'key'        => 'pickup_date',
+            'value'      => $date_selector_date,
+            'compare'    => '='
+          ),
+        ),
+    )
+  );
 
   //Get all orders that contain specific product (breadclub) 
   $bread_club_results = $wpdb->get_col("

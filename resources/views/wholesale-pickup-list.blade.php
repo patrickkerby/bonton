@@ -47,17 +47,33 @@ global $wpdb;
   ]);
 
 // Get order data!
-  $query = new WC_Order_Query( array(  
+  $results = wc_get_orders([
     'limit' => -1,
-    // 'orderby' => 'name',
-    // 'order' => 'asc',
     'customer_id' => $user_ids,
-    'status' => array('wc-processing', 'wc-completed', 'ws-processing', 'ws-completed'),
-    'pickup_date' => $date_selector_date,
-  ) );
+    'status' => ['processing', 'completed', 'ws-processing', 'ws-completed'],
+    'meta_query' => [
+      [
+        'key'     => 'pickup_date',
+        'value'   => $date_selector_date,
+        'compare' => '='
+      ],
+    ],
+]);
 
-  $results = $query->get_orders();
+  // If no date is selected, use today's date.
+  if (empty($date_selector_date)) {
+    $date_selector_date = date('Y-m-d');
+  }
 
+  // If no orders are found, return an empty array.
+  if (empty($results)) {
+    $results = array();
+  }
+
+  // If the date selector is not set, use today's date.
+  if (empty($date_selector_date)) {
+    $date_selector_date = date('Y-m-d');
+  }
 
 //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();

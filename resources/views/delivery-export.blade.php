@@ -62,16 +62,17 @@ $user_ids = (array) get_users([
 
 
 // Get order data!
-  $query = new WC_Order_Query( array(  
-      'limit' => -1,
-      // 'orderby' => 'name',
-      // 'order' => 'asc',
-      // 'customer_id' => $user_ids, //This limits the query to customers only (excludes wholesale)
-      'status' => array('wc-processing', 'wc-completed'),
-      'pickup_date' => $date_selector_date,
-
-  ) );
-  $results = $query->get_orders();
+  $results = wc_get_orders([
+  'limit' => -1,
+  'status' => ['processing', 'completed'],
+  'meta_query' => [
+    [
+      'key'     => 'pickup_date',
+      'value'   => $date_selector_date,
+      'compare' => '='
+    ],
+  ],
+]);
   
 //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();
