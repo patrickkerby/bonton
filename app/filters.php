@@ -228,6 +228,14 @@ add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
         
 }, 10, 3 );
 
+
+// Add a custom fragment to the cart so we can update the cart count in the header
+add_filter( 'woocommerce_add_to_cart_fragments', 'add_to_cart_fragment' );
+function add_to_cart_fragment( $fragments ) {
+    $fragments[ '.misha-cart' ] = '<a href="' . esc_url( wc_get_cart_url() ) . '" class="misha-cart">Cart (' . absint( WC()->cart->get_cart_contents_count() ) . ')</a>';
+    return $fragments;
+}
+
 // Let's see if we can get these damned sorting options setup right
 add_filter( 'woocommerce_catalog_orderby', function( $options ){
 	$options['title'] = 'Sort alphabetically';

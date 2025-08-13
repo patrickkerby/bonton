@@ -26,6 +26,7 @@ $sub_title = get_field('sub_title');
       @if (has_nav_menu('top_navigation'))
         {!! wp_nav_menu(['theme_location' => 'top_navigation', 'menu_class' => 'top-nav']) !!}
       @endif
+      <a class="cart-icon" href="{{ wc_get_cart_url() }}">{{ WC()->cart->get_cart_contents_count() }}</a>
     </div>
   </div>
   <div class="container-fluid">
@@ -41,7 +42,7 @@ $sub_title = get_field('sub_title');
 
 <header class="mobile-banner d-sm-none">
   
-  @php echo do_shortcode('[wpmenucart]'); @endphp 
+  <a class="cart-icon" href="{{ wc_get_cart_url() }}">{{ WC()->cart->get_cart_contents_count() }}</a> 
 
   <a href="{!! get_home_url() !!}" class="logo">Bon Ton Bakery &amp; Pâtisserie</a>
   <button class="navbar-toggler hamburger hamburger--arrow" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
