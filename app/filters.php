@@ -1108,7 +1108,6 @@ add_filter( 'woocommerce_available_variation', function ( $variations ) {
 
     return $variations;
  } );
- 
 
-
- 
+// Suppress "doing it wrong" error for plugins 
+ add_filter('doing_it_wrong_trigger_error', '__return_false');
