@@ -40,9 +40,9 @@ function bonton_pickup_meta( $order ){  ?>
 		<h4>Pickup Details: <a href="#" class="edit_address">Edit</a></h4>
 		<?php 
 			/*
-			 * get all the meta data values we need
+			 * get all the meta data values we need - Updated for HPOS
 			 */ 
-			$date = get_post_meta( $order->get_id(), 'pickup_date', true );
+			$date = $order->get_meta( 'pickup_date', true );
         ?>
         <div class="address">
 				<p><strong>Pickup Date:</strong> <?php echo $date ?></p>
@@ -63,7 +63,11 @@ function bonton_pickup_meta( $order ){  ?>
 add_action( 'woocommerce_process_shop_order_meta', 'App\save_general_details' );
  
 function save_general_details( $ord_id ){
-	update_post_meta( $ord_id, 'pickup_date', wc_clean( $_POST[ 'pickup_date' ] ) );
+	$order = wc_get_order( $ord_id );
+	if ( $order ) {
+		$order->update_meta_data( 'pickup_date', wc_clean( $_POST[ 'pickup_date' ] ) );
+		$order->save();
+	}
 	
 	// wc_clean() and wc_sanitize_textarea() are WooCommerce sanitization functions
 }
@@ -77,6 +81,9 @@ function save_general_details( $ord_id ){
  * @compatible    WooCommerce 3.4.5
  */
  
+// HPOS compatible hooks for admin order columns
+add_filter( 'manage_woocommerce_page_wc-orders_columns', 'App\add_new_order_admin_list_column' );
+// Keep the old hook for backward compatibility with non-HPOS sites
 add_filter( 'manage_edit-shop_order_columns', 'App\add_new_order_admin_list_column' );
  
 function add_new_order_admin_list_column( $columns ) {
@@ -84,27 +91,39 @@ function add_new_order_admin_list_column( $columns ) {
     return $columns;
 }
  
-add_action( 'manage_shop_order_posts_custom_column', 'App\add_new_order_admin_list_column_content' );
+// HPOS compatible hook for column content
+add_action( 'manage_woocommerce_page_wc-orders_custom_column', 'App\add_new_order_admin_list_column_content', 10, 2 );
+// Keep the old hook for backward compatibility with non-HPOS sites
+add_action( 'manage_shop_order_posts_custom_column', 'App\add_new_order_admin_list_column_content_legacy' );
  
-function add_new_order_admin_list_column_content( $column ) {
-   
+function add_new_order_admin_list_column_content( $column, $order ) {
+    if ( 'pickup_date' === $column ) {
+        $date = $order->get_meta( 'pickup_date', true );
+        echo $date;
+    }
+}
+
+// Legacy function for non-HPOS sites
+function add_new_order_admin_list_column_content_legacy( $column ) {
     global $post;
  
     if ( 'pickup_date' === $column ) {
- 
-				$order = wc_get_order( $post->ID );
-				$date = get_post_meta( $order->get_id(), 'pickup_date', true );
-			
-        echo $date;
-      
+        $order = wc_get_order( $post->ID );
+        if ( $order ) {
+            $date = $order->get_meta( 'pickup_date', true );
+            echo $date;
+        }
     }
 }
 
 /**
  * 
- * Make order screen custom column sortable
+ * Make order screen custom column sortable - Updated for HPOS
  * 
  */
+// HPOS compatible hook for sortable columns
+add_filter( 'manage_woocommerce_page_wc-orders_sortable_columns', 'App\MY_COLUMNS_SORT_FUNCTION' );
+// Keep the old hook for backward compatibility with non-HPOS sites
 add_filter( 'manage_edit-shop_order_sortable_columns', 'App\MY_COLUMNS_SORT_FUNCTION' );
 
 function MY_COLUMNS_SORT_FUNCTION( $columns ) 
@@ -125,7 +144,7 @@ function pickupdate_orderby( $query ) {
  
     if( 'pickup_date' == $orderby ) {
 						
-				$query->set('meta_key','pickup_date_object');
+		$query->set('meta_key','pickup_date_object');
         $query->set('orderby','meta_value');
     }
 }
@@ -135,7 +154,7 @@ function pickupdate_orderby( $query ) {
 
 add_action( 'woocommerce_admin_order_data_after_billing_address', 'App\misha_editable_order_meta_billing' );	 	
 function misha_editable_order_meta_billing( $order ){	 	 
-	$billing_unitno = get_post_meta( $order->get_id(), 'billing_unitno', true );
+	$billing_unitno = $order->get_meta( 'billing_unitno', true );
 	?>
 	<div class="address">
 		<p<?php if( !$billing_unitno ) echo ' class="none_set"' ?>>
@@ -156,14 +175,18 @@ function misha_editable_order_meta_billing( $order ){
 add_action( 'woocommerce_process_shop_order_meta', 'App\misha_save_billing_details' );
 
 function misha_save_billing_details( $ord_id ){
-	update_post_meta( $ord_id, 'billing_unitno', wc_clean( $_POST[ 'billing_unitno' ] ) );
+	$order = wc_get_order( $ord_id );
+	if ( $order ) {
+		$order->update_meta_data( 'billing_unitno', wc_clean( $_POST[ 'billing_unitno' ] ) );
+		$order->save();
+	}
 }
 
 // add custom shipping field to edit order screen
 
 add_action( 'woocommerce_admin_order_data_after_shipping_address', 'App\misha_editable_order_meta_shipping' );	 	
 function misha_editable_order_meta_shipping( $order ){	 	 
-	$shipping_unitno = get_post_meta( $order->get_id(), 'shipping_unitno', true );
+	$shipping_unitno = $order->get_meta( 'shipping_unitno', true );
 	?>
 	<div class="address">
 		<p<?php if( !$shipping_unitno ) echo ' class="none_set"' ?>>
@@ -184,5 +207,9 @@ function misha_editable_order_meta_shipping( $order ){
 add_action( 'woocommerce_process_shop_order_meta', 'App\misha_save_shipping_details' );
 
 function misha_save_shipping_details( $ord_id ){
-	update_post_meta( $ord_id, 'shipping_unitno', wc_clean( $_POST[ 'shipping_unitno' ] ) );
+	$order = wc_get_order( $ord_id );
+	if ( $order ) {
+		$order->update_meta_data( 'shipping_unitno', wc_clean( $_POST[ 'shipping_unitno' ] ) );
+		$order->save();
+	}
 }
