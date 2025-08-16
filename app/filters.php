@@ -358,7 +358,7 @@ function add_pickup_to_order($order_id) {
 }
 
 /*
- * ADD PICKUP DETAILS TO EMAILS
+ * ADD PICKUP DETAILS TO EMAILS - Updated for HPOS
  * @param $order_obj Order Object
  * @param $sent_to_admin If this email is for administrator or for a customer
  * @param $plain_text HTML or Plain text (can be configured in WooCommerce > Settings > Emails)
@@ -367,7 +367,7 @@ function add_pickup_to_order($order_id) {
 add_action( 'woocommerce_email_order_meta', 'App\bonton_add_email_order_meta', 10, 3 );
 function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 
-	$date = get_post_meta( $order_obj->get_order_number(), 'pickup_date', true );
+	$date = $order_obj->get_meta( 'pickup_date', true );
  
 	// ok, we will add the separate version for plaintext emails
 	if ( $plain_text === false ) {
