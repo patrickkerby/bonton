@@ -809,22 +809,22 @@ function bbloomer_add_field_and_reorder_fields( $fields ) {
 }
 
 // ------------------------------------
-// Add Billing House # to Address Fields
+// Add Billing House # to Address Fields - Updated for HPOS
   
 add_filter( 'woocommerce_order_formatted_billing_address' , 'App\bbloomer_default_billing_address_fields', 10, 2 );
   
 function bbloomer_default_billing_address_fields( $fields, $order ) {
-    $fields['billing_unitno'] = get_post_meta( $order->get_id(), '_billing_unitno', true );
+    $fields['billing_unitno'] = $order->get_meta( '_billing_unitno', true );
     return $fields;
 }
   
 // ------------------------------------
-// Add Shipping House # to Address Fields
+// Add Shipping House # to Address Fields - Updated for HPOS
   
 add_filter( 'woocommerce_order_formatted_shipping_address' , 'App\bbloomer_default_shipping_address_fields', 10, 2 );
   
 function bbloomer_default_shipping_address_fields( $fields, $order ) {
-    $fields['shipping_unitno'] = get_post_meta( $order->get_id(), '_shipping_unitno', true );
+    $fields['shipping_unitno'] = $order->get_meta( '_shipping_unitno', true );
     return $fields;
 }
 
@@ -839,16 +839,23 @@ function add_new_replacement_fields( $replacements, $address ) {
     return $replacements;
 }
 
-// save fields to order meta
+// save fields to order meta - Updated for HPOS
 add_action( 'woocommerce_checkout_update_order_meta', 'App\misha_save_what_we_added' );
 
 function misha_save_what_we_added( $order_id ){
+	$order = wc_get_order( $order_id );
+	
+	if ( $order && !empty( $_POST['billing_unitno'] ) ) {
+		$order->update_meta_data( 'billing_unitno', sanitize_text_field( $_POST['billing_unitno'] ) );
+	}
 
-	if( !empty( $_POST['billing_unitno'] ) )
-		update_post_meta( $order_id, 'billing_unitno', sanitize_text_field( $_POST['billing_unitno'] ) );
-
-    if( !empty( $_POST['shipping_unitno'] ) )
-    update_post_meta( $order_id, 'shipping_unitno', sanitize_text_field( $_POST['shipping_unitno'] ) );
+	if ( $order && !empty( $_POST['shipping_unitno'] ) ) {
+		$order->update_meta_data( 'shipping_unitno', sanitize_text_field( $_POST['shipping_unitno'] ) );
+	}
+	
+	if ( $order ) {
+		$order->save();
+	}
 }
 
 // ----------  ADDITIONAL FEES
