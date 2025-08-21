@@ -536,7 +536,8 @@ button[name="update_cart"] {
 }
 
 // quanity input
-.quantity {
+.quantity,
+div.product.wcpa_has_options form.cart > div.quantity {
   position: relative;
   border: solid 3px #f8f7f2 !important;
   width: 7.25rem !important;
