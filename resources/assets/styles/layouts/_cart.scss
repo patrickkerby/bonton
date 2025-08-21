@@ -542,6 +542,7 @@ button[name="update_cart"] {
   width: 7.25rem !important;
   display: flex;
   margin-right: 1rem !important;
+  flex-wrap: nowrap !important;
 }
 
 input[type=number]::-webkit-inner-spin-button,
