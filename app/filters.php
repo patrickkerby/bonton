@@ -989,10 +989,22 @@ function my_custom_dashboard_widget() {
  
 function custom_dashboard_help() {
 
-    $orders = wc_get_orders( array(  
-      'limit' => -1,
-      'status' => array('wc-processing'),
-      'pickup_date' => '',
+    // Optimized: Only fetch orders with missing or empty pickup_date
+    $orders = wc_get_orders( array(
+        'limit' => -1,
+        'status' => array('wc-processing'),
+        'meta_query' => array(
+            'relation' => 'OR',
+            array(
+                'key' => 'pickup_date',
+                'compare' => 'NOT EXISTS',
+            ),
+            array(
+                'key' => 'pickup_date',
+                'value' => '',
+                'compare' => '=',
+            ),
+        ),
     ) );
 
     echo '<table id="lists" class="display" style="width: 100%;">

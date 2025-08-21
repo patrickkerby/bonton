@@ -66,7 +66,6 @@ defined( 'ABSPATH' ) || exit;
 	$session_pickup_date = WC()->session->get('pickup_date');
 	$session_date_object = WC()->session->get('pickup_date_object');
 	$session_formatted = WC()->session->get('pickup_date_formatted');
-
 	$pickup_restriction_data = "";
 	$pickup_restriction_end_data = "";
 	$restricted_start_date = "";

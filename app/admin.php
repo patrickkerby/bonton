@@ -23,9 +23,17 @@ add_action('customize_preview_init', function () {
     wp_enqueue_script('sage/customizer.js', asset_path('scripts/customizer.js'), ['customize-preview'], null, true);
 });
 
-add_action('admin_enqueue_scripts', function () {
-	wp_enqueue_script('jquery-ui-datepicker');
-    wp_enqueue_script('jquery-ui.multidatespicker', 'https://cdn.rawgit.com/dubrox/Multiple-Dates-Picker-for-jQuery-UI/master/jquery-ui.multidatespicker.js', array('jquery-ui-datepicker'));	
+
+add_action('admin_enqueue_scripts', function ($hook) {
+	// Only load on WooCommerce order edit/add screens
+	global $typenow;
+	if (
+		($typenow === 'shop_order' && ($hook === 'post.php' || $hook === 'post-new.php')) ||
+		(isset($_GET['post_type']) && $_GET['post_type'] === 'shop_order')
+	) {
+		wp_enqueue_script('jquery-ui-datepicker');
+		wp_enqueue_script('jquery-ui.multidatespicker', 'https://cdn.rawgit.com/dubrox/Multiple-Dates-Picker-for-jQuery-UI/master/jquery-ui.multidatespicker.js', array('jquery-ui-datepicker'));
+	}
 });
 
 
