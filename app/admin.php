@@ -73,88 +73,22 @@ add_action( 'woocommerce_process_shop_order_meta', 'App\save_general_details' );
 function save_general_details( $ord_id ){
 	$order = wc_get_order( $ord_id );
 	if ( $order ) {
-		$order->update_meta_data( 'pickup_date', wc_clean( $_POST[ 'pickup_date' ] ) );
+		$pickup_date = wc_clean( $_POST[ 'pickup_date' ] );
+		$order->update_meta_data( 'pickup_date', $pickup_date );
+		
+		// Create a sortable date format (Y-m-d) for sorting purposes
+		if ( !empty( $pickup_date ) ) {
+			$date_timestamp = strtotime( $pickup_date );
+			if ( $date_timestamp !== false ) {
+				$sortable_date = date( 'Y-m-d', $date_timestamp );
+				$order->update_meta_data( 'pickup_date_sort', $sortable_date );
+			}
+		}
+		
 		$order->save();
 	}
 	
 	// wc_clean() and wc_sanitize_textarea() are WooCommerce sanitization functions
-}
-
-
-/**
- * @snippet       Add Column to Orders Table (e.g. Billing Country) - WooCommerce
- * @how-to        Get CustomizeWoo.com FREE
- * @sourcecode    https://businessbloomer.com/?p=78723
- * @author        Rodolfo Melogli
- * @compatible    WooCommerce 3.4.5
- */
- 
-// HPOS compatible hooks for admin order columns
-add_filter( 'manage_woocommerce_page_wc-orders_columns', 'App\add_new_order_admin_list_column' );
-// Keep the old hook for backward compatibility with non-HPOS sites
-add_filter( 'manage_edit-shop_order_columns', 'App\add_new_order_admin_list_column' );
- 
-function add_new_order_admin_list_column( $columns ) {
-    $columns['pickup_date'] = 'Pickup Date';
-    return $columns;
-}
- 
-// HPOS compatible hook for column content
-add_action( 'manage_woocommerce_page_wc-orders_custom_column', 'App\add_new_order_admin_list_column_content', 10, 2 );
-// Keep the old hook for backward compatibility with non-HPOS sites
-add_action( 'manage_shop_order_posts_custom_column', 'App\add_new_order_admin_list_column_content_legacy' );
- 
-function add_new_order_admin_list_column_content( $column, $order ) {
-    if ( 'pickup_date' === $column ) {
-        $date = $order->get_meta( 'pickup_date', true );
-        echo $date;
-    }
-}
-
-// Legacy function for non-HPOS sites
-function add_new_order_admin_list_column_content_legacy( $column ) {
-    global $post;
- 
-    if ( 'pickup_date' === $column ) {
-        $order = wc_get_order( $post->ID );
-        if ( $order ) {
-            $date = $order->get_meta( 'pickup_date', true );
-            echo $date;
-        }
-    }
-}
-
-/**
- * 
- * Make order screen custom column sortable - Updated for HPOS
- * 
- */
-// HPOS compatible hook for sortable columns
-add_filter( 'manage_woocommerce_page_wc-orders_sortable_columns', 'App\MY_COLUMNS_SORT_FUNCTION' );
-// Keep the old hook for backward compatibility with non-HPOS sites
-add_filter( 'manage_edit-shop_order_sortable_columns', 'App\MY_COLUMNS_SORT_FUNCTION' );
-
-function MY_COLUMNS_SORT_FUNCTION( $columns ) 
-{
-	$custom = array(
-			'pickup_date'    => 'pickup_date' 
-			);
-	return wp_parse_args( $custom, $columns );
-}
-
-add_action( 'pre_get_posts', 'App\pickupdate_orderby' );
-
-function pickupdate_orderby( $query ) {
-    if( ! is_admin() )
-        return;
- 
-    $orderby = $query->get( 'orderby');
- 
-    if( 'pickup_date' == $orderby ) {
-						
-		$query->set('meta_key','pickup_date_object');
-        $query->set('orderby','meta_value');
-    }
 }
 
 
@@ -221,3 +155,98 @@ function misha_save_shipping_details( $ord_id ){
 		$order->save();
 	}
 }
+
+
+/**
+ * @snippet       Add Column to Orders Table (e.g. Billing Country) - WooCommerce
+ * @how-to        Get CustomizeWoo.com FREE
+ * @sourcecode    https://businessbloomer.com/?p=78723
+ * @author        Rodolfo Melogli
+ * @compatible    WooCommerce 3.4.5
+ */
+ 
+// HPOS compatible hooks for admin order columns
+add_filter( 'manage_woocommerce_page_wc-orders_columns', 'App\add_new_order_admin_list_column' );
+// Keep the old hook for backward compatibility with non-HPOS sites
+add_filter( 'manage_edit-shop_order_columns', 'App\add_new_order_admin_list_column' );
+ 
+function add_new_order_admin_list_column( $columns ) {
+    $columns['pickup_date'] = 'Pickup Date';
+    return $columns;
+}
+ 
+// HPOS compatible hook for column content
+add_action( 'manage_woocommerce_page_wc-orders_custom_column', 'App\add_new_order_admin_list_column_content', 10, 2 );
+// Keep the old hook for backward compatibility with non-HPOS sites
+add_action( 'manage_shop_order_posts_custom_column', 'App\add_new_order_admin_list_column_content_legacy' );
+ 
+function add_new_order_admin_list_column_content( $column, $order ) {
+    if ( 'pickup_date' === $column ) {
+        $date = $order->get_meta( 'pickup_date', true );
+		$date_sort = $order->get_meta( 'pickup_date_sort', true );
+		if ( empty( $date ) ) {
+            echo '<span style="color:red;">(empty)</span>';
+        } else {
+            echo esc_html($date);
+			echo '<br>';
+			echo esc_html($date_sort);
+        }
+    }
+}
+
+// Legacy function for non-HPOS sites
+function add_new_order_admin_list_column_content_legacy( $column ) {
+    global $post;
+ 
+    if ( 'pickup_date' === $column ) {
+        $order = wc_get_order( $post->ID );
+        if ( $order ) {
+            $date = $order->get_meta( 'pickup_date', true );
+            echo $date;
+        }
+    }
+}
+
+
+/**
+ * 
+ * Make order screen custom column sortable - Updated for HPOS
+ * 
+ */
+// HPOS compatible hook for sortable columns
+add_filter('manage_woocommerce_page_wc-orders_sortable_columns', 'App\MY_COLUMNS_SORT_FUNCTION');
+add_filter('manage_edit-shop_order_sortable_columns', 'App\MY_COLUMNS_SORT_FUNCTION');
+
+if (!function_exists('App\MY_COLUMNS_SORT_FUNCTION')) {
+    function MY_COLUMNS_SORT_FUNCTION($columns) {
+        $custom = array(
+            'pickup_date' => 'pickup_date_sort'
+        );
+        return wp_parse_args($custom, $columns);
+    }
+}
+
+// HPOS: Sorting logic
+add_filter('woocommerce_order_query_args', function ($args, $query = null) {
+    if (
+        isset($_GET['orderby']) && $_GET['orderby'] === 'pickup_date_sort'
+    ) {
+        $args['meta_key'] = 'pickup_date_sort';
+        $args['orderby'] = 'meta_value';
+        $args['order'] = isset($_GET['order']) ? $_GET['order'] : 'asc';
+        $args['meta_type'] = 'DATE';
+    }
+    return $args;
+}, 10, 2);
+
+// Legacy: Classic WP Orders Table
+add_action('pre_get_posts', function ($query) {
+    if (!is_admin()) return;
+    $orderby = $query->get('orderby');
+    if ('pickup_date_sort' === $orderby) {
+        $query->set('meta_key', 'pickup_date_sort');
+        $query->set('orderby', 'meta_value');
+        $query->set('meta_type', 'DATE');
+    }
+});
+

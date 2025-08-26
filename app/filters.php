@@ -345,16 +345,24 @@ function zero_tax_items_based_on_invoice_choice( $cart ) {
  */
 add_action('woocommerce_checkout_update_order_meta', 'App\add_pickup_to_order');
 function add_pickup_to_order($order_id) {
-	$pickup_date = WC()->session->get('pickup_date');
-	$pickup_date_formatted = WC()->session->get('pickup_date_formatted');
+    $pickup_date = WC()->session->get('pickup_date'); // e.g., "Saturday, August 23, 2025"
+    $pickup_date_formatted = WC()->session->get('pickup_date_formatted'); // e.g., "28/08/2025"
     $pickup_object = WC()->session->get('pickup_date_object');
 
-	$order = wc_get_order( $order_id );
+    $order = wc_get_order( $order_id );
 
-	$order->update_meta_data( 'pickup_date', $pickup_date );
-	$order->update_meta_data( 'pickup_date_formatted', $pickup_date_formatted );
-	$order->update_meta_data( 'pickup_date_object', $pickup_object );
-	$order->save();
+    $order->update_meta_data( 'pickup_date', $pickup_date );
+    $order->update_meta_data( 'pickup_date_formatted', $pickup_date_formatted );
+    $order->update_meta_data( 'pickup_date_object', $pickup_object );
+
+    // Convert dd/mm/yyyy to Y-m-d for sorting
+    $sortable_date = '';
+    if ($pickup_date_formatted && preg_match('#^(\d{2})/(\d{2})/(\d{4})$#', $pickup_date_formatted, $m)) {
+        $sortable_date = "{$m[3]}-{$m[2]}-{$m[1]}"; // Y-m-d
+    }
+    $order->update_meta_data( 'pickup_date_sort', $sortable_date );
+
+    $order->save();
 }
 
 /*
@@ -1130,3 +1138,8 @@ add_filter( 'woocommerce_available_variation', function ( $variations ) {
 
 // Suppress "doing it wrong" error for plugins 
  add_filter('doing_it_wrong_trigger_error', '__return_false');
+
+
+ if ( defined( 'WP_CLI' ) && WP_CLI ) {
+    require_once __DIR__ . '/wp-cli-backfill.php';
+}
