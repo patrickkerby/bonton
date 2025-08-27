@@ -4,7 +4,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         
         // Parameters
         $output_file = isset($assoc_args['output']) ? $assoc_args['output'] : 'delivery-orders-export.csv';
-        $start_date = isset($assoc_args['start-date']) ? $assoc_args['start-date'] : '2023-01-01';
+        $start_date = isset($assoc_args['start-date']) ? $assoc_args['start-date'] : '2025-01-01';
         $end_date = isset($assoc_args['end-date']) ? $assoc_args['end-date'] : date('Y-m-d');
         $batch_size = isset($assoc_args['batch']) ? intval($assoc_args['batch']) : 100;
         
@@ -120,7 +120,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
     
     // Add a separate command for testing/preview
     WP_CLI::add_command('bonton delivery_export_preview', function($args, $assoc_args) {
-        $start_date = isset($assoc_args['start-date']) ? $assoc_args['start-date'] : '2023-01-01';
+        $start_date = isset($assoc_args['start-date']) ? $assoc_args['start-date'] : '2025-01-01';
         $end_date = isset($assoc_args['end-date']) ? $assoc_args['end-date'] : date('Y-m-d');
         $limit = isset($assoc_args['limit']) ? intval($assoc_args['limit']) : 10;
         
