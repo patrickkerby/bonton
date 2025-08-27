@@ -271,7 +271,7 @@ function site_notice_widget_content() {
     // Handle form submission
     if (isset($_POST['update_store_notice']) && wp_verify_nonce($_POST['store_notice_nonce'], 'update_store_notice')) {
         $new_notice_enabled = isset($_POST['store_notice_enabled']) ? 'yes' : 'no';
-        $new_notice_text = sanitize_textarea_field($_POST['store_notice_text']);
+        $new_notice_text = wp_unslash(sanitize_textarea_field($_POST['store_notice_text']));
         
         update_option('woocommerce_demo_store', $new_notice_enabled);
         update_option('woocommerce_demo_store_notice', $new_notice_text);
@@ -310,7 +310,7 @@ function site_notice_widget_content() {
                         cols="50" 
                         class="large-text"
                         placeholder="Enter your notice text here..."
-                    ><?php echo esc_textarea($store_notice_text); ?></textarea>
+                    ><?php echo esc_textarea(wp_unslash($store_notice_text)); ?></textarea>
                     <p class="description">HTML is allowed. The notice will appear at the bottom of every page.</p>
                 </td>
             </tr>
