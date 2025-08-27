@@ -250,3 +250,147 @@ add_action('pre_get_posts', function ($query) {
     }
 });
 
+/**
+ * Site-wide Notice Management Dashboard Widget
+ */
+add_action('wp_dashboard_setup', 'App\add_site_notice_dashboard_widget');
+
+function add_site_notice_dashboard_widget() {
+    wp_add_dashboard_widget(
+        'site_notice_widget',
+        'Site-wide Notice',
+        'App\site_notice_widget_content'
+    );
+}
+
+function site_notice_widget_content() {
+    // Get current WooCommerce store notice settings
+    $store_notice = get_option('woocommerce_demo_store', 'no');
+    $store_notice_text = get_option('woocommerce_demo_store_notice', __('This is a demo store for testing purposes &mdash; no orders shall be fulfilled.', 'woocommerce'));
+    
+    // Handle form submission
+    if (isset($_POST['update_store_notice']) && wp_verify_nonce($_POST['store_notice_nonce'], 'update_store_notice')) {
+        $new_notice_enabled = isset($_POST['store_notice_enabled']) ? 'yes' : 'no';
+        $new_notice_text = sanitize_textarea_field($_POST['store_notice_text']);
+        
+        update_option('woocommerce_demo_store', $new_notice_enabled);
+        update_option('woocommerce_demo_store_notice', $new_notice_text);
+        
+        $store_notice = $new_notice_enabled;
+        $store_notice_text = $new_notice_text;
+        
+        echo '<div class="notice notice-success inline"><p>Notice updated successfully!</p></div>';
+    }
+    
+    ?>
+    <form method="post" action="">
+        <?php wp_nonce_field('update_store_notice', 'store_notice_nonce'); ?>
+        
+        <table class="form-table">
+            <tr>
+                <th scope="row">
+                    <label for="store_notice_enabled">Enable Notice</label>
+                </th>
+                <td>
+                    <label>
+                        <input type="checkbox" id="store_notice_enabled" name="store_notice_enabled" value="1" <?php checked($store_notice, 'yes'); ?>>
+                        Show site-wide notice
+                    </label>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    <label for="store_notice_text">Notice Text</label>
+                </th>
+                <td>
+                    <textarea 
+                        id="store_notice_text" 
+                        name="store_notice_text" 
+                        rows="3" 
+                        cols="50" 
+                        class="large-text"
+                        placeholder="Enter your notice text here..."
+                    ><?php echo esc_textarea($store_notice_text); ?></textarea>
+                    <p class="description">HTML is allowed. The notice will appear at the bottom of every page.</p>
+                </td>
+            </tr>
+        </table>
+        
+        <p class="submit">
+            <input type="submit" name="update_store_notice" class="button button-primary" value="Update Notice">
+            <?php if ($store_notice === 'yes'): ?>
+                <a href="<?php echo home_url(); ?>" target="_blank" class="button">Preview Notice</a>
+            <?php endif; ?>
+        </p>
+    </form>
+    
+    <style>
+        #site_notice_widget .form-table th {
+            width: 120px;
+            padding-left: 0;
+        }
+        #site_notice_widget .form-table td {
+            padding-left: 10px;
+        }
+        #site_notice_widget textarea {
+            width: 100%;
+        }
+    </style>
+    <?php
+}
+
+/**
+ * Ensure WooCommerce store notice is displayed
+ */
+add_action('wp_footer', 'App\ensure_woocommerce_store_notice_display');
+
+function ensure_woocommerce_store_notice_display() {
+    // Only proceed if WooCommerce is active and store notice is enabled
+    if (!function_exists('WC') || get_option('woocommerce_demo_store', 'no') !== 'yes') {
+        return;
+    }
+    
+    // Check if the store notice was already displayed by WooCommerce
+    if (did_action('woocommerce_demo_store')) {
+        return;
+    }
+    
+    // If not displayed, manually output the store notice
+    $notice = get_option('woocommerce_demo_store_notice', __('This is a demo store for testing purposes &mdash; no orders shall be fulfilled.', 'woocommerce'));
+    
+    if (!empty($notice)) {
+        ?>
+        <p class="demo_store" style="display: block;">
+            <?php echo wp_kses_post($notice); ?>
+            <a href="#" class="woocommerce-store-notice__dismiss-link"><?php esc_html_e('Dismiss', 'woocommerce'); ?></a>
+        </p>
+        <script type="text/javascript">
+        (function() {
+            var dismissLink = document.querySelector('.woocommerce-store-notice__dismiss-link');
+            if (dismissLink) {
+                dismissLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    var notice = document.querySelector('.demo_store');
+                    if (notice) {
+                        notice.style.display = 'none';
+                    }
+                    // Set a cookie to remember dismissal
+                    document.cookie = 'store_notice_dismissed=1; path=/; max-age=' + (60 * 60 * 24 * 30);
+                });
+            }
+            
+            // Check if notice was previously dismissed
+            if (document.cookie.indexOf('store_notice_dismissed=1') !== -1) {
+                var notice = document.querySelector('.demo_store');
+                if (notice) {
+                    notice.style.display = 'none';
+                }
+            }
+        })();
+        </script>
+        <?php
+    }
+}
+
+
+
