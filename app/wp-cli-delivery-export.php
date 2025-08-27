@@ -3,18 +3,35 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
     WP_CLI::add_command('bonton delivery_export', function($args, $assoc_args) {
         
         // Parameters
-        $output_file = isset($assoc_args['output']) ? $assoc_args['output'] : 'delivery-orders-export.csv';
+        $filename = isset($assoc_args['output']) ? $assoc_args['output'] : 'delivery-orders-export.csv';
         $start_date = isset($assoc_args['start-date']) ? $assoc_args['start-date'] : '2025-01-01';
         $end_date = isset($assoc_args['end-date']) ? $assoc_args['end-date'] : date('Y-m-d');
         $batch_size = isset($assoc_args['batch']) ? intval($assoc_args['batch']) : 100;
         
+        // Determine output file path
+        if (strpos($filename, '/') === false) {
+            // No path specified, use WordPress uploads directory
+            $upload_dir = wp_upload_dir();
+            $output_file = trailingslashit($upload_dir['basedir']) . $filename;
+        } else {
+            // Full path specified
+            $output_file = $filename;
+        }
+        
         WP_CLI::log("Exporting delivery orders from {$start_date} to {$end_date}");
         WP_CLI::log("Output file: {$output_file}");
+        
+        // Check if directory is writable
+        $output_dir = dirname($output_file);
+        if (!is_writable($output_dir)) {
+            WP_CLI::error("Directory is not writable: {$output_dir}");
+            return;
+        }
         
         // Prepare CSV file
         $file_handle = fopen($output_file, 'w');
         if (!$file_handle) {
-            WP_CLI::error("Could not create output file: {$output_file}");
+            WP_CLI::error("Could not create output file: {$output_file}. Check file permissions.");
             return;
         }
         

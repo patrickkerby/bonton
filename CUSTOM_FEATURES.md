@@ -46,14 +46,17 @@ wp bonton backfill_pickup_date_sort --force
 
 **Usage**:
 ```bash
-# Basic export (Jan 1, 2025 to now)
+# Basic export (Jan 1, 2025 to now) - saves to uploads directory
 wp bonton delivery_export
 
 # Custom date range
 wp bonton delivery_export --start-date=2025-01-01 --end-date=2025-12-31
 
-# Custom output file
+# Custom output filename (saves to uploads directory)
 wp bonton delivery_export --output=my-delivery-report.csv
+
+# Save to specific path (must be writable)
+wp bonton delivery_export --output=/tmp/delivery-report.csv
 
 # Preview first 10 delivery orders
 wp bonton delivery_export_preview --limit=10
@@ -61,6 +64,8 @@ wp bonton delivery_export_preview --limit=10
 # Preview with custom date range
 wp bonton delivery_export_preview --start-date=2025-01-01 --end-date=2025-03-31
 ```
+
+**Note**: Files are automatically saved to the WordPress uploads directory unless you specify a full path. The uploads directory is typically `/path/to/wordpress/wp-content/uploads/`.
 
 **CSV Output Columns**:
 - Order ID
