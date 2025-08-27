@@ -10,9 +10,32 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         
         // Determine output file path
         if (strpos($filename, '/') === false) {
-            // No path specified, use WordPress uploads directory
+            // No path specified, try multiple writable directories
+            $possible_dirs = [
+                '/tmp/',
+                sys_get_temp_dir() . '/',
+                WP_CONTENT_DIR . '/',
+                ABSPATH
+            ];
+            
+            // Add uploads directory if it exists
             $upload_dir = wp_upload_dir();
-            $output_file = trailingslashit($upload_dir['basedir']) . $filename;
+            if (!empty($upload_dir['basedir'])) {
+                array_unshift($possible_dirs, trailingslashit($upload_dir['basedir']));
+            }
+            
+            $output_file = null;
+            foreach ($possible_dirs as $dir) {
+                if (is_writable($dir)) {
+                    $output_file = $dir . $filename;
+                    break;
+                }
+            }
+            
+            if (!$output_file) {
+                WP_CLI::error("Could not find a writable directory. Please specify a full path with --output=/path/to/file.csv");
+                return;
+            }
         } else {
             // Full path specified
             $output_file = $filename;
@@ -25,6 +48,9 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         $output_dir = dirname($output_file);
         if (!is_writable($output_dir)) {
             WP_CLI::error("Directory is not writable: {$output_dir}");
+            WP_CLI::log("Try specifying a different path, such as:");
+            WP_CLI::log("  --output=/tmp/{$filename}");
+            WP_CLI::log("  --output=/home/yourusername/{$filename}");
             return;
         }
         
@@ -173,5 +199,51 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         
         WP_CLI::log("");
         WP_CLI::success("Found {$delivery_count} delivery orders in preview");
+    });
+    
+    // Add a helper command to check writable directories
+    WP_CLI::add_command('bonton delivery_export_check', function($args, $assoc_args) {
+        WP_CLI::log("Checking writable directories for CSV export...");
+        WP_CLI::log("");
+        
+        $upload_dir = wp_upload_dir();
+        $possible_dirs = [
+            'Uploads Directory' => !empty($upload_dir['basedir']) ? $upload_dir['basedir'] : 'Not available',
+            'Temp Directory (/tmp)' => '/tmp',
+            'System Temp' => sys_get_temp_dir(),
+            'WP Content Directory' => WP_CONTENT_DIR,
+            'WordPress Root' => ABSPATH,
+        ];
+        
+        $writable_found = false;
+        
+        foreach ($possible_dirs as $name => $dir) {
+            if ($dir === 'Not available') {
+                WP_CLI::log("❌ {$name}: Not available");
+                continue;
+            }
+            
+            if (is_dir($dir) && is_writable($dir)) {
+                WP_CLI::log("✅ {$name}: {$dir} (WRITABLE)");
+                $writable_found = true;
+            } else {
+                $status = !is_dir($dir) ? 'Does not exist' : 'Not writable';
+                WP_CLI::log("❌ {$name}: {$dir} ({$status})");
+            }
+        }
+        
+        WP_CLI::log("");
+        if ($writable_found) {
+            WP_CLI::success("Found writable directories! You can run: wp bonton delivery_export");
+        } else {
+            WP_CLI::log("No automatically writable directories found. You can:");
+            WP_CLI::log("1. Create a writable directory: mkdir ~/exports && chmod 755 ~/exports");
+            WP_CLI::log("2. Use that directory: wp bonton delivery_export --output=~/exports/delivery-report.csv");
+            WP_CLI::log("3. Or use /tmp: wp bonton delivery_export --output=/tmp/delivery-report.csv");
+        }
+        
+        WP_CLI::log("");
+        WP_CLI::log("Current user: " . get_current_user());
+        WP_CLI::log("Current working directory: " . getcwd());
     });
 }
