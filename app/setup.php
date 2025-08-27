@@ -13,8 +13,8 @@ add_action('wp_head', function() {
 });
 
 // TEMPORARY: Site notice function directly in setup.php
-add_action('wp_footer', function() {
-    echo "<!-- DEBUG: wp_footer hook is working in setup.php -->\n";
+add_action('get_footer', function() {
+    echo "<!-- DEBUG: get_footer hook is working in setup.php -->\n";
     
     // Check if store notice is enabled
     $store_notice_enabled = get_option('woocommerce_demo_store', 'no');
