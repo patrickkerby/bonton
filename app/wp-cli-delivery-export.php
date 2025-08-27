@@ -85,6 +85,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                 'limit' => $batch_size,
                 'paged' => $paged,
                 'status' => ['processing', 'completed', 'ws-processing', 'ws-completed', 'on-hold', 'pending'],
+                'type' => 'shop_order', // Exclude refunds
                 'date_created' => $start_date . '...' . $end_date,
                 'orderby' => 'date',
                 'order' => 'ASC'
@@ -92,6 +93,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
             
             foreach ($orders as $order) {
                 $total_processed++;
+                
+                // Skip refunds - they don't have shipping methods or billing info
+                if ($order->get_type() === 'shop_order_refund') {
+                    continue;
+                }
                 
                 // Check if this is a delivery order (has flat_rate or free_shipping)
                 $is_delivery = $order->has_shipping_method('flat_rate') || $order->has_shipping_method('free_shipping');
@@ -106,8 +112,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
                     $pickup_date = 'No date set';
                 }
                 
-                // Get customer name
-                $customer_name = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+                // Get customer name (with safety check)
+                $customer_name = '';
+                if (method_exists($order, 'get_billing_first_name') && method_exists($order, 'get_billing_last_name')) {
+                    $customer_name = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+                }
                 if (empty($customer_name)) {
                     $customer_name = 'Guest Customer';
                 }
@@ -173,6 +182,7 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         $orders = wc_get_orders([
             'limit' => $limit,
             'status' => ['processing', 'completed', 'ws-processing', 'ws-completed', 'on-hold', 'pending'],
+            'type' => 'shop_order', // Exclude refunds
             'date_created' => $start_date . '...' . $end_date,
             'orderby' => 'date',
             'order' => 'ASC'
@@ -181,6 +191,11 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
         $delivery_count = 0;
         
         foreach ($orders as $order) {
+            // Skip refunds (double check)
+            if ($order->get_type() === 'shop_order_refund') {
+                continue;
+            }
+            
             $is_delivery = $order->has_shipping_method('flat_rate') || $order->has_shipping_method('free_shipping');
             
             if (!$is_delivery) {
@@ -189,7 +204,15 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
             
             $delivery_count++;
             $pickup_date = $order->get_meta('pickup_date', true) ?: 'No date set';
-            $customer_name = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name()) ?: 'Guest Customer';
+            
+            // Safe customer name retrieval
+            $customer_name = '';
+            if (method_exists($order, 'get_billing_first_name') && method_exists($order, 'get_billing_last_name')) {
+                $customer_name = trim($order->get_billing_first_name() . ' ' . $order->get_billing_last_name());
+            }
+            if (empty($customer_name)) {
+                $customer_name = 'Guest Customer';
+            }
             $order_total = $order->get_total();
             $tax_total = $order->get_total_tax();
             $order_ex_tax = $order_total - $tax_total;
