@@ -2,10 +2,7 @@
 
 namespace App;
 
-// Debug: Check if admin.php is loaded
-add_action('wp_head', function() {
-    echo "<!-- DEBUG: admin.php file is loaded -->\n";
-});
+
 
 /**
  * Theme customizer
@@ -345,75 +342,56 @@ function site_notice_widget_content() {
 }
 
 /**
- * Ensure WooCommerce store notice is displayed
+ * Display WooCommerce store notice with proper styling
  */
-function bonton_ensure_store_notice_display() {
-    // Debug: Always output this to see if function is running
-    echo "<!-- DEBUG: ensure_woocommerce_store_notice_display function is running -->\n";
-    
-    // Check WooCommerce
-    if (!function_exists('WC')) {
-        echo "<!-- DEBUG: WooCommerce not active -->\n";
-        return;
-    }
-    
+add_action('get_footer', function() {
     // Check if store notice is enabled
     $store_notice_enabled = get_option('woocommerce_demo_store', 'no');
-    echo "<!-- DEBUG: Store notice enabled = {$store_notice_enabled} -->\n";
     
-    if ($store_notice_enabled !== 'yes') {
-        return;
-    }
-    
-    // Check if the store notice was already displayed by WooCommerce
-    if (did_action('woocommerce_demo_store')) {
-        echo "<!-- DEBUG: WooCommerce already displayed store notice -->\n";
-        return;
-    }
-    
-    // If not displayed, manually output the store notice
-    $notice = get_option('woocommerce_demo_store_notice', __('This is a demo store for testing purposes &mdash; no orders shall be fulfilled.', 'woocommerce'));
-    $notice = wp_unslash($notice); // Remove any slashes from the stored notice
-    
-    echo "<!-- DEBUG: Notice text = '" . esc_html($notice) . "' -->\n";
-    
-    if (!empty($notice)) {
-        ?>
-        <!-- Site Notice: Enabled and displaying -->
-        <p class="demo_store" style="display: block;">
-            <?php echo wp_kses_post($notice); ?>
-            <a href="#" class="woocommerce-store-notice__dismiss-link"><?php esc_html_e('Dismiss', 'woocommerce'); ?></a>
-        </p>
-        <script type="text/javascript">
-        (function() {
-            var dismissLink = document.querySelector('.woocommerce-store-notice__dismiss-link');
-            if (dismissLink) {
-                dismissLink.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    var notice = document.querySelector('.demo_store');
-                    if (notice) {
-                        notice.style.display = 'none';
-                    }
-                    // Set a cookie to remember dismissal
-                    document.cookie = 'store_notice_dismissed=1; path=/; max-age=' + (60 * 60 * 24 * 30);
-                });
-            }
+    if ($store_notice_enabled === 'yes') {
+        $notice = get_option('woocommerce_demo_store_notice', __('This is a demo store for testing purposes &mdash; no orders shall be fulfilled.', 'woocommerce'));
+        $notice = wp_unslash($notice);
+        
+        // Check if notice was dismissed (server-side check)
+        $notice_hash = md5($notice);
+        $dismissed_cookie = "bonton_notice_dismissed_{$notice_hash}";
+        $is_dismissed = isset($_COOKIE[$dismissed_cookie]);
+        
+        if (!empty($notice) && !$is_dismissed) {
+            echo '<p class="demo_store woocommerce-store-notice bonton-site-notice" style="display: block !important; position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important; background: #53c999 !important; color: white !important; padding: 3rem 4rem !important; margin: 2rem !important; width: calc(100% - 4rem) !important; font-size: 1.15rem !important; box-sizing: border-box !important;">';
+            echo '<span style="position: relative; z-index: 3;">' . wp_kses_post($notice) . '</span>';
+            echo ' <a href="#" onclick="bontonDismissNotice(); return false;" style="color: white !important; text-decoration: underline !important; margin-left: 10px !important; position: relative !important; z-index: 3 !important;">Dismiss</a>';
+            echo '</p>';
             
-            // Check if notice was previously dismissed
-            if (document.cookie.indexOf('store_notice_dismissed=1') !== -1) {
-                var notice = document.querySelector('.demo_store');
-                if (notice) {
-                    notice.style.display = 'none';
+            // Add the white border with CSS
+            echo '<style>
+                .bonton-site-notice::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: calc(100% - 20px);
+                    height: calc(100% - 20px);
+                    margin: 10px;
+                    border: solid 2px #fff;
+                    pointer-events: none;
                 }
-            }
-        })();
-        </script>
-        <?php
+            </style>';
+            
+            // JavaScript to handle dismissal
+            echo '<script>
+                function bontonDismissNotice() {
+                    var notice = document.querySelector(".bonton-site-notice");
+                    if (notice) {
+                        notice.style.display = "none";
+                        // Set cookie to remember dismissal (30 days)
+                        document.cookie = "' . $dismissed_cookie . '=1; path=/; max-age=" + (60 * 60 * 24 * 30);
+                    }
+                }
+            </script>';
+        }
     }
-}
-
-// Hook the function to wp_footer
-add_action('wp_footer', 'bonton_ensure_store_notice_display');
+});
 
 
 

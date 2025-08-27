@@ -7,77 +7,26 @@ use Roots\Sage\Assets\JsonManifest;
 use Roots\Sage\Template\Blade;
 use Roots\Sage\Template\BladeProvider;
 
-// TEMPORARY DEBUG: Test if setup.php is working
-add_action('wp_head', function() {
-    echo "<!-- DEBUG: setup.php is working -->\n";
-});
 
-// TEMPORARY: Site notice function directly in setup.php
-add_action('get_footer', function() {
-    echo "<!-- DEBUG: get_footer hook is working in setup.php -->\n";
-    
-    // Check if store notice is enabled
-    $store_notice_enabled = get_option('woocommerce_demo_store', 'no');
-    echo "<!-- DEBUG: Store notice enabled = {$store_notice_enabled} -->\n";
-    
-    if ($store_notice_enabled === 'yes') {
-        $notice = get_option('woocommerce_demo_store_notice', 'Default notice text');
-        $notice = wp_unslash($notice);
-        echo "<!-- DEBUG: Notice text = '" . esc_html($notice) . "' -->\n";
-        
-        if (!empty($notice)) {
-            echo '<p class="demo_store woocommerce-store-notice bonton-site-notice" style="display: block !important; position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important; background: #53c999 !important; color: white !important; padding: 3rem 4rem !important; margin: 2rem !important; width: calc(100% - 4rem) !important; font-size: 1.15rem !important; box-sizing: border-box !important;">';
-            echo '<span style="position: relative; z-index: 3;">' . wp_kses_post($notice) . '</span>';
-            echo ' <a href="#" onclick="bontonDismissNotice(); return false;" style="color: white !important; text-decoration: underline !important; margin-left: 10px !important; position: relative !important; z-index: 3 !important;">Dismiss</a>';
-            echo '</p>';
-            
-            // Add the white border with CSS
-            echo '<style>
-                .bonton-site-notice::after {
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: calc(100% - 20px);
-                    height: calc(100% - 20px);
-                    margin: 10px;
-                    border: solid 2px #fff;
-                    pointer-events: none;
-                }
-            </style>';
-            
-            // JavaScript to handle dismissal and prevent conflicts
-            echo '<script>
-                function bontonDismissNotice() {
-                    var notice = document.querySelector(".bonton-site-notice");
-                    if (notice) {
-                        notice.style.display = "none";
-                        // Set cookie to remember dismissal
-                        document.cookie = "bonton_notice_dismissed_' . md5($notice) . '=1; path=/; max-age=" + (60 * 60 * 24 * 30);
-                    }
-                }
-                
-                // Check if notice was previously dismissed
-                document.addEventListener("DOMContentLoaded", function() {
-                    var noticeCookie = "bonton_notice_dismissed_' . md5($notice) . '=1";
-                    if (document.cookie.indexOf(noticeCookie) === -1) {
-                        // Force show if not dismissed
-                        var notice = document.querySelector(".bonton-site-notice");
-                        if (notice) {
-                            notice.style.display = "block";
-                        }
-                    } else {
-                        // Hide if previously dismissed
-                        var notice = document.querySelector(".bonton-site-notice");
-                        if (notice) {
-                            notice.style.display = "none";
-                        }
-                    }
-                });
-            </script>';
+
+/**
+ * Clear WP Rocket cache when store notice settings change
+ */
+add_action('updated_option', function($option_name, $old_value, $value) {
+    if (in_array($option_name, ['woocommerce_demo_store', 'woocommerce_demo_store_notice'])) {
+        // Clear WP Rocket cache if available
+        if (function_exists('rocket_clean_domain')) {
+            rocket_clean_domain();
+        }
+        // Also clear other common caches
+        if (function_exists('wp_cache_flush')) {
+            wp_cache_flush();
+        }
+        if (function_exists('w3tc_flush_all')) {
+            w3tc_flush_all();
         }
     }
-});
+}, 10, 3);
 
 /**
  * Theme assets
