@@ -7,6 +7,33 @@ use Roots\Sage\Assets\JsonManifest;
 use Roots\Sage\Template\Blade;
 use Roots\Sage\Template\BladeProvider;
 
+// TEMPORARY DEBUG: Test if setup.php is working
+add_action('wp_head', function() {
+    echo "<!-- DEBUG: setup.php is working -->\n";
+});
+
+// TEMPORARY: Site notice function directly in setup.php
+add_action('wp_footer', function() {
+    echo "<!-- DEBUG: wp_footer hook is working in setup.php -->\n";
+    
+    // Check if store notice is enabled
+    $store_notice_enabled = get_option('woocommerce_demo_store', 'no');
+    echo "<!-- DEBUG: Store notice enabled = {$store_notice_enabled} -->\n";
+    
+    if ($store_notice_enabled === 'yes') {
+        $notice = get_option('woocommerce_demo_store_notice', 'Default notice text');
+        $notice = wp_unslash($notice);
+        echo "<!-- DEBUG: Notice text = '" . esc_html($notice) . "' -->\n";
+        
+        if (!empty($notice)) {
+            echo '<p class="demo_store woocommerce-store-notice" style="display: block !important; position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important; background: #53c999 !important; color: white !important; padding: 1rem !important; margin: 0 !important;">';
+            echo wp_kses_post($notice);
+            echo ' <a href="#" onclick="this.parentElement.style.display=\'none\'; return false;" style="color: white; text-decoration: underline; margin-left: 10px;">Dismiss</a>';
+            echo '</p>';
+        }
+    }
+});
+
 /**
  * Theme assets
  */
