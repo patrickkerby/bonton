@@ -266,7 +266,7 @@ function add_site_notice_dashboard_widget() {
 function site_notice_widget_content() {
     // Get current WooCommerce store notice settings
     $store_notice = get_option('woocommerce_demo_store', 'no');
-    $store_notice_text = get_option('woocommerce_demo_store_notice', __('This is a demo store for testing purposes &mdash; no orders shall be fulfilled.', 'woocommerce'));
+    $store_notice_text = wp_unslash(get_option('woocommerce_demo_store_notice', __('This is a demo store for testing purposes &mdash; no orders shall be fulfilled.', 'woocommerce')));
     
     // Handle form submission
     if (isset($_POST['update_store_notice']) && wp_verify_nonce($_POST['store_notice_nonce'], 'update_store_notice')) {
@@ -310,7 +310,7 @@ function site_notice_widget_content() {
                         cols="50" 
                         class="large-text"
                         placeholder="Enter your notice text here..."
-                    ><?php echo esc_textarea(wp_unslash($store_notice_text)); ?></textarea>
+                    ><?php echo esc_textarea($store_notice_text); ?></textarea>
                     <p class="description">HTML is allowed. The notice will appear at the bottom of every page.</p>
                 </td>
             </tr>
@@ -357,9 +357,11 @@ function ensure_woocommerce_store_notice_display() {
     
     // If not displayed, manually output the store notice
     $notice = get_option('woocommerce_demo_store_notice', __('This is a demo store for testing purposes &mdash; no orders shall be fulfilled.', 'woocommerce'));
+    $notice = wp_unslash($notice); // Remove any slashes from the stored notice
     
     if (!empty($notice)) {
         ?>
+        <!-- Site Notice: Enabled and displaying -->
         <p class="demo_store" style="display: block;">
             <?php echo wp_kses_post($notice); ?>
             <a href="#" class="woocommerce-store-notice__dismiss-link"><?php esc_html_e('Dismiss', 'woocommerce'); ?></a>
