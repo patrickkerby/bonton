@@ -2,6 +2,11 @@
 
 namespace App;
 
+// Debug: Check if admin.php is loaded
+add_action('wp_head', function() {
+    echo "<!-- DEBUG: admin.php file is loaded -->\n";
+});
+
 /**
  * Theme customizer
  */
@@ -342,9 +347,7 @@ function site_notice_widget_content() {
 /**
  * Ensure WooCommerce store notice is displayed
  */
-add_action('wp_footer', 'App\ensure_woocommerce_store_notice_display');
-
-function ensure_woocommerce_store_notice_display() {
+function bonton_ensure_store_notice_display() {
     // Debug: Always output this to see if function is running
     echo "<!-- DEBUG: ensure_woocommerce_store_notice_display function is running -->\n";
     
@@ -408,6 +411,9 @@ function ensure_woocommerce_store_notice_display() {
         <?php
     }
 }
+
+// Hook the function to wp_footer
+add_action('wp_footer', 'bonton_ensure_store_notice_display');
 
 
 
