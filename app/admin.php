@@ -345,19 +345,34 @@ function site_notice_widget_content() {
 add_action('wp_footer', 'App\ensure_woocommerce_store_notice_display');
 
 function ensure_woocommerce_store_notice_display() {
-    // Only proceed if WooCommerce is active and store notice is enabled
-    if (!function_exists('WC') || get_option('woocommerce_demo_store', 'no') !== 'yes') {
+    // Debug: Always output this to see if function is running
+    echo "<!-- DEBUG: ensure_woocommerce_store_notice_display function is running -->\n";
+    
+    // Check WooCommerce
+    if (!function_exists('WC')) {
+        echo "<!-- DEBUG: WooCommerce not active -->\n";
+        return;
+    }
+    
+    // Check if store notice is enabled
+    $store_notice_enabled = get_option('woocommerce_demo_store', 'no');
+    echo "<!-- DEBUG: Store notice enabled = {$store_notice_enabled} -->\n";
+    
+    if ($store_notice_enabled !== 'yes') {
         return;
     }
     
     // Check if the store notice was already displayed by WooCommerce
     if (did_action('woocommerce_demo_store')) {
+        echo "<!-- DEBUG: WooCommerce already displayed store notice -->\n";
         return;
     }
     
     // If not displayed, manually output the store notice
     $notice = get_option('woocommerce_demo_store_notice', __('This is a demo store for testing purposes &mdash; no orders shall be fulfilled.', 'woocommerce'));
     $notice = wp_unslash($notice); // Remove any slashes from the stored notice
+    
+    echo "<!-- DEBUG: Notice text = '" . esc_html($notice) . "' -->\n";
     
     if (!empty($notice)) {
         ?>
