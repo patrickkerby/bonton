@@ -190,8 +190,6 @@ function add_new_order_admin_list_column_content( $column, $order ) {
             echo '<span style="color:red;">(empty)</span>';
         } else {
             echo esc_html($date);
-			echo '<br>';
-			echo esc_html($date_sort);
         }
     }
 }
