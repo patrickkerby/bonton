@@ -433,7 +433,8 @@ div.pp_woocommerce_quick_view {
         padding: 0.5rem 1rem;
         background: $cream;
 
-        .wcpa_form_item .wcpa_checkbox label {
+        .wcpa_form_item .wcpa_checkbox label,
+        .wcpa_wrap .wcpa_field_wrap {
           margin-bottom: 0;
         }
       }

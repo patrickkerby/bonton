@@ -18523,7 +18523,9 @@ div.pp_woocommerce_quick_view .pp_content_container .woocommerce-product-gallery
     background: #f8f7f2;
   }
   .single-product .single-product div.product.wcpa_has_options form.cart .wcpa_form_outer .wcpa_form_item .wcpa_checkbox label,
-.pp_woocommerce_quick_view .single-product div.product.wcpa_has_options form.cart .wcpa_form_outer .wcpa_form_item .wcpa_checkbox label {
+.single-product .single-product div.product.wcpa_has_options form.cart .wcpa_form_outer .wcpa_wrap .wcpa_field_wrap,
+.pp_woocommerce_quick_view .single-product div.product.wcpa_has_options form.cart .wcpa_form_outer .wcpa_form_item .wcpa_checkbox label,
+.pp_woocommerce_quick_view .single-product div.product.wcpa_has_options form.cart .wcpa_form_outer .wcpa_wrap .wcpa_field_wrap {
     margin-bottom: 0;
   }
   .single-product .single-product div.product.wcpa_has_options form.cart .variations,
