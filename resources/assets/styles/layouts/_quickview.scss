@@ -277,6 +277,10 @@ div.pp_woocommerce_quick_view {
     }
   }
 
+  .wcpa_wrap .wcpa_field_wrap {
+    margin-bottom: 0 !important;
+  }
+
   div.product form.cart {
     @include media-breakpoint-down(sm) {
       display: flex !important;
