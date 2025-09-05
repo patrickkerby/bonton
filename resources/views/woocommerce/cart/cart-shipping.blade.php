@@ -159,7 +159,9 @@ if($icecream_conflict) {
 					?>
 				</p>
 			@else
-				<p class="small">{{  $delivery_message }}</p>						
+				@if($delivery_message)
+					<p class="small">{{  $delivery_message }}</p>
+				@endif
 			@endif
 
 			<?php
