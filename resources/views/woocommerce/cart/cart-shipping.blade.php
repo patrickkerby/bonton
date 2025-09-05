@@ -62,6 +62,7 @@ $delivery_available = false;
 $pickup_day_of_week = "";
 $pickup_date = ""; 
 $icecream_conflict = false;
+$delivery_message = "";
 
 if ($is_wholesale_user) {
 	$delivery_available = true;
