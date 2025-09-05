@@ -1143,3 +1143,10 @@ add_filter( 'woocommerce_available_variation', function ( $variations ) {
  if ( defined( 'WP_CLI' ) && WP_CLI ) {
     require_once __DIR__ . '/wp-cli-backfill.php';
 }
+
+add_filter('theme_file_path', function($path, $file) {
+    if($file === 'theme.json') {
+        return false;
+    }
+    return $path;
+}, 0, 2);
