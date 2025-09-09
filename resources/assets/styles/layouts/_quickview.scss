@@ -410,9 +410,17 @@ div.pp_woocommerce_quick_view {
     }
   }
 
-  .single-product div.product.wcpa_has_options form.cart {
-    .assorted-selection_parent,
+  // Updated for Custom Product Addons Pro plugin (new structure)
+  .single-product div.product form.cart {
+    // Hide assorted selection elements by default
+    .wcpa_field_wrap.assorted-section,
     .assorted-selection-clear {
+      display: none;
+    }
+
+    // Support old plugin structure for backward compatibility
+    .assorted-selection_parent,
+    .wcpa_form_item.assorted-section_parent {
       display: none;
     }
 
@@ -421,23 +429,34 @@ div.pp_woocommerce_quick_view {
       box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.16), 0 -35px 40px 0 rgb(255, 255, 255);
       display: flex !important;
 
-      .assorted-selection_parent,
+      // Show assorted selection elements on mobile
+      .wcpa_field_wrap.assorted-section,
       .assorted-selection-clear {
         display: block;
       }
 
-      .wcpa_form_item,
-      .wcpa_form_outer {
-        margin: 0;
+      // Backward compatibility
+      .assorted-selection_parent,
+      .wcpa_form_item.assorted-section_parent {
+        display: block;
       }
 
-      .wcpa_form_outer {
+      // New plugin structure styling
+      .wcpa_form_outer,
+      .wcpa_wrap {
         position: absolute;
         top: 0;
         left: 0;
-        padding: 0.5rem 1rem;
+        padding: 0;
         background: $cream;
+        margin: 0;
+        width: 100%;
 
+        .wcpa_field_wrap {
+          margin-bottom: 0;
+        }
+
+        // Old structure support
         .wcpa_form_item .wcpa_checkbox label,
         .wcpa_wrap .wcpa_field_wrap {
           margin-bottom: 0;
@@ -448,6 +467,8 @@ div.pp_woocommerce_quick_view {
         margin-bottom: 0;
       }
 
+      // Updated selector for new plugin structure
+      .wcpa_field_wrap.assorted-section,
       div.assorted-section_parent {
         visibility: hidden;
         position: absolute;
@@ -461,6 +482,8 @@ div.pp_woocommerce_quick_view {
 
         @include slowfade;
 
+        // New plugin label structure
+        .wcpa_field_label,
         label {
           visibility: visible;
           display: flex;
@@ -482,6 +505,7 @@ div.pp_woocommerce_quick_view {
           top: -13rem;
           opacity: 1;
 
+          .wcpa_field_label,
           label {
             opacity: 0;
             margin: 0;
@@ -493,28 +517,32 @@ div.pp_woocommerce_quick_view {
           @include slowfade;
         }
 
+        // New plugin description structure
+        .wcpa_field_desc,
         .wcpa_helptext {
           font-size: 14px;
           font-weight: 600;
           margin-bottom: 0.5rem;
           display: inline-block;
         }
+      }
 
-        span.assorted-selection-clear {
-          display: inline-flex;
-          font-weight: 600;
-          padding: 0.25rem 0.5rem;
-          background: $highlight;
-          width: auto;
-          color: #fff;
-          margin: 0.5rem 0 0 auto;
-          cursor: pointer;
-        }
+      span.assorted-selection-clear {
+        display: inline-flex;
+        font-weight: 600;
+        padding: 0.25rem 0.5rem;
+        background: $highlight;
+        width: auto;
+        color: #fff;
+        margin: 0.5rem 0 0 auto;
+        cursor: pointer;
       }
     }
   }
 
-  .wcpa_form_item.breadclub_parent {
+  // Breadclub styling - updated for new plugin structure
+  .wcpa_form_item.breadclub_parent,
+  .wcpa_field_wrap.breadclub_parent {
     .wcpa_checkbox {
       label {
         font-size: 0.7rem;

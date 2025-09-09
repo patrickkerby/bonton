@@ -81,20 +81,35 @@ export default {
       });
 
       // ASSORTED ITEMS SELECTION BEHAVIOUR FOR MOBILE
-      //mobile trigger for assorted options on items like Danish
-      $(document).on('click', '.assorted-section_parent label', function() {
+      // Updated for Custom Product Addons Pro plugin (new structure)
+      
+      // Mobile trigger for assorted options - supports both old and new plugin structure
+      $(document).on('click', '.assorted-section_parent label, .wcpa_field_wrap.assorted-section .wcpa_field_label', function() {
+        // Support old structure
         $('.assorted-section_parent').addClass('show-assorted');
+        // Support new structure
+        $('.wcpa_field_wrap.assorted-section').addClass('show-assorted');
       });
 
-      // remove class from body when close button is clicked  
+      // Remove class when close button is clicked  
       $(document).on('click', '.assorted-selection-clear', function() {
-          $('.assorted-section_parent').removeClass('show-assorted');
+        // Support old structure
+        $('.assorted-section_parent').removeClass('show-assorted');
+        // Support new structure
+        $('.wcpa_field_wrap.assorted-section').removeClass('show-assorted');
       });
 
-       //Add a fake submit button on the Assorted Items Selection textarea in order to dismiss it.
-      $(document).on('click', '.wcpa_has_options', function() {
+      // Add a fake submit button on the Assorted Items Selection textarea
+      $(document).on('click', '.wcpa_has_options, .wcpa_wrap', function() {
         if ($('.assorted-selection-clear').length < 1) {
-          $( '.assorted-section' ).after( '<span class="assorted-selection-clear">Done!</span>' );
+          // Try new structure first
+          if ($('.wcpa_field_wrap.assorted-section').length > 0) {
+            $('.wcpa_field_wrap.assorted-section textarea').after('<span class="assorted-selection-clear">Done!</span>');
+          }
+          // Fallback to old structure
+          else if ($('.assorted-section').length > 0) {
+            $('.assorted-section').after('<span class="assorted-selection-clear">Done!</span>');
+          }
         }
       });
 
