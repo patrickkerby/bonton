@@ -66,18 +66,31 @@ global $wpdb;
     )
   );
 
-  //Get all orders that contain specific product (breadclub) 
-  $bread_club_results = $wpdb->get_col("
-    SELECT order_items.order_id
-    FROM {$wpdb->prefix}woocommerce_order_items as order_items
-    LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as order_item_meta ON order_items.order_item_id = order_item_meta.order_item_id
-    LEFT JOIN {$wpdb->posts} AS posts ON order_items.order_id = posts.ID
-    WHERE posts.post_type = 'shop_order'
-    AND posts.post_status IN ( 'wc-processing', 'wc-completed' )
-    AND order_items.order_item_type = 'line_item'
-    AND order_item_meta.meta_key = '_product_id'
-    AND order_item_meta.meta_value = '$breadclub_id'
-  ");
+  //Get all orders that contain specific product (breadclub) - OPTIMIZED QUERY
+  // Check cache first to prevent repeated expensive queries
+  $cache_key = "breadclub_orders_" . $breadclub_id;
+  $bread_club_results = wp_cache_get($cache_key);
+  
+  if (false === $bread_club_results) {
+    $bread_club_results = $wpdb->get_col($wpdb->prepare("
+      SELECT DISTINCT order_items.order_id
+      FROM {$wpdb->prefix}woocommerce_order_items as order_items
+      INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta as order_item_meta 
+        ON order_items.order_item_id = order_item_meta.order_item_id
+      INNER JOIN {$wpdb->posts} AS posts 
+        ON order_items.order_id = posts.ID
+      WHERE order_item_meta.meta_key = '_product_id'
+      AND order_item_meta.meta_value = %d
+      AND order_items.order_item_type = 'line_item'
+      AND posts.post_type = 'shop_order'
+      AND posts.post_status IN ('wc-processing', 'wc-completed')
+      ORDER BY posts.post_date DESC
+      LIMIT 1000
+    ", $breadclub_id));
+    
+    // Cache for 15 minutes to prevent repeated queries
+    wp_cache_set($cache_key, $bread_club_results, '', 900);
+  }
 
 //Create filtered list of orders based on the date selected on list page.
   $filtered_orders = array();

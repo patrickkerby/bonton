@@ -34,18 +34,31 @@
   $day = 'Thursday';
   $product_id = 18200; //TODO: have this set via ACF incase the product ever changes, or to build new programs.
 
-  //Get all orders that contain specific product 
-  $results = $wpdb->get_col("
-      SELECT order_items.order_id
+  //Get all orders that contain specific product - OPTIMIZED QUERY
+  // Check cache first to prevent repeated expensive queries
+  $cache_key = "breadclub_list_orders_" . $product_id;
+  $results = wp_cache_get($cache_key);
+  
+  if (false === $results) {
+    $results = $wpdb->get_col($wpdb->prepare("
+      SELECT DISTINCT order_items.order_id
       FROM {$wpdb->prefix}woocommerce_order_items as order_items
-      LEFT JOIN {$wpdb->prefix}woocommerce_order_itemmeta as order_item_meta ON order_items.order_item_id = order_item_meta.order_item_id
-      LEFT JOIN {$wpdb->posts} AS posts ON order_items.order_id = posts.ID
-      WHERE posts.post_type = 'shop_order'
-      AND posts.post_status IN ( 'wc-processing', 'wc-completed' )
+      INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta as order_item_meta 
+        ON order_items.order_item_id = order_item_meta.order_item_id
+      INNER JOIN {$wpdb->posts} AS posts 
+        ON order_items.order_id = posts.ID
+      WHERE order_item_meta.meta_key = '_product_id'
+      AND order_item_meta.meta_value = %d
       AND order_items.order_item_type = 'line_item'
-      AND order_item_meta.meta_key = '_product_id'
-      AND order_item_meta.meta_value = '$product_id'
-  ");
+      AND posts.post_type = 'shop_order'
+      AND posts.post_status IN ('wc-processing', 'wc-completed')
+      ORDER BY posts.post_date DESC
+      LIMIT 1000
+    ", $product_id));
+    
+    // Cache for 15 minutes to prevent repeated queries
+    wp_cache_set($cache_key, $results, '', 900);
+  }
 
   // Check schedule to see if program is current. Find current date and see which week lines up.
   date_default_timezone_set('MST');
