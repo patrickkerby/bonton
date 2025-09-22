@@ -66,30 +66,53 @@ global $wpdb;
     )
   );
 
-  //Get all orders that contain specific product (breadclub) - OPTIMIZED QUERY
+  //Get all orders that contain specific product (breadclub) - HPOS OPTIMIZED
   // Check cache first to prevent repeated expensive queries
-  $cache_key = "breadclub_orders_" . $breadclub_id;
+  $cache_key = "breadclub_orders_hpos_" . $breadclub_id;
   $bread_club_results = wp_cache_get($cache_key);
   
   if (false === $bread_club_results) {
-    $bread_club_results = $wpdb->get_col($wpdb->prepare("
-      SELECT DISTINCT order_items.order_id
-      FROM {$wpdb->prefix}woocommerce_order_items as order_items
-      INNER JOIN {$wpdb->prefix}woocommerce_order_itemmeta as order_item_meta 
-        ON order_items.order_item_id = order_item_meta.order_item_id
-      INNER JOIN {$wpdb->posts} AS posts 
-        ON order_items.order_id = posts.ID
-      WHERE order_item_meta.meta_key = '_product_id'
-      AND order_item_meta.meta_value = %d
-      AND order_items.order_item_type = 'line_item'
-      AND posts.post_type = 'shop_order'
-      AND posts.post_status IN ('wc-processing', 'wc-completed')
-      ORDER BY posts.post_date DESC
-      LIMIT 1000
-    ", $breadclub_id));
+    // Use HPOS-compatible wc_get_orders() with product filter
+    $breadclub_orders = wc_get_orders([
+      'limit' => 1000,
+      'status' => ['processing', 'completed'],
+      'orderby' => 'date',
+      'order' => 'DESC',
+      'meta_query' => [
+        [
+          'key' => '_product_id_' . $breadclub_id,
+          'compare' => 'EXISTS'
+        ]
+      ]
+    ]);
     
-    // Cache for 15 minutes to prevent repeated queries
-    wp_cache_set($cache_key, $bread_club_results, '', 900);
+    // Alternative method if meta_query doesn't work - check for product in line items
+    if (empty($breadclub_orders)) {
+      $all_orders = wc_get_orders([
+        'limit' => 1000,
+        'status' => ['processing', 'completed'],
+        'orderby' => 'date',
+        'order' => 'DESC'
+      ]);
+      
+      $breadclub_orders = [];
+      foreach ($all_orders as $order) {
+        foreach ($order->get_items() as $item) {
+          if ($item->get_product_id() == $breadclub_id) {
+            $breadclub_orders[] = $order;
+            break; // Found the product, move to next order
+          }
+        }
+      }
+    }
+    
+    // Extract order IDs for compatibility with existing code
+    $bread_club_results = array_map(function($order) {
+      return $order->get_id();
+    }, $breadclub_orders);
+    
+    // Cache for 2 minutes to balance performance with real-time order updates
+    wp_cache_set($cache_key, $bread_club_results, '', 120);
   }
 
 //Create filtered list of orders based on the date selected on list page.

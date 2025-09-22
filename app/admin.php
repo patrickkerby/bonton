@@ -391,5 +391,41 @@ add_action('get_footer', function() {
     }
 });
 
+// Clear breadclub caches when new orders are saved to ensure real-time updates
+add_action('woocommerce_new_order', 'App\clear_breadclub_caches');
+add_action('woocommerce_order_status_changed', 'App\clear_breadclub_caches');
+add_action('woocommerce_update_order', 'App\clear_breadclub_caches');
 
+function clear_breadclub_caches($order_id = null) {
+    $breadclub_id = 18200; // TODO: Get from ACF options
+    
+    // If we have an order ID, check if it contains breadclub product
+    if ($order_id) {
+        $order = wc_get_order($order_id);
+        if (!$order) return;
+        
+        $has_breadclub = false;
+        foreach ($order->get_items() as $item) {
+            if ($item->get_product_id() == $breadclub_id) {
+                $has_breadclub = true;
+                break;
+            }
+        }
+        
+        // Only clear cache if this order contains breadclub
+        if (!$has_breadclub) return;
+    }
+    
+    // Clear all breadclub-related caches
+    $cache_keys = [
+        "breadclub_orders_hpos_{$breadclub_id}",
+        "breadclub_list_orders_hpos_{$breadclub_id}",
+        "breadclub_addons_orders_hpos_{$breadclub_id}",
+        "breadclub_schedule_orders_hpos_{$breadclub_id}"
+    ];
+    
+    foreach ($cache_keys as $key) {
+        wp_cache_delete($key);
+    }
+}
 
