@@ -76,7 +76,8 @@ defined( 'ABSPATH' ) || exit;
 				<li class="pickup">
 					<?php 
 						$pickup_date = WC()->session->get('pickup_date_calendar'); 
-						$date = get_post_meta( $order->get_order_number(), 'pickup_date', true );
+						$date_old = get_post_meta( $order->get_order_number(), 'pickup_date', true );	
+						$date = $order->get_meta( 'pickup_date', true );
 
 					?>
 					Pickup date: <strong><?php echo $date; ?></strong>
