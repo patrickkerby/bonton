@@ -340,9 +340,14 @@ function site_notice_widget_content() {
 }
 
 /**
+ * Disable WooCommerce's default store notice output (we're using our custom one below)
+ */
+remove_action('wp_footer', 'woocommerce_demo_store');
+
+/**
  * Display WooCommerce store notice with proper styling
  */
-add_action('get_footer', function() {
+add_action('wp_footer', function() {
     // Check if store notice is enabled
     $store_notice_enabled = get_option('woocommerce_demo_store', 'no');
     
@@ -358,7 +363,7 @@ add_action('get_footer', function() {
         if (!empty($notice) && !$is_dismissed) {
             echo '<p class="demo_store woocommerce-store-notice bonton-site-notice" style="display: block !important; position: fixed !important; bottom: 0 !important; left: 0 !important; right: 0 !important; z-index: 99999 !important; background: #53c999 !important; color: white !important; padding: 3rem 4rem !important; margin: 2rem !important; width: calc(100% - 4rem) !important; font-size: 1.15rem !important; box-sizing: border-box !important;">';
             echo '<span style="position: relative; z-index: 3;">' . wp_kses_post($notice) . '</span>';
-            echo ' <a href="#" onclick="bontonDismissNotice(); return false;" style="color: white !important; text-decoration: underline !important; margin-left: 10px !important; position: relative !important; z-index: 3 !important;">Dismiss</a>';
+            echo ' <a href="#" class="bonton-notice-dismiss" style="color: white !important; text-decoration: underline !important; margin-left: 10px !important; position: relative !important; z-index: 3 !important; cursor: pointer;">Dismiss</a>';
             echo '</p>';
             
             // Add the white border with CSS
@@ -376,20 +381,35 @@ add_action('get_footer', function() {
                 }
             </style>';
             
-            // JavaScript to handle dismissal
+            // JavaScript to handle dismissal - using event delegation to work with AJAX
             echo '<script>
-                function bontonDismissNotice() {
-                    var notice = document.querySelector(".bonton-site-notice");
-                    if (notice) {
-                        notice.style.display = "none";
-                        // Set cookie to remember dismissal (30 days)
-                        document.cookie = "' . $dismissed_cookie . '=1; path=/; max-age=" + (60 * 60 * 24 * 30);
-                    }
-                }
+                (function() {
+                    // Use event delegation to handle both initial load and AJAX-loaded content
+                    document.addEventListener("click", function(e) {
+                        if (e.target && e.target.classList.contains("bonton-notice-dismiss")) {
+                            e.preventDefault();
+                            var notice = document.querySelector(".bonton-site-notice");
+                            if (notice) {
+                                notice.style.display = "none";
+                                // Set cookie to remember dismissal (30 days)
+                                document.cookie = "' . $dismissed_cookie . '=1; path=/; max-age=" + (60 * 60 * 24 * 30);
+                            }
+                        }
+                    });
+                    
+                    // Also support old function name for backwards compatibility
+                    window.bontonDismissNotice = function() {
+                        var notice = document.querySelector(".bonton-site-notice");
+                        if (notice) {
+                            notice.style.display = "none";
+                            document.cookie = "' . $dismissed_cookie . '=1; path=/; max-age=" + (60 * 60 * 24 * 30);
+                        }
+                    };
+                })();
             </script>';
         }
     }
-});
+}, 5); // Priority 5 to run before WooCommerce's default (priority 10)
 
 // Clear breadclub caches when new orders are saved to ensure real-time updates
 add_action('woocommerce_new_order', 'App\clear_breadclub_caches');
