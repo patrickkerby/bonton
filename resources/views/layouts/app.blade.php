@@ -6,8 +6,8 @@
     @php do_action('get_header') @endphp
       @if(isset($landing_page) && $landing_page == TRUE)
         @include('partials.header-landing')
-      @elseif(is_page_template( 'views/faq.blade.php' ) && !$is_wholesale_user)
-        @include('partials.header-faq')
+      {{-- @elseif(is_page_template( 'views/faq.blade.php' ) && !$is_wholesale_user)
+        @include('partials.header-faq') --}}
       @else
         @include('partials.header')
       @endif
