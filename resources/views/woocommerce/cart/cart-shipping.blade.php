@@ -82,7 +82,7 @@ if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-10-11" && !$icecream_conflict) {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-10-24" && !$icecream_conflict) {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -91,8 +91,8 @@ if($session_date_object) {
 	else {
 		$delivery_available = false;
 	}
-	if ($pickup_date == "2025-10-11" ) {
-		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, October 11, but we'd love to see your face in the store!";
+	if ($pickup_date == "2025-10-24" ) {
+		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, October 24, but we'd love to see your face in the store!";
 	}
 	else {
 		$delivery_message = "(Delivery is currently only available on Saturdays)";
