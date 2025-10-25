@@ -563,7 +563,7 @@ defined( 'ABSPATH' ) || exit;
 					</button>
 				</div>
 				<div class="modal-body">
-					<p>We offer order delivery to Edmonton with Deeleeo on Saturdays only! The delivery window is 9am - 1pm.</p>						
+					<p>We offer order delivery to Edmonton with Deeleeo on Saturdays only! The delivery window is 10am - 2pm.</p>						
 					<p>At this time, we are not able to deliver to surrounding areas.</p>
 					<p>Once the Deeleeo team leaves the bakery with your order, they'll keep you updated by text to track your delivery.</p>
 					
