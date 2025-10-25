@@ -82,6 +82,9 @@ export default {
     const longFermentationTarget = document.getElementById('long_fermentation_in_cart');
     const longFermentation = longFermentationTarget ? longFermentationTarget.textContent : null;
 
+    const twoDaysNoticeTarget = document.getElementById('two_days_notice_in_cart');
+    const twoDaysNotice = twoDaysNoticeTarget ? twoDaysNoticeTarget.textContent : null;
+
     const AvailableDatesTarget = document.getElementById('available_dates_in_cart');
     const AvailableDates = AvailableDatesTarget ? AvailableDatesTarget.textContent : null;
     const availableDatesArray = AvailableDates ? JSON.parse(AvailableDates) : [];
@@ -93,9 +96,10 @@ export default {
       });
 
       $(document).ready(function () {
-        const time = longFermentation == 1 ? 57 : 33;
+        // Determine time based on long fermentation OR two days notice requirements
+        const time = (longFermentation == 1 || twoDaysNotice == 1) ? 57 : 33;
 
-        // the "standard formula" is the current date + 33 hours or 57 hours if long fermentation. This prevents anyone from purchasing tomorrow (if it's past 3pm) and adds extra time if there's sourdough in the car.
+        // the "standard formula" is the current date + 33 hours or 57 hours if long fermentation or two days notice. This prevents anyone from purchasing tomorrow (if it's past 3pm) and adds extra time if there's sourdough or two-day-notice items in the cart.
         const standardFormulaMinDate = dayjs().add(time, 'hour').format('DD/MM/YYYY H:mm:ss');
         const standardFormulaMinDateFormatted = dayjs(standardFormulaMinDate, 'DD/MM/YYYY');
 

@@ -82,6 +82,25 @@
             "ui_off_text": "Default"
         },
         {
+            "key": "field_67210abc12345",
+            "label": "Requires Two Days Notice?",
+            "name": "requires_two_days_notice",
+            "type": "true_false",
+            "instructions": "Enable this if the product requires at least two days notice for pickup (prevents next-day pickup, similar to long fermentation products).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No"
+        },
+        {
             "key": "field_5f5165cc85dc7",
             "label": "Restricted Pickup Dates (Start Date)",
             "name": "restricted_pickup",
@@ -135,5 +154,5 @@
     ],
     "active": true,
     "description": "",
-    "modified": 1618516984
+    "modified": 1730000000
 }

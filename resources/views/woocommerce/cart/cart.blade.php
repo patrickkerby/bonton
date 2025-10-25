@@ -21,6 +21,8 @@ defined( 'ABSPATH' ) || exit;
 	do_action( 'woocommerce_before_cart' ); 
 	$long_fermentation = "";
 	$long_fermentation_in_cart = "";
+	$two_days_notice = "";
+	$two_days_notice_in_cart = "";
 	$restricted_in_cart = "";
 	$giftcertificate_only_item_in_cart = false;
 	$cart_count = 0;
@@ -115,6 +117,7 @@ defined( 'ABSPATH' ) || exit;
 
 						foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 							$long_fermentation = "";
+							$two_days_notice = "";
 							$giftcertificate_in_cart = false;
 							$cart_count++;
 							$days_available_array = array();
@@ -174,6 +177,12 @@ defined( 'ABSPATH' ) || exit;
 								if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
 									$long_fermentation = "yes";
 									$long_fermentation_in_cart = True;
+								}
+
+								//Check if product requires two days notice (ACF field)
+								if ( get_field('requires_two_days_notice', $product_id) ){
+									$two_days_notice = "yes";
+									$two_days_notice_in_cart = True;
 								}
 
 								//Check if product is gift certificate or bread club
@@ -315,6 +324,10 @@ defined( 'ABSPATH' ) || exit;
 									?>
 									@if($long_fermentation === 'yes')
 										<span class="availability"><strong>*Note:</strong> Not available for next-day pickup</span>										
+									@endif
+
+									@if($two_days_notice === 'yes')
+										<span class="availability"><strong>*Note:</strong> This product requires two days notice</span>										
 									@endif
 
 									@if($special_availability_msg)
@@ -506,6 +519,11 @@ defined( 'ABSPATH' ) || exit;
 								<strong>Why can't I choose tomorrow?</strong> <br>Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
 							</div><br>
 						@endif
+						@if ( $two_days_notice_in_cart == True)
+							<div class="lf_notice"> 
+								<strong>Why can't I choose tomorrow?</strong> <br>One or more products in your cart require at least two days notice for preparation.
+							</div><br>
+						@endif
 						@if ( $restricted_in_cart == True)
 							<div class="lf_notice"> 
 								<strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
@@ -605,6 +623,7 @@ defined( 'ABSPATH' ) || exit;
 		<div id="session_pickup_date">@if($session_date_object)@php echo htmlspecialchars($session_date_object->format('d/m/Y')); @endphp@endif</div>
 		<div id="session_pickup_date_object">@php var_dump($session_pickup_date); @endphp</div>
 		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
+		<div id="two_days_notice_in_cart">@php echo htmlspecialchars($two_days_notice_in_cart); @endphp</div>
 		@if($all_sold_out_dates)
 			<div id="sold_out_dates_in_cart">@php echo json_encode($all_sold_out_dates); @endphp</div>
 		@endif
