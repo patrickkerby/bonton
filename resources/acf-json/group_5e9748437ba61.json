@@ -6,6 +6,7 @@
             "key": "field_5e97484ce1bea",
             "label": "Availability",
             "name": "availability",
+            "aria-label": "",
             "type": "taxonomy",
             "instructions": "",
             "required": 1,
@@ -22,12 +23,14 @@
             "load_terms": 1,
             "return_format": "object",
             "multiple": 0,
-            "allow_null": 0
+            "allow_null": 0,
+            "bidirectional_target": []
         },
         {
             "key": "field_5e98ae16284ca",
             "label": "Cooler Storage?",
             "name": "cooler",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "Is this product stored for pickup in the cooler?",
             "required": 0,
@@ -47,6 +50,7 @@
             "key": "field_5f5c391b6562c",
             "label": "Shelf Storage?",
             "name": "shelf",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "Is this product stored for pickup in the shelf?",
             "required": 0,
@@ -66,6 +70,7 @@
             "key": "field_60789abf2d33d",
             "label": "Exclude from bulk discount?",
             "name": "bulk_discount_exclusion",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "If this item is in a category eligible for bulk discounts, you may override eligibility here.",
             "required": 0,
@@ -82,9 +87,31 @@
             "ui_off_text": "Default"
         },
         {
+            "key": "field_68fd375c35989",
+            "label": "Exclude from delivery?",
+            "name": "delivery_exclusion",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "If this item is in the cart, delivery will not be available.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 0,
+            "allow_in_bindings": 1,
+            "ui_on_text": "Exclude",
+            "ui_off_text": "Default",
+            "ui": 1
+        },
+        {
             "key": "field_67210abc12345",
             "label": "Requires Two Days Notice?",
             "name": "requires_two_days_notice",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "Enable this if the product requires at least two days notice for pickup (prevents next-day pickup, similar to long fermentation products).",
             "required": 0,
@@ -104,6 +131,7 @@
             "key": "field_5f5165cc85dc7",
             "label": "Restricted Pickup Dates (Start Date)",
             "name": "restricted_pickup",
+            "aria-label": "",
             "type": "date_picker",
             "instructions": "Select which date(s) this product is available to be picked up.",
             "required": 0,
@@ -115,12 +143,14 @@
             },
             "display_format": "d\/m\/Y",
             "return_format": "d\/m\/Y",
-            "first_day": 1
+            "first_day": 1,
+            "default_to_current_date": 0
         },
         {
             "key": "field_5f5d114bcae85",
             "label": "Restricted Pickup Dates (End Date)",
             "name": "restricted_pickup_end",
+            "aria-label": "",
             "type": "date_picker",
             "instructions": "Select which date(s) this product is available to be picked up.",
             "required": 0,
@@ -132,7 +162,8 @@
             },
             "display_format": "d\/m\/Y",
             "return_format": "d\/m\/Y",
-            "first_day": 1
+            "first_day": 1,
+            "default_to_current_date": 0
         }
     ],
     "location": [
@@ -154,5 +185,6 @@
     ],
     "active": true,
     "description": "",
-    "modified": 1730000000
+    "show_in_rest": 0,
+    "modified": 1761425261
 }
