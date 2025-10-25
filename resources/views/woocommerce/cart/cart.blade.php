@@ -95,6 +95,7 @@ defined( 'ABSPATH' ) || exit;
 @endphp
 	<div class="row justify-content-center">
 		<div class="col-md-8">
+		
 			<form class="woocommerce-cart-form" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
 				<?php do_action( 'woocommerce_before_cart_table' ); ?>
 				<table class="shop_table cart woocommerce-cart-form__contents" cellspacing="0">
@@ -117,10 +118,12 @@ defined( 'ABSPATH' ) || exit;
 							$giftcertificate_in_cart = false;
 							$cart_count++;
 							$days_available_array = array();
-
+							
 							$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
 							$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
-
+							
+							$delivery_exclusion = get_field('delivery_exclusion', $product_id);
+							
 							if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
 								$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
 							?>
@@ -324,6 +327,10 @@ defined( 'ABSPATH' ) || exit;
 										@if($pickup_restriction_data)
 										{!! $restriction_msg !!}
 										@endif
+									@endif
+
+									@if($delivery_exclusion)
+										<span class="availability"><br><strong>**</strong> Not available for delivery</span>
 									@endif
 																		
 									</td>

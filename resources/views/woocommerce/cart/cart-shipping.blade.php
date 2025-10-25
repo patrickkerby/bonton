@@ -52,7 +52,6 @@
  */
 
 defined( 'ABSPATH' ) || exit;
-
 $formatted_destination    = isset( $formatted_destination ) ? $formatted_destination : WC()->countries->get_formatted_address( $package['destination'], ', ' );
 $has_calculated_shipping  = ! empty( $has_calculated_shipping );
 $show_shipping_calculator = ! empty( $show_shipping_calculator );
@@ -71,6 +70,12 @@ if ($is_wholesale_user) {
 foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
    $cart_product = $cart_item['data'];
    $cart_product_id = $cart_item['product_id'];
+   $delivery_exclusion = get_field('delivery_exclusion', $cart_product_id);
+
+   	if ($delivery_exclusion) {
+		$delivery_override = true; //this disables delivery because a product in the cart is listed as no delivery available
+	}
+
 
 	 if ($cart_product_id === 2045) {
 		// $delivery_available = false;
@@ -82,7 +87,7 @@ if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-10-24" && !$icecream_conflict) {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-11-1" && !$icecream_conflict) {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -91,7 +96,7 @@ if($session_date_object) {
 	else {
 		$delivery_available = false;
 	}
-	if ($pickup_date == "2025-10-24" ) {
+	if ($pickup_date == "2025-11-1" ) {
 		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, October 24, but we'd love to see your face in the store!";
 	}
 	else {
@@ -99,7 +104,7 @@ if($session_date_object) {
 	}
 }
 
-if($icecream_conflict) {
+if($icecream_conflict || $delivery_override) {
 	delete_user_meta( get_current_user_id(), 'shipping_method' );
 	WC()->session->__unset( 'chosen_shipping_methods' );
 }
@@ -146,7 +151,8 @@ if($icecream_conflict) {
 			</ul>
 			@if ( is_cart() && $icecream_conflict)
 				<p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
-
+			@elseif ( is_cart() && $delivery_override)
+				<p class="small">We do deliver on this day, however you have a product in your cart that's not available for delivery. Please remove the that item if you'd like delivery</p>	 
 			@elseif ( is_cart() && $delivery_available )
 				<p class="woocommerce-shipping-destination">
 					<?php
