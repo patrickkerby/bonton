@@ -62,6 +62,7 @@ $pickup_day_of_week = "";
 $pickup_date = ""; 
 $icecream_conflict = false;
 $delivery_message = "";
+$delivery_day = false;
 
 if ($is_wholesale_user) {
 	$delivery_available = true;
@@ -87,7 +88,11 @@ if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-11-1" && !$icecream_conflict) {
+	if ($pickup_day_of_week === "Saturday") {
+		$delivery_day = true;
+	}
+	
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-11-1" && !$icecream_conflict && !$delivery_override) {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -104,11 +109,10 @@ if($session_date_object) {
 	}
 }
 
-if($icecream_conflict || $delivery_override) {
+if($icecream_conflict) {
 	delete_user_meta( get_current_user_id(), 'shipping_method' );
 	WC()->session->__unset( 'chosen_shipping_methods' );
 }
-
 
 ?>
 
@@ -151,7 +155,7 @@ if($icecream_conflict || $delivery_override) {
 			</ul>
 			@if ( is_cart() && $icecream_conflict)
 				<p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
-			@elseif ( is_cart() && $delivery_override)
+			@elseif ( is_cart() && $delivery_override && $delivery_day)
 				<p class="small">We do deliver on this day, however you have a product in your cart that's not available for delivery. Please remove the that item if you'd like delivery</p>	 
 			@elseif ( is_cart() && $delivery_available )
 				<p class="woocommerce-shipping-destination">
