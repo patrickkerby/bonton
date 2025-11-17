@@ -1174,6 +1174,7 @@ function prevent_restricted_variation_purchase($purchasable, $product) {
 // 5. Add restriction notice that shows when restricted variation is selected
 
 add_action('woocommerce_before_add_to_cart_button', 'App\display_restricted_variation_notice');
+add_action('woocommerce_single_product_summary', 'App\display_restricted_variation_notice', 25); // Also hook for quick view
 
 function display_restricted_variation_notice() {
     global $product;
@@ -1204,26 +1205,50 @@ function display_restricted_variation_notice() {
         // JavaScript to show/hide notice based on selected variation
         ?>
         <script type="text/javascript">
-            jQuery(document).ready(function($) {
-                var $noticeContainer = $('.restricted-product-notice');
-                var $addToCartButton = $('.single_add_to_cart_button');
-                
-                $('form.variations_form').on('found_variation', function(event, variation) {
-                    if (variation.restrict_online_purchase === 'yes') {
-                        $noticeContainer.slideDown();
-                        $addToCartButton.prop('disabled', true).addClass('disabled');
-                    } else {
+            (function($) {
+                // Function to initialize the restriction notice behavior
+                function initRestrictedNotice() {
+                    var $noticeContainer = $('.restricted-product-notice');
+                    var $addToCartButton = $('.single_add_to_cart_button');
+                    
+                    // Make sure we have the elements
+                    if ($noticeContainer.length === 0 || $addToCartButton.length === 0) {
+                        return;
+                    }
+                    
+                    // Unbind previous handlers to avoid duplicates
+                    $('form.variations_form').off('found_variation.restriction').on('found_variation.restriction', function(event, variation) {
+                        if (variation.restrict_online_purchase === 'yes') {
+                            $noticeContainer.slideDown();
+                            $addToCartButton.prop('disabled', true).addClass('disabled');
+                        } else {
+                            $noticeContainer.slideUp();
+                            $addToCartButton.prop('disabled', false).removeClass('disabled');
+                        }
+                    });
+                    
+                    // Hide notice when variation is reset/cleared
+                    $('form.variations_form').off('reset_data.restriction').on('reset_data.restriction', function() {
                         $noticeContainer.slideUp();
                         $addToCartButton.prop('disabled', false).removeClass('disabled');
-                    }
+                    });
+                }
+                
+                // Initialize on page load
+                $(document).ready(function() {
+                    initRestrictedNotice();
                 });
                 
-                // Hide notice when variation is reset/cleared
-                $('form.variations_form').on('reset_data', function() {
-                    $noticeContainer.slideUp();
-                    $addToCartButton.prop('disabled', false).removeClass('disabled');
+                // Re-initialize when quick view is opened (for AJAX loaded content)
+                $(document).ajaxComplete(function(event, xhr, settings) {
+                    // Check if this is a quick view AJAX call
+                    if ($('body').hasClass('quickview-open')) {
+                        setTimeout(initRestrictedNotice, 100);
+                        setTimeout(initRestrictedNotice, 300);
+                        setTimeout(initRestrictedNotice, 600);
+                    }
                 });
-            });
+            })(jQuery);
         </script>
         <?php
     }
