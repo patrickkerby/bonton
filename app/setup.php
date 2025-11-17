@@ -190,16 +190,18 @@ add_action('after_setup_theme', function () {
     });
 });
 
-if( function_exists('acf_add_options_page') ) {
-	
-	acf_add_options_page(array(
-		'page_title' 	=> 'Bon Ton General Settings',
-		'menu_title'	=> 'Bon Ton Settings',
-		'menu_slug' 	=> 'bonton-general-settings',
-		'capability'	=> 'edit_posts',
-		'redirect'		=> false
-	));
-}
+add_action('acf/init', function() {
+	if( function_exists('acf_add_options_page') ) {
+		
+		acf_add_options_page(array(
+			'page_title' 	=> 'Bon Ton General Settings',
+			'menu_title'	=> 'Bon Ton Settings',
+			'menu_slug' 	=> 'bonton-general-settings',
+			'capability'	=> 'edit_posts',
+			'redirect'		=> false
+		));
+	}
+});
 
 // // Add instore vs curbside to checkout
 
