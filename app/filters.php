@@ -1154,14 +1154,53 @@ add_filter( 'woocommerce_available_variation', function ( $variations ) {
  } );
 
 // -----------------------------------------
-// 4. Prevent purchase of restricted variations
+// 4. Add restriction checkbox for simple products
 
-add_filter('woocommerce_is_purchasable', 'App\prevent_restricted_variation_purchase', 10, 2);
+add_action('woocommerce_product_options_general_product_data', 'App\add_simple_product_restriction_field');
 
-function prevent_restricted_variation_purchase($purchasable, $product) {
+function add_simple_product_restriction_field() {
+    global $product_object;
+    
+    // Only show for simple products
+    if ($product_object && $product_object->is_type('simple')) {
+        echo '<div class="options_group show_if_simple">';
+        woocommerce_wp_checkbox(array(
+            'id' => '_restrict_online_purchase_simple',
+            'label' => __('Restrict Online Purchase', 'woocommerce'),
+            'description' => __('Check this to prevent customers from purchasing this product online (requires in-person/phone order)', 'woocommerce'),
+            'desc_tip' => true,
+        ));
+        echo '</div>';
+    }
+}
+
+// Save the simple product restriction field
+add_action('woocommerce_admin_process_product_object', 'App\save_simple_product_restriction_field');
+
+function save_simple_product_restriction_field($product) {
+    if ($product->is_type('simple')) {
+        $restrict_online = isset($_POST['_restrict_online_purchase_simple']) ? 'yes' : 'no';
+        $product->update_meta_data('_restrict_online_purchase_simple', $restrict_online);
+    }
+}
+
+// -----------------------------------------
+// 5. Prevent purchase of restricted products (both variations and simple products)
+
+add_filter('woocommerce_is_purchasable', 'App\prevent_restricted_product_purchase', 10, 2);
+
+function prevent_restricted_product_purchase($purchasable, $product) {
     // Check if this is a variation
     if ($product->is_type('variation')) {
         $restrict_online = get_post_meta($product->get_id(), '_restrict_online_purchase', true);
+        if ($restrict_online === 'yes') {
+            return false;
+        }
+    }
+    
+    // Check if this is a simple product
+    if ($product->is_type('simple')) {
+        $restrict_online = get_post_meta($product->get_id(), '_restrict_online_purchase_simple', true);
         if ($restrict_online === 'yes') {
             return false;
         }
@@ -1171,17 +1210,12 @@ function prevent_restricted_variation_purchase($purchasable, $product) {
 }
 
 // -----------------------------------------
-// 5. Add restriction notice that shows when restricted variation is selected
+// 6. Add restriction notice for restricted products
 
-add_action('woocommerce_before_add_to_cart_button', 'App\display_restricted_variation_notice');
+add_action('woocommerce_before_add_to_cart_button', 'App\display_restricted_product_notice');
 
-function display_restricted_variation_notice() {
+function display_restricted_product_notice() {
     global $product;
-    
-    // Only for variable products
-    if (!$product->is_type('variable')) {
-        return;
-    }
     
     // Prevent duplicate output using product ID
     static $output_products = array();
@@ -1191,29 +1225,46 @@ function display_restricted_variation_notice() {
         return;
     }
     
-    // Check if any variations are restricted
-    $variations = $product->get_available_variations();
     $has_restricted = false;
+    $is_simple = false;
     
-    foreach ($variations as $variation) {
-        if (isset($variation['restrict_online_purchase']) && $variation['restrict_online_purchase'] === 'yes') {
+    // Check if this is a simple product with restriction
+    if ($product->is_type('simple')) {
+        $restrict_online = get_post_meta($product_id, '_restrict_online_purchase_simple', true);
+        if ($restrict_online === 'yes') {
             $has_restricted = true;
-            break;
+            $is_simple = true;
         }
     }
     
-    // Only output the notice container if there are restricted variations
+    // Check if this is a variable product with any restricted variations
+    if ($product->is_type('variable')) {
+        $variations = $product->get_available_variations();
+        
+        foreach ($variations as $variation) {
+            if (isset($variation['restrict_online_purchase']) && $variation['restrict_online_purchase'] === 'yes') {
+                $has_restricted = true;
+                break;
+            }
+        }
+    }
+    
+    // Only output the notice container if there are restricted products/variations
     if ($has_restricted) {
         $output_products[] = $product_id;
         $store_phone = get_field('phone', 'option') ?: '(780) 489-7717'; // Fallback phone number
-        echo '<div class="restricted-product-notice restricted-notice-' . esc_attr($product_id) . '" style="display:none; background-color: #f9edbe; border: 1px solid #f0c36d; padding: 15px; margin: 15px 0; border-radius: 4px;">
+        
+        // For simple products, show the notice immediately (not hidden)
+        $display_style = $is_simple ? 'display:block;' : 'display:none;';
+        
+        echo '<div class="restricted-product-notice restricted-notice-' . esc_attr($product_id) . '" style="' . $display_style . ' background-color: #f9edbe; border: 1px solid #f0c36d; padding: 15px; margin: 15px 0; border-radius: 4px;">
             <p style="margin: 0;"><strong>This item requires special ordering.</strong> Please call us at <a href="tel:' . esc_attr(preg_replace('/[^0-9]/', '', $store_phone)) . '">' . esc_html($store_phone) . '</a> or visit our store to place this order.</p>
         </div>';
     }
 }
 
 // -----------------------------------------
-// 6. Add JavaScript to handle restriction notice (footer to ensure it loads everywhere)
+// 7. Add JavaScript to handle restriction notice (footer to ensure it loads everywhere)
 
 add_action('wp_footer', 'App\restriction_notice_javascript');
 
@@ -1231,7 +1282,13 @@ function restriction_notice_javascript() {
                     return;
                 }
                 
-                // Unbind previous handlers to avoid duplicates
+                // Check if this is a simple product with notice already visible
+                if ($noticeContainer.is(':visible')) {
+                    // This is a restricted simple product - disable the button immediately
+                    $addToCartButton.prop('disabled', true).addClass('disabled');
+                }
+                
+                // For variable products: handle variation changes
                 $('form.variations_form').off('found_variation.restriction').on('found_variation.restriction', function(event, variation) {
                     if (variation.restrict_online_purchase === 'yes') {
                         $noticeContainer.slideDown();
