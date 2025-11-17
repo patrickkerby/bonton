@@ -1205,7 +1205,7 @@ function display_restricted_variation_notice() {
     // Only output the notice container if there are restricted variations
     if ($has_restricted) {
         $output_products[] = $product_id;
-        $store_phone = get_field('phone_number', 'option') ?: '(780) 439-7702'; // Fallback phone number
+        $store_phone = get_field('phone', 'option') ?: '(780) 489-7717'; // Fallback phone number
         echo '<div class="restricted-product-notice restricted-notice-' . esc_attr($product_id) . '" style="display:none; background-color: #f9edbe; border: 1px solid #f0c36d; padding: 15px; margin: 15px 0; border-radius: 4px;">
             <p style="margin: 0;"><strong>This item requires special ordering.</strong> Please call us at <a href="tel:' . esc_attr(preg_replace('/[^0-9]/', '', $store_phone)) . '">' . esc_html($store_phone) . '</a> or visit our store to place this order.</p>
         </div>';
@@ -1226,10 +1226,6 @@ function restriction_notice_javascript() {
                 var $noticeContainer = $('.restricted-product-notice');
                 var $addToCartButton = $('.single_add_to_cart_button');
                 
-                console.log('initRestrictedNotice called');
-                console.log('Notice found:', $noticeContainer.length);
-                console.log('Button found:', $addToCartButton.length);
-                
                 // Make sure we have the elements
                 if ($noticeContainer.length === 0 || $addToCartButton.length === 0) {
                     return;
@@ -1237,9 +1233,6 @@ function restriction_notice_javascript() {
                 
                 // Unbind previous handlers to avoid duplicates
                 $('form.variations_form').off('found_variation.restriction').on('found_variation.restriction', function(event, variation) {
-                    console.log('Variation selected:', variation);
-                    console.log('Restriction status:', variation.restrict_online_purchase);
-                    
                     if (variation.restrict_online_purchase === 'yes') {
                         $noticeContainer.slideDown();
                         $addToCartButton.prop('disabled', true).addClass('disabled');
@@ -1258,7 +1251,6 @@ function restriction_notice_javascript() {
             
             // Initialize on page load
             $(document).ready(function() {
-                console.log('Document ready - initializing restriction notice');
                 initRestrictedNotice();
             });
             
@@ -1266,7 +1258,6 @@ function restriction_notice_javascript() {
             $(document).ajaxComplete(function(event, xhr, settings) {
                 // Check if this is a quick view AJAX call
                 if ($('body').hasClass('quickview-open')) {
-                    console.log('Quick view detected - reinitializing');
                     setTimeout(initRestrictedNotice, 100);
                     setTimeout(initRestrictedNotice, 300);
                     setTimeout(initRestrictedNotice, 600);
