@@ -1084,6 +1084,7 @@ add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variatio
     
     $existing_soldout_value = get_post_meta( $variation->ID, 'sold_out', true );
     $available_override = get_post_meta( $variation->ID, 'available_override', true );
+    $restrict_online_purchase = get_post_meta( $variation->ID, '_restrict_online_purchase', true );
 
     echo '<p class="input-group date form-field form-row form-row-full">
             <label for="sold_out[' . $loop . ']">Sold Out / Unavailable Dates</label>
@@ -1107,6 +1108,19 @@ add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variatio
                 value="' . $available_override . '"
             >
                 <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+            </p>
+            
+            <p class="form-field form-row form-row-full">
+                <label for="restrict_online_purchase[' . $loop . ']">
+                    <input
+                        type="checkbox" 
+                        id="restrict_online_purchase[' . $loop . ']"
+                        name="restrict_online_purchase[' . $loop . ']"
+                        value="yes"
+                        ' . checked( $restrict_online_purchase, 'yes', false ) . '
+                    >
+                    Restrict Online Purchase (requires in-person/phone order)
+                </label>
             </p>';
 
  }, 10, 3 );
@@ -1119,9 +1133,11 @@ add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variatio
 add_action( 'woocommerce_save_product_variation', function ( $variation_id, $i ) {
     $sold_out = $_POST['sold_out'][$i];
     $available_override = $_POST['available_override'][$i];
+    $restrict_online_purchase = isset( $_POST['restrict_online_purchase'][$i] ) ? 'yes' : 'no';
         
     if ( isset( $sold_out ) ) update_post_meta( $variation_id, 'sold_out', esc_attr( $sold_out ) );
     if ( isset( $available_override ) ) update_post_meta( $variation_id, 'available_override', esc_attr( $available_override ) );
+    update_post_meta( $variation_id, '_restrict_online_purchase', esc_attr( $restrict_online_purchase ) );
     
  }, 10, 2 );
 
@@ -1132,9 +1148,86 @@ add_action( 'woocommerce_save_product_variation', function ( $variation_id, $i )
 add_filter( 'woocommerce_available_variation', function ( $variations ) {
     $variations['sold_out'] = '<div class="woocommerce_custom_field">Sold Out: <span>' . get_post_meta( $variations[ 'variation_id' ], 'sold_out', true ) . '</span></div>';
     $variations['available_override'] = '<div class="woocommerce_custom_field">Availability Override: <span>' . get_post_meta( $variations[ 'variation_id' ], 'available_override', true ) . '</span></div>';
+    $variations['restrict_online_purchase'] = get_post_meta( $variations[ 'variation_id' ], '_restrict_online_purchase', true );
 
     return $variations;
  } );
+
+// -----------------------------------------
+// 4. Prevent purchase of restricted variations
+
+add_filter('woocommerce_is_purchasable', 'App\prevent_restricted_variation_purchase', 10, 2);
+
+function prevent_restricted_variation_purchase($purchasable, $product) {
+    // Check if this is a variation
+    if ($product->is_type('variation')) {
+        $restrict_online = get_post_meta($product->get_id(), '_restrict_online_purchase', true);
+        if ($restrict_online === 'yes') {
+            return false;
+        }
+    }
+    
+    return $purchasable;
+}
+
+// -----------------------------------------
+// 5. Add restriction notice that shows when restricted variation is selected
+
+add_action('woocommerce_before_add_to_cart_button', 'App\display_restricted_variation_notice');
+
+function display_restricted_variation_notice() {
+    global $product;
+    
+    // Only for variable products
+    if (!$product->is_type('variable')) {
+        return;
+    }
+    
+    // Check if any variations are restricted
+    $variations = $product->get_available_variations();
+    $has_restricted = false;
+    
+    foreach ($variations as $variation) {
+        if (isset($variation['restrict_online_purchase']) && $variation['restrict_online_purchase'] === 'yes') {
+            $has_restricted = true;
+            break;
+        }
+    }
+    
+    // Only output the notice container if there are restricted variations
+    if ($has_restricted) {
+        $store_phone = get_field('phone_number', 'option') ?: '(780) 439-7702'; // Fallback phone number
+        echo '<div class="restricted-product-notice" style="display:none; background-color: #f9edbe; border: 1px solid #f0c36d; padding: 15px; margin: 15px 0; border-radius: 4px;">
+            <p style="margin: 0;"><strong>This item requires special ordering.</strong> Please call us at <a href="tel:' . esc_attr(preg_replace('/[^0-9]/', '', $store_phone)) . '">' . esc_html($store_phone) . '</a> or visit our store to place this order.</p>
+        </div>';
+        
+        // JavaScript to show/hide notice based on selected variation
+        ?>
+        <script type="text/javascript">
+            jQuery(document).ready(function($) {
+                var $noticeContainer = $('.restricted-product-notice');
+                var $addToCartButton = $('.single_add_to_cart_button');
+                
+                $('form.variations_form').on('found_variation', function(event, variation) {
+                    if (variation.restrict_online_purchase === 'yes') {
+                        $noticeContainer.slideDown();
+                        $addToCartButton.prop('disabled', true).addClass('disabled');
+                    } else {
+                        $noticeContainer.slideUp();
+                        $addToCartButton.prop('disabled', false).removeClass('disabled');
+                    }
+                });
+                
+                // Hide notice when variation is reset/cleared
+                $('form.variations_form').on('reset_data', function() {
+                    $noticeContainer.slideUp();
+                    $addToCartButton.prop('disabled', false).removeClass('disabled');
+                });
+            });
+        </script>
+        <?php
+    }
+}
 
 // Suppress "doing it wrong" error for plugins 
  add_filter('doing_it_wrong_trigger_error', '__return_false');
