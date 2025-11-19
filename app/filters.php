@@ -434,14 +434,22 @@ function bulk_pricing( $cart ) {
         
         if ( isset($_POST['date']) || isset($session_pickup_date))  { 
             
-            if ( isset($_POST['date'])) {
-                $pickupdate = $_POST['date'];
-            }
-            else {
+            // Always prefer session data as it's already in the correct d/m/Y format
+            // POST date needs to be converted first (handled by cart template)
+            if ( isset($session_pickup_date) && !empty($session_pickup_date)) {
                 $pickupdate = $session_pickup_date;
+            }
+            elseif ( isset($_POST['date'])) {
+                // If no session yet, convert POST date to d/m/Y format
+                $post_date_obj = DateTime::createFromFormat('d/m/Y', $_POST['date']);
+                if ($post_date_obj) {
+                    $pickupdate = $post_date_obj->format('d/m/Y');
+                } else {
+                    $pickupdate = $_POST['date']; // Fallback if format is already correct
+                }
             } 
 
-            if (in_array($pickupdate, $blackout_array)) {
+            if (isset($pickupdate) && in_array($pickupdate, $blackout_array)) {
                 $bulk_discount_enabled = false;
             }
         }
@@ -542,34 +550,43 @@ function bulk_pricing( $cart ) {
                 
                 if ( isset($_POST['date']) || isset($session_pickup_date))  { 
                     
-                    if ( isset($_POST['date'])) {
-                        $pickupdate = $_POST['date'];
-                    }
-                    else {
+                    // Always prefer session data as it's already in the correct d/m/Y format
+                    if ( isset($session_pickup_date) && !empty($session_pickup_date)) {
                         $pickupdate = $session_pickup_date;
                     }
-
-                    $date = str_replace('/', '-', $pickupdate);
-                    $pickupdate_time = date('Y-m-d', strtotime($date));
-                    $start_date = '2021-12-21'; // @TODO hook up to ACF
-                    $cutoff_date = '2021-12-31'; // @TODO hook up to ACF
-
-                    if ($pickupdate_time > $start_date && $pickupdate_time < $cutoff_date) {
-                        // Set discount percentage based on total number of eligible items in the cart
-                        if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
-                            $discount_percentage = $seasonal_discount_small;
-                        }
-                        elseif ( $total_item_quantity >= 10  ) {
-                            $discount_percentage = $seasonal_discount_large;
+                    elseif ( isset($_POST['date'])) {
+                        // If no session yet, convert POST date to d/m/Y format
+                        $post_date_obj = DateTime::createFromFormat('d/m/Y', $_POST['date']);
+                        if ($post_date_obj) {
+                            $pickupdate = $post_date_obj->format('d/m/Y');
+                        } else {
+                            $pickupdate = $_POST['date']; // Fallback if format is already correct
                         }
                     }
-                    else {
-                        // Set discount percentage based on total number of eligible items in the cart
-                        if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
-                            $discount_percentage = $regular_discount_small;
+
+                    if (isset($pickupdate)) {
+                        $date = str_replace('/', '-', $pickupdate);
+                        $pickupdate_time = date('Y-m-d', strtotime($date));
+                        $start_date = '2021-12-21'; // @TODO hook up to ACF
+                        $cutoff_date = '2021-12-31'; // @TODO hook up to ACF
+
+                        if ($pickupdate_time > $start_date && $pickupdate_time < $cutoff_date) {
+                            // Set discount percentage based on total number of eligible items in the cart
+                            if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
+                                $discount_percentage = $seasonal_discount_small;
+                            }
+                            elseif ( $total_item_quantity >= 10  ) {
+                                $discount_percentage = $seasonal_discount_large;
+                            }
                         }
-                        elseif ( $total_item_quantity >= 10  ) {
-                            $discount_percentage = $regular_discount_large;
+                        else {
+                            // Set discount percentage based on total number of eligible items in the cart
+                            if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
+                                $discount_percentage = $regular_discount_small;
+                            }
+                            elseif ( $total_item_quantity >= 10  ) {
+                                $discount_percentage = $regular_discount_large;
+                            }
                         }
                     }
                 }
