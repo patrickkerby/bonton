@@ -441,7 +441,7 @@ function bulk_pricing( $cart ) {
             }
             elseif ( isset($_POST['date'])) {
                 // If no session yet, convert POST date to d/m/Y format
-                $post_date_obj = DateTime::createFromFormat('d/m/Y', $_POST['date']);
+                $post_date_obj = \DateTime::createFromFormat('d/m/Y', $_POST['date']);
                 if ($post_date_obj) {
                     $pickupdate = $post_date_obj->format('d/m/Y');
                 } else {
@@ -556,7 +556,7 @@ function bulk_pricing( $cart ) {
                     }
                     elseif ( isset($_POST['date'])) {
                         // If no session yet, convert POST date to d/m/Y format
-                        $post_date_obj = DateTime::createFromFormat('d/m/Y', $_POST['date']);
+                        $post_date_obj = \DateTime::createFromFormat('d/m/Y', $_POST['date']);
                         if ($post_date_obj) {
                             $pickupdate = $post_date_obj->format('d/m/Y');
                         } else {
