@@ -92,7 +92,7 @@ if($session_date_object) {
 		$delivery_day = true;
 	}
 	
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-12-20" && !$icecream_conflict && !$delivery_override) {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-12-20" && $pickup_date != "2025-12-06" && !$icecream_conflict && !$delivery_override) {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -103,6 +103,9 @@ if($session_date_object) {
 	}
 	if ($pickup_date == "2025-12-20" ) {
 		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, December 20, but we'd love to see your face in the store!";
+	}
+	elseif ($pickup_date == "2025-12-06" ) {
+		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, December 6th, but we'd love to see your face in the store!";
 	}
 	else {
 		$delivery_message = "(Delivery is currently only available on Saturdays)";
