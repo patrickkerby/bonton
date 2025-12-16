@@ -345,7 +345,10 @@
     <a href="javascript:location.reload();" class="refresh-button">Refresh Now</a>
     
     <div class="refresh-note">
-      Last updated: {{ date('g:i A') }} — Auto-refreshes every 5 minutes
+      @php
+        $edmonton_time = new \DateTime('now', new \DateTimeZone('America/Edmonton'));
+      @endphp
+      Last updated: {{ $edmonton_time->format('g:i A') }} — Auto-refreshes every 5 minutes
     </div>
   </div>
 @endsection
