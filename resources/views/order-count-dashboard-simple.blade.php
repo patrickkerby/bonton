@@ -1,6 +1,6 @@
 {{--
-  Template Name: Order Count Dashboard
-  Description: Shows order counts for next 10 days with shelf order alerts
+  Template Name: Order Count Dashboard (Simple)
+  Description: Lightweight version - shows order counts for next 10 days
 --}}
 
 @extends('layouts.app')
@@ -10,52 +10,41 @@
   $shelf_threshold = 150;
   $shelf_warning_threshold = 140;
   
-  // Try to get cached dashboard data first (cache for 2 minutes)
-  $cache_key = 'order_dashboard_data_v2';
-  $next_10_days = wp_cache_get($cache_key);
+  // Cache for 2 minutes
+  $cache_key = 'order_dashboard_simple_v1';
+  $next_10_days = get_transient($cache_key);
   
   if (false === $next_10_days) {
-    // Get shelf products (same logic as packing-list.blade.php)
-    $shelf_cache_key = 'order_dashboard_shelf_products';
-    $shelf_array = wp_cache_get($shelf_cache_key);
-    
-    if (false === $shelf_array) {
-      $cooler_override_args = [
-        'status' => 'publish',
-        'cooler' => '1',
-        'return' => 'ids',
-        'limit'  => 100 // Limit to reduce load
-      ];
-
-      $shelf_override_args = [
-        'status' => 'publish',
-        'shelf' => '1',
-        'return' => 'ids',
-        'limit' => 100
-      ];
-
-      $shelf_list_slugs = array('buns-bagels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients', 'savoury-treats');
-
-      $cooler_overrides = wc_get_products( $cooler_override_args );
-      $shelf_overrides = wc_get_products( $shelf_override_args );
-
-      $shelf_args = array(
-        'status' => 'publish', // Only published to reduce load
-        'category' => $shelf_list_slugs,
-        'limit' => 500, // Reasonable limit
-        'return' => 'ids',
-        'exclude' => $cooler_overrides
-      );
-
-      $shelf_array = wc_get_products( $shelf_args );
-      $shelf_array = array_merge($shelf_array, $shelf_overrides);
-      
-      wp_cache_set($shelf_cache_key, $shelf_array, '', 600);
-    }
+    global $wpdb;
     
     // Calculate next 10 days
     $today = new \DateTime('today', new \DateTimeZone('America/Edmonton'));
     $next_10_days = array();
+    
+    // Get shelf product IDs (simplified - just the main categories)
+    $shelf_term_slugs = array('buns-bagels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts');
+    $shelf_products = array();
+    
+    foreach ($shelf_term_slugs as $slug) {
+      $term = get_term_by('slug', $slug, 'product_cat');
+      if ($term) {
+        $args = array(
+          'post_type' => 'product',
+          'posts_per_page' => 100,
+          'tax_query' => array(
+            array(
+              'taxonomy' => 'product_cat',
+              'field' => 'slug',
+              'terms' => $slug
+            )
+          ),
+          'fields' => 'ids'
+        );
+        $products = get_posts($args);
+        $shelf_products = array_merge($shelf_products, $products);
+      }
+    }
+    $shelf_products = array_unique($shelf_products);
     
     // Process each day
     for ($i = 0; $i < 10; $i++) {
@@ -63,47 +52,56 @@
       $date->modify("+{$i} days");
       $date_key = $date->format('Y-m-d');
       $date_display = $date->format('D, M j');
-      $date_formatted_dmy = $date->format('d/m/Y');
       
-      // Simplified query - just get order IDs and minimal data
-      $day_orders = wc_get_orders([
-        'limit' => 150,
-        'status' => ['processing', 'completed'],
-        'return' => 'ids', // Just get IDs first
-        'meta_query' => [
-          [
-            'key'     => 'pickup_date_sort',
-            'value'   => $date_key,
-            'compare' => '='
-          ]
-        ],
-      ]);
+      // Direct database query for speed
+      // Count orders with this pickup date
+      $order_count_query = "
+        SELECT COUNT(DISTINCT p.ID) 
+        FROM {$wpdb->posts} p
+        INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+        WHERE p.post_type = 'shop_order'
+        AND p.post_status IN ('wc-processing', 'wc-completed')
+        AND pm.meta_key = 'pickup_date_sort'
+        AND pm.meta_value = %s
+      ";
       
-      $total_orders = count($day_orders);
+      $total_orders = $wpdb->get_var($wpdb->prepare($order_count_query, $date_key));
+      $total_orders = $total_orders ? intval($total_orders) : 0;
+      
+      // For shelf orders, we need to check order items
+      // This is a simplified count - counts pickup orders only
       $shelf_orders = 0;
       
-      // Only count shelf orders if we have orders
-      if ($total_orders > 0) {
-        foreach ($day_orders as $order_id) {
+      if ($total_orders > 0 && !empty($shelf_products)) {
+        // Get order IDs for this date
+        $order_ids_query = "
+          SELECT DISTINCT p.ID 
+          FROM {$wpdb->posts} p
+          INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+          WHERE p.post_type = 'shop_order'
+          AND p.post_status IN ('wc-processing', 'wc-completed')
+          AND pm.meta_key = 'pickup_date_sort'
+          AND pm.meta_value = %s
+          LIMIT 150
+        ";
+        
+        $order_ids = $wpdb->get_col($wpdb->prepare($order_ids_query, $date_key));
+        
+        foreach ($order_ids as $order_id) {
           $order = wc_get_order($order_id);
           if (!$order) continue;
           
-          // Skip delivery orders
+          // Skip delivery
           if ($order->has_shipping_method('flat_rate') || $order->has_shipping_method('free_shipping')) {
             continue;
           }
           
-          // Check if order has shelf products
-          $has_shelf = false;
+          // Check for shelf products (simplified check)
           foreach ($order->get_items() as $item) {
-            if (in_array($item->get_product_id(), $shelf_array)) {
-              $has_shelf = true;
+            if (in_array($item->get_product_id(), $shelf_products)) {
+              $shelf_orders++;
               break;
             }
-          }
-          
-          if ($has_shelf) {
-            $shelf_orders++;
           }
         }
       }
@@ -117,15 +115,14 @@
       );
     }
     
-    // Cache the entire result for 2 minutes
-    wp_cache_set($cache_key, $next_10_days, '', 120);
+    // Cache for 2 minutes
+    set_transient($cache_key, $next_10_days, 120);
   }
   
-  // Get dates that need blackout (shelf orders >= 150)
+  // Get dates that need blackout
   $blackout_dates = array();
   foreach ($next_10_days as $day) {
     if ($day['status'] === 'exceeded' || $day['status'] === 'warning') {
-      // Convert Y-m-d to YYYY-MM-DD format for cart.js
       $blackout_dates[] = $day['date'];
     }
   }
@@ -257,13 +254,6 @@
       white-space: pre;
     }
     
-    .refresh-note {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 12px;
-      color: #999;
-    }
-    
     .refresh-button {
       display: block;
       width: 100%;
@@ -284,19 +274,34 @@
     .refresh-button:hover {
       background: #0056b3;
     }
+    
+    .refresh-note {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: #999;
+    }
+    
+    .cache-note {
+      text-align: center;
+      font-size: 11px;
+      color: #999;
+      margin-top: 5px;
+    }
   </style>
   
   <script>
     // Auto-refresh every 5 minutes
     setTimeout(function() {
       location.reload();
-    }, 300000); // 5 minutes
+    }, 300000);
   </script>
 
   <div class="order-dashboard">
     <div class="dashboard-header">
-      <h1>Order Count Dashboard</h1>
+      <h1>📦 Order Count Dashboard</h1>
       <div class="threshold">Shelf Order Limit: {{ $shelf_threshold }}</div>
+      <div class="cache-note">(Simplified version - faster loading)</div>
     </div>
     
     @foreach ($next_10_days as $day)
@@ -323,12 +328,12 @@
         <h2>⚠️ Suggested Blackout Dates</h2>
         <p style="font-size: 13px; margin-bottom: 10px;">Add these dates to cart.js vacationDays array:</p>
         <div class="blackout-dates">
-          <code>const vacationDays = [{{ implode(', ', array_map(function($date) { return "'" . $date . "'"; }, $blackout_dates)) }}];</code>
+          <code>{{ implode(', ', array_map(function($date) { return "'" . $date . "'"; }, $blackout_dates)) }}</code>
         </div>
       </div>
     @endif
     
-    <a href="javascript:location.reload();" class="refresh-button">Refresh Now</a>
+    <a href="javascript:location.reload();" class="refresh-button">🔄 Refresh Now</a>
     
     <div class="refresh-note">
       Last updated: {{ date('g:i A') }} — Auto-refreshes every 5 minutes
