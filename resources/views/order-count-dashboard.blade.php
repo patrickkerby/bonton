@@ -11,84 +11,89 @@
   $shelf_warning_threshold = 140;
   
   // Get shelf products (same logic as packing-list.blade.php)
-  // Product override arguments
-  $cooler_override_args = [
-    'status' => 'publish',
-    'cooler' => '1',
-    'return' => 'ids',
-    'limit'  => '-1'
-  ];
-
-  $shelf_override_args = [
-    'status' => 'publish',
-    'shelf' => '1',
-    'return' => 'ids',
-    'limit' => '-1'
-  ];
-
-  $shelf_list_slugs = array('buns-bagels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients', 'savoury-treats');
-
-  $cooler_overrides = wc_get_products( $cooler_override_args );
-  $shelf_overrides = wc_get_products( $shelf_override_args );
-
-  $shelf_args = array(
-    'status' => array('publish', 'draft'),
-    'category' => $shelf_list_slugs,
-    'limit' => -1,
-    'return' => 'ids',
-    'exclude' => $cooler_overrides
-  );
-
-  $shelf_array = wc_get_products( $shelf_args );
-  $shelf_array = array_merge($shelf_array, $shelf_overrides);
+  // Use caching to prevent repeated queries
+  $cache_key = 'order_dashboard_shelf_products';
+  $shelf_array = wp_cache_get($cache_key);
   
-  // Get all processing and completed orders
-  $all_orders = wc_get_orders([
-    'limit' => -1,
-    'status' => ['processing', 'completed'],
-  ]);
-  
-  // Group orders by pickup date
-  // Use pickup_date_sort meta which is stored in Y-m-d format for reliable comparison
-  $orders_by_date = array();
-  
-  foreach ($all_orders as $order) {
-    // First try pickup_date_sort (most reliable, Y-m-d format)
-    $date_formatted = $order->get_meta('pickup_date_sort', true);
+  if (false === $shelf_array) {
+    // Product override arguments
+    $cooler_override_args = [
+      'status' => 'publish',
+      'cooler' => '1',
+      'return' => 'ids',
+      'limit'  => '-1'
+    ];
+
+    $shelf_override_args = [
+      'status' => 'publish',
+      'shelf' => '1',
+      'return' => 'ids',
+      'limit' => '-1'
+    ];
+
+    $shelf_list_slugs = array('buns-bagels', 'bread', 'cookies', 'sweet-buns', 'granola-crackers-nuts', 'coffee-ice-cream', 'flours-flatbreads', 'preserves-spreads-honey', 'sauces-dressings', 'treats-and-ice-cream', 'general-grocery', 'baking-ingredients', 'savoury-treats');
+
+    $cooler_overrides = wc_get_products( $cooler_override_args );
+    $shelf_overrides = wc_get_products( $shelf_override_args );
+
+    $shelf_args = array(
+      'status' => array('publish', 'draft'),
+      'category' => $shelf_list_slugs,
+      'limit' => -1,
+      'return' => 'ids',
+      'exclude' => $cooler_overrides
+    );
+
+    $shelf_array = wc_get_products( $shelf_args );
+    $shelf_array = array_merge($shelf_array, $shelf_overrides);
     
-    // Fallback: try to parse pickup_date_formatted (DD/MM/YYYY)
-    if (empty($date_formatted)) {
-      $pickup_date_formatted = $order->get_meta('pickup_date_formatted', true);
-      if ($pickup_date_formatted && preg_match('#^(\d{2})/(\d{2})/(\d{4})$#', $pickup_date_formatted, $m)) {
-        $date_formatted = "{$m[3]}-{$m[2]}-{$m[1]}"; // Convert DD/MM/YYYY to Y-m-d
-      }
-    }
-    
-    // Last fallback: try to parse pickup_date string
-    if (empty($date_formatted)) {
-      $pickup_date = $order->get_meta('pickup_date', true);
-      if (!empty($pickup_date)) {
-        // Try strtotime as last resort
-        $timestamp = strtotime($pickup_date);
-        if ($timestamp !== false) {
-          $date_formatted = date('Y-m-d', $timestamp);
-        }
-      }
-    }
-    
-    if (empty($date_formatted)) {
-      continue;
-    }
-    
-    if (!isset($orders_by_date[$date_formatted])) {
-      $orders_by_date[$date_formatted] = array();
-    }
-    
-    $orders_by_date[$date_formatted][] = $order;
+    // Cache for 10 minutes
+    wp_cache_set($cache_key, $shelf_array, '', 600);
   }
   
-  // Get next 10 days
+  // Calculate date range - only fetch orders for the next 10 days
   $today = new \DateTime('today', new \DateTimeZone('America/Edmonton'));
+  $start_date = $today->format('Y-m-d');
+  
+  $end_date_obj = clone $today;
+  $end_date_obj->modify('+10 days');
+  $end_date = $end_date_obj->format('Y-m-d');
+  
+  // Initialize orders by date array
+  $orders_by_date = array();
+  
+  // Query orders for each day individually to reduce memory usage
+  for ($i = 0; $i < 10; $i++) {
+    $date = clone $today;
+    $date->modify("+{$i} days");
+    $date_key = $date->format('Y-m-d');
+    
+    // Convert to DD/MM/YYYY format for the meta query (how pickup_date_formatted is stored)
+    $date_formatted_dmy = $date->format('d/m/Y');
+    
+    // Query orders for this specific date only
+    $day_orders = wc_get_orders([
+      'limit' => 200, // Reasonable limit per day
+      'status' => ['processing', 'completed'],
+      'meta_query' => [
+        'relation' => 'OR',
+        [
+          'key'     => 'pickup_date_sort',
+          'value'   => $date_key,
+          'compare' => '='
+        ],
+        [
+          'key'     => 'pickup_date_formatted',
+          'value'   => $date_formatted_dmy,
+          'compare' => '='
+        ]
+      ],
+    ]);
+    
+    $orders_by_date[$date_key] = $day_orders;
+  }
+  
+  // Process orders and build next 10 days array
   $next_10_days = array();
   
   for ($i = 0; $i < 10; $i++) {
