@@ -53,14 +53,25 @@
       wp_cache_set($shelf_cache_key, $shelf_array, '', 600);
     }
     
-    // Calculate next 10 days
+    // Calculate next 10 business days (skip Sundays and Mondays - closed)
     $today = new \DateTime('today', new \DateTimeZone('America/Edmonton'));
     $next_10_days = array();
     
-    // Process each day
-    for ($i = 0; $i < 10; $i++) {
+    $days_added = 0;
+    $day_offset = 0;
+    
+    while ($days_added < 10) {
       $date = clone $today;
-      $date->modify("+{$i} days");
+      $date->modify("+{$day_offset} days");
+      $day_offset++;
+      
+      $day_of_week = (int)$date->format('w'); // 0 = Sunday, 1 = Monday
+      
+      // Skip Sundays (0) and Mondays (1)
+      if ($day_of_week === 0 || $day_of_week === 1) {
+        continue;
+      }
+      
       $date_key = $date->format('Y-m-d');
       $date_display = $date->format('D, M j');
       $date_formatted_dmy = $date->format('d/m/Y');
@@ -115,6 +126,8 @@
         'shelf' => $shelf_orders,
         'status' => $shelf_orders >= $shelf_threshold ? 'exceeded' : ($shelf_orders >= $shelf_warning_threshold ? 'warning' : 'ok')
       );
+      
+      $days_added++;
     }
     
     // Cache the entire result for 2 minutes
@@ -295,8 +308,9 @@
 
   <div class="order-dashboard">
     <div class="dashboard-header">
-      <h1>Order Count Dashboard</h1>
+      <h1>📦 Order Count Dashboard</h1>
       <div class="threshold">Shelf Order Limit: {{ $shelf_threshold }}</div>
+      <div class="cache-note" style="font-size: 11px; color: #999; margin-top: 5px;">Next 10 business days (Closed Sun/Mon) • Edmonton Time</div>
     </div>
     
     @foreach ($next_10_days as $day)

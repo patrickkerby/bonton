@@ -46,10 +46,22 @@
     }
     $shelf_products = array_unique($shelf_products);
     
-    // Process each day
-    for ($i = 0; $i < 10; $i++) {
+    // Process next business days (skip Sundays and Mondays - closed)
+    $days_added = 0;
+    $day_offset = 0;
+    
+    while ($days_added < 10) {
       $date = clone $today;
-      $date->modify("+{$i} days");
+      $date->modify("+{$day_offset} days");
+      $day_offset++;
+      
+      $day_of_week = (int)$date->format('w'); // 0 = Sunday, 1 = Monday
+      
+      // Skip Sundays (0) and Mondays (1)
+      if ($day_of_week === 0 || $day_of_week === 1) {
+        continue;
+      }
+      
       $date_key = $date->format('Y-m-d');
       $date_display = $date->format('D, M j');
       
@@ -113,6 +125,8 @@
         'shelf' => $shelf_orders,
         'status' => $shelf_orders >= $shelf_threshold ? 'exceeded' : ($shelf_orders >= $shelf_warning_threshold ? 'warning' : 'ok')
       );
+      
+      $days_added++;
     }
     
     // Cache for 2 minutes
@@ -301,7 +315,7 @@
     <div class="dashboard-header">
       <h1>📦 Order Count Dashboard</h1>
       <div class="threshold">Shelf Order Limit: {{ $shelf_threshold }}</div>
-      <div class="cache-note">(Simplified version - faster loading)</div>
+      <div class="cache-note">Next 10 business days (Closed Sun/Mon) • Edmonton Time</div>
     </div>
     
     @foreach ($next_10_days as $day)
