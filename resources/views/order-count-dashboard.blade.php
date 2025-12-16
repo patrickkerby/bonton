@@ -3,8 +3,6 @@
   Description: Shows order counts for next 10 days with shelf order alerts
 --}}
 
-@extends('layouts.app')
-
 @php
   // Shelf order threshold
   $shelf_threshold = 150;
@@ -54,8 +52,10 @@
     }
     
     // Calculate next 10 business days (skip Sundays and Mondays - closed)
+    // Stop at December 24 (closed until Jan 5)
     $today = new \DateTime('today', new \DateTimeZone('America/Edmonton'));
     $next_10_days = array();
+    $christmas_cutoff = new \DateTime('2025-12-24', new \DateTimeZone('America/Edmonton'));
     
     $days_added = 0;
     $day_offset = 0;
@@ -64,6 +64,11 @@
       $date = clone $today;
       $date->modify("+{$day_offset} days");
       $day_offset++;
+      
+      // Stop if we're past December 24, 2025
+      if ($date > $christmas_cutoff) {
+        break;
+      }
       
       $day_of_week = (int)$date->format('w'); // 0 = Sunday, 1 = Monday
       
@@ -144,8 +149,51 @@
   }
 @endphp
 
-@section('content')
+<!doctype html>
+<html <?php language_attributes(); ?>>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Order Count Dashboard</title>
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #fff;
+    }
+    
+    .back-link {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #f5f5f5;
+      border-radius: 6px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+      z-index: 100;
+    }
+    
+    .back-link:hover {
+      background: #e5e5e5;
+    }
+    
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+    }
+    
     .order-dashboard {
       max-width: 600px;
       margin: 20px auto;
@@ -305,12 +353,20 @@
       location.reload();
     }, 300000); // 5 minutes
   </script>
+</head>
+<body>
+  <a href="/lists/" class="back-link">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+    </svg>
+    Back to Lists
+  </a>
 
   <div class="order-dashboard">
     <div class="dashboard-header">
-      <h1>📦 Order Count Dashboard</h1>
+      <h1>Order Count Dashboard</h1>
       <div class="threshold">Shelf Order Limit: {{ $shelf_threshold }}</div>
-      <div class="cache-note" style="font-size: 11px; color: #999; margin-top: 5px;">Next 10 business days (Closed Sun/Mon) • Edmonton Time</div>
+      <div class="cache-note" style="font-size: 11px; color: #999; margin-top: 5px;">Next 10 business days</div>
     </div>
     
     @foreach ($next_10_days as $day)
@@ -351,5 +407,6 @@
       Last updated: {{ $edmonton_time->format('g:i A') }} — Auto-refreshes every 5 minutes
     </div>
   </div>
-@endsection
+</body>
+</html>
 
