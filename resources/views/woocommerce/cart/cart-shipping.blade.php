@@ -92,7 +92,7 @@ if($session_date_object) {
 		$delivery_day = true;
 	}
 	
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2025-12-20" && $pickup_date != "2025-12-13" && !$icecream_conflict && !$delivery_override) {
+	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2026-01-17" && !$icecream_conflict && !$delivery_override) {
 		$delivery_available = true;
 	}
 	elseif ($is_wholesale_user) {
@@ -101,11 +101,8 @@ if($session_date_object) {
 	else {
 		$delivery_available = false;
 	}
-	if ($pickup_date == "2025-12-20" ) {
-		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, December 20, but we'd love to see your face in the store!";
-	}
-	elseif ($pickup_date == "2025-12-13" ) {
-		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, December 13th, but we'd love to see your face in the store!";
+	if ($pickup_date == "2026-01-17" ) {
+		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, January 17, but we'd love to see your face in the store!";
 	}
 	else {
 		$delivery_message = "(Delivery is currently only available on Saturdays)";
@@ -126,7 +123,6 @@ if($icecream_conflict) {
 			<ul id="shipping_method" class="woocommerce-shipping-methods">
 				<?php foreach ( $available_methods as $method ) : ?>
 
-				
 				@if($delivery_available)
 					<li>
 						<?php
