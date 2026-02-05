@@ -1356,3 +1356,43 @@ add_filter('theme_file_path', function($path, $file) {
     }
     return $path;
 }, 0, 2);
+
+/**
+ * LOCAL DEV: Point uploads URLs at production so missing local uploads still render.
+ *
+ * This does NOT change where files are written on disk; it only changes the URL
+ * WordPress generates for attachments (including `srcset`).
+ *
+ * Configure via env var (recommended):
+ * - BONTON_PROD_UPLOADS_BASEURL=https://bonton.ca/app/uploads
+ */
+add_filter('upload_dir', function (array $uploads) {
+    // Only affect front-end requests (keep Media Library / uploads normal in wp-admin).
+    if (is_admin()) {
+        return $uploads;
+    }
+
+    // Run only on local/dev.
+    $envType = function_exists('wp_get_environment_type') ? wp_get_environment_type() : '';
+    $wpEnv = defined('WP_ENV') ? (string) WP_ENV : '';
+    $host = isset($_SERVER['HTTP_HOST']) ? (string) $_SERVER['HTTP_HOST'] : '';
+    $isLocal =
+        in_array($envType, ['local', 'development'], true)
+        || in_array($wpEnv, ['local', 'development'], true)
+        || (bool) preg_match('/\.(test|local|localhost)$/', $host)
+        || in_array($host, ['localhost', '127.0.0.1'], true);
+
+    if (!$isLocal) {
+        return $uploads;
+    }
+
+    $prodBase = getenv('BONTON_PROD_UPLOADS_BASEURL') ?: 'https://bonton.ca/app/uploads';
+    $prodBase = rtrim($prodBase, '/');
+
+    // Keep the same subdir structure (e.g., /2026/02) so paths match prod.
+    $subdir = isset($uploads['subdir']) ? (string) $uploads['subdir'] : '';
+    $uploads['baseurl'] = $prodBase;
+    $uploads['url'] = $prodBase . $subdir;
+
+    return $uploads;
+});
