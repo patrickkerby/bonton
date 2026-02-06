@@ -24,7 +24,7 @@
                           echo wp_get_attachment_image( $image, $size );
                       }
                     @endphp
-                  </div>    
+                  </div>      
                 @endforeach
               </div>
             </div>
