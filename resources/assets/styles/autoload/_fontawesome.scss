@@ -1,0 +1,11 @@
+// Font Awesome (Free).
+// This lives in `autoload/` so it's included in every bundle (main/home/woo).
+$fa-font-path: "~@fortawesome/fontawesome-free/webfonts";
+
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+@import "~@fortawesome/fontawesome-free/scss/regular";
+@import "~@fortawesome/fontawesome-free/scss/brands";
+
+// v4 shim to support legacy markup like: <i class="fa fa-print"></i>
+@import "~@fortawesome/fontawesome-free/scss/v4-shims";

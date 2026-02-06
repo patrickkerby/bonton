@@ -6,42 +6,51 @@
 @section('content')
   @while(have_posts()) @php the_post() @endphp
       <div class="hero-slider row full-width no-gutters">
-        <div class="col-sm-8">
+        <div class="col-sm-12">
           <div class="slider">
             <div id="carouselIndicators" class="carousel slide carousel-fade" data-ride="carousel" data-interval="6000">
               <ol class="carousel-indicators">
-                @foreach ($background_image as $item)
+                @foreach ($slide as $item)
                   <li data-target="#carouselIndicators" data-slide-to="{{ $loop->index }}" class="@if ($loop->first)active @endif"></li>
                 @endforeach
               </ol>
              <div class="carousel-inner">
-                @foreach ($background_image as $item)
-                  <div class="carousel-item @if ($loop->first)active @endif">
+                @foreach ($slide as $item)
+                  <div class="carousel-item @if ($loop->first)active @endif" data-interval="10000">
+                    <div class="carousel-content">
+                      <h2>{{ $item->title }}</h2>
+                      <p>{{ $item->content }}</p>
+                      <a href="{{ $item->link->url }}" class="button btn">{{ $item->link->title }}</a>
+                      <nav>
+                        <button class="carousel-control-prev" type="button" data-target="#carouselIndicators" data-slide="prev">
+                          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                          <span class="sr-only">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-target="#carouselIndicators" data-slide="next">
+                          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                          <span class="sr-only">Next</span>
+                        </button>
+                      </nav>
+                    </div>
                     @php
-                      $image = $item->image->ID;
-                      $size = 'large'; // (thumbnail, medium, large, full or custom size)
-                      if( $image ) {
-                          echo wp_get_attachment_image( $image, $size );
+                      $background_image = $item->image->ID;
+                      $size = 'full'; // (thumbnail, medium, large, full or custom size)
+                      if( $background_image ) {
+                        echo wp_get_attachment_image( $background_image, $size );
                       }
-                    @endphp
-                  </div>    
-                @endforeach
+                      @endphp
+                  </div>
+                  @endforeach
               </div>
             </div>
           </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="page-header">
-            <h1 class="hero-headline">{!! App::title() !!}</h1>
-          </div>
-          <h3>{!! $sub_title !!}</h3>
         </div>
       </div>
       <div class="container-fluid featured-products">
         <div class="row justify-content-center">
           <div class="col-10 col-sm-8 col-lg-6 feature-intro">
-            <h2>{{ $featured_products->heading }}</h2>
-            <p>{{ $featured_products->sub_heading }}</p>
+            <h2>{!! $featured_products->heading !!}</h2>
+            <p>{!! $featured_products->sub_heading !!}</p>
             <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=specials" class="button btn">View our products</a>
           </div>
         </div>
