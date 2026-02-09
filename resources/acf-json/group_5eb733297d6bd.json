@@ -6,6 +6,7 @@
             "key": "field_5eb79fd9c947d",
             "label": "Featured Products",
             "name": "featured_products",
+            "aria-label": "",
             "type": "group",
             "instructions": "",
             "required": 0,
@@ -21,6 +22,7 @@
                     "key": "field_5eb79ffac947e",
                     "label": "Heading",
                     "name": "heading",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 0,
@@ -40,6 +42,7 @@
                     "key": "field_5eb7a009c947f",
                     "label": "Sub heading",
                     "name": "sub_heading",
+                    "aria-label": "",
                     "type": "textarea",
                     "instructions": "",
                     "required": 0,
@@ -56,11 +59,123 @@
                     "new_lines": ""
                 },
                 {
-                    "key": "field_5eb7a020c9480",
-                    "label": "Featured Products Row 1",
-                    "name": "featured_row_1",
+                    "key": "field_698a282e57ca8",
+                    "label": "Featured Categories",
+                    "name": "featured_categories",
+                    "aria-label": "",
                     "type": "group",
-                    "instructions": "",
+                    "instructions": "Select up to 6 items per category. Use this to quickly showcase the scope of what Bon Ton has to offer. (We're not just bread!)",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "layout": "row",
+                    "sub_fields": [
+                        {
+                            "key": "field_698a28e857caa",
+                            "label": "Bakery Products",
+                            "name": "bakery_products",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "product"
+                            ],
+                            "post_status": [
+                                "publish"
+                            ],
+                            "taxonomy": [
+                                "product_cat:bakery"
+                            ],
+                            "return_format": "object",
+                            "multiple": 1,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "bidirectional": 0,
+                            "ui": 1,
+                            "bidirectional_target": []
+                        },
+                        {
+                            "key": "field_698a292757cab",
+                            "label": "Patisserie Products",
+                            "name": "patisserie_products",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "product"
+                            ],
+                            "post_status": [
+                                "publish"
+                            ],
+                            "taxonomy": [
+                                "product_cat:patisserie"
+                            ],
+                            "return_format": "object",
+                            "multiple": 1,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "bidirectional": 0,
+                            "ui": 1,
+                            "bidirectional_target": []
+                        },
+                        {
+                            "key": "field_698a296a57cac",
+                            "label": "Grocery Products",
+                            "name": "grocery_products",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "product"
+                            ],
+                            "post_status": [
+                                "publish"
+                            ],
+                            "taxonomy": [
+                                "product_cat:grocery"
+                            ],
+                            "return_format": "object",
+                            "multiple": 1,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "bidirectional": 0,
+                            "ui": 1,
+                            "bidirectional_target": []
+                        }
+                    ]
+                },
+                {
+                    "key": "field_5eb7a020c9480",
+                    "label": "Featured Products Carousels",
+                    "name": "featured_row_1",
+                    "aria-label": "",
+                    "type": "group",
+                    "instructions": "These settings manage the product carousels (sliders). Choose the products, and the product photos will be automatically populated. Use the additional fields to override and default descriptions etc.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -72,8 +187,9 @@
                     "sub_fields": [
                         {
                             "key": "field_5eb7a063c9481",
-                            "label": "Product Group 1",
+                            "label": "Carousel 1",
                             "name": "product",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "",
                             "required": 0,
@@ -83,16 +199,19 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "collapsed": "",
+                            "layout": "row",
+                            "pagination": 0,
                             "min": 0,
                             "max": 0,
-                            "layout": "table",
-                            "button_label": "",
+                            "collapsed": "",
+                            "button_label": "Add Row",
+                            "rows_per_page": 20,
                             "sub_fields": [
                                 {
                                     "key": "field_5eb7a07bc9482",
                                     "label": "Product",
                                     "name": "product",
+                                    "aria-label": "",
                                     "type": "post_object",
                                     "instructions": "",
                                     "required": 0,
@@ -109,12 +228,15 @@
                                     "allow_null": 0,
                                     "multiple": 0,
                                     "return_format": "object",
-                                    "ui": 1
+                                    "ui": 1,
+                                    "bidirectional_target": [],
+                                    "parent_repeater": "field_5eb7a063c9481"
                                 },
                                 {
                                     "key": "field_5eb7a09cc9483",
                                     "label": "Description override",
                                     "name": "description_override",
+                                    "aria-label": "",
                                     "type": "textarea",
                                     "instructions": "",
                                     "required": 0,
@@ -128,12 +250,14 @@
                                     "placeholder": "",
                                     "maxlength": "",
                                     "rows": 3,
-                                    "new_lines": ""
+                                    "new_lines": "",
+                                    "parent_repeater": "field_5eb7a063c9481"
                                 },
                                 {
                                     "key": "field_5eee71b6ec5e8",
                                     "label": "Link",
                                     "name": "link",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "",
                                     "required": 0,
@@ -147,12 +271,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5eb7a063c9481"
                                 },
                                 {
                                     "key": "field_5eee7501ec5e9",
                                     "label": "Link Text",
                                     "name": "link_text",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "",
                                     "required": 0,
@@ -166,14 +292,16 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5eb7a063c9481"
                                 }
                             ]
                         },
                         {
                             "key": "field_5eb9fcf8cf569",
-                            "label": "Product Group 2",
+                            "label": "Carousel 2",
                             "name": "product_2",
+                            "aria-label": "",
                             "type": "repeater",
                             "instructions": "",
                             "required": 0,
@@ -183,16 +311,19 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "collapsed": "",
+                            "layout": "row",
+                            "pagination": 0,
                             "min": 0,
                             "max": 0,
-                            "layout": "table",
-                            "button_label": "",
+                            "collapsed": "",
+                            "button_label": "Add Row",
+                            "rows_per_page": 20,
                             "sub_fields": [
                                 {
                                     "key": "field_5eb9fcf8cf56a",
                                     "label": "Product",
                                     "name": "product",
+                                    "aria-label": "",
                                     "type": "post_object",
                                     "instructions": "",
                                     "required": 0,
@@ -209,12 +340,15 @@
                                     "allow_null": 0,
                                     "multiple": 0,
                                     "return_format": "object",
-                                    "ui": 1
+                                    "ui": 1,
+                                    "bidirectional_target": [],
+                                    "parent_repeater": "field_5eb9fcf8cf569"
                                 },
                                 {
                                     "key": "field_5eb9fcf8cf56b",
                                     "label": "Description override",
                                     "name": "description_override",
+                                    "aria-label": "",
                                     "type": "textarea",
                                     "instructions": "",
                                     "required": 0,
@@ -228,12 +362,14 @@
                                     "placeholder": "",
                                     "maxlength": "",
                                     "rows": 3,
-                                    "new_lines": ""
+                                    "new_lines": "",
+                                    "parent_repeater": "field_5eb9fcf8cf569"
                                 },
                                 {
                                     "key": "field_5eee767a7885d",
                                     "label": "Link",
                                     "name": "link",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "",
                                     "required": 0,
@@ -247,12 +383,14 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5eb9fcf8cf569"
                                 },
                                 {
                                     "key": "field_5eee764d7885b",
                                     "label": "Link Text",
                                     "name": "link_text",
+                                    "aria-label": "",
                                     "type": "text",
                                     "instructions": "",
                                     "required": 0,
@@ -266,7 +404,8 @@
                                     "placeholder": "",
                                     "prepend": "",
                                     "append": "",
-                                    "maxlength": ""
+                                    "maxlength": "",
+                                    "parent_repeater": "field_5eb9fcf8cf569"
                                 }
                             ]
                         }
@@ -278,6 +417,7 @@
             "key": "field_5eb76ea4fac58",
             "label": "Stories Introduction",
             "name": "intro",
+            "aria-label": "",
             "type": "group",
             "instructions": "",
             "required": 0,
@@ -293,6 +433,7 @@
                     "key": "field_5eb76fdffac59",
                     "label": "Intro Image",
                     "name": "intro_image",
+                    "aria-label": "",
                     "type": "image",
                     "instructions": "",
                     "required": 0,
@@ -317,6 +458,7 @@
                     "key": "field_5eb76ffffac5a",
                     "label": "Stories Intro Content",
                     "name": "column_1",
+                    "aria-label": "",
                     "type": "wysiwyg",
                     "instructions": "",
                     "required": 0,
@@ -338,6 +480,7 @@
             "key": "field_5ecdcd75b4710",
             "label": "Story & Process",
             "name": "story_process",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "These items create home page thumbnails, sending the user to another section of the website.",
             "required": 0,
@@ -347,16 +490,19 @@
                 "class": "",
                 "id": ""
             },
-            "collapsed": "",
+            "layout": "row",
+            "pagination": 0,
             "min": 0,
             "max": 0,
-            "layout": "table",
-            "button_label": "",
+            "collapsed": "",
+            "button_label": "Add Row",
+            "rows_per_page": 20,
             "sub_fields": [
                 {
                     "key": "field_5ecdd134b4711",
                     "label": "Title",
                     "name": "title",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 0,
@@ -370,12 +516,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": ""
+                    "maxlength": "",
+                    "parent_repeater": "field_5ecdcd75b4710"
                 },
                 {
                     "key": "field_5ecdd200b4712",
                     "label": "Link",
                     "name": "link",
+                    "aria-label": "",
                     "type": "page_link",
                     "instructions": "",
                     "required": 0,
@@ -389,12 +537,14 @@
                     "taxonomy": "",
                     "allow_null": 0,
                     "allow_archives": 1,
-                    "multiple": 0
+                    "multiple": 0,
+                    "parent_repeater": "field_5ecdcd75b4710"
                 },
                 {
                     "key": "field_5ecdd218b4713",
                     "label": "Image",
                     "name": "image",
+                    "aria-label": "",
                     "type": "image",
                     "instructions": "",
                     "required": 0,
@@ -413,7 +563,8 @@
                     "max_width": "",
                     "max_height": "",
                     "max_size": "",
-                    "mime_types": ""
+                    "mime_types": "",
+                    "parent_repeater": "field_5ecdcd75b4710"
                 }
             ]
         }
@@ -432,8 +583,20 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": "",
-    "active": 1,
+    "hide_on_screen": [
+        "the_content",
+        "excerpt",
+        "discussion",
+        "comments",
+        "author",
+        "format",
+        "featured_image",
+        "categories",
+        "tags",
+        "send-trackbacks"
+    ],
+    "active": true,
     "description": "",
-    "modified": 1593585097
+    "show_in_rest": 0,
+    "modified": 1770666771
 }

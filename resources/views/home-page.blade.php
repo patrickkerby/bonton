@@ -48,10 +48,60 @@
       </div>
       <div class="container-fluid featured-products">
         <div class="row justify-content-center">
-          <div class="col-10 col-sm-8 col-lg-6 feature-intro">
+          <div class="col-10 col-sm-8 col-lg-8 feature-intro">
             <h2>{!! $featured_products->heading !!}</h2>
             <p>{!! $featured_products->sub_heading !!}</p>
-            <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=specials" class="button btn">View our products</a>
+          </div>
+        </div>
+        <div class="row justify-content-center featured-categories">
+          <ul class="nav nav-tabs" id="featuredCategoryTabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="bakery-tab" data-toggle="tab" href="#tab-bakery" role="tab" aria-controls="tab-bakery" aria-selected="true">Bakery</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="patisserie-tab" data-toggle="tab" href="#tab-patisserie" role="tab" aria-controls="tab-patisserie" aria-selected="false">Patisserie</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="grocery-tab" data-toggle="tab" href="#tab-grocery" role="tab" aria-controls="tab-grocery" aria-selected="false">Grocery</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="popular-tab" data-toggle="tab" href="#tab-popular" role="tab" aria-controls="tab-popular" aria-selected="false">Most Popular</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="newest-tab" data-toggle="tab" href="#tab-newest" role="tab" aria-controls="tab-newest" aria-selected="false">Newest</a>
+            </li>
+          </ul>
+
+          <div class="row justify-content-center tab-content" id="featuredCategoryTabContent">
+            {{-- Bakery --}}
+            <div class="col-sm-12 tab-pane fade show active" id="tab-bakery" role="tabpanel" aria-labelledby="bakery-tab">
+              @include('partials.featured-product-grid', ['products' => $featured_products->featured_categories->bakery_products ?? []])
+              <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=bakery" class="button btn">See all Bakery Products</a>
+            </div>
+
+            {{-- Patisserie --}}
+            <div class="col-sm-12 tab-pane fade" id="tab-patisserie" role="tabpanel" aria-labelledby="patisserie-tab">
+              @include('partials.featured-product-grid', ['products' => $featured_products->featured_categories->patisserie_products ?? []])
+              <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=patisserie" class="button btn">See all Pâtisserie Products</a>
+            </div>
+
+            {{-- Grocery --}}
+            <div class="col-sm-12 tab-pane fade" id="tab-grocery" role="tabpanel" aria-labelledby="grocery-tab">
+              @include('partials.featured-product-grid', ['products' => $featured_products->featured_categories->grocery_products ?? []])
+              <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=grocery" class="button btn">See all Grocery Products</a>
+            </div>
+
+            {{-- Most Popular --}}
+            <div class="col-sm-12 tab-pane fade" id="tab-popular" role="tabpanel" aria-labelledby="popular-tab">
+              @include('partials.featured-product-grid', ['products' => App\get_most_popular_products(6)])
+              <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=specials" class="button btn">See all Products</a>
+            </div>
+
+            {{-- Newest --}}
+            <div class="col-sm-12 tab-pane fade" id="tab-newest" role="tabpanel" aria-labelledby="newest-tab">
+              @include('partials.featured-product-grid', ['products' => App\get_newest_products(6)])
+              <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=specials" class="button btn">See all Products</a>
+            </div>
           </div>
         </div>
         <div class="row justify-content-center no-gutters">
@@ -81,7 +131,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="{{ $item->link }}" title="" class="product-link"><span>{!! $item->link_text !!}</span></a>
+                        <a class="product-link inside-thumb quick-view-button manual" data-product_id="{{ $item->product->ID }}" href="#"><span>Order now!</span></a>
                       </div>
                     </div> 
                   </div>                                                       
@@ -110,7 +160,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="{{ $item->link }}" title="" class="product-link"><span>{!! $item->link_text !!}</span></a>
+                        <a class="product-link inside-thumb quick-view-button manual" data-product_id="{{ $item->product->ID }}" href="#"><span>Order now!</span></a>
                       </div>
                     </div> 
                   </div>                                                       

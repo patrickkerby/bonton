@@ -43,6 +43,14 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('sage/woo.css', asset_path('styles/woo.css'), false, null);
     }
 
+    // Enqueue Quick View script on the home page template so the
+    // WooCommerce Quick View plugin can handle product popovers.
+    // The plugin registers the script globally but only enqueues it
+    // inside the WooCommerce shop loop, which doesn't run on this page.
+    if (is_page_template('views/home-page.blade.php')) {
+        wp_enqueue_script('woocommerce-quick-view');
+    }
+
     if (is_single() && comments_open() && get_option('thread_comments')) {
         wp_enqueue_script('comment-reply');
     }
