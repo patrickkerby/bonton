@@ -20,7 +20,8 @@
       }
 
       @include media-breakpoint-down(xs) {
-        height: 380px;
+        height: 290px;
+        overflow: visible;
       }
 
       img {
@@ -43,6 +44,10 @@
 
       ol.carousel-indicators {
         bottom: 2rem;
+
+        @include media-breakpoint-down(xs) {
+          display: none;
+        }
       }
 
       .carousel-inner,
@@ -51,14 +56,28 @@
         height: 100%;
       }
 
+      .carousel-inner {
+        @include media-breakpoint-down(xs) {
+          overflow: visible;
+        }
+      }
+
       nav {
         position: absolute;
         right: 2rem;
         bottom: 2rem;
         width: 2.25rem;
+
+        @include media-breakpoint-down(xs) {
+          right: 0;
+          left: -0.5rem;
+          width: calc(100% + 1rem);
+          bottom: 9rem;
+        }
       }
 
-      .carousel-control-prev-icon::before {
+      .carousel-control-prev-icon::before,
+      .carousel-control-next-icon::before {
         content: "\f104";
         font-family: "Font Awesome 7 Free", sans-serif;
         font-weight: 900;
@@ -70,12 +89,6 @@
 
       .carousel-control-next-icon::before {
         content: "\f105";
-        font-family: "Font Awesome 7 Free", sans-serif;
-        font-weight: 900;
-        font-style: normal;
-        line-height: 1;
-        font-size: 18px;
-        color: #c8c8c8;
       }
 
       .carousel-item {
@@ -130,6 +143,35 @@
         position: relative;
         width: 32%;
         min-width: 460px;
+
+        @include media-breakpoint-down(xs) {
+          width: 86%;
+          min-width: 86%;
+          height: 18rem;
+          margin: 0 auto 1rem auto;
+          padding: 2rem;
+          text-align: center;
+          justify-content: center;
+          box-shadow: 0 17px 36px -36px rgba(0, 0, 0, 0.5);
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          top: 78%;
+
+          h2 {
+            font-size: 2rem;
+            text-align: center;
+            margin: 0;
+          }
+
+          p {
+            margin: 0.7rem auto 1rem auto;
+          }
+
+          a {
+            margin: 0 auto;
+          }
+        }
       }
     }
 
