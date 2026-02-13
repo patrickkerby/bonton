@@ -44,7 +44,7 @@ foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 
 		$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
 
-		if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
+		if ( $product_id == 5317 ) {
 				$giftcertificate_in_cart = true;
 				$gc_cart_count++;
 		}	

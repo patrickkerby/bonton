@@ -41,9 +41,9 @@ export default {
           dateFormat: 'dd/mm/yy',
           beforeShowDay: function (date) {
             const string = jQuery.datepicker.formatDate('yy-mm-dd', date);
-            var day = date.getDay();              
+            var day = date.getDay();
 
-            // Disable all other Saturdays and Sundays           
+            // Disable Sundays and Mondays
             if (day == 0 || day == 1){
               return [false];
             }
@@ -58,9 +58,11 @@ export default {
         }).find('.ui-state-active').removeClass('ui-state-active');
 
         if (selectedDate) {
-          const selectedDateFormatted = dayjs(selectedDate, 'DD/MM/YYYY');
+          // Parse ISO date from PHP and set on datepicker
+          const selectedDateFormatted = dayjs(selectedDate, 'YYYY-MM-DD');
           if (selectedDateFormatted.isAfter(standardFormulaMinDateFormatted)) {
-            $('#datepicker').datepicker('setDate', selectedDate);
+            // Convert to datepicker's display format (dd/mm/yy) for setDate
+            $('#datepicker').datepicker('setDate', selectedDateFormatted.format('DD/MM/YYYY'));
           } else {
             $('#datepicker').datepicker('setDate', standardFormulaMinDateFormatted.format('DD/MM/YYYY'));
           }
@@ -68,43 +70,46 @@ export default {
       });
     }
 
-    // Get variables from cart PHP
+    // Get variables from cart PHP (all dates now in YYYY-MM-DD format)
     const pickupRestrictionTarget = document.getElementById('pickup_restriction_data');
-    const pickupRestriction = pickupRestrictionTarget ? pickupRestrictionTarget.textContent : null;
-    const pickupRestrictionFormatted = pickupRestriction ? dayjs(pickupRestriction, 'DD/MM/YYYY') : null;
+    const pickupRestriction = pickupRestrictionTarget ? pickupRestrictionTarget.textContent.trim() : null;
+    const pickupRestrictionFormatted = pickupRestriction ? dayjs(pickupRestriction, 'YYYY-MM-DD') : null;
 
     const pickupRestrictionEndTarget = document.getElementById('pickup_restriction_end_data');
-    const pickupRestrictionEnd = pickupRestrictionEndTarget ? pickupRestrictionEndTarget.textContent : null;
+    const pickupRestrictionEnd = pickupRestrictionEndTarget ? pickupRestrictionEndTarget.textContent.trim() : null;
 
     const selectedDateTarget = document.getElementById('session_pickup_date');
-    const selectedDate = selectedDateTarget ? selectedDateTarget.textContent : null;
+    const selectedDate = selectedDateTarget ? selectedDateTarget.textContent.trim() : null;
 
     const longFermentationTarget = document.getElementById('long_fermentation_in_cart');
-    const longFermentation = longFermentationTarget ? longFermentationTarget.textContent : null;
+    const longFermentation = longFermentationTarget ? longFermentationTarget.textContent.trim() : null;
 
     const twoDaysNoticeTarget = document.getElementById('two_days_notice_in_cart');
-    const twoDaysNotice = twoDaysNoticeTarget ? twoDaysNoticeTarget.textContent : null;
+    const twoDaysNotice = twoDaysNoticeTarget ? twoDaysNoticeTarget.textContent.trim() : null;
 
     const AvailableDatesTarget = document.getElementById('available_dates_in_cart');
-    const AvailableDates = AvailableDatesTarget ? AvailableDatesTarget.textContent : null;
+    const AvailableDates = AvailableDatesTarget ? AvailableDatesTarget.textContent.trim() : null;
     const availableDatesArray = AvailableDates ? JSON.parse(AvailableDates) : [];
-    const availableDatesFormatted = availableDatesArray.map(date => dayjs(date, 'YY-MM-DD').format('YYYY-MM-DD'));
+    // All dates are now in YYYY-MM-DD format from PHP, no conversion needed
+    const availableDatesFormatted = availableDatesArray;
 
     jQuery(function ($) {
       $('body').on('updated_cart_totals', function () {
-        location.reload(); // uncomment this line to refresh the page.
+        location.reload();
       });
 
       $(document).ready(function () {
         // Determine time based on long fermentation OR two days notice requirements
         const time = (longFermentation == 1 || twoDaysNotice == 1) ? 57 : 33;
 
-        // the "standard formula" is the current date + 33 hours or 57 hours if long fermentation or two days notice. This prevents anyone from purchasing tomorrow (if it's past 3pm) and adds extra time if there's sourdough or two-day-notice items in the cart.
-        const standardFormulaMinDate = dayjs().add(time, 'hour').format('DD/MM/YYYY H:mm:ss');
-        const standardFormulaMinDateFormatted = dayjs(standardFormulaMinDate, 'DD/MM/YYYY');
+        // the "standard formula" is the current date + 33 hours or 57 hours if long fermentation
+        // or two days notice. This prevents anyone from purchasing tomorrow (if it's past 3pm) and
+        // adds extra time if there's sourdough or two-day-notice items in the cart.
+        const standardFormulaMinDate = dayjs().add(time, 'hour').format('YYYY-MM-DD');
+        const standardFormulaMinDateFormatted = dayjs(standardFormulaMinDate, 'YYYY-MM-DD');
 
         let minDate = standardFormulaMinDate;
-        let maxDate = '01/01/2030';
+        let maxDate = '2030-01-01';
 
         if (pickupRestriction) {
           if (pickupRestrictionFormatted.isBefore(standardFormulaMinDateFormatted)) {
@@ -118,14 +123,16 @@ export default {
           }
         }
 
-        const minDateFormatted = dayjs(minDate, 'DD/MM/YYYY');
-        const maxDateFormatted = dayjs(maxDate, 'DD/MM/YYYY');
+        const minDateFormatted = dayjs(minDate, 'YYYY-MM-DD');
+        const maxDateFormatted = dayjs(maxDate, 'YYYY-MM-DD');
         const startDate = minDateFormatted.format('YYYY-MM-DD');
         const endDate = maxDateFormatted.format('YYYY-MM-DD');
         const daterange = getDatesBetweenDates(startDate, endDate);
 
-        const vacationDays = ['2025-12-19', '2025-12-20', '2025-12-23', '2025-12-24', '2025-12-25', '2025-12-26', '2025-12-27', '2025-12-28', '2025-12-29', '2025-12-30', '2025-12-31', '2026-01-01', '2026-01-02', '2026-01-03', '2026-01-04', '2026-01-05' ];
-        const enableDays = ['']; 
+        // Vacation/closure blackout dates — add future dates here as needed (format: YYYY-MM-DD)
+        // TODO: Move to ACF date picker for easier management
+        const vacationDays = [];
+        const enableDays = [''];
 
         const allowedDates = daterange.filter(date => !vacationDays.includes(date)).concat(enableDays, availableDatesFormatted);
 

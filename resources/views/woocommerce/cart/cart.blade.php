@@ -1,633 +1,107 @@
+{{--
+  Cart Page
+
+  This template can be overridden by copying it to yourtheme/woocommerce/cart/cart.php.
+
+  @see     https://docs.woocommerce.com/document/template-structure/
+  @package WooCommerce/Templates
+  @version 3.8.0
+--}}
+
 @php
-/**
- * Cart Page
- *
- * This template can be overridden by copying it to yourtheme/woocommerce/cart/cart.php.
- *
- * HOWEVER, on occasion WooCommerce will need to update template filees and you
- * (the theme developer) will need to copy the new files to your theme to
- * maintain compatibility. We try to do this as little as possible, but it does
- * happen. When this occurs the version of the template file will be bumped and
- * the readme will list any important changes.
- *
- * @see     https://docs.woocommerce.com/document/template-structure/
- * @package WooCommerce/Templates
- * @version 3.8.0
- */
-
-defined( 'ABSPATH' ) || exit;
-
-	$post_id = get_the_ID();	
-	do_action( 'woocommerce_before_cart' ); 
-	$long_fermentation = "";
-	$long_fermentation_in_cart = "";
-	$two_days_notice = "";
-	$two_days_notice_in_cart = "";
-	$restricted_in_cart = "";
-	$giftcertificate_only_item_in_cart = false;
-	$cart_count = 0;
-	$gc_cart_count = 0;
-	$conflict = false;
-	$post3pm = "";
-	$test = "no test";
-	$cooler_item_in_cart = false;
-
-	$dateformat = "!d/m/Y";
-	date_default_timezone_set('MST');
-	$currenthour = date('H');
-	$cutoffhour = '15:00';
-	$cutoff = date('H', strtotime($cutoffhour));	
-	$tomorrow = new DateTime('tomorrow');
-	$today = new DateTime('today');
-
-	if ($currenthour > $cutoff) {
-  	$post3pm = true;
-	}
-	elseif ($currenthour < $cutoff) {
-  	$post3pm = false;
-	}
-	else {
-		//
-	}
-
-	if ( isset($_POST['date']))  { // Save post data to session. Only use session data from here on in.
-		$pickupdate = $_POST['date'];
-
-		$pickupdate_object = DateTime::createFromFormat($dateformat, $pickupdate);
-		
-		if ($pickupdate_object) {
-			$pickup_date_formatted = $pickupdate_object->format('d/m/Y');
-			$pickup_date_calendar = $pickupdate_object->format('l, F j, Y');
-		}
-
-		WC()->session->set('pickup_date', $pickup_date_calendar);
-		WC()->session->set('pickup_date_formatted', $pickup_date_formatted);
-		WC()->session->set('pickup_date_object', $pickupdate_object);
-	}
-
-	$session_pickup_date = WC()->session->get('pickup_date');
-	$session_date_object = WC()->session->get('pickup_date_object');
-	$session_formatted = WC()->session->get('pickup_date_formatted');
-	$pickup_restriction_data = "";
-	$pickup_restriction_end_data = "";
-	$restricted_start_date = "";
-	$restricted_end_date = "";
-	
-	if ($session_pickup_date) {
-		// $session_pickup_date = DateTime::createFromFormat($dateformat, $session_pickup_date);
-		if ($session_date_object) {
-			$pickup_day_of_week = $session_date_object->format('l');
-		}
-	}
-
-	if ( !isset($session_pickup_date) || $session_pickup_date == "") {		
-		$conflict = true;
-	}
-
-	//if session date is earlier than current date, turn on the conflict
-	if ($session_date_object) {
-		 $potential_old_date = new DateTime($session_pickup_date);
-
-		 if($potential_old_date < $today) {
-			 $conflict = true;
-			 $test = "potential old date conflict";
-		 }
-	}
-
+  defined( 'ABSPATH' ) || exit;
+  do_action( 'woocommerce_before_cart' );
 @endphp
-	<div class="row justify-content-center">
-		<div class="col-md-8">
-		
-			<form class="woocommerce-cart-form" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
-				<?php do_action( 'woocommerce_before_cart_table' ); ?>
-				<table class="shop_table cart woocommerce-cart-form__contents" cellspacing="0">
-					<thead>
-						<tr>
-							<th class="product-remove">&nbsp;</th>
-							<th class="product-name"><?php esc_html_e( 'Product', 'woocommerce' ); ?></th>
-							<th class="product-price"><?php esc_html_e( 'Price', 'woocommerce' ); ?></th>
-							<th class="product-quantity"><?php esc_html_e( 'Quantity', 'woocommerce' ); ?></th>
-							<th class="product-subtotal"><?php esc_html_e( 'Subtotal', 'woocommerce' ); ?></th>
-						</tr>
-					</thead>
-					<tbody>
-						<?php do_action( 'woocommerce_before_cart_contents' ); ?>
 
-						<?php
+<div class="row justify-content-center">
+  <div class="col-md-8">
 
-						foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-							$long_fermentation = "";
-							$two_days_notice = "";
-							$giftcertificate_in_cart = false;
-							$cart_count++;
-							$days_available_array = array();
-							
-							$_product   = apply_filters( 'woocommerce_cart_item_product', $cart_item['data'], $cart_item, $cart_item_key );
-							$product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
-							
-							$delivery_exclusion = get_field('delivery_exclusion', $product_id);
-							
-							if ( $_product && $_product->exists() && $cart_item['quantity'] > 0 && apply_filters( 'woocommerce_cart_item_visible', true, $cart_item, $cart_item_key ) ) {
-								$product_permalink = apply_filters( 'woocommerce_cart_item_permalink', $_product->is_visible() ? $_product->get_permalink( $cart_item ) : '', $cart_item, $cart_item_key );
-							?>
-							<?php 
-								
-								// Check availability
-								$availability = get_field('availability', $product_id );
+    <form class="woocommerce-cart-form" action="{{ esc_url( wc_get_cart_url() ) }}" method="post">
+      @php do_action( 'woocommerce_before_cart_table' ) @endphp
 
-								usort($availability, function($a, $b) {
-									return strcmp($a->term_id, $b->term_id);
-								});
+      <table class="shop_table cart woocommerce-cart-form__contents" cellspacing="0">
+        <thead>
+          <tr>
+            <th class="product-remove">&nbsp;</th>
+            <th class="product-name">{{ __( 'Product', 'woocommerce' ) }}</th>
+            <th class="product-price">{{ __( 'Price', 'woocommerce' ) }}</th>
+            <th class="product-quantity">{{ __( 'Quantity', 'woocommerce' ) }}</th>
+            <th class="product-subtotal">{{ __( 'Subtotal', 'woocommerce' ) }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          @php do_action( 'woocommerce_before_cart_contents' ) @endphp
 
-								$days_available_string = join(', ', wp_list_pluck($availability, 'name'));
+          @foreach ($cart_items_data as $item)
+            @include('woocommerce.cart.partials.cart-item-row', ['item' => $item])
+          @endforeach
 
-								if (is_array($availability) || is_object($availability)) {
+          @php do_action( 'woocommerce_cart_contents' ) @endphp
 
-									foreach ($availability as $term) {
-										$days = $term->name;
-										$days_available_array[] = $days;
-									}
-								}
-								
-								//Pickup Restriction!!
-								if (!wc_pb_is_bundled_cart_item($cart_item)) {
-									$pickup_restriction_data = get_field('restricted_pickup', $product_id);
-									$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
-								
-									if($pickup_restriction_data) {
-										$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
-										$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
-										$restricted_start_date_js = $restricted_start_date->format('d/m/Y');
-										$restricted_end_date_js = $restricted_end_date->format('d/m/Y');
-										$restriction_msg = '<span class="restricted_notice">Only available '. $restricted_start_date->format('D, M j') . ' to ' . $restricted_end_date->format('D, M j') . '</span>';
-									}
-								}								
+          <tr>
+            <td colspan="6" class="actions">
 
-								//Is the product available on the day selected? 
-								if(isset($session_pickup_date) && !in_array($pickup_day_of_week, $days_available_array)){
-									$availability_status = "not-available";
-									$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
-								}								
-								else {
-									$availability_msg = "";
-									$availability_status = "available";
-								}
+              @unless($is_wholesale_user)
+                @if ( wc_coupons_enabled() )
+                  <div class="coupon">
+                    <label for="coupon_code">{{ __( 'Coupon:', 'woocommerce' ) }}</label>
+                    <input type="text" name="coupon_code" class="input-text" id="coupon_code" value="" placeholder="{{ __( 'Coupon code', 'woocommerce' ) }}" />
+                    <button type="submit" class="button" name="apply_coupon" value="{{ __( 'Apply coupon', 'woocommerce' ) }}">{{ __( 'Apply coupon', 'woocommerce' ) }}</button>
+                    @php do_action( 'woocommerce_cart_coupon' ) @endphp
+                  </div>
+                @endif
+              @endunless
 
-								//Check if requires long fermentation lead time
-								if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
-									$long_fermentation = "yes";
-									$long_fermentation_in_cart = True;
-								}
+              <button type="submit" class="button" name="update_cart" value="{{ __( 'Update cart', 'woocommerce' ) }}">{{ __( 'Update cart', 'woocommerce' ) }}</button>
 
-								//Check if product requires two days notice (ACF field)
-								if ( get_field('requires_two_days_notice', $product_id) ){
-									$two_days_notice = "yes";
-									$two_days_notice_in_cart = True;
-								}
+              @php do_action( 'woocommerce_cart_actions' ) @endphp
+              @php wp_nonce_field( 'woocommerce-cart', 'woocommerce-cart-nonce' ) @endphp
+            </td>
+          </tr>
 
-								//Check if product is gift certificate or bread club
-								if ( $product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
-									$giftcertificate_in_cart = true;
-									$gc_cart_count++; 
-								}	
+          @php do_action( 'woocommerce_after_cart_contents' ) @endphp
+        </tbody>
+      </table>
 
-							// SOLD OUT! -- Does the variation have a soldout override?
-								$variation_id = $cart_item['variation_id'];
-								$sold_out_dates = array();
-								$sold_out = get_post_meta( $variation_id, 'sold_out', true );							
-								$sold_out = explode(', ', $sold_out);
-								$availability_override = get_post_meta( $variation_id, 'available_override', true );							
-								$availability_override = explode(', ', $availability_override);
-								$sold_out_conflict = "";
-								$available_dates = array();
-								$available_dates_shortened = array();
-								$all_sold_out_dates = array();
-								$all_available_dates = array();
-								
-								$sold_out = array_diff($sold_out, $availability_override);
-								
-								$soldOutDateObjects = array_map(function($dateStr) {
-									return DateTime::createFromFormat('Y-m-d', $dateStr);
-								}, $sold_out);
-								
-								foreach($soldOutDateObjects as $sold_out_day) {
-									// If the sold out date is in the future, add it to the array
-									if ($sold_out_day && $sold_out_day->format('y-m-d') > $today->format('y-m-d')) {
-										// Create an array of dates formatted for display in cart page
-										$sold_out_dates[] = $sold_out_day->format('M j');
-										
-										// Create an array of dates formatted for comparison
-										$all_sold_out_dates[] = $sold_out_day->format('y-m-d');
-										
-										// If the session date is the same as the sold out date, set the conflict flag
-										if ($session_date_object && $session_date_object->format('y-m-d') == $sold_out_day->format('y-m-d')) {
-											$conflict = true;
-											$sold_out_conflict = "sold_out_conflict";
-											$availability_status = "not-available";
-											$availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
-										}
-									}
-								}
+      @php do_action( 'woocommerce_after_cart_table' ) @endphp
+    </form>
 
-								if ($sold_out_dates) {	
-									sort($sold_out_dates);
-									$sold_out_dates_msg = implode(", ", $sold_out_dates);
-									$sold_out_msg = '<span class="special-availability sold-out ' . $sold_out_conflict . '"><strong>Sold out: </strong> ' . $sold_out_dates_msg . '</span><br>';	
-								}
-								else {
-									$sold_out_msg = "";
-								}
+    @php do_action( 'woocommerce_before_cart_collaterals' ) @endphp
 
-								// Use availability override to override the day of week availability check:
+    <div class="cart-collaterals @if($conflict) conflict @endif col-sm-12 @if($giftcertificate_only_item_in_cart) giftcertificate @endif">
+      @php
+        /**
+         * Cart collaterals hook.
+         *
+         * @hooked woocommerce_cross_sell_display
+         * @hooked woocommerce_cart_totals - 10
+         */
+        do_action( 'woocommerce_cart_collaterals' );
+      @endphp
+    </div>
 
-								$availableDateObjects = array_map(function($dateStr) {
-									return DateTime::createFromFormat('y-m-d', $dateStr);
-								}, $availability_override);
-								
-								foreach ($availableDateObjects as $available_day) {
-									if ($available_day) {
-										$available_dates_shortened[] = $available_day->format('M j');
-										$available_dates[] = $available_day->format('l, F j, Y');
-										
-										// Create an array of dates formatted for comparison
-										$all_available_dates[] = $available_day->format('y-m-d');
-									}
-								}
-								
-								if(isset($session_pickup_date) && in_array($session_pickup_date, $available_dates)){
-									$availability_msg = "";
-									$availability_status = "available";
-									$conflict = false;
-								}
-								
-								if($available_dates_shortened){	
-									// sort($available_dates_shortened);
-									$available_dates_shortened = implode(', ', $available_dates_shortened);							
-									$special_availability_msg = '<span class="special-availability available"><strong>Special Availability: </strong> ' . $available_dates_shortened . '</span><br>';
-								}
-								else {
-									$special_availability_msg = "";
-								}								
+    @php do_action( 'woocommerce_after_cart' ) @endphp
 
-							?>
-							<tr class="<?php echo $availability_status; ?> title woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
-								<td class="product-remove">
-									<?php
-										echo apply_filters( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-											'woocommerce_cart_item_remove_link',
-											sprintf(
-												'<a href="%s" class="remove" aria-label="%s" data-product_id="%s" data-product_sku="%s">&times;</a>',
-												esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
-												esc_html__( 'Remove this item', 'woocommerce' ),
-												esc_attr( $product_id ),
-												esc_attr( $_product->get_sku() )
-											),
-											$cart_item_key
-										);
-									?>
-								</td>	
-								<td class="product-name" colspan="4" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
-									@php
-										if ( ! $product_permalink ) {
-											echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;' );
-										} else {
-											echo wp_kses_post( apply_filters( 'woocommerce_cart_item_name', sprintf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $_product->get_name() ), $cart_item, $cart_item_key ) );
-										}
+  </div>
 
-										do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key );																										
-									@endphp									
-								</td>
-							</tr>
-							
-							<tr class="<?php echo $availability_status; ?> woocommerce-cart-form__cart-item <?php echo esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ); ?>">
-								<td></td>
-								<td class="product-meta" data-title="<?php esc_attr_e( 'Product', 'woocommerce' ); ?>">
-									<?php
-									// Meta data.
-									echo wc_get_formatted_cart_item_data( $cart_item ); // PHPCS: XSS ok.
-									
-									// Backorder notification.
-									if ( $_product->backorders_require_notification() && $_product->is_on_backorder( $cart_item['quantity'] ) ) {
-										echo wp_kses_post( apply_filters( 'woocommerce_cart_item_backorder_notification', '<p class="backorder_notification">' . esc_html__( 'Available on backorder', 'woocommerce' ) . '</p>', $product_id ) );
-									}
-									?>
-									<?php
-									if (!wc_pb_is_bundled_cart_item($cart_item)) {
+  @unless($giftcertificate_only_item_in_cart)
+    @include('woocommerce.cart.partials.date-picker-sidebar')
+  @endunless
+</div>
 
-										if (in_array('Everyday', $days_available_array)) {
-											echo '<span class="availability"><strong>Availability: </strong> All week!</span>';
-										}
-										else {
-												echo '<span class="availability"><strong>Availability: </strong>' . $days_available_string . '</span>';
-										}
-									}
-									?>
-									@if($long_fermentation === 'yes')
-										<span class="availability"><strong>*Note:</strong> Not available for next-day pickup</span>										
-									@endif
+@include('woocommerce.cart.partials.modal-delivery')
+@include('woocommerce.cart.partials.modal-bags')
 
-									@if($two_days_notice === 'yes')
-										<span class="availability"><strong>*Note:</strong> This product requires two days notice</span>										
-									@endif
+{{-- Validation messages --}}
+@if ($conflict && $session_pickup_date)
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <div class="alert-danger">
+      <strong>Whoops! </strong> It looks like product(s) you have selected aren't available on your chosen pickup date. Please remove the product(s) or select a different pickup date.
+    </div>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+@endif
 
-									@if($special_availability_msg)
-										{!! $special_availability_msg !!}
-									@endif
-									
-									{!! $sold_out_msg !!}
-
-									@if (!wc_pb_is_bundled_cart_item($cart_item))
-										@if($pickup_restriction_data)
-										{!! $restriction_msg !!}
-										@endif
-									@endif
-
-									@if($delivery_exclusion)
-										<span class="availability"><br><strong>**</strong> Not available for delivery</span>
-									@endif
-																		
-									</td>
-
-									<td class="product-price" data-title="<?php esc_attr_e( 'Price', 'woocommerce' ); ?>">
-										<?php
-											echo apply_filters( 'woocommerce_cart_item_price', WC()->cart->get_product_price( $_product ), $cart_item, $cart_item_key ); // PHPCS: XSS ok.
-										?>
-									</td>
-
-									<td class="product-quantity" data-title="<?php esc_attr_e( 'Quantity', 'woocommerce' ); ?>">
-									<?php
-									if ( $_product->is_sold_individually() ) {
-										$product_quantity = sprintf( '1 <input type="hidden" name="cart[%s][qty]" value="1" />', $cart_item_key );
-									} else {
-										$product_quantity = woocommerce_quantity_input(
-											array(
-												'input_name'   => "cart[{$cart_item_key}][qty]",
-												'input_value'  => $cart_item['quantity'],
-												'max_value'    => $_product->get_max_purchase_quantity(),
-												'min_value'    => '0',
-												'product_name' => $_product->get_name(),
-											),
-											$_product,
-											false
-										);
-									}
-
-									echo apply_filters( 'woocommerce_cart_item_quantity', $product_quantity, $cart_item_key, $cart_item ); // PHPCS: XSS ok.
-									?>
-									</td>
-
-									<td class="product-subtotal" data-title="<?php esc_attr_e( 'Subtotal', 'woocommerce' ); ?>">
-										<?php
-											echo apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ); // PHPCS: XSS ok.
-										?>
-									</td>
-								</tr>
-								
-								@if($availability_msg || $sold_out_conflict == "sold_out_conflict")
-									<tr class="not-available">
-										<td></td>
-										<td colspan="5">{!! $availability_msg !!}</td>
-									</tr>									
-								@endif	
-				
-								@php									
-								if ($pickup_restriction_data) {
-									$pickup_restriction_check = true;
-									$restricted_in_cart = true;									
-								}
-								
-								if ($pickup_restriction_end_data) {
-									$pickup_restriction_end_check = true;
-								}
-								else {
-									$pickup_restriction_end_check = false;
-								}
-
-								// Prevent cart from proceeding with old session data selected. Force a new date selection according to restrictions
-								// Except if the previously chosen date is within the restricted range, then leave it as is.								
-								if ($pickup_restriction_data) {
-									if ($session_date_object < $restricted_start_date || $session_date_object > $restricted_end_date){
-										$conflict = true;
-									}	
-									if(isset($session_pickup_date) && in_array($session_pickup_date, $available_dates)){
-										$conflict = false;
-									}
-								}
-
-								// Check to see if session date is from an old session. Is the session date older than 33 hrs from now?
-								if ($post3pm == true && $session_date_object <= $tomorrow || $session_date_object == $today) {
-									$session_pickup_date = null;	
-									$conflict = true;	
-								}
-								else {
-									//
-								}
-								// This check MUST occur in the loop. Otherwise, it won't catch
-								if ($availability_msg == TRUE) {
-									$conflict = true;
-								}
-							}
-						}
-						
-						// Conflict check for number of items in the cart. this is needed incase someone puts multiple GC products into the cart.								
-						$cart_count = $cart_count - $gc_cart_count;
-
-						if ( $giftcertificate_in_cart && $cart_count < 1) {
-							$giftcertificate_only_item_in_cart = true;
-							$conflict = false;
-						}
-
-						if ($availability_msg == TRUE) {
-							$conflict = true;
-						}
-
-						//If date has been chosen, change language for update button
-						if (isset($session_pickup_date) ) {
-							$datetime_button_copy = 'Update';
-						}
-						else {
-							$datetime_button_copy = 'Select date to continue';
-						}
-
-					@endphp
-
-						<?php do_action( 'woocommerce_cart_contents' ); ?>
-
-						<tr>
-							<td colspan="6" class="actions">
-
-								@unless($is_wholesale_user)
-								<?php if ( wc_coupons_enabled() ) { ?>
-									<div class="coupon">
-										<label for="coupon_code"><?php esc_html_e( 'Coupon:', 'woocommerce' ); ?></label> <input type="text" name="coupon_code" class="input-text" id="coupon_code" value="" placeholder="<?php esc_attr_e( 'Coupon code', 'woocommerce' ); ?>" /> <button type="submit" class="button" name="apply_coupon" value="<?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?>"><?php esc_attr_e( 'Apply coupon', 'woocommerce' ); ?></button>
-										<?php do_action( 'woocommerce_cart_coupon' ); ?>
-									</div>
-								<?php } ?>
-								@endunless
-
-								<button type="submit" class="button" name="update_cart" value="<?php esc_attr_e( 'Update cart', 'woocommerce' ); ?>"><?php esc_html_e( 'Update cart', 'woocommerce' ); ?></button>
-
-								<?php do_action( 'woocommerce_cart_actions' ); ?>
-
-								<?php wp_nonce_field( 'woocommerce-cart', 'woocommerce-cart-nonce' ); ?>
-							</td>
-						</tr>
-
-						<?php do_action( 'woocommerce_after_cart_contents' ); ?>
-					</tbody>
-				</table>
-				<?php do_action( 'woocommerce_after_cart_table' ); ?>
-			</form>
-			<?php do_action( 'woocommerce_before_cart_collaterals' ); ?>
-
-				<div class="cart-collaterals @if($conflict === true) conflict @endif col-sm-12 @if($giftcertificate_only_item_in_cart == true) giftcertificate @endif">
-					<?php
-						/**
-						* Cart collaterals hook.
-						*
-						* @hooked woocommerce_cross_sell_display
-						* @hooked woocommerce_cart_totals - 10
-						*/
-						do_action( 'woocommerce_cart_collaterals' );
-					?>
-				</div>
-		<?php do_action( 'woocommerce_after_cart' ); ?>
-		
-		</div>
-		@unless($giftcertificate_only_item_in_cart == true)
-
-			<div class='col-md-4 order-first'>
-				<form method="post" class="acf-form">
-					<div class="">
-						<div class="acf-field acf-field-date-picker">
-							<div class="acf-label">
-								<label for="date">Confirm your pickup date:</label>
-							</div>
-							<div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
-								<div class="datepicker" id="datepicker">
-									{{-- <input type='text' name="date" id="datepicker" value="{{ $session_pickup_date }}" autocomplete="off" /> --}}
-									<input type='hidden' name="date" id="dateInput" value="{{ $session_formatted }}" />
-								</div>
-								
-								<span class="input-group-addon">
-										<span class="glyphicon glyphicon-calendar"></span>
-								</span>
-							</div>
-						</div>
-						@if ( $long_fermentation_in_cart == True)
-							<div class="lf_notice"> 
-								<strong>Why can't I choose tomorrow?</strong> <br>Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
-							</div><br>
-						@endif
-						@if ( $two_days_notice_in_cart == True)
-							<div class="lf_notice"> 
-								<strong>Why can't I choose tomorrow?</strong> <br>One or more products in your cart require at least two days notice for preparation.
-							</div><br>
-						@endif
-						@if ( $restricted_in_cart == True)
-							<div class="lf_notice"> 
-								<strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
-							</div>
-						@endif		
-
-						<div class="acf-form-submit">
-							<input type="submit" class="acf-button button button-primary button-large" value="{{ $datetime_button_copy }}">
-							<span class="acf-spinner"></span>
-						</div>
-
-					@unless($is_wholesale_user)
-						<div class="delivery-notice">
-							<h5>Delivery is now available!</h5>
-							<a href="" data-toggle="modal" data-target="#delivery" >See more details here.</a>
-						</div>
-						@endunless
-
-						<div class="delivery-notice">
-							<h5>What's up with the bag fees?</h5>
-							<a href="" data-toggle="modal" data-target="#bags">More info here.</a>
-						</div>
-
-					</div>
-				</form>					
-			</div>
-		@endunless
-	</div>
-	<div class="modal fade" id="delivery" tabindex="-1" role="dialog" aria-labelledby="bontonDelivery" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h2>Delivery Details</h2>
-
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p>We offer order delivery to Edmonton with Deeleeo on Saturdays only! The delivery window is 10am - 2pm.</p>						
-					<p>At this time, we are not able to deliver to surrounding areas.</p>
-					<p>Once the Deeleeo team leaves the bakery with your order, they'll keep you updated by text to track your delivery.</p>
-					
-					<strong>Directly to your door (So, please be home!)</strong>
-					<p>If you choose delivery, please ensure someone is home during the delivery window. If no one is home to receive the order, the Deeleeo driver will leave the product on your step.</p>
-					<p>Many of our products will freeze or spoil quickly in weather conditions that are too hot or too cold. It is the customer's responsibility to be available to receive their order during the delivery window. Bon Ton will not replace products or refund orders in cases where products are left on customers' steps.</p>
-				
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="modal fade" id="bags" tabindex="-1" role="dialog" aria-labelledby="bontonDelivery" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h2>Single Use Bag By-law</h2>
-
-					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-						<span aria-hidden="true">&times;</span>
-					</button>
-				</div>
-				<div class="modal-body">
-					<p>On July 1, 2023, the City of Edmonton is implementing the Single-use Item Reduction Bylaw (20117). As a result, Bon Ton Bakery & Patisserie is making the following changes for all online orders to comply with this bylaw. When placing an order for pickup, you will be required to choose from one of three options related to shopping bags:</p>
-					<ol>
-						<li>Paper shopping bag fixed charge of $0.50 – all items in your cart will be delivered to your vehicle in paper shopping bags.</li>
-						<li>Bon Ton reusable shopping bag at $2.50 each – you can purchase as many reusable bags as you would like. We will bring your items out to your vehicle in the reusable shopping bags. If you have additional items that do not fit, we will bring those out to your vehicle without being packed in a shopping bag and you can pack them in your own reusable bag or other container.</li>
-						<li>No bags required (no extra charges) – all items will be delivered to your vehicle without being packed in a shopping bag. We will place the items in your vehicle and you will be able to pack them in your own reusable bag or other container.</li>
-					</ol>
-					<p>If you choose delivery, rather than pickup, when you place your order, we will automatically add a $0.50 paper shopping bag charge to your order to ensure that your items arrive at your destination in good condition.</p>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	{{-- Validation messages --}}
-	@if ($conflict && isset($session_pickup_date))
-	<div class="alert alert-danger alert-dismissible fade show" role="alert">
-		<div class="alert-danger">
-			<strong>Whoops! </strong> It looks like product(s) you have selected aren't available on your chosen pickup date. Please remove the product(s) or select a different pickup date.			
-		</div>
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-	@endif
-
-	{{-- The following are solely for passing variables through to js --}}
-	@php
-		if($all_sold_out_dates) {
-			sort($all_sold_out_dates);
-		}
-	@endphp
-	<div id="pickup-details" style="display: none;">
-		<div id="pickup_restriction_data">@if($restricted_start_date)@php echo htmlspecialchars($restricted_start_date_js); @endphp@endif</div>			
-		<div id="pickup_restriction_end_data">@if($restricted_end_date)@php echo htmlspecialchars($restricted_end_date_js); @endphp@endif</div>		
-		<div id="session_pickup_date">@if($session_date_object)@php echo htmlspecialchars($session_date_object->format('d/m/Y')); @endphp@endif</div>
-		<div id="session_pickup_date_object">@php var_dump($session_pickup_date); @endphp</div>
-		<div id="long_fermentation_in_cart">@php echo htmlspecialchars($long_fermentation_in_cart); @endphp</div>
-		<div id="two_days_notice_in_cart">@php echo htmlspecialchars($two_days_notice_in_cart); @endphp</div>
-		@if($all_sold_out_dates)
-			<div id="sold_out_dates_in_cart">@php echo json_encode($all_sold_out_dates); @endphp</div>
-		@endif
-		@if($all_available_dates)
-			<div id="available_dates_in_cart">@php echo json_encode($all_available_dates); @endphp</div>
-		@endif
-	</div>
+@include('woocommerce.cart.partials.js-pickup-data')
