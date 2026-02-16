@@ -3,55 +3,61 @@
     "title": "Carousel Header Options",
     "fields": [
         {
-            "key": "field_5ecebf985b4bb",
-            "label": "Sub Title",
-            "name": "sub_title",
-            "type": "wysiwyg",
-            "instructions": "This content displays below the page title, over top of the image in the header. It's best to keep this very short.",
-            "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_5ecebf985b4a8",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ]
-            ],
-            "wrapper": {
-                "width": "75",
-                "class": "",
-                "id": ""
-            },
-            "default_value": "",
-            "tabs": "all",
-            "toolbar": "basic",
-            "media_upload": 0,
-            "delay": 0
-        },
-        {
-            "key": "field_5ecebf985b4cc",
-            "label": "Background Image",
-            "name": "background_image",
+            "key": "field_6984c08b76f00",
+            "label": "Slide",
+            "name": "slide",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
             "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "",
                 "class": "",
                 "id": ""
             },
-            "collapsed": "",
-            "min": 0,
-            "max": 5,
             "layout": "row",
-            "button_label": "Add Image",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Add Row",
+            "rows_per_page": 20,
             "sub_fields": [
                 {
-                    "key": "field_5ecec0453d560",
-                    "label": "image",
+                    "key": "field_5ecebf985b4bb",
+                    "label": "Title",
+                    "name": "title",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "This content displays below the page title, over top of the image in the header. It's best to keep this very short.",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_5ecebf985b4cc",
+                                "operator": "!=empty"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "75",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_6984c08b76f00"
+                },
+                {
+                    "key": "field_6984c0b976f01",
+                    "label": "Image",
                     "name": "image",
+                    "aria-label": "",
                     "type": "image",
                     "instructions": "",
                     "required": 0,
@@ -62,7 +68,6 @@
                         "id": ""
                     },
                     "return_format": "array",
-                    "preview_size": "medium",
                     "library": "all",
                     "min_width": "",
                     "min_height": "",
@@ -70,37 +75,72 @@
                     "max_width": "",
                     "max_height": "",
                     "max_size": "",
-                    "mime_types": ""
+                    "mime_types": "",
+                    "allow_in_bindings": 0,
+                    "preview_size": "medium",
+                    "parent_repeater": "field_6984c08b76f00"
+                },
+                {
+                    "key": "field_6984c0e476f02",
+                    "label": "Content",
+                    "name": "content",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "rows": 3,
+                    "placeholder": "",
+                    "new_lines": "",
+                    "parent_repeater": "field_6984c08b76f00"
+                },
+                {
+                    "key": "field_6984c0fb76f03",
+                    "label": "Link",
+                    "name": "link",
+                    "aria-label": "",
+                    "type": "link",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_6984c08b76f00"
                 }
             ]
         },
         {
-            "key": "field_5ecebf985b4db",
-            "label": "Dark Overlay",
-            "name": "overlay",
-            "type": "range",
-            "instructions": "Depending on the photo, the dark overlay may need to be adjusted. 90% is always a safe bet, but this will give you finer control.",
+            "key": "field_5fb470b7357df",
+            "label": "Transform into Landing Page?",
+            "name": "landing_page",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "",
             "required": 0,
-            "conditional_logic": [
-                [
-                    {
-                        "field": "field_5ecebf985b4a8",
-                        "operator": "==",
-                        "value": "1"
-                    }
-                ]
-            ],
+            "conditional_logic": 0,
             "wrapper": {
-                "width": "50",
+                "width": "",
                 "class": "",
                 "id": ""
             },
-            "default_value": 90,
-            "min": "",
-            "max": 99,
-            "step": 1,
-            "prepend": "",
-            "append": "%"
+            "message": "",
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "",
+            "ui_off_text": ""
         }
     ],
     "location": [
@@ -109,6 +149,13 @@
                 "param": "page_template",
                 "operator": "==",
                 "value": "views\/home-page.blade.php"
+            }
+        ],
+        [
+            {
+                "param": "post",
+                "operator": "==",
+                "value": "6076"
             }
         ]
     ],
@@ -121,7 +168,8 @@
         "format",
         "featured_image"
     ],
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1590608021
+    "show_in_rest": 0,
+    "modified": 1770307934
 }

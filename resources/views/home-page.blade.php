@@ -6,45 +6,92 @@
 @section('content')
   @while(have_posts()) @php the_post() @endphp
       <div class="hero-slider row full-width no-gutters">
-        <div class="col-sm-8">
+        <div class="col-sm-12">
           <div class="slider">
             <div id="carouselIndicators" class="carousel slide carousel-fade" data-ride="carousel" data-interval="6000">
               <ol class="carousel-indicators">
-                @foreach ($background_image as $item)
+                @foreach ($slide as $item)
                   <li data-target="#carouselIndicators" data-slide-to="{{ $loop->index }}" class="@if ($loop->first)active @endif"></li>
                 @endforeach
               </ol>
              <div class="carousel-inner">
-                @foreach ($background_image as $item)
-                  <div class="carousel-item @if ($loop->first)active @endif">
+                @foreach ($slide as $item)
+                  <div class="carousel-item @if ($loop->first)active @endif" data-interval="10000">
+                    @if (!empty($item->title) || !empty($item->content) || !empty($item->link))
+                      <div class="carousel-content">
+                        @if (!empty($item->title))
+                          <h2>{{ $item->title }}</h2>
+                        @endif
+                        @if (!empty($item->content))
+                          <p>{{ $item->content }}</p>
+                        @endif
+                        @if (!empty($item->link->url))
+                          <a href="{{ $item->link->url }}" class="button btn">{{ $item->link->title }}</a>
+                        @endif
+                        <nav>
+                          <button class="carousel-control-prev" type="button" data-target="#carouselIndicators" data-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Previous</span>
+                          </button>
+                          <button class="carousel-control-next" type="button" data-target="#carouselIndicators" data-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="sr-only">Next</span>
+                          </button>
+                        </nav>
+                      </div>
+                    @endif
                     @php
-                      $image = $item->image->ID;
-                      $size = 'large'; // (thumbnail, medium, large, full or custom size)
-                      if( $image ) {
-                          echo wp_get_attachment_image( $image, $size );
+                      $background_image = $item->image->ID;
+                      $size = 'full';
+                      if( $background_image ) {
+                        echo wp_get_attachment_image( $background_image, $size );
                       }
                     @endphp
-                  </div>      
+                  </div>
                 @endforeach
               </div>
             </div>
           </div>
         </div>
-        <div class="col-sm-4">
-          <div class="page-header">
-            <h1 class="hero-headline">{!! App::title() !!}</h1>
-          </div>
-          <h3>{!! $sub_title !!}</h3>
-        </div>
       </div>
       <div class="container-fluid featured-products">
         <div class="row justify-content-center">
-          <div class="col-10 col-sm-8 col-lg-6 feature-intro">
-            <h2>{{ $featured_products->heading }}</h2>
-            <p>{{ $featured_products->sub_heading }}</p>
-            <a href="/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=specials" class="button btn">View our products</a>
+          <div class="col-10 col-sm-8 col-lg-8 feature-intro">
+            <h2>{!! $featured_products->heading !!}</h2>
+            <p>{!! $featured_products->sub_heading !!}</p>
           </div>
         </div>
+        @php
+          // Build tab data — only tabs with products will render.
+          $category_tabs = collect([
+            ['id' => 'bakery',     'label' => 'Bakery',       'products' => $featured_products->featured_categories->bakery_products ?? [],     'link' => '/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=bakery',     'link_text' => 'See all Bakery Products'],
+            ['id' => 'patisserie', 'label' => 'Patisserie',   'products' => $featured_products->featured_categories->patisserie_products ?? [], 'link' => '/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=patisserie', 'link_text' => 'See all Pâtisserie Products'],
+            ['id' => 'grocery',    'label' => 'Grocery',      'products' => $featured_products->featured_categories->grocery_products ?? [],    'link' => '/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=grocery',    'link_text' => 'See all Grocery Products'],
+            ['id' => 'popular',    'label' => 'Most Popular', 'products' => App\get_most_popular_products(6),                                   'link' => '/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=specials',   'link_text' => 'See all Products'],
+            ['id' => 'newest',     'label' => 'Newest',       'products' => App\get_newest_products(6),                                         'link' => '/products/?wpf_page=1&id=catalogue&wpf=1&wpf_wpf_cat=specials',   'link_text' => 'See all Products'],
+          ])->filter(fn ($tab) => !empty($tab['products']) && count($tab['products']));
+        @endphp
+
+        @if ($category_tabs->isNotEmpty())
+          <div class="row justify-content-center featured-categories">
+            <ul class="nav nav-tabs" id="featuredCategoryTabs" role="tablist">
+              @foreach ($category_tabs as $tab)
+                <li class="nav-item">
+                  <a class="nav-link @if ($loop->first) active @endif" id="{{ $tab['id'] }}-tab" data-toggle="tab" href="#tab-{{ $tab['id'] }}" role="tab" aria-controls="tab-{{ $tab['id'] }}" aria-selected="{{ $loop->first ? 'true' : 'false' }}">{{ $tab['label'] }}</a>
+                </li>
+              @endforeach
+            </ul>
+
+            <div class="row justify-content-center tab-content" id="featuredCategoryTabContent">
+              @foreach ($category_tabs as $tab)
+                <div class="col-sm-12 tab-pane fade @if ($loop->first) show active @endif" id="tab-{{ $tab['id'] }}" role="tabpanel" aria-labelledby="{{ $tab['id'] }}-tab">
+                  @include('partials.featured-product-grid', ['products' => $tab['products']])
+                  <a href="{{ $tab['link'] }}" class="button btn">{{ $tab['link_text'] }}</a>
+                </div>
+              @endforeach
+            </div>
+          </div>
+        @endif
         <div class="row justify-content-center no-gutters">
           <div class="col-sm-11">
             <div id="featuredProducts1" class="carousel slide carousel-fade row no-gutters" data-ride="carousel" data-interval="4000">
@@ -72,7 +119,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="{{ $item->link }}" title="" class="product-link"><span>{!! $item->link_text !!}</span></a>
+                        <a class="product-link inside-thumb quick-view-button manual" data-product_id="{{ $item->product->ID }}" href="#"><span>Order now!</span></a>
                       </div>
                     </div> 
                   </div>                                                       
@@ -101,7 +148,7 @@
                         <p>{!! $item->product->post_excerpt !!}</p>
                       @endif
                       <div class="meta">
-                        <a href="{{ $item->link }}" title="" class="product-link"><span>{!! $item->link_text !!}</span></a>
+                        <a class="product-link inside-thumb quick-view-button manual" data-product_id="{{ $item->product->ID }}" href="#"><span>Order now!</span></a>
                       </div>
                     </div> 
                   </div>                                                       

@@ -23,10 +23,10 @@
     "opera 12"
   ],
   "scripts": {
-    "build": "webpack --progress --config resources/assets/build/webpack.config.js",
-    "build:production": "webpack --mode=production --progress --config resources/assets/build/webpack.config.js",
-    "build:profile": "webpack --progress --profile --json --config resources/assets/build/webpack.config.js",
-    "start": "webpack --watch --config resources/assets/build/webpack.config.js",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --progress --config resources/assets/build/webpack.config.js",
+    "build:production": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode=production --progress --config resources/assets/build/webpack.config.js",
+    "build:profile": "NODE_OPTIONS=--openssl-legacy-provider webpack --progress --profile --json --config resources/assets/build/webpack.config.js",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider webpack --watch --config resources/assets/build/webpack.config.js",
     "rmdist": "rimraf dist",
     "lint": "npm run -s lint:scripts && npm run -s lint:styles",
     "lint:scripts": "eslint resources/assets/scripts resources/assets/build",
@@ -77,6 +77,7 @@
     "yargs": "^17.0.1"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.1.0",
     "bootstrap": "^4.3.1",
     "bootstrap-datepicker": "^1.10.0",
     "custom-event-polyfill": "^1.0.7",

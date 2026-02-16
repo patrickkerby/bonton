@@ -137,3 +137,143 @@ function display_sidebar()
     return $display;
 }
 
+/**
+ * Check whether a product_cat term (or any of its ancestors) lives
+ * inside the "collections" category tree.
+ *
+ * @param  \WP_Term $term
+ * @param  int      $collections_term_id  The term_id of the root "collections" term.
+ * @return bool
+ */
+function is_in_collections($term, $collections_term_id)
+{
+    if (!$term || !$collections_term_id) {
+        return false;
+    }
+
+    if ((int) $term->term_id === $collections_term_id) {
+        return true;
+    }
+
+    // Walk up the parent chain to see if any ancestor is "collections".
+    $parent_id = $term->parent;
+    while ($parent_id) {
+        if ((int) $parent_id === $collections_term_id) {
+            return true;
+        }
+        $parent = get_term($parent_id, 'product_cat');
+        if (is_wp_error($parent) || !$parent) {
+            break;
+        }
+        $parent_id = $parent->parent;
+    }
+
+    return false;
+}
+
+/**
+ * Get the most appropriate display category for a WooCommerce product.
+ *
+ * Selection rules (in priority order):
+ *  1. Yoast SEO primary category – if set, valid, is a subcategory, and
+ *     is NOT inside the "collections" tree.
+ *  2. First subcategory term that is NOT inside the "collections" tree.
+ *  3. Empty string when only top-level or "collections" terms remain
+ *     (we intentionally hide top-level category names).
+ *
+ * @param  int    $product_id  WooCommerce product (post) ID.
+ * @return string  The category name to display, or empty string.
+ */
+function get_product_display_category($product_id)
+{
+    $terms = get_the_terms($product_id, 'product_cat');
+
+    if (!$terms || is_wp_error($terms) || !count($terms)) {
+        return '';
+    }
+
+    // Resolve the root "collections" term once.
+    $collections_root    = get_term_by('slug', 'collections', 'product_cat');
+    $collections_term_id = $collections_root ? (int) $collections_root->term_id : 0;
+
+    // --- 1. Try Yoast SEO primary category --------------------------------
+    $selected_term = null;
+
+    if (class_exists('WPSEO_Primary_Term')) {
+        try {
+            $wpseo = new \WPSEO_Primary_Term('product_cat', $product_id);
+            $primary_cat_id = $wpseo->get_primary_term();
+
+            if ($primary_cat_id && !is_wp_error($primary_cat_id)) {
+                foreach ($terms as $term) {
+                    if ((int) $term->term_id === (int) $primary_cat_id) {
+                        $selected_term = $term;
+                        break;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            $selected_term = null;
+        }
+    }
+
+    // Fallback: use the first term.
+    if (!$selected_term && isset($terms[0])) {
+        $selected_term = $terms[0];
+    }
+
+    // --- 2. Prefer the selected term if it's a valid subcategory ----------
+    if (
+        $selected_term
+        && $selected_term->parent != 0
+        && !is_in_collections($selected_term, $collections_term_id)
+    ) {
+        return $selected_term->name;
+    }
+
+    // --- 3. Pick any other non-top-level term not in "collections" --------
+    foreach ($terms as $term) {
+        if ($term->parent != 0 && !is_in_collections($term, $collections_term_id)) {
+            return $term->name;
+        }
+    }
+
+    // --- 4. Nothing suitable – intentionally return empty -----------------
+    return '';
+}
+
+/**
+ * Fetch the most popular WooCommerce products by total sales.
+ *
+ * @param  int   $count  Number of products to return.
+ * @return array Array of WP_Post objects.
+ */
+function get_most_popular_products($count = 6)
+{
+    return get_posts([
+        'post_type'      => 'product',
+        'post_status'    => 'publish',
+        'posts_per_page' => $count,
+        'meta_key'       => 'total_sales',
+        'orderby'        => 'meta_value_num',
+        'order'          => 'DESC',
+    ]);
+}
+
+/**
+ * Fetch the newest WooCommerce products by publish date.
+ *
+ * @param  int   $count  Number of products to return.
+ * @return array Array of WP_Post objects.
+ */
+function get_newest_products($count = 6)
+{
+    return get_posts([
+        'post_type'      => 'product',
+        'post_status'    => 'publish',
+        'posts_per_page' => $count,
+        'orderby'        => 'date',
+        'order'          => 'DESC',
+    ]);
+}
+
