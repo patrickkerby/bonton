@@ -3,15 +3,10 @@
 
   This Blade template customizes the display of shipping methods in the WooCommerce cart.
   It handles special business logic for delivery availability based on user type, cart contents,
-  and selected pickup date. Notable features include:
+  and selected pickup date.
 
-  - Delivery is only available on Saturdays, except for specific blackout dates.
-  - Wholesale users are always eligible for delivery.
-  - If the cart contains a product with ID 2045 (ice cream), delivery is disabled and a message is shown.
-  - The template dynamically updates the available shipping methods and displays context-aware messages.
-  - If delivery is not available, only local pickup is shown as a shipping method.
-  - User and session meta are manipulated to enforce delivery restrictions.
-  - Shipping calculator is conditionally displayed based on delivery availability and cart contents.
+  On the cart page, this outputs a div-based "Pickup / Delivery Options" section.
+  On checkout, it outputs a table row for the review-order table.
 
   @see https://docs.woocommerce.com/document/template-structure/
   @package WooCommerce\Templates
@@ -59,7 +54,7 @@
       $delivery_day = true;
     }
 
-    // Delivery blackout dates — add future dates here as needed
+    // Delivery blackout dates -- add future dates here as needed
     // TODO: Move to ACF date picker for easier management
     $delivery_blackout_dates = [];
 
@@ -84,6 +79,84 @@
   }
 @endphp
 
+@if (is_cart())
+{{-- CART PAGE: div-based Pickup / Delivery Options section --}}
+<div class="shipping-options">
+  <h4>Pickup / Delivery Options</h4>
+
+  @if ( $available_methods )
+    <ul id="shipping_method" class="woocommerce-shipping-methods">
+      @foreach ( $available_methods as $method )
+        @if($delivery_available)
+          <li>
+            @php
+              if ( 1 < count( $available_methods ) ) {
+                printf( '<input type="radio" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" %4$s />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ), checked( $method->id, $chosen_method, false ) );
+              } else {
+                printf( '<input type="hidden" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ) );
+              }
+              printf( '<label for="shipping_method_%1$s_%2$s">%3$s</label>', $index, esc_attr( sanitize_title( $method->id ) ), wc_cart_totals_shipping_method_label( $method ) );
+              do_action( 'woocommerce_after_shipping_rate', $method, $index );
+            @endphp
+          </li>
+        @elseif($method->method_id === 'local_pickup')
+          <li>
+            @php
+              if ( 1 < count( $available_methods ) ) {
+                printf( '<input type="radio" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" %4$s />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ), checked( $method->id, $chosen_method, false ) );
+              } else {
+                printf( '<input type="hidden" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ) );
+              }
+              printf( '<label for="shipping_method_%1$s_%2$s">%3$s</label>', $index, esc_attr( sanitize_title( $method->id ) ), wc_cart_totals_shipping_method_label( $method ) );
+              do_action( 'woocommerce_after_shipping_rate', $method, $index );
+            @endphp
+          </li>
+        @endif
+      @endforeach
+    </ul>
+
+    @if ( $icecream_conflict)
+      <p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
+    @elseif ( $delivery_override && $delivery_day)
+      <p class="small">We do deliver on this day, however you have a product in your cart that's not available for delivery. Please remove the that item if you'd like delivery</p>
+    @elseif ( $delivery_available )
+      
+      <p class="woocommerce-shipping-destination">
+        @if ( $formatted_destination )
+          {!! sprintf( esc_html__( '%s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) !!}
+          @php $calculator_text = esc_html__( 'Change address', 'woocommerce' ) @endphp
+        @else
+          {!! wp_kses_post( apply_filters( 'woocommerce_shipping_estimate_html', __( '', 'woocommerce' ) ) ) !!}
+        @endif
+      </p>
+    @else
+      @if($delivery_message)
+        <p class="delivery-message">{{ $delivery_message }}</p>
+      @endif
+    @endif
+
+  @elseif ( ! $has_calculated_shipping || ! $formatted_destination )
+    @if ( 'no' === get_option( 'woocommerce_enable_shipping_calc' ) )
+      {!! wp_kses_post( apply_filters( 'woocommerce_shipping_not_enabled_on_cart_html', __( 'Shipping costs are calculated during checkout.', 'woocommerce' ) ) ) !!}
+    @else
+      {!! wp_kses_post( apply_filters( 'woocommerce_shipping_may_be_available_html', __( 'Enter your address to view shipping options.', 'woocommerce' ) ) ) !!}
+    @endif
+  @else
+    {!! wp_kses_post( apply_filters( 'woocommerce_cart_no_shipping_available_html', sprintf( esc_html__( 'No shipping options were found for %s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) ) ) !!}
+    @php $calculator_text = esc_html__( 'Enter a different address', 'woocommerce' ) @endphp
+  @endif
+
+  @if ( $show_package_details )
+    <p class="woocommerce-shipping-contents"><small>{{ esc_html( $package_details ) }}</small></p>
+  @endif
+
+  @if ( $show_shipping_calculator && $delivery_available && !$icecream_conflict )
+    @php woocommerce_shipping_calculator( $calculator_text ) @endphp
+  @endif
+</div>
+
+@else
+{{-- CHECKOUT PAGE: table row for review-order --}}
 <tr class="woocommerce-shipping-totals shipping">
   <th>{!! wp_kses_post( $package_name ) !!}</th>
   <td data-title="{{ esc_attr( $package_name ) }}">
@@ -91,7 +164,6 @@
     @if ( $available_methods )
       <ul id="shipping_method" class="woocommerce-shipping-methods">
         @foreach ( $available_methods as $method )
-
           @if($delivery_available)
             <li>
               @php
@@ -117,15 +189,14 @@
               @endphp
             </li>
           @endif
-
         @endforeach
       </ul>
 
-      @if ( is_cart() && $icecream_conflict)
+      @if ( $icecream_conflict)
         <p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
-      @elseif ( is_cart() && $delivery_override && $delivery_day)
+      @elseif ( $delivery_override && $delivery_day)
         <p class="small">We do deliver on this day, however you have a product in your cart that's not available for delivery. Please remove the that item if you'd like delivery</p>
-      @elseif ( is_cart() && $delivery_available )
+      @elseif ( $delivery_available )
         <p class="woocommerce-shipping-destination">
           @if ( $formatted_destination )
             {!! sprintf( esc_html__( '%s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) !!}
@@ -141,7 +212,7 @@
       @endif
 
     @elseif ( ! $has_calculated_shipping || ! $formatted_destination )
-      @if ( is_cart() && 'no' === get_option( 'woocommerce_enable_shipping_calc' ) )
+      @if ( 'no' === get_option( 'woocommerce_enable_shipping_calc' ) )
         {!! wp_kses_post( apply_filters( 'woocommerce_shipping_not_enabled_on_cart_html', __( 'Shipping costs are calculated during checkout.', 'woocommerce' ) ) ) !!}
       @else
         {!! wp_kses_post( apply_filters( 'woocommerce_shipping_may_be_available_html', __( 'Enter your address to view shipping options.', 'woocommerce' ) ) ) !!}
@@ -164,3 +235,4 @@
 
   </td>
 </tr>
+@endif

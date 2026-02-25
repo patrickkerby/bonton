@@ -42,16 +42,19 @@ $sub_title = get_field('sub_title');
 
 <header class="mobile-banner d-sm-none">
   
-  <a class="cart-icon" href="{{ wc_get_cart_url() }}">{{ WC()->cart->get_cart_contents_count() }}</a> 
+  @unless(is_cart())
+    <a class="cart-icon" href="{{ wc_get_cart_url() }}">{{ WC()->cart->get_cart_contents_count() }}</a> 
+  @endunless
 
-  <a href="{!! get_home_url() !!}" class="logo">Bon Ton Bakery &amp; Pâtisserie</a>
+  @unless(is_cart())
+    <a href="{!! get_home_url() !!}" class="logo">Bon Ton Bakery &amp; Pâtisserie</a>
+  @endunless 
   <button class="navbar-toggler hamburger hamburger--arrow" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
     <span class="hamburger-box">
       <span class="hamburger-inner"></span>
     </span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent1">
-    
     <nav class="nav-mobile">
       @php 
       echo do_shortcode('[wcas-search-form]');

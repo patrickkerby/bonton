@@ -15,7 +15,7 @@
 
 <div class="row justify-content-center">
   <div class="col-md-8">
-
+    <h4>Your Items:</h4>
     <form class="woocommerce-cart-form" action="{{ esc_url( wc_get_cart_url() ) }}" method="post">
       @php do_action( 'woocommerce_before_cart_table' ) @endphp
 
@@ -24,7 +24,7 @@
           <tr>
             <th class="product-remove">&nbsp;</th>
             <th class="product-name">{{ __( 'Product', 'woocommerce' ) }}</th>
-            <th class="product-price">{{ __( 'Price', 'woocommerce' ) }}</th>
+            {{-- <th class="product-price">{{ __( 'Price', 'woocommerce' ) }}</th> --}}
             <th class="product-quantity">{{ __( 'Quantity', 'woocommerce' ) }}</th>
             <th class="product-subtotal">{{ __( 'Subtotal', 'woocommerce' ) }}</th>
           </tr>
@@ -38,30 +38,13 @@
 
           @php do_action( 'woocommerce_cart_contents' ) @endphp
 
-          <tr>
-            <td colspan="6" class="actions">
-
-              @unless($is_wholesale_user)
-                @if ( wc_coupons_enabled() )
-                  <div class="coupon">
-                    <label for="coupon_code">{{ __( 'Coupon:', 'woocommerce' ) }}</label>
-                    <input type="text" name="coupon_code" class="input-text" id="coupon_code" value="" placeholder="{{ __( 'Coupon code', 'woocommerce' ) }}" />
-                    <button type="submit" class="button" name="apply_coupon" value="{{ __( 'Apply coupon', 'woocommerce' ) }}">{{ __( 'Apply coupon', 'woocommerce' ) }}</button>
-                    @php do_action( 'woocommerce_cart_coupon' ) @endphp
-                  </div>
-                @endif
-              @endunless
-
-              <button type="submit" class="button" name="update_cart" value="{{ __( 'Update cart', 'woocommerce' ) }}">{{ __( 'Update cart', 'woocommerce' ) }}</button>
-
-              @php do_action( 'woocommerce_cart_actions' ) @endphp
-              @php wp_nonce_field( 'woocommerce-cart', 'woocommerce-cart-nonce' ) @endphp
-            </td>
-          </tr>
-
           @php do_action( 'woocommerce_after_cart_contents' ) @endphp
         </tbody>
       </table>
+      <button type="submit" class="button" name="update_cart" value="{{ __( 'Update cart', 'woocommerce' ) }}">{{ __( 'Update cart', 'woocommerce' ) }}</button>
+
+              @php do_action( 'woocommerce_cart_actions' ) @endphp
+              @php wp_nonce_field( 'woocommerce-cart', 'woocommerce-cart-nonce' ) @endphp
 
       @php do_action( 'woocommerce_after_cart_table' ) @endphp
     </form>

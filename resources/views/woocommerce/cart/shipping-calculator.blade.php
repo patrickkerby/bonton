@@ -21,7 +21,7 @@ do_action( 'woocommerce_before_shipping_calculator' ); ?>
 
 <form class="woocommerce-shipping-calculator" action="<?php echo esc_url( wc_get_cart_url() ); ?>" method="post">
 
-	<?php printf( '<a href="#" class="shipping-calculator-button">%s</a>', esc_html( ! empty( $button_text ) ? $button_text : __( 'Check your address', 'woocommerce' ) ) ); ?>
+	<?php printf( '<a href="#" class="shipping-calculator-button">%s</a>', esc_html( ! empty( $button_text ) ? $button_text : __( 'Check your address for delivery!', 'woocommerce' ) ) ); ?>
 
 	<section class="shipping-calculator-form" style="display:none;">
 

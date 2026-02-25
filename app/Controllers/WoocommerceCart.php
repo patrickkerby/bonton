@@ -30,6 +30,17 @@ class WoocommerceCart extends Controller
     private $_cart_items_computed = false;
     private $_cart_items_result = [];
 
+    // Cart-state properties (set by cartItemsData)
+    private $_long_fermentation_in_cart = false;
+    private $_two_days_notice_in_cart = false;
+    private $_restricted_in_cart = false;
+    private $_conflict = false;
+    private $_giftcertificate_only_item_in_cart = false;
+    private $_all_available_dates = [];
+    private $_restricted_start_date = null;
+    private $_restricted_end_date = null;
+    private $_pickup_restriction_data = null;
+
     /**
      * Process and store the pickup date from POST data into the WC session.
      * This must run before any session reads.
@@ -197,7 +208,7 @@ class WoocommerceCart extends Controller
                     $restricted_end_date = DateTime::createFromFormat(self::DATE_FORMAT, $pickup_restriction_end_data);
 
                     if ($restricted_start_date && $restricted_end_date) {
-                        $restriction_msg = '<span class="restricted_notice">Only available ' . $restricted_start_date->format('D, M j') . ' to ' . $restricted_end_date->format('D, M j') . '</span>';
+                        $restriction_msg = '<span class="restricted_notice">Only available ' . $restricted_start_date->format('D, M j') . ' - ' . $restricted_end_date->format('D, M j') . '</span>';
                     }
 
                     $this->_pickup_restriction_data = $pickup_restriction_data;
@@ -213,7 +224,7 @@ class WoocommerceCart extends Controller
 
             if ($session_pickup_date && $pickup_day_of_week && !in_array($pickup_day_of_week, $days_available_array)) {
                 $availability_status = 'not-available';
-                $availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
+                $availability_msg = '<span class="not-available-message">Not available on your selected pickup date!<br> Please remove, or select a different date.</span>';
             }
 
             // Long fermentation check
@@ -367,8 +378,7 @@ class WoocommerceCart extends Controller
      */
     public function conflict()
     {
-        // Ensure cartItemsData has been computed
-        if (!isset($this->_conflict)) {
+        if (!$this->_cart_items_computed) {
             $this->cartItemsData();
         }
         return $this->_conflict;
@@ -379,7 +389,7 @@ class WoocommerceCart extends Controller
      */
     public function giftcertificateOnlyItemInCart()
     {
-        if (!isset($this->_giftcertificate_only_item_in_cart)) {
+        if (!$this->_cart_items_computed) {
             $this->cartItemsData();
         }
         return $this->_giftcertificate_only_item_in_cart;
@@ -390,7 +400,7 @@ class WoocommerceCart extends Controller
      */
     public function longFermentationInCart()
     {
-        if (!isset($this->_long_fermentation_in_cart)) {
+        if (!$this->_cart_items_computed) {
             $this->cartItemsData();
         }
         return $this->_long_fermentation_in_cart;
@@ -401,7 +411,7 @@ class WoocommerceCart extends Controller
      */
     public function twoDaysNoticeInCart()
     {
-        if (!isset($this->_two_days_notice_in_cart)) {
+        if (!$this->_cart_items_computed) {
             $this->cartItemsData();
         }
         return $this->_two_days_notice_in_cart;
@@ -412,7 +422,7 @@ class WoocommerceCart extends Controller
      */
     public function restrictedInCart()
     {
-        if (!isset($this->_restricted_in_cart)) {
+        if (!$this->_cart_items_computed) {
             $this->cartItemsData();
         }
         return $this->_restricted_in_cart;
@@ -431,7 +441,7 @@ class WoocommerceCart extends Controller
      */
     public function allAvailableDates()
     {
-        if (!isset($this->_all_available_dates)) {
+        if (!$this->_cart_items_computed) {
             $this->cartItemsData();
         }
         return $this->_all_available_dates;
@@ -442,7 +452,7 @@ class WoocommerceCart extends Controller
      */
     public function restrictedStartDateJs()
     {
-        if (!isset($this->_restricted_start_date)) {
+        if (!$this->_cart_items_computed) {
             $this->cartItemsData();
         }
         return $this->_restricted_start_date ? $this->_restricted_start_date->format('Y-m-d') : null;
@@ -453,7 +463,7 @@ class WoocommerceCart extends Controller
      */
     public function restrictedEndDateJs()
     {
-        if (!isset($this->_restricted_end_date)) {
+        if (!$this->_cart_items_computed) {
             $this->cartItemsData();
         }
         return $this->_restricted_end_date ? $this->_restricted_end_date->format('Y-m-d') : null;

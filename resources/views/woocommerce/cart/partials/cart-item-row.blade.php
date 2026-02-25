@@ -12,7 +12,7 @@
     {!! apply_filters(
       'woocommerce_cart_item_remove_link',
       sprintf(
-        '<a href="%s" class="remove" aria-label="%s" data-product_id="%s" data-product_sku="%s">&times;</a>',
+        '<a href="%s" class="remove" aria-label="%s" data-product_id="%s" data-product_sku="%s"><i class="fas fa-regular fa-trash-alt" aria-hidden="true"></i></a>',
         esc_url( wc_get_cart_remove_url( $cart_item_key ) ),
         esc_html__( 'Remove this item', 'woocommerce' ),
         esc_attr( $product_id ),
@@ -32,51 +32,54 @@
 </tr>
 
 <tr class="{{ $item['availability_status'] }} woocommerce-cart-form__cart-item {{ esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ) }}">
-  <td></td>
+  <td class="d-none d-sm-block"></td>
   <td class="product-meta" data-title="{{ __( 'Product', 'woocommerce' ) }}">
-    {{-- Meta data --}}
-    {!! wc_get_formatted_cart_item_data( $cart_item ) !!}
-
-    {{-- Backorder notification --}}
-    @if ( $_product->backorders_require_notification() && $_product->is_on_backorder( $cart_item['quantity'] ) )
-      {!! wp_kses_post( apply_filters( 'woocommerce_cart_item_backorder_notification', '<p class="backorder_notification">' . esc_html__( 'Available on backorder', 'woocommerce' ) . '</p>', $product_id ) ) !!}
+ 
+    {{-- Day-of-week availability badges --}}
+    @if (!$item['is_bundled'] && !empty($item['days_available_array']))
+      @php
+        $all_days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+        $letters  = ['S','M','T','W','T','F','S'];
+        $is_everyday = in_array('Everyday', $item['days_available_array']);
+        $everyday_days = ['Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      @endphp
+      <span class="day-badges" title="{{ $is_everyday ? 'All week!' : $item['days_available_string'] }}">
+        @foreach ($all_days as $i => $day)
+          <span class="day-badge {{ ($is_everyday && in_array($day, $everyday_days)) || in_array($day, $item['days_available_array']) ? 'active' : '' }}">{{ $letters[$i] }}</span>
+        @endforeach
+      </span>
     @endif
+    
+    @if($item['long_fermentation'] || $item['two_days_notice'] || $item['sold_out_msg'] || $item['special_availability_msg'] || $item['delivery_exclusion'])
+      <div class="special-notes-container">
+        {{-- Meta data --}}
+        {!! wc_get_formatted_cart_item_data( $cart_item ) !!}
 
-    {{-- Day-of-week availability --}}
-    @if (!$item['is_bundled'])
-      @if (in_array('Everyday', $item['days_available_array']))
-        <span class="availability"><strong>Availability: </strong> All week!</span>
-      @else
-        <span class="availability"><strong>Availability: </strong>{{ $item['days_available_string'] }}</span>
-      @endif
-    @endif
+        {{-- Backorder notification --}}
+        @if ( $_product->backorders_require_notification() && $_product->is_on_backorder( $cart_item['quantity'] ) )
+          {!! wp_kses_post( apply_filters( 'woocommerce_cart_item_backorder_notification', '<p class="backorder_notification">' . esc_html__( 'Available on backorder', 'woocommerce' ) . '</p>', $product_id ) ) !!}
+        @endif
 
-    @if($item['long_fermentation'])
-      <span class="availability"><strong>*Note:</strong> Not available for next-day pickup</span>
-    @endif
+        @if($item['long_fermentation'] || $item['two_days_notice'])
+          <span class="availability"><span class="availability-icon"><i class="fa-regular fa-clock"></i></span> 2 days notice req.</span>
+        @endif
+        
+        {!! $item['sold_out_msg'] !!}
 
-    @if($item['two_days_notice'])
-      <span class="availability"><strong>*Note:</strong> This product requires two days notice</span>
-    @endif
-
-    @if($item['special_availability_msg'])
-      {!! $item['special_availability_msg'] !!}
-    @endif
-
-    {!! $item['sold_out_msg'] !!}
-
-    @if (!$item['is_bundled'] && $item['pickup_restriction_data'])
-      {!! $item['restriction_msg'] !!}
-    @endif
-
-    @if($item['delivery_exclusion'])
-      <span class="availability"><br><strong>**</strong> Not available for delivery</span>
+        @if($item['special_availability_msg'])
+          {!! $item['special_availability_msg'] !!}
+        @endif
+        
+        @if($item['delivery_exclusion'])
+        <span class="availability"><br><strong>**</strong> Not available for delivery</span>
+        @endif
+      </div>
     @endif
   </td>
 
-  <td class="product-price" data-title="{{ __( 'Price', 'woocommerce' ) }}">
+  {{-- <td class="product-price" data-title="{{ __( 'Price', 'woocommerce' ) }}">
     {!! apply_filters( 'woocommerce_cart_item_price', WC()->cart->get_product_price( $_product ), $cart_item, $cart_item_key ) !!}
-  </td>
+  </td> --}}
 
   <td class="product-quantity" data-title="{{ __( 'Quantity', 'woocommerce' ) }}">
     @if ( $_product->is_sold_individually() )
@@ -100,9 +103,14 @@
   </td>
 </tr>
 
+@if (!$item['is_bundled'] && $item['pickup_restriction_data'])
+  <tr>
+    <td colspan="5">{!! $item['restriction_msg'] !!}</td>
+  </tr>
+@endif
+
 @if($item['availability_msg'] || $item['sold_out_conflict'] === 'sold_out_conflict')
   <tr class="not-available">
-    <td></td>
     <td colspan="5">{!! $item['availability_msg'] !!}</td>
   </tr>
 @endif

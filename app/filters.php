@@ -27,6 +27,18 @@ add_filter('body_class', function (array $classes) {
 });
 
 /**
+ * Add -data body classes for WooCommerce pages so SoberWP controllers can bind.
+ * Priority 20 ensures this runs after the Loader's addBodyDataClasses (priority 10),
+ * so these classes appear after app-data in the list and the App controller processes first.
+ */
+add_filter('body_class', function (array $classes) {
+    if (function_exists('is_cart') && is_cart()) {
+        $classes[] = 'woocommerce-cart-data';
+    }
+    return $classes;
+}, 20);
+
+/**
  * Add "… Continued" to the excerpt
  */
 add_filter('excerpt_more', function () {
@@ -339,6 +351,9 @@ function zero_tax_items_based_on_invoice_choice( $cart ) {
         }
     }
 }
+
+// Don't show individual item prices in cart
+add_filter( 'woocommerce_cart_item_price', '__return_empty_string' );   
 
 /**
  * Save pickup date and timeslot to WooCommerce order (from session)

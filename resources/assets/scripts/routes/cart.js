@@ -18,6 +18,17 @@ export default {
 
     dayjs.tz.setDefault('America/Edmonton');
 
+
+    // Mobile trigger for assorted options - supports both old and new plugin structure
+    $(document).on('click', '#show-coupon-btn', function() {
+      $('#coupon-slidein').addClass('show-coupon');
+    });
+
+    // Remove class when close button is clicked  
+    $(document).on('click', '#close-coupon-slidein', function() {      
+      $('#coupon-slidein').removeClass('show-coupon');
+    });
+
     // Functions
     function getDatesBetweenDates(rangeStartDate, rangeEndDate) {
       const dates = [];
