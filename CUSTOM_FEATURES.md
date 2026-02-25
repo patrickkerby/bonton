@@ -43,6 +43,13 @@ This document tracks the custom functionalities and recent development work on t
 
 ---
 
+## 2026 Development Summary
+
+### February 2026
+- **GA4 Custom Event Tracking** - Full-funnel analytics tracking from homepage through purchase
+
+---
+
 ## 2025 Development Summary
 
 ### November 2025
@@ -74,6 +81,46 @@ This document tracks the custom functionalities and recent development work on t
 ---
 
 ## Recent Development Work
+
+### GA4 Custom Event Tracking (February 2026)
+
+**Purpose**: Measure the impact of new homepage features (hero CTA, featured products by category, homepage add-to-cart) and track the full customer purchase funnel.
+
+**Background**: The site had a basic GA4 tag (`G-HTCXG3J87J`) with zero custom events. Default GA4 provides page views and scroll depth, but nothing about product interactions, cart friction, or conversion attribution. This implementation adds targeted custom events at each step of the purchase funnel without any third-party tools or additional scripts.
+
+**Events Tracked**:
+
+| Event | Location | Fires When | Key Parameters |
+|---|---|---|---|
+| `product_quick_view` | Homepage | Product clicked in featured grid or carousels | `product_name`, `source_section`, `category_tab` or `carousel_id` |
+| `add_to_cart` | All pages | Item successfully added to cart | `product_name`, `source_page` (homepage vs pathname), `via_quick_view` |
+| `filter_category` | Shop pages | Category filter selected in sidebar | `category_name` |
+| `cart_date_conflict` | Cart page | Cart loads with availability/date conflict | `conflict_reasons`, `items_in_cart` |
+| `begin_checkout` | Checkout page | Checkout loads with valid order (not error state) | `value`, `currency`, `items_count` |
+| `purchase` | Thank you page | Order completed successfully | `transaction_id`, `value`, `currency`, `items_count`, `shipping_method` |
+
+**Files Modified**:
+- `resources/assets/scripts/routes/home.js` — Homepage product click tracking (featured grid + carousels)
+- `resources/assets/scripts/routes/common.js` — Add-to-cart tracking (site-wide) + shop page filter tracking
+- `resources/assets/scripts/routes/cart.js` — Cart conflict detection on page load
+- `resources/views/woocommerce/checkout/form-checkout.blade.php` — `begin_checkout` event via inline script
+- `resources/views/woocommerce/checkout/thankyou.php` — `purchase` event via inline script
+
+**Technical Details**:
+
+- All JS events use `window.gtag` with a guard check, so they degrade silently if GA4 is ever removed
+- The `add_to_cart` tracking uses two detection methods (WooCommerce `added_to_cart` jQuery event + `ajaxComplete` fallback for quick view modal) with a 2-second debounce to prevent double-counting
+- The `purchase` event uses GA4's `transaction_id` deduplication plus a `sessionStorage` guard to prevent double-counting on page refresh
+- The `begin_checkout` event only fires when the checkout form is valid (not when the "Oops, something went wrong" error state is shown)
+- The `cart_date_conflict` event identifies specific conflict types: `product_not_available`, `sold_out`, `no_date_selected`
+
+**How to Use in GA4**:
+1. **Reports > Engagement > Events** — See all custom events and their counts
+2. **Explore > Free Form** — Build custom reports filtering by event parameters (e.g., `add_to_cart` where `source_page = homepage`)
+3. **Explore > Funnel Exploration** — Create a funnel: `product_quick_view` → `add_to_cart` → `begin_checkout` → `purchase`
+4. **Date comparison** — Compare any date range before vs. after these features launched to measure impact
+
+**Note**: The GA4 tag is defined in `resources/views/layouts/app.blade.php` (lines 33-41). The `gtag()` function is a lightweight wrapper that pushes to `window.dataLayer` — it's available synchronously before the async gtag.js library loads, so events are never lost.
 
 ### Product Purchase Restriction System (November 2025)
 
@@ -473,6 +520,6 @@ All custom order-related functionality has been updated for WordPress/WooCommerc
 
 ---
 
-*Last Updated: November 17, 2025*  
+*Last Updated: February 25, 2026*  
 *Document tracks development work from January 2024 to present*  
 *For technical questions, refer to the individual files or contact the development team.*

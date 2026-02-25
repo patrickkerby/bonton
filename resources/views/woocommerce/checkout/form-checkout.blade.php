@@ -130,7 +130,16 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 	@else
 		<div id="order_review" class="woocommerce-checkout-review-order">
 			@php do_action( 'woocommerce_checkout_order_review' ); @endphp
-		</div>	
+		</div>
+		<script>
+		if (window.gtag) {
+			window.gtag('event', 'begin_checkout', {
+				value: {{ (float) WC()->cart->get_total('edit') }},
+				currency: '{{ get_woocommerce_currency() }}',
+				items_count: {{ (int) WC()->cart->get_cart_contents_count() }},
+			});
+		}
+		</script>
 	@endif
 	
 	@php

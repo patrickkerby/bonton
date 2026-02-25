@@ -87,6 +87,24 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php endif; ?>
 
+		<?php if ( ! $order->has_status( 'failed' ) ) : ?>
+		<script>
+		if (window.gtag) {
+			var orderId = '<?php echo esc_js( $order->get_order_number() ); ?>';
+			if (!sessionStorage.getItem('purchase_tracked_' + orderId)) {
+				window.gtag('event', 'purchase', {
+					transaction_id: orderId,
+					value: <?php echo (float) $order->get_total(); ?>,
+					currency: '<?php echo esc_js( $order->get_currency() ); ?>',
+					items_count: <?php echo (int) $order->get_item_count(); ?>,
+					shipping_method: '<?php echo esc_js( $order->get_shipping_method() ); ?>',
+				});
+				sessionStorage.setItem('purchase_tracked_' + orderId, '1');
+			}
+		}
+		</script>
+		<?php endif; ?>
+
 		<?php do_action( 'woocommerce_thankyou_' . $order->get_payment_method(), $order->get_id() ); ?>
 		<?php do_action( 'woocommerce_thankyou', $order->get_id() ); ?>
 

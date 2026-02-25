@@ -130,6 +130,18 @@ export default {
         const allowedDates = daterange.filter(date => !vacationDays.includes(date)).concat(enableDays, availableDatesFormatted);
 
         initializeDatePicker(allowedDates, selectedDate, standardFormulaMinDateFormatted);
+
+        // GA4: Track cart date/availability conflicts on page load
+        if (window.gtag && $('.cart-collaterals').hasClass('conflict')) {
+          const reasons = [];
+          if ($('.not-available-message').length) reasons.push('product_not_available');
+          if ($('.sold_out_conflict').length) reasons.push('sold_out');
+          if (!selectedDate) reasons.push('no_date_selected');
+          window.gtag('event', 'cart_date_conflict', {
+            conflict_reasons: reasons.join(', ') || 'unknown',
+            items_in_cart: $('.woocommerce-cart-form__cart-item.title').length,
+          });
+        }
       });
     });
   },

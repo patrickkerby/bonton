@@ -30,8 +30,13 @@ export default {
       $('.checked').removeClass('checked');
       $( this ).addClass( 'checked' );
       $('.wpf_submenu input').prop('checked',false);
-      //.checkboxradio('refresh')  add this to end of line 26. maybe.
 
+      // GA4: Track which product category filters are used
+      if (window.gtag) {
+        window.gtag('event', 'filter_category', {
+          category_name: $(this).text().trim(),
+        });
+      }
     });
 
     // The following is to control the background overflow on body while a product modal is opened.
@@ -228,6 +233,45 @@ export default {
           }, 50);
         }
       });
+
+      // GA4: Track add-to-cart events with source page context
+      (function() {
+        if (!window.gtag) return;
+
+        let lastTrackedAt = 0;
+        function trackAddToCart(productName) {
+          const now = Date.now();
+          if (now - lastTrackedAt < 2000) return;
+          lastTrackedAt = now;
+          window.gtag('event', 'add_to_cart', {
+            product_name: productName || 'Unknown',
+            source_page: $('body').hasClass('home') ? 'homepage' : window.location.pathname,
+            via_quick_view: $('body').hasClass('quickview-open'),
+          });
+        }
+
+        // WooCommerce fires this for AJAX add-to-cart (loop products)
+        $(document.body).on('added_to_cart', function(e, fragments, cart_hash, $button) {
+          let name = '';
+          if ($('body').hasClass('quickview-open')) {
+            name = $('.product_title').first().text().trim();
+          } else if ($button) {
+            name = $button.closest('.product').find('.woocommerce-loop-product__title').text().trim();
+          }
+          trackAddToCart(name);
+        });
+
+        // Fallback: catch single product form add-to-cart (e.g. quick view modal)
+        $(document).ajaxComplete(function(event, xhr, settings) {
+          if (xhr.status !== 200) return;
+          const data = settings.data;
+          const url = settings.url || '';
+          const isAddToCart = (typeof data === 'string' && data.indexOf('add-to-cart') !== -1) ||
+                              url.indexOf('wc-ajax=add_to_cart') !== -1;
+          if (!isAddToCart) return;
+          trackAddToCart($('.product_title').first().text().trim());
+        });
+      })();
     });
   },
 };
