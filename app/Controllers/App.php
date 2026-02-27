@@ -62,5 +62,34 @@ class App extends Controller
         }
         return $is_wholesale_user;
     }
+
+    public function bulkDiscountProgress()
+    {
+        if (!function_exists('WC') || !WC()->cart) {
+            return null;
+        }
+        return \App\Helpers\BulkPricing::get_progress();
+    }
+
+    public function globalPickupDate()
+    {
+        if (!function_exists('WC') || !WC()->session) {
+            return null;
+        }
+        return WC()->session->get('pickup_date');
+    }
+
+    public function globalPickupDateShort()
+    {
+        if (!function_exists('WC') || !WC()->session) {
+            return null;
+        }
+        $formatted = WC()->session->get('pickup_date_formatted');
+        if (!$formatted) {
+            return null;
+        }
+        $date_obj = \DateTime::createFromFormat('Y-m-d', $formatted);
+        return $date_obj ? $date_obj->format('D, M j') : null;
+    }
 }
 

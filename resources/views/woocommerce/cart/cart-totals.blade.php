@@ -73,7 +73,7 @@
         @endunless
 
       @foreach ( WC()->cart->get_fees() as $fee )
-        <tr class="fee">
+        <tr class="fee {{ stripos($fee->name, 'Bulk discount') !== false ? 'bulk-discount' : '' }}">
           <th>
             {{ esc_html( $fee->name ) }}
             @if (stripos($fee->name, 'Bag Fee') !== false)

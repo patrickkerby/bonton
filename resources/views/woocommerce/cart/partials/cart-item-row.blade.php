@@ -49,6 +49,10 @@
         @endforeach
       </span>
     @endif
+
+    @if($item['bulk_eligible'])
+      <span class="bulk-label"><i class="fa fa-dollar-sign" aria-hidden="true"></i> Bulk discount eligible</span>
+    @endif
     
     @if($item['long_fermentation'] || $item['two_days_notice'] || $item['sold_out_msg'] || $item['special_availability_msg'] || $item['delivery_exclusion'])
       <div class="special-notes-container">
@@ -98,8 +102,17 @@
     @endif
   </td>
 
-  <td class="product-subtotal" data-title="{{ __( 'Subtotal', 'woocommerce' ) }}">
-    {!! apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ) !!}
+  <td class="product-subtotal{{ $item['bulk_discount_amount'] > 0 ? ' product-subtotal--discounted' : '' }}" data-title="{{ __( 'Subtotal', 'woocommerce' ) }}">
+    @if($item['bulk_discount_amount'] > 0)
+      @php
+        $original_subtotal = $_product->get_price() * $cart_item['quantity'];
+        $discounted_subtotal = $original_subtotal - $item['bulk_discount_amount'];
+      @endphp
+      <del>{!! wc_price( $original_subtotal ) !!}</del>
+      <ins>{!! wc_price( $discounted_subtotal ) !!}</ins>
+    @else
+      {!! apply_filters( 'woocommerce_cart_item_subtotal', WC()->cart->get_product_subtotal( $_product, $cart_item['quantity'] ), $cart_item, $cart_item_key ) !!}
+    @endif
   </td>
 </tr>
 

@@ -164,6 +164,9 @@ class WoocommerceCart extends Controller
 
         $tomorrow = new DateTime('tomorrow');
 
+        $bulk_progress = \App\Helpers\BulkPricing::get_progress();
+        $this->_bulk_discount_rate = $bulk_progress['current_discount'];
+
         foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
             $cart_count++;
 
@@ -354,6 +357,10 @@ class WoocommerceCart extends Controller
                 'restriction_msg' => $restriction_msg,
                 'restricted_start_date' => $restricted_start_date,
                 'restricted_end_date' => $restricted_end_date,
+                'bulk_eligible' => \App\Helpers\BulkPricing::is_product_eligible($product_id),
+                'bulk_discount_amount' => \App\Helpers\BulkPricing::is_product_eligible($product_id)
+                    ? \App\Helpers\BulkPricing::get_item_discount($cart_item, $this->_bulk_discount_rate ?? 0)
+                    : 0,
             ];
         }
 

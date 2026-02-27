@@ -3,6 +3,8 @@
   @include('partials.head')
   <body @php body_class() @endphp>
     @php if ( function_exists( 'gtm4wp_the_gtm_tag' ) ) { gtm4wp_the_gtm_tag(); } @endphp
+    @include('partials.utility-banner')
+
     @php do_action('get_header') @endphp
     @if(isset($landing_page) && $landing_page == TRUE)
       @include('partials.header-landing')

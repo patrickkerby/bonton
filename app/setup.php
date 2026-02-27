@@ -58,6 +58,11 @@ add_action('wp_enqueue_scripts', function () {
     if (is_page( array( 789, 819, 815, 810, 791, 6968, 6177, 10794, 10071, 14747, 15435, 19316, 19656, 19367, 19747, 19361, 19364, 19369, 20170 )) ) {
         wp_enqueue_script('sage/lists.js', asset_path('scripts/lists.js'), [], null, true);
     }
+
+    wp_localize_script('sage/main.js', 'bontonData', [
+        'ajaxUrl' => admin_url('admin-ajax.php'),
+        'nonce'   => wp_create_nonce('bonton_nonce'),
+    ]);
 }, 100);
 
 /**

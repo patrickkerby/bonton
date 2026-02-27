@@ -10,6 +10,55 @@ ul.woocommerce-thankyou-order-details li {
 
 .cart .woocommerce {
   margin-top: 1rem;
+
+  input[type="text"],
+  input[type="password"] {
+    border: solid 3px #f8f7f3;
+    padding: 0.45rem 0.5rem;
+    color: #7e7e7e;
+    font-style: italic;
+    font-size: 0.9375rem;
+    width: 100%;
+    border-radius: 3px;
+  }
+
+  button.button {
+    height: 2rem !important;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    line-height: 1;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0 0.75rem !important;
+  }
+
+  label {
+    margin-right: 1rem;
+  }
+
+  form.login {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    margin: 0;
+    padding: 1rem 2rem;
+    border-top: solid 3px $cream;
+    border-radius: 0;
+
+    p {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin: 0 0 0.25rem 0;
+    }
+
+    button[type="submit"] {
+      margin-top: 1rem;
+    }
+  }
 }
 
 .page-header {
@@ -816,6 +865,15 @@ ul.woocommerce-thankyou-order-details li {
     background: none !important;
   }
 
+  tr.fee.bulk-discount {
+    th,
+    td {
+      color: $highlight;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+  }
+
   tr.order-total {
     border-top: solid 3px $cream !important;
     margin-top: 1rem;
@@ -858,8 +916,37 @@ ul.woocommerce-thankyou-order-details li {
   }
 }
 
-//Remove woocommerce cart and checkout notifications for coupons.
-//Remove woocommerce checkout notifications for loyalty points redemption
+// Bulk discount eligibility label in the meta area
+.bulk-label {
+  display: inline-block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: $highlight;
+  letter-spacing: 0.01em;
+
+  i {
+    margin-right: 0.2em;
+  }
+}
+
+// Strikethrough pricing for discounted items
+.product-subtotal--discounted {
+  del {
+    display: block;
+    color: #bbb;
+    font-size: 0.8125rem;
+    text-decoration: line-through;
+
+    .woocommerce-Price-amount { color: inherit; }
+  }
+
+  ins {
+    display: block;
+    text-decoration: none;
+    color: $highlight;
+    font-weight: 600;
+  }
+}
 
 .points-coupons {
   display: flex;
@@ -882,6 +969,10 @@ ul.woocommerce-thankyou-order-details li {
   padding: 0 0.75rem;
   margin: 2rem 0.5rem 0 auto;
 
+  i {
+    margin-right: 0.5em;
+  }
+
   &:hover {
     background: transparent;
   }
@@ -901,6 +992,75 @@ ul.woocommerce-thankyou-order-details li {
   align-items: center;
   margin: 2rem auto 0 -1rem;
   padding: 0 1.25rem 0 0.75rem;
+
+  i {
+    margin-right: 0.5em;
+  }
+}
+
+.loyalty-modal {
+  display: none;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+  box-shadow: 0 0 52px -22px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  padding: 0;
+
+  .close-loyalty-modal {
+    position: absolute;
+    top: 0.5rem;
+    right: 1.5rem;
+    z-index: 99;
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.5;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .loyalty-modal__content {
+    padding: 1.5rem;
+
+    p {
+      font-size: 0.9375rem;
+      line-height: 1.4;
+      margin-bottom: 1rem;
+    }
+
+    .loyalty-modal__applied {
+      color: $highlight;
+      font-weight: 600;
+    }
+
+    .wc_points_rewards_apply_discount {
+      display: flex;
+      justify-content: center;
+
+      input[type="submit"] {
+        background: $highlight;
+        color: #fff;
+        border: none;
+        border-radius: 3px;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        cursor: pointer;
+
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+    }
+  }
 }
 
 #coupon-slidein {
@@ -908,24 +1068,34 @@ ul.woocommerce-thankyou-order-details li {
   visibility: hidden;
   transition: all 0.4s ease-in-out;
   height: 0;
+  position: absolute;
+  width: 100%;
+  left: 0;
+  background: #fff;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  gap: 1rem;
 
   &.show-coupon {
     opacity: 1;
     visibility: visible;
-    position: fixed;
-    width: 100%;
-    left: 0;
     height: auto;
-    padding: 2rem;
-    background: #fff;
     box-shadow: 0 0 52px -22px rgba(0, 0, 0, 0.2);
     transition: all 0.4s ease-in-out;
+
+    input[type="text"] {
+      width: 65%;
+      max-width: 14rem;
+    }
   }
 }
 
-.woocommerce-form-coupon-toggle {
-  display: none !important;
-}
+// .woocommerce-form-coupon-toggle {
+//   display: none !important;
+// }
 
 .woocommerce-table__line-item .wc-item-meta li {
   display: flex;

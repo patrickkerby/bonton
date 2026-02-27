@@ -19,14 +19,41 @@ export default {
     dayjs.tz.setDefault('America/Edmonton');
 
 
-    // Mobile trigger for assorted options - supports both old and new plugin structure
+    // Coupon slidein
     $(document).on('click', '#show-coupon-btn', function() {
       $('#coupon-slidein').addClass('show-coupon');
     });
 
-    // Remove class when close button is clicked  
-    $(document).on('click', '#close-coupon-slidein', function() {      
-      $('#coupon-slidein').removeClass('show-coupon');
+    $(document).on('mousedown touchstart', function(event) {
+      var $slidein = $('#coupon-slidein');
+      if (
+        $slidein.hasClass('show-coupon') &&
+        !$slidein.is(event.target) && 
+        $slidein.has(event.target).length === 0
+      ) {
+        $slidein.removeClass('show-coupon');
+      }
+    });
+
+    // Loyalty points login slidein
+    $(document).on('click', '#show-loyalty-points-btn', function() {
+      $('#loyalty-points-slidein').fadeIn(200);
+    });
+
+    $(document).on('click', '.close-loyalty-modal', function() {
+      $('#loyalty-points-slidein').fadeOut(200);
+    });
+
+    $(document).on('mousedown touchstart', function(event) {
+      var $modal = $('#loyalty-points-slidein');
+      if (
+        $modal.is(':visible') &&
+        !$modal.is(event.target) &&
+        $modal.has(event.target).length === 0 &&
+        !$(event.target).is('#show-loyalty-points-btn')
+      ) {
+        $modal.fadeOut(200);
+      }
     });
 
     // Functions

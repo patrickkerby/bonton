@@ -20,6 +20,102 @@ export default {
       $( this ).toggleClass( 'packed' );
     });
 
+    // --- Utility Banner: Global Date Picker ---
+    // WooCommerce loads jQuery UI Datepicker on the cart page, which overrides
+    // Bootstrap Datepicker's $.fn.datepicker. Detect which one is active and
+    // use the correct API.
+    (function() {
+      var $btn = $('#global-date-picker-btn');
+      var $dropdown = $('#global-date-dropdown');
+      var $picker = $('#global-datepicker');
+
+      if (!$btn.length) return;
+
+      var dayjs = require('dayjs');
+      var startDate = dayjs().add(33, 'hour').toDate();
+      var isJQueryUI = typeof $.datepicker !== 'undefined' && typeof $.datepicker.formatDate === 'function';
+
+      function saveDateAndUpdate(dateText) {
+        $.post(window.bontonData.ajaxUrl, {
+          action: 'save_pickup_date',
+          nonce: window.bontonData.nonce,
+          date: dateText,
+        }, function(response) {
+          if (response.success) {
+            if ($('body').hasClass('woocommerce-cart')) {
+              window.location.reload();
+            } else {
+              $btn.find('.utility-banner__date-label').text(response.data.date_display);
+              $dropdown.fadeOut(150);
+            }
+          }
+        });
+      }
+
+      if (isJQueryUI) {
+        $picker.datepicker({
+          dateFormat: 'dd/mm/yy',
+          minDate: startDate,
+          beforeShowDay: function(date) {
+            var day = date.getDay();
+            if (day === 0 || day === 1) return [false];
+            return [true];
+          },
+          onSelect: function(dateText) {
+            saveDateAndUpdate(dateText);
+          },
+        });
+      } else {
+        $picker.datepicker({
+          format: 'dd/mm/yyyy',
+          startDate: startDate,
+          daysOfWeekDisabled: [0, 1],
+          todayHighlight: true,
+          maxViewMode: 0,
+        });
+
+        $picker.on('changeDate', function(e) {
+          var d = e.date;
+          var dd = ('0' + d.getDate()).slice(-2);
+          var mm = ('0' + (d.getMonth() + 1)).slice(-2);
+          var yyyy = d.getFullYear();
+          saveDateAndUpdate(dd + '/' + mm + '/' + yyyy);
+        });
+      }
+
+      $btn.on('click', function(e) {
+        e.stopPropagation();
+        $dropdown.fadeToggle(150);
+        $('#bulk-info-popover').fadeOut(150);
+      });
+
+      $(document).on('mousedown touchstart', function(e) {
+        if (!$dropdown.is(e.target) && $dropdown.has(e.target).length === 0 && !$btn.is(e.target) && $btn.has(e.target).length === 0) {
+          $dropdown.fadeOut(150);
+        }
+      });
+    })();
+
+    // --- Utility Banner: Bulk Discount Popover ---
+    (function() {
+      var $btn = $('#bulk-info-btn');
+      var $popover = $('#bulk-info-popover');
+
+      if (!$btn.length) return;
+
+      $btn.on('click', function(e) {
+        e.stopPropagation();
+        $popover.fadeToggle(150);
+        $('#global-date-dropdown').fadeOut(150);
+      });
+
+      $(document).on('mousedown touchstart', function(e) {
+        if (!$popover.is(e.target) && $popover.has(e.target).length === 0 && !$btn.is(e.target) && $btn.has(e.target).length === 0) {
+          $popover.fadeOut(150);
+        }
+      });
+    })();
+
     //Initialise popovers
     $(function () {
       $('[data-toggle="tooltip"]').tooltip();

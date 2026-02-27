@@ -409,299 +409,54 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 }
 
 
-// BULK PRICING FOR BAKED YEASTED ITEMS
-// if category is Bread (52), Buns & Bagels (91) & if product is not in blacklist
-//   get_quantity of each line item
-//     if line item = "single", unit_quantity = quantity * 1/6
-//     if line item = "1/2 dozen", unit_quantity = quantity * 1
-//     if line item = "Dozen", unit_quantity = quantity * 2
-//       calculate total cart quantity
-//         if total cart unit_quantity > 5 && < 10, apply discount of 10% to products within categories
-//         if total cart unit_quantity > 10, apply discount of 20% to products within categories
-//            if line item = "single"
-//               apply discount to quantity that makes up unit_quantity. Apply full price to remainder of items. 
+// AJAX: Save pickup date to WC session (used by the global utility banner date picker)
+add_action('wp_ajax_save_pickup_date', 'App\ajax_save_pickup_date');
+add_action('wp_ajax_nopriv_save_pickup_date', 'App\ajax_save_pickup_date');
 
-// Product categories
-function get_my_bulk_terms(){
-    return array( 91, 52 );
+function ajax_save_pickup_date() {
+    check_ajax_referer('bonton_nonce', 'nonce');
+
+    $date_raw = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
+    $date_obj = \DateTime::createFromFormat('!d/m/Y', $date_raw);
+
+    if (!$date_obj) {
+        wp_send_json_error(['message' => 'Invalid date format']);
+    }
+
+    WC()->session->set('pickup_date', $date_obj->format('l, F j, Y'));
+    WC()->session->set('pickup_date_formatted', $date_obj->format('Y-m-d'));
+    WC()->session->set('pickup_date_object', $date_obj);
+
+    wp_send_json_success([
+        'date_display' => $date_obj->format('D, M j'),
+        'date_full'    => $date_obj->format('l, F j, Y'),
+    ]);
 }
 
-add_action( 'woocommerce_before_calculate_totals', 'App\bulk_pricing', 30, 10 );
-function bulk_pricing( $cart ) {
-    if ( is_admin() && ! defined( 'DOING_AJAX' ) )
+// BULK PRICING FOR BAKED YEASTED ITEMS
+// Calculation logic lives in App\Helpers\BulkPricing.
+// Discount applied as a negative WooCommerce fee (not via set_price).
+
+function get_my_bulk_terms(){
+    return \App\Helpers\BulkPricing::get_bulk_terms();
+}
+
+// Apply bulk discount as a WooCommerce fee so it appears as a real line item
+// in the cart totals (subtotal stays at original prices, fee reduces the total).
+add_action('woocommerce_cart_calculate_fees', 'App\apply_bulk_discount_fee');
+function apply_bulk_discount_fee($cart) {
+    if (is_admin() && !defined('DOING_AJAX')) {
         return;
-
-    if ( did_action( 'woocommerce_before_calculate_totals' ) >= 2 )
-        return;
-
-    $bulk_discount_enabled = get_field('bulk_discount', 'option');;
-    $blackoutdates = get_field('bulk_discount_blackout_dates', 'option');
-
-    if ($blackoutdates) {
-        $blackout_array = array();
-
-        foreach($blackoutdates as $blackout) {
-            $date = $blackout['date'];
-            $blackout_array[] = $date;
-        }
-
-        $session_pickup_date = WC()->session->get('pickup_date_formatted');
-        
-        if ( isset($_POST['date']) || isset($session_pickup_date))  { 
-            
-            // Always prefer session data as it's already in the correct d/m/Y format
-            // POST date needs to be converted first (handled by cart template)
-            if ( isset($session_pickup_date) && !empty($session_pickup_date)) {
-                $pickupdate = $session_pickup_date;
-            }
-            elseif ( isset($_POST['date'])) {
-                // If no session yet, convert POST date to d/m/Y format
-                $post_date_obj = \DateTime::createFromFormat('d/m/Y', $_POST['date']);
-                if ($post_date_obj) {
-                    $pickupdate = $post_date_obj->format('d/m/Y');
-                } else {
-                    $pickupdate = $_POST['date']; // Fallback if format is already correct
-                }
-            } 
-
-            if (isset($pickupdate) && in_array($pickupdate, $blackout_array)) {
-                $bulk_discount_enabled = false;
-            }
-        }
     }
 
-    if ($bulk_discount_enabled) {
-    
-        $total_item_quantity = 0;
+    $progress = \App\Helpers\BulkPricing::get_progress();
 
-        $excluded_products = array( 899, 963, 1087, 1119, 1164, 1988, 1158, 1168, 1177, 2098, 8703, 8516, 10167, 10144, 10036, 10028, 11723); // @TODO hook up to ACF
-        //Excluded Products Legend:
-        // 899  = Pretzels
-        // 963  = Egg Bread
-        // 1087 = Olive Flutes
-        // 1119 = Amandine Croissant
-        // 1164 = Rugelach
-        // 1988 = Fig & Pistachio Rugelach
-        // 1158 = Cranberry, Almond, Marmalade Rugelach
-        // 1168 = Kouign-Amann
-        // 1177 = Canelé de Bordeaux
-        // 2098 = Hot Cross Buns
-        // 8703 = White Chocolate & Blueberry Filled Croissant
-        // 8516 = Strawberry Mascarpone Croissant 
-        // 10167 = Paska
-        // 10144 = Easter Egg Filled Croissant
-        // 10036 = Roasted Vegetable Cheddar Turnover
-        // 10028 = Focaccia
-        // 4382 = Pizza Swirl
-        // 11723 = Raspberry White Chocolate Filled Croissant
-        // 11854 = Beef & Cheddar Swirl 
-
-        $seasonal_pricing_activated = false; // @TODO Hook this up to ACF fiels.
-        $regular_discount_small = 0.9; // @TODO hook up to ACF
-        $regular_discount_large = 0.8; // @TODO hook up to ACF
-        $seasonal_discount_small = 1; // @TODO hook up to ACF
-        $seasonal_discount_large = 1; // @TODO hook up to ACF
-        $discount_percentage = 1;
-
-        // Loop through cart items
-        if( is_user_logged_in() ) { // check if there is a logged in user 	 
-            $user = wp_get_current_user(); // getting & setting the current user 
-            $roles = ( array ) $user->roles; // obtaining the role         
-        }
-        else {            
-            $roles = array(); // if there is no logged in user return empty array  
-        }
-
-        if (! in_array("wcwp_wholesale", $roles)) {
-
-            foreach ( $cart->get_cart() as $cart_item ) {
-                $prod_id = $cart_item['product_id'];
-                $exclusion_set = get_field('bulk_discount_exclusion', $prod_id);
-                if($exclusion_set === true) {
-                    $exclusion = true;
-                }
-                else {
-                    $exclusion = false;
-                }
-
-                if( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) && ! in_array( $cart_item['product_id'], $excluded_products) && $exclusion === false ){
-                    $attributes = $cart_item['data']->get_attributes();    
-                    $quantity = $cart_item['quantity'];
-                    $product = wc_get_product( $cart_item['product_id'] );
-
-                    if (isset($attributes['pa_package-size'])) {
-
-                        $size = $attributes['pa_package-size'];
-                        
-                        if ($size === 'single') {
-                            $quantity = $quantity * 0.166666666667;                
-                        }
-                        elseif ($size === 'half-dozen') {
-                            $quantity = $quantity * 1;                
-                        }
-                        elseif ($size === '6-pack') {
-                            $quantity = $quantity * 1;
-                        }                    
-                        elseif ($size === 'dozen') {
-                            $quantity = $quantity * 2;
-                        }
-                        else {
-                            $quantity = $quantity * 1;
-                        }
-                    }                
-                    $total_item_quantity +=  $quantity;
-                }
-            }
-
-            // Check if seasonal pricing has been enabled
-            // Check for a selected pickup date, either through POST or in the session data. Set single pickupdate variable, regardless of where it comes from
-            /// Convert date from dd/mm/yyyy to Y-m-d so we can compare properly
-            //// Compare selected pickup date to hardcoded cutoff date
-            ///// If pickup date is within special pricing range, set special pricing to true (then adust bulk discount percentage)
-            
-            if ($seasonal_pricing_activated === true) {
-
-                $session_pickup_date = WC()->session->get('pickup_date_formatted');
-                
-                if ( isset($_POST['date']) || isset($session_pickup_date))  { 
-                    
-                    // Always prefer session data as it's already in the correct d/m/Y format
-                    if ( isset($session_pickup_date) && !empty($session_pickup_date)) {
-                        $pickupdate = $session_pickup_date;
-                    }
-                    elseif ( isset($_POST['date'])) {
-                        // If no session yet, convert POST date to d/m/Y format
-                        $post_date_obj = \DateTime::createFromFormat('d/m/Y', $_POST['date']);
-                        if ($post_date_obj) {
-                            $pickupdate = $post_date_obj->format('d/m/Y');
-                        } else {
-                            $pickupdate = $_POST['date']; // Fallback if format is already correct
-                        }
-                    }
-
-                    if (isset($pickupdate)) {
-                        $date = str_replace('/', '-', $pickupdate);
-                        $pickupdate_time = date('Y-m-d', strtotime($date));
-                        $start_date = '2021-12-21'; // @TODO hook up to ACF
-                        $cutoff_date = '2021-12-31'; // @TODO hook up to ACF
-
-                        if ($pickupdate_time > $start_date && $pickupdate_time < $cutoff_date) {
-                            // Set discount percentage based on total number of eligible items in the cart
-                            if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
-                                $discount_percentage = $seasonal_discount_small;
-                            }
-                            elseif ( $total_item_quantity >= 10  ) {
-                                $discount_percentage = $seasonal_discount_large;
-                            }
-                        }
-                        else {
-                            // Set discount percentage based on total number of eligible items in the cart
-                            if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
-                                $discount_percentage = $regular_discount_small;
-                            }
-                            elseif ( $total_item_quantity >= 10  ) {
-                                $discount_percentage = $regular_discount_large;
-                            }
-                        }
-                    }
-                }
-            }
-            else {
-                // Set discount percentage based on total number of eligible items in the cart
-                if ( $total_item_quantity >= 5 && $total_item_quantity < 10) {
-                    $discount_percentage = $regular_discount_small;
-                }
-                elseif ( $total_item_quantity >= 10  ) {
-                    $discount_percentage = $regular_discount_large;
-                }
-            }
-
-            // Set price with 10% discount, for items within set categories only (bread, bagels, sweet buns)
-            if ( $total_item_quantity >= 5) {
-                $bulk_discount_savings_total = 0;
-                $discounted_quantity = 0;
-                $discount_savings_percentage = 1 - $discount_percentage;
-
-                foreach ( $cart->get_cart() as $cart_item ) {
-                    $prod_id = $cart_item['product_id'];
-                    $exclusion_set = get_field('bulk_discount_exclusion', $prod_id);
-                    if($exclusion_set === true) {
-                        $exclusion = true;
-                    }
-                    else {
-                        $exclusion = false;
-                    }
-                    
-                    // Set price with discount, for items within set categories only (bread, bagels, sweet buns)
-                    if ( has_term( get_my_bulk_terms(), 'product_cat', $cart_item['product_id'] ) && ! in_array( $cart_item['product_id'], $excluded_products) && $exclusion === false ) {
-                        $product = $cart_item['data'];
-                        $quantity = $cart_item['quantity'];
-                        $price = $product->get_price();
-                        $name = $product->get_name();
-                        
-                        // If line item qualifies for bulk pricing, but is of single items, the discount only applies to  the number of items that directly make up a full "unit" (batches of 6).
-                        $attributes = $cart_item['data']->get_attributes(); 
-                        if (isset($attributes['pa_package-size'])) {
-                            $size = $attributes['pa_package-size'];                                                
-                            if ($size == 'single') {
-                                $is_single = true;
-                                $discounted_quantity = $quantity;
-                                $discounted_quantity -= $discounted_quantity % 6;  // ex: if quantity is 32, this will reduce it to 30 items that get a discount
-                                $discounted_price = $discounted_quantity * $price * $discount_percentage;
-                                $bulk_discount_savings = $price * $discount_savings_percentage * $discounted_quantity;
-                                $remaining_quantity = $quantity - $discounted_quantity; // determine remainder of items that should be charged at full price
-                                $remainder_price = $remaining_quantity * $price;
-                                $combined_total_price = $discounted_price + $remainder_price;
-                                $discounted_unit_price = $combined_total_price / $quantity;
-
-                                // Action! set the price of line item with what we've determined above
-                                $cart_item['data']->set_price( $discounted_unit_price );                        
-                            }
-                            else {
-                                $is_single = false;
-                                $cart_item['data']->set_price( $price * $discount_percentage );
-                                $discounted_price = $price * $discount_percentage;
-                                $bulk_discount_savings = $price * $discount_savings_percentage * $quantity;
-                            }                 
-                        }
-                        else {
-                            $is_single = false;
-                            $cart_item['data']->set_price( $price * $discount_percentage );
-                            $discounted_price = $price * $discount_percentage;
-                            $bulk_discount_savings = $price * $discount_savings_percentage * $quantity;
-                        }
-
-                        $bulk_discount_savings_total += $bulk_discount_savings;
-                        // Following code is for debugging. Print the vars on screen to see if the math is right.
-                        // if (is_cart()) {
-                        //     echo '<h4>' .$name . '</h4>' ;
-                        //     echo 'Original Price: ' . $price . '<br>';
-                        //     echo 'Savings Percentage: ' . $discount_savings_percentage . '<br>';
-                        //     echo 'Bulk Discount Savings: '. $bulk_discount_savings . '<br>';
-                            
-                        //     if ($is_single) {
-                        //         echo '<br>Discounted Quantity: ' . $discounted_quantity . '<br>';
-                        //         echo 'Remainder Quantity: ' . $remaining_quantity . '<br>';
-                        //         echo 'Discounted Total Price: ' . $discounted_price . '<br>';
-                        //         echo 'Remainder Total Price: ' . $remainder_price . '<br>';
-                        //         echo 'New Unit Price: ' . $discounted_unit_price . '<br><br>';
-                        //     }
-
-                        //     if (! $is_single) {
-                        //         echo 'Discounted Price: ' . $discounted_price . '<br><hr>';
-                        //     }
-
-                        // }
-                    } 
-                }
-                if (is_cart()) {
-                    echo '<div class="bulk_discounts">Bulk discount savings: <span>$'. $bulk_discount_savings_total . '</span></div>';
-                }
-            }
-            else {
-            } 
-        }
+    if (!$progress['enabled'] || $progress['current_tier'] === 0 || $progress['savings'] <= 0) {
+        return;
     }
+
+    $label = 'Bulk discount (' . $progress['current_tier'] . '% off)';
+    $cart->add_fee($label, -$progress['savings']);
 }
 
 /**

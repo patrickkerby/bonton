@@ -1,0 +1,396 @@
+.utility-banner {
+  background: $cream;
+  border-bottom: solid 2px darken($cream, 4%);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  &__divider {
+    width: 1px;
+    height: 1.5rem;
+    background: darken($cream, 10%);
+    margin: 0 1.25rem;
+    flex-shrink: 0;
+  }
+
+  // --- Date Picker Section ---
+
+  &__date {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__date-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: $charcoal;
+    padding: 0.35rem 0.6rem;
+    border-radius: 2rem;
+
+    @include slowfade(0.2);
+
+    &:hover {
+      background: darken($cream, 4%);
+    }
+
+    .fa-calendar-alt {
+      color: $highlight;
+    }
+  }
+
+  &__date-caret {
+    font-size: 0.7em;
+    opacity: 0.5;
+  }
+
+  &__date-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.15);
+    padding: 0.75rem;
+
+    .datepicker {
+      font-size: 0.8125rem;
+
+      .datepicker-switch {
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+
+      table {
+        width: 100%;
+      }
+
+      td,
+      th {
+        text-align: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        font-weight: 500;
+      }
+
+      td.day {
+        cursor: pointer;
+
+        &:hover {
+          background: $cream;
+          border-radius: 50%;
+        }
+
+        &.disabled {
+          opacity: 0.2;
+          cursor: default;
+
+          &:hover {
+            background: none;
+          }
+        }
+
+        &.active,
+        &.active:hover {
+          background: $highlight;
+          color: #fff;
+        }
+
+        &.today {
+          background: darken($cream, 6%);
+
+          &.active {
+            background: $highlight;
+            color: #fff;
+          }
+        }
+      }
+
+      .prev,
+      .next {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+
+        &:hover {
+          background: $cream;
+          border-radius: 50%;
+        }
+      }
+
+      .dow {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        color: #999;
+        text-transform: uppercase;
+        padding-bottom: 0.25rem;
+      }
+    }
+
+    // jQuery UI Datepicker (rendered on cart page where WooCommerce overrides Bootstrap Datepicker)
+    .ui-datepicker {
+      width: 17rem;
+      border: none;
+      font-size: 0.8125rem;
+      background: #fff;
+
+      .ui-datepicker-header {
+        background: none;
+        border: none;
+        border-radius: 0;
+        padding: 0.25rem 0;
+      }
+
+      .ui-datepicker-title {
+        font-weight: 600;
+        font-size: 0.875rem;
+      }
+
+      .ui-datepicker-prev,
+      .ui-datepicker-next {
+        cursor: pointer;
+        top: 0.35rem;
+      }
+
+      table {
+        width: 100%;
+      }
+
+      td {
+        padding: 1px;
+      }
+
+      thead th {
+        font-size: 0.6875rem;
+        font-weight: 600;
+        color: #999;
+        text-align: center;
+        padding: 0 0 0.25rem;
+
+        span {
+          border: none;
+          margin: 0;
+          padding: 0;
+        }
+      }
+
+      .ui-state-default,
+      .ui-widget-content .ui-state-default {
+        text-align: center;
+        border: solid 2px transparent;
+        border-radius: 50%;
+        width: 2rem;
+        height: 2rem;
+        line-height: 1.75rem;
+        background: none;
+        font-weight: 500;
+      }
+
+      .ui-state-active,
+      .ui-widget-content .ui-state-active {
+        border-color: $highlight;
+        color: $charcoal;
+        font-weight: 700;
+      }
+
+      .ui-state-hover {
+        background: $cream;
+        border-color: transparent;
+      }
+
+      .ui-state-disabled {
+        opacity: 0.2;
+
+        .ui-state-default {
+          border-color: transparent;
+        }
+      }
+    }
+  }
+
+  // --- Bulk Discount Progress Section ---
+
+  &__bulk {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__bulk-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.35rem 0.6rem;
+    border-radius: 2rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: $charcoal;
+
+    @include slowfade(0.2);
+
+    &:hover {
+      background: darken($cream, 4%);
+    }
+  }
+
+  &__progress {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: darken($cream, 10%);
+    display: inline-block;
+
+    @include slowfade(0.3);
+
+    &.filled {
+      background: $highlight;
+    }
+
+    &.tier-reached {
+      background: $highlight;
+    }
+  }
+
+  &__milestone {
+    font-size: 0.625rem;
+    font-weight: 700;
+    color: darken($cream, 25%);
+    margin: 0 0.3rem 0 0.15rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+
+    &.reached {
+      color: $highlight;
+    }
+  }
+
+  &__bulk-label {
+    white-space: nowrap;
+    color: darken($charcoal, 10%);
+  }
+
+  // --- Info Popover ---
+
+  &__popover {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 100;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.15);
+    width: 18rem;
+  }
+
+  &__popover-content {
+    padding: 1.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+
+    strong {
+      font-size: 0.875rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0 0 0.5rem;
+    }
+
+    ul {
+      margin: 0 0 0.75rem;
+      padding: 0 0 0 1.25rem;
+
+      li {
+        margin-bottom: 0.25rem;
+      }
+    }
+  }
+
+  &__popover-note {
+    font-size: 0.75rem;
+    font-style: italic;
+    color: #888;
+    margin-bottom: 0 !important;
+  }
+
+  // --- Responsive ---
+
+  @media screen and (max-width: 640px) {
+    &__inner {
+      justify-content: space-between;
+      padding: 0.35rem 0.5rem;
+    }
+
+    &__divider {
+      display: none;
+    }
+
+    &__date-btn {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.4rem;
+    }
+
+    &__bulk-trigger {
+      padding: 0.25rem 0.4rem;
+      gap: 0;
+    }
+
+    &__bulk-label {
+      display: none;
+    }
+
+    &__dot {
+      width: 7px;
+      height: 7px;
+    }
+
+    &__milestone {
+      font-size: 0.5625rem;
+    }
+
+    &__date-dropdown {
+      left: 0;
+      transform: none;
+    }
+
+    &__popover {
+      position: fixed;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
