@@ -49,13 +49,13 @@
         @endforeach
       </span>
     @endif
-
-    @if($item['bulk_eligible'])
-      <span class="bulk-label"><i class="fa fa-dollar-sign" aria-hidden="true"></i> Bulk discount eligible</span>
-    @endif
     
-    @if($item['long_fermentation'] || $item['two_days_notice'] || $item['sold_out_msg'] || $item['special_availability_msg'] || $item['delivery_exclusion'])
+    @if($item['long_fermentation'] || $item['two_days_notice'] || $item['sold_out_msg'] || $item['special_availability_msg'] || $item['delivery_exclusion'] || $item['bulk_eligible'])
       <div class="special-notes-container">
+        @if($item['bulk_eligible'])
+          <span class="bulk-label"><i class="fa fa-dollar-sign" aria-hidden="true"></i> Bulk discount eligible</span>
+        @endif
+
         {{-- Meta data --}}
         {!! wc_get_formatted_cart_item_data( $cart_item ) !!}
 

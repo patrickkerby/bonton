@@ -646,31 +646,6 @@ ul.woocommerce-thankyou-order-details li {
       width: 80%;
     }
 
-    td.product-meta {
-      width: 100%;
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 0.25rem;
-
-      span {
-        line-height: 1.5rem;
-      }
-
-      i {
-        color: $highlight;
-        font-size: 0.9rem;
-        margin-right: 0.025rem;
-      }
-
-      .variation-SlicedOption span::before {
-        content: "\f058";
-        font-family: "Font Awesome 7 Free", serif;
-        font-weight: 500;
-        margin-right: 0.25rem;
-        color: $highlight;
-      }
-    }
-
     td.product-subtotal .amount {
       font-size: 1.1875rem;
       font-weight: 500;
@@ -918,14 +893,37 @@ ul.woocommerce-thankyou-order-details li {
 
 // Bulk discount eligibility label in the meta area
 .bulk-label {
-  display: inline-block;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  color: $highlight;
-  letter-spacing: 0.01em;
+  font-size: 0.875rem;
+  font-weight: 500;
 
   i {
-    margin-right: 0.2em;
+    width: 0.75rem;
+    margin: 0 0.15rem 0 0 !important;
+  }
+}
+
+td.product-meta {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+
+  span {
+    line-height: 1.5rem;
+  }
+
+  i {
+    color: $highlight;
+    font-size: 0.9rem;
+    margin-right: 0.025rem;
+  }
+
+  .variation-SlicedOption span::before {
+    content: "\f058";
+    font-family: "Font Awesome 7 Free", serif;
+    font-weight: 500;
+    margin-right: 0.25rem;
+    color: $highlight;
   }
 }
 
