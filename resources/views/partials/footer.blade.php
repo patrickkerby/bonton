@@ -1,3 +1,12 @@
+{{-- GA4: Load on all pages (shop, cart, checkout use layouts.contained/products/shop which lack gtag) --}}
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HTCXG3J87J"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-HTCXG3J87J');
+</script>
+
 <footer class="container-fluid">
   <div class="row justify-content-center">
   @if (isset($landing_page) && $landing_page == TRUE)

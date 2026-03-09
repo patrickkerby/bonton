@@ -104,12 +104,14 @@ This document tracks the custom functionalities and recent development work on t
 - `resources/assets/scripts/routes/common.js` — Add-to-cart tracking (site-wide) + shop page filter tracking
 - `resources/assets/scripts/routes/cart.js` — Cart conflict detection on page load
 - `resources/views/woocommerce/checkout/form-checkout.blade.php` — `begin_checkout` event via inline script
-- `resources/views/woocommerce/checkout/thankyou.php` — `purchase` event via inline script
+- `resources/views/woocommerce/checkout/thankyou.php` — `purchase` event via inline script (client-side backup)
+- `app/filters.php` — Server-side `purchase` event via GA4 Measurement Protocol (primary, fires on payment complete)
+- `resources/views/partials/footer.blade.php` — GA4 gtag added here so it loads on all layouts (shop, contained, products); removed from `layouts/app.blade.php` to avoid duplication
 
 **Technical Details**:
 
 - All JS events use `window.gtag` with a guard check, so they degrade silently if GA4 is ever removed
-- The `add_to_cart` tracking uses two detection methods (WooCommerce `added_to_cart` jQuery event + `ajaxComplete` fallback for quick view modal) with a 2-second debounce to prevent double-counting
+- The `add_to_cart` tracking uses three detection methods: (1) **click handler** on `.single_add_to_cart_button` for quick view and single product pages — WooCommerce uses form POST (page reload), not AJAX, so `added_to_cart` never fires; the click handler uses `transport_type: 'beacon'` so the event sends before the page navigates; (2) WooCommerce `added_to_cart` jQuery event for AJAX add-to-cart (loop products); (3) `ajaxComplete` fallback for any plugin-converted AJAX add-to-cart. A 2-second debounce prevents double-counting.
 - The `purchase` event uses GA4's `transaction_id` deduplication plus a `sessionStorage` guard to prevent double-counting on page refresh
 - The `begin_checkout` event only fires when the checkout form is valid (not when the "Oops, something went wrong" error state is shown)
 - The `cart_date_conflict` event identifies specific conflict types: `product_not_available`, `sold_out`, `no_date_selected`
@@ -120,7 +122,20 @@ This document tracks the custom functionalities and recent development work on t
 3. **Explore > Funnel Exploration** — Create a funnel: `product_quick_view` → `add_to_cart` → `begin_checkout` → `purchase`
 4. **Date comparison** — Compare any date range before vs. after these features launched to measure impact
 
-**Note**: The GA4 tag is defined in `resources/views/layouts/app.blade.php` (lines 33-41). The `gtag()` function is a lightweight wrapper that pushes to `window.dataLayer` — it's available synchronously before the async gtag.js library loads, so events are never lost.
+**Note**: The GA4 tag is loaded via `resources/views/partials/footer.blade.php` so it appears on all customer-facing pages. Previously it was only in `layouts/app.blade.php`, which meant shop, cart, checkout, and single-product pages (which use `layouts.shop`, `layouts.contained`, `layouts.products`) had no gtag — so `filter_category`, `cart_date_conflict`, `begin_checkout`, and `purchase` never reached GA4. Moving gtag to the footer partial fixes this.
+
+**Server-side purchase tracking (February 2026)**:
+
+Payment gateways often redirect users externally to complete payment. When they return, customers may not land on the thank-you page, so the client-side `purchase` event never fires. To fix this, server-side tracking was added via GA4 Measurement Protocol. When WooCommerce confirms payment (`woocommerce_payment_complete`), a purchase event is sent from the server — no dependency on the customer's browser.
+
+**Setup required**: Add your GA4 API secret to `wp-config.php`:
+```php
+define('BONTON_GA4_API_SECRET', 'your_api_secret_here');
+```
+
+Create the secret in GA4: **Admin** → **Data Streams** → select your Web stream → **Measurement Protocol API secrets** → **Create**.
+
+GA4 deduplicates by `transaction_id`, so if both client and server fire (e.g. customer lands on thank-you page), only one purchase is counted.
 
 ### Product Purchase Restriction System (November 2025)
 

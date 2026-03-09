@@ -1396,3 +1396,62 @@ add_filter('upload_dir', function (array $uploads) {
 
     return $uploads;
 });
+
+/**
+ * GA4 Server-side purchase tracking (Measurement Protocol)
+ *
+ * Fires when WooCommerce confirms payment, regardless of whether the customer
+ * lands on the thank-you page. Fixes missing purchase events when payment
+ * gateways redirect users externally.
+ *
+ * Requires: Add your GA4 API secret to wp-config.php:
+ *   define('BONTON_GA4_API_SECRET', 'your_api_secret_here');
+ *
+ * Create the secret in GA4: Admin > Data Streams > [Web stream] > Measurement Protocol API secrets
+ */
+add_action('woocommerce_payment_complete', function ($order_id) {
+    $api_secret = defined('BONTON_GA4_API_SECRET') ? BONTON_GA4_API_SECRET : '';
+    if (empty($api_secret)) {
+        return;
+    }
+
+    $order = wc_get_order($order_id);
+    if (!$order || !$order->get_id()) {
+        return;
+    }
+
+    $measurement_id = 'G-HTCXG3J87J';
+    $endpoint = sprintf(
+        'https://www.google-analytics.com/mp/collect?measurement_id=%s&api_secret=%s',
+        urlencode($measurement_id),
+        urlencode($api_secret)
+    );
+
+    // Client ID: use order-based value for server-side attribution (GA4 deduplicates by transaction_id)
+    $client_id = 'server_' . $order_id . '_' . $order->get_date_created()->format('U');
+
+    $payload = [
+        'client_id' => $client_id,
+        'events' => [
+            [
+                'name' => 'purchase',
+                'params' => [
+                    'transaction_id' => (string) $order->get_order_number(),
+                    'value' => (float) $order->get_total(),
+                    'currency' => $order->get_currency(),
+                    'shipping' => (float) $order->get_shipping_total(),
+                    'tax' => (float) $order->get_total_tax(),
+                    'items_count' => (int) $order->get_item_count(),
+                    'shipping_method' => $order->get_shipping_method(),
+                ],
+            ],
+        ],
+    ];
+
+    wp_remote_post($endpoint, [
+        'body' => wp_json_encode($payload),
+        'headers' => ['Content-Type' => 'application/json'],
+        'blocking' => false,
+        'timeout' => 5,
+    ]);
+}, 10, 1);

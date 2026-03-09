@@ -239,16 +239,26 @@ export default {
         if (!window.gtag) return;
 
         let lastTrackedAt = 0;
-        function trackAddToCart(productName) {
+        function trackAddToCart(productName, useBeacon) {
           const now = Date.now();
           if (now - lastTrackedAt < 2000) return;
           lastTrackedAt = now;
-          window.gtag('event', 'add_to_cart', {
+          const params = {
             product_name: productName || 'Unknown',
             source_page: $('body').hasClass('home') ? 'homepage' : window.location.pathname,
             via_quick_view: $('body').hasClass('quickview-open'),
-          });
+          };
+          if (useBeacon) params.transport_type = 'beacon';
+          window.gtag('event', 'add_to_cart', params);
         }
+
+        // Single product form (quick view + product page): uses form POST, not AJAX — track on click
+        $(document).on('click', '.single_add_to_cart_button, button[name="add-to-cart"]', function() {
+          const name = $(this).closest('form').find('.product_title').text().trim() ||
+                       $(this).closest('.product').find('.product_title').text().trim() ||
+                       $('.product_title').first().text().trim();
+          trackAddToCart(name, true); // beacon so event sends before page navigates
+        });
 
         // WooCommerce fires this for AJAX add-to-cart (loop products)
         $(document.body).on('added_to_cart', function(e, fragments, cart_hash, $button) {
@@ -258,10 +268,10 @@ export default {
           } else if ($button) {
             name = $button.closest('.product').find('.woocommerce-loop-product__title').text().trim();
           }
-          trackAddToCart(name);
+          trackAddToCart(name, false);
         });
 
-        // Fallback: catch single product form add-to-cart (e.g. quick view modal)
+        // Fallback: catch single product form add-to-cart via AJAX (if any plugin converts it)
         $(document).ajaxComplete(function(event, xhr, settings) {
           if (xhr.status !== 200) return;
           const data = settings.data;
@@ -269,7 +279,7 @@ export default {
           const isAddToCart = (typeof data === 'string' && data.indexOf('add-to-cart') !== -1) ||
                               url.indexOf('wc-ajax=add_to_cart') !== -1;
           if (!isAddToCart) return;
-          trackAddToCart($('.product_title').first().text().trim());
+          trackAddToCart($('.product_title').first().text().trim(), false);
         });
       })();
     });
