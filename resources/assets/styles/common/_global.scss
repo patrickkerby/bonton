@@ -383,3 +383,9 @@ p.demo_store,
     display: none;
   }
 }
+
+del,
+del span,
+del span bdi {
+  text-decoration: line-through;
+}

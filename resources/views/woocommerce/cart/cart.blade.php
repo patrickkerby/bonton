@@ -14,7 +14,7 @@
 @endphp
 
 <div class="row justify-content-center">
-  <div class="col-md-8">
+  <div class="col-sm-10 col-md-8">
     <h4>Your Items:</h4>
     <form class="woocommerce-cart-form" action="{{ esc_url( wc_get_cart_url() ) }}" method="post">
       @php do_action( 'woocommerce_before_cart_table' ) @endphp

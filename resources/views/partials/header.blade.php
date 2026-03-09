@@ -19,7 +19,11 @@ $sub_title = get_field('sub_title');
 
 @endphp
 
-<header class="banner d-none d-sm-flex">
+@if(is_cart())
+  <header class="banner d-none d-md-flex">
+@else
+  <header class="banner d-none d-sm-flex">
+@endif
   <div class="util-nav">    	
     <div class="hours">@php echo do_shortcode('[mbhi location="Bon Ton Bakery"]'); @endphp</div>
     <div class="top-nav-row">
@@ -40,8 +44,12 @@ $sub_title = get_field('sub_title');
   </div>
 </header>
 
-<header class="mobile-banner d-sm-none">
-  
+@if(is_cart())
+  <header class="mobile-banner d-md-none">
+@else
+  <header class="mobile-banner d-sm-none">
+@endif
+
   @unless(is_cart())
     <a class="cart-icon" href="{{ wc_get_cart_url() }}">{{ WC()->cart->get_cart_contents_count() }}</a> 
   @endunless
@@ -49,11 +57,13 @@ $sub_title = get_field('sub_title');
   @unless(is_cart())
     <a href="{!! get_home_url() !!}" class="logo">Bon Ton Bakery &amp; Pâtisserie</a>
   @endunless 
+
   <button class="navbar-toggler hamburger hamburger--arrow" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
     <span class="hamburger-box">
       <span class="hamburger-inner"></span>
     </span>
   </button>
+
   <div class="collapse navbar-collapse" id="navbarSupportedContent1">
     <nav class="nav-mobile">
       @php 

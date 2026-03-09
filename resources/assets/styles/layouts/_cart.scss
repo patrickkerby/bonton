@@ -6,6 +6,25 @@ ul.woocommerce-thankyou-order-details li {
 
 .cart .wrap {
   padding-top: 1rem;
+
+  @include media-breakpoint-down(md) {
+    &.container {
+      max-width: none;
+    }
+  }
+}
+
+.cart del {
+  margin-bottom: -0.5rem;
+
+  span bdi {
+    font-size: 1rem;
+    color: $highlight;
+
+    span {
+      font-weight: 500;
+    }
+  }
 }
 
 .cart .woocommerce {
@@ -80,6 +99,7 @@ ul.woocommerce-thankyou-order-details li {
     transform: rotate(180deg);
     display: inline-flex;
     margin-right: 0.75rem;
+    overflow: hidden;
   }
 }
 
@@ -405,6 +425,10 @@ ul.woocommerce-thankyou-order-details li {
     font-size: 19px;
     font-weight: 500;
     color: $charcoal;
+  }
+
+  td.product-subtotal {
+    text-align: right;
   }
 
   a.remove {
@@ -898,7 +922,7 @@ ul.woocommerce-thankyou-order-details li {
 
   i {
     width: 0.75rem;
-    margin: 0 0.15rem 0 0 !important;
+    margin: 0 0.1rem 0 0.025rem !important;
   }
 }
 
@@ -915,7 +939,8 @@ td.product-meta {
   i {
     color: $highlight;
     font-size: 0.9rem;
-    margin-right: 0.025rem;
+    margin-right: 0.15rem;
+    width: 0.75rem;
   }
 
   .variation-SlicedOption span::before {
@@ -944,6 +969,10 @@ td.product-meta {
     color: $highlight;
     font-weight: 600;
   }
+}
+
+.special-notes-container {
+  margin-top: -0.15rem;
 }
 
 .points-coupons {
