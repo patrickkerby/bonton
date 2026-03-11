@@ -106,8 +106,8 @@ This document tracks the custom functionalities and recent development work on t
 - `resources/views/woocommerce/checkout/form-checkout.blade.php` — `begin_checkout` event via inline script
 - `resources/views/woocommerce/checkout/thankyou.php` — `purchase` event via inline script (client-side backup)
 - `app/filters.php` — Server-side `purchase` event via GA4 Measurement Protocol (primary, fires on payment complete)
-- `resources/views/partials/head.blade.php` — GA4 `gtag()` function stub defined early so inline scripts can call it before footer loads
-- `resources/views/partials/footer.blade.php` — GA4 async library + config; removed from `layouts/app.blade.php` to avoid duplication
+- `resources/views/partials/head.blade.php` — Full GA4 init (async library load, gtag stub, config) in `<head>` so config is queued before any inline event scripts
+- `resources/views/partials/footer.blade.php` — GA4 code removed (moved to head)
 
 **Technical Details**:
 
@@ -124,9 +124,9 @@ This document tracks the custom functionalities and recent development work on t
 3. **Explore > Funnel Exploration** — Create a funnel: `product_quick_view` → `add_to_cart` → `begin_checkout` → `purchase`
 4. **Date comparison** — Compare any date range before vs. after these features launched to measure impact
 
-**Note**: The `gtag()` function stub is defined in `resources/views/partials/head.blade.php` (early, before content) so inline scripts in templates like `thankyou.php` and `form-checkout.blade.php` can call `window.gtag()` immediately. The async gtag.js library and `gtag('config', ...)` are loaded in `resources/views/partials/footer.blade.php`. This split is intentional — `gtag()` just pushes to `window.dataLayer`, and the library processes the queue when it loads.
+**Note**: The full GA4 init (async library, gtag stub, `gtag('js')`, and `gtag('config')`) is in `resources/views/partials/head.blade.php`. This ensures the config is queued in `dataLayer` *before* any inline event scripts (like `purchase` in `thankyou.php` or `begin_checkout` in `form-checkout.blade.php`). When gtag.js loads asynchronously, it processes the queue in order — config first, then events — so events are correctly attributed to the GA4 property. A previous split (stub in head, config in footer) caused `purchase` and `begin_checkout` events to be silently dropped because they were queued before the config.
 
-Previously, the entire gtag setup was only in `layouts/app.blade.php`, which meant shop, cart, checkout, and single-product pages (using `layouts.shop`, `layouts.contained`, `layouts.products`) had no gtag at all. Moving it to head+footer partials fixed this.
+Previously, the entire gtag setup was only in `layouts/app.blade.php`, which meant shop, cart, checkout, and single-product pages (using `layouts.shop`, `layouts.contained`, `layouts.products`) had no gtag at all. Moving it to the head partial (included by all layouts) fixed this.
 
 **Server-side purchase tracking (February 2026)**:
 

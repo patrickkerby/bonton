@@ -1,7 +1,3 @@
-{{-- GA4: gtag() is defined in head.blade.php; load the library and send config here --}}
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HTCXG3J87J"></script>
-<script>gtag('js', new Date());gtag('config', 'G-HTCXG3J87J');</script>
-
 <footer class="container-fluid">
   <div class="row justify-content-center">
   @if (isset($landing_page) && $landing_page == TRUE)
