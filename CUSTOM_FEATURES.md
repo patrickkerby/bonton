@@ -86,51 +86,52 @@ This document tracks the custom functionalities and recent development work on t
 
 **Purpose**: Measure the impact of new homepage features (hero CTA, featured products by category, homepage add-to-cart) and track the full customer purchase funnel.
 
-**Background**: The site had a basic GA4 tag (`G-HTCXG3J87J`) with zero custom events. Default GA4 provides page views and scroll depth, but nothing about product interactions, cart friction, or conversion attribution. This implementation adds targeted custom events at each step of the purchase funnel without any third-party tools or additional scripts.
+**Architecture**: Hybrid approach using two systems:
+1. **GTM + gtm4wp plugin** — Handles all standard ecommerce events (`page_view`, `add_to_cart`, `begin_checkout`, `purchase`, `view_item`, etc.) automatically via the GTM container `GTM-WFXR55C` and the "Google Tag Manager for WordPress" plugin (gtm4wp v1.22+). A GA4 Configuration tag in GTM forwards these to property `G-HTCXG3J87J`.
+2. **Direct gtag.js** — Handles custom events unique to Bon Ton that no plugin provides (`product_quick_view`, `filter_category`, `cart_date_conflict`). Configured with `send_page_view: false` to avoid duplicating page views with GTM.
 
-**Events Tracked**:
+**Custom Events (via direct gtag.js in theme code)**:
 
 | Event | Location | Fires When | Key Parameters |
 |---|---|---|---|
 | `product_quick_view` | Homepage | Product clicked in featured grid or carousels | `product_name`, `source_section`, `category_tab` or `carousel_id` |
-| `add_to_cart` | All pages | Item successfully added to cart | `product_name`, `source_page` (homepage vs pathname), `via_quick_view` |
 | `filter_category` | Shop pages | Category filter selected in sidebar | `category_name` |
 | `cart_date_conflict` | Cart page | Cart loads with availability/date conflict | `conflict_reasons`, `items_in_cart` |
-| `begin_checkout` | Checkout page | Checkout loads with valid order (not error state) | `value`, `currency`, `items_count` |
-| `purchase` | Thank you page | Order completed successfully | `transaction_id`, `value`, `currency`, `items_count`, `shipping_method` |
+
+**Standard Ecommerce Events (via GTM + gtm4wp plugin)**:
+
+| Event | Handled By |
+|---|---|
+| `page_view` | GTM GA4 Configuration tag |
+| `add_to_cart` | gtm4wp pushes to dataLayer → GTM forwards to GA4 |
+| `begin_checkout` | gtm4wp pushes to dataLayer → GTM forwards to GA4 |
+| `purchase` | gtm4wp pushes to dataLayer → GTM forwards to GA4 |
+| `view_item`, `view_item_list`, etc. | gtm4wp pushes to dataLayer → GTM forwards to GA4 |
 
 **Files Modified**:
 - `resources/assets/scripts/routes/home.js` — Homepage product click tracking (featured grid + carousels)
-- `resources/assets/scripts/routes/common.js` — Add-to-cart tracking (site-wide) + shop page filter tracking
+- `resources/assets/scripts/routes/common.js` — Shop page filter tracking (`filter_category`)
 - `resources/assets/scripts/routes/cart.js` — Cart conflict detection on page load
-- `resources/views/woocommerce/checkout/form-checkout.blade.php` — `begin_checkout` event via inline script
-- `resources/views/woocommerce/checkout/thankyou.php` — `purchase` event via inline script (client-side backup)
-- `app/filters.php` — Server-side `purchase` event via GA4 Measurement Protocol (primary, fires on payment complete)
-- `resources/views/partials/head.blade.php` — Full GA4 init (async library load, gtag stub, config) in `<head>` so config is queued before any inline event scripts
-- `resources/views/partials/footer.blade.php` — GA4 code removed (moved to head)
+- `resources/views/partials/head.blade.php` — Direct gtag.js init with `send_page_view: false` (custom events only)
+- `app/filters.php` — Server-side `purchase` event via GA4 Measurement Protocol (safety net for ad-blocked browsers)
 
 **Technical Details**:
 
-- All JS events use `window.gtag` with a guard check, so they degrade silently if GA4 is ever removed
-- The `add_to_cart` tracking uses three detection methods: (1) **click handler** on `.single_add_to_cart_button` for quick view and single product pages — WooCommerce uses form POST (page reload), not AJAX, so `added_to_cart` never fires; the click handler uses `transport_type: 'beacon'` so the event sends before the page navigates; (2) WooCommerce `added_to_cart` jQuery event for AJAX add-to-cart (loop products); (3) `ajaxComplete` fallback for any plugin-converted AJAX add-to-cart. A 2-second debounce prevents double-counting.
-- Both `purchase` and `begin_checkout` events include a full `items` array with `item_id`, `item_name`, `price`, `quantity`, and `item_category` — this is required for GA4's Monetization reports (revenue, ecommerce purchases, purchase journey, checkout journey)
-- The `purchase` event uses GA4's `transaction_id` deduplication plus a `sessionStorage` guard to prevent double-counting on page refresh
-- The `begin_checkout` event only fires when the checkout form is valid (not when the "Oops, something went wrong" error state is shown)
+- All custom JS events use `window.gtag` with a guard check, so they degrade silently if GA4 is ever removed
 - The `cart_date_conflict` event identifies specific conflict types: `product_not_available`, `sold_out`, `no_date_selected`
+- The gtag.js config uses `send_page_view: false` because GTM's GA4 tag handles page views — without this flag, every page would be double-counted
+- GTM's legacy Universal Analytics tags (from ~2019-2020) are defunct since UA was sunset in July 2023. They can be cleaned up but cause no harm.
 
 **How to Use in GA4**:
 1. **Reports > Engagement > Events** — See all custom events and their counts
-2. **Explore > Free Form** — Build custom reports filtering by event parameters (e.g., `add_to_cart` where `source_page = homepage`)
-3. **Explore > Funnel Exploration** — Create a funnel: `product_quick_view` → `add_to_cart` → `begin_checkout` → `purchase`
-4. **Date comparison** — Compare any date range before vs. after these features launched to measure impact
+2. **Reports > Monetization** — Revenue, purchase funnel, ecommerce data (powered by gtm4wp)
+3. **Explore > Free Form** — Build custom reports filtering by event parameters (e.g., `filter_category` by `category_name`)
+4. **Explore > Funnel Exploration** — Create a funnel: `product_quick_view` → `add_to_cart` → `begin_checkout` → `purchase`
+5. **Date comparison** — Compare any date range before vs. after features launched to measure impact
 
-**Note**: The full GA4 init (async library, gtag stub, `gtag('js')`, and `gtag('config')`) is in `resources/views/partials/head.blade.php`. This ensures the config is queued in `dataLayer` *before* any inline event scripts (like `purchase` in `thankyou.php` or `begin_checkout` in `form-checkout.blade.php`). When gtag.js loads asynchronously, it processes the queue in order — config first, then events — so events are correctly attributed to the GA4 property. A previous split (stub in head, config in footer) caused `purchase` and `begin_checkout` events to be silently dropped because they were queued before the config.
+**Server-side purchase tracking (safety net)**:
 
-Previously, the entire gtag setup was only in `layouts/app.blade.php`, which meant shop, cart, checkout, and single-product pages (using `layouts.shop`, `layouts.contained`, `layouts.products`) had no gtag at all. Moving it to the head partial (included by all layouts) fixed this.
-
-**Server-side purchase tracking (February 2026)**:
-
-Payment gateways often redirect users externally to complete payment. When they return, customers may not land on the thank-you page, so the client-side `purchase` event never fires. To fix this, server-side tracking was added via GA4 Measurement Protocol. When WooCommerce confirms payment (`woocommerce_payment_complete`), a purchase event is sent from the server — no dependency on the customer's browser.
+Payment gateways often redirect users externally to complete payment. When they return, customers may not land on the thank-you page, so the client-side `purchase` event never fires. Ad blockers also prevent client-side tracking entirely. Server-side tracking via GA4 Measurement Protocol fires from PHP on `woocommerce_payment_complete` — no dependency on the customer's browser.
 
 **Setup required**: Add your GA4 API secret to `wp-config.php`:
 ```php
@@ -139,7 +140,7 @@ define('BONTON_GA4_API_SECRET', 'your_api_secret_here');
 
 Create the secret in GA4: **Admin** → **Data Streams** → select your Web stream → **Measurement Protocol API secrets** → **Create**.
 
-GA4 deduplicates by `transaction_id`, so if both client and server fire (e.g. customer lands on thank-you page), only one purchase is counted.
+GA4 deduplicates by `transaction_id`, so if both client and server fire, only one purchase is counted.
 
 ### Product Purchase Restriction System (November 2025)
 

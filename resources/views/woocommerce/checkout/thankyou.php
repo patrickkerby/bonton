@@ -87,38 +87,6 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php endif; ?>
 
-		<?php if ( ! $order->has_status( 'failed' ) ) :
-			$ga4_items = array();
-			foreach ( $order->get_items() as $item ) {
-				$product = $item->get_product();
-				$categories = wp_get_post_terms( $item->get_product_id(), 'product_cat', array( 'fields' => 'names' ) );
-				$ga4_items[] = array(
-					'item_id'       => $product ? $product->get_sku() ?: (string) $item->get_product_id() : (string) $item->get_product_id(),
-					'item_name'     => $item->get_name(),
-					'price'         => (float) ( $item->get_total() / max( $item->get_quantity(), 1 ) ),
-					'quantity'      => (int) $item->get_quantity(),
-					'item_category' => ! empty( $categories ) && ! is_wp_error( $categories ) ? $categories[0] : '',
-				);
-			}
-		?>
-		<script>
-		if (window.gtag) {
-			var orderId = '<?php echo esc_js( $order->get_order_number() ); ?>';
-			if (!sessionStorage.getItem('purchase_tracked_' + orderId)) {
-				window.gtag('event', 'purchase', {
-					transaction_id: orderId,
-					value: <?php echo (float) $order->get_total(); ?>,
-					currency: '<?php echo esc_js( $order->get_currency() ); ?>',
-					tax: <?php echo (float) $order->get_total_tax(); ?>,
-					shipping: <?php echo (float) $order->get_shipping_total(); ?>,
-					items: <?php echo wp_json_encode( $ga4_items ); ?>,
-				});
-				sessionStorage.setItem('purchase_tracked_' + orderId, '1');
-			}
-		}
-		</script>
-		<?php endif; ?>
-
 		<?php do_action( 'woocommerce_thankyou_' . $order->get_payment_method(), $order->get_id() ); ?>
 		<?php do_action( 'woocommerce_thankyou', $order->get_id() ); ?>
 
