@@ -21,9 +21,10 @@ export default {
     });
 
     // --- Utility Banner: Global Date Picker ---
-    // WooCommerce loads jQuery UI Datepicker on the cart page, which overrides
-    // Bootstrap Datepicker's $.fn.datepicker. Detect which one is active and
-    // use the correct API.
+    // On the cart page, WooCommerce loads jQuery UI Datepicker as a separate
+    // script that may not be ready when common.js init fires. Use the body
+    // class (always available) instead of runtime library detection, and defer
+    // initialisation on the cart page so jQuery UI is guaranteed to be loaded.
     (function() {
       var $btn = $('#global-date-picker-btn');
       var $dropdown = $('#global-date-dropdown');
@@ -33,7 +34,7 @@ export default {
 
       var dayjs = require('dayjs');
       var startDate = dayjs().add(33, 'hour').toDate();
-      var isJQueryUI = typeof $.datepicker !== 'undefined' && typeof $.datepicker.formatDate === 'function';
+      var isCartPage = $('body').hasClass('woocommerce-cart');
 
       function saveDateAndUpdate(dateText) {
         $.post(window.bontonData.ajaxUrl, {
@@ -42,7 +43,7 @@ export default {
           date: dateText,
         }, function(response) {
           if (response.success) {
-            if ($('body').hasClass('woocommerce-cart')) {
+            if (isCartPage) {
               window.location.reload();
             } else {
               $btn.find('.utility-banner__date-label').text(response.data.date_display);
@@ -52,20 +53,7 @@ export default {
         });
       }
 
-      if (isJQueryUI) {
-        $picker.datepicker({
-          dateFormat: 'dd/mm/yy',
-          minDate: startDate,
-          beforeShowDay: function(date) {
-            var day = date.getDay();
-            if (day === 0 || day === 1) return [false];
-            return [true];
-          },
-          onSelect: function(dateText) {
-            saveDateAndUpdate(dateText);
-          },
-        });
-      } else {
+      function initBootstrap() {
         $picker.datepicker({
           format: 'dd/mm/yyyy',
           startDate: startDate,
@@ -83,17 +71,36 @@ export default {
         });
       }
 
-      $btn.on('click', function(e) {
-        e.stopPropagation();
-        $dropdown.fadeToggle(150);
-        $('#bulk-info-popover').fadeOut(150);
-      });
+      if (isCartPage) {
+        // On the cart page, the main calendar already handles date selection.
+        // jQuery UI Datepicker can't run two inline instances reliably, so the
+        // utility banner button scrolls to the existing calendar instead.
+        $btn.on('click', function(e) {
+          e.stopPropagation();
+          var $calendar = $('#datepicker');
+          if ($calendar.length) {
+            $('html, body').animate({ scrollTop: $calendar.offset().top - 80 }, 300);
+            $calendar.closest('.calendar-container').css('outline', '2px solid #6fcf97');
+            setTimeout(function() {
+              $calendar.closest('.calendar-container').css('outline', '');
+            }, 1500);
+          }
+        });
+      } else {
+        initBootstrap();
 
-      $(document).on('mousedown touchstart', function(e) {
-        if (!$dropdown.is(e.target) && $dropdown.has(e.target).length === 0 && !$btn.is(e.target) && $btn.has(e.target).length === 0) {
-          $dropdown.fadeOut(150);
-        }
-      });
+        $btn.on('click', function(e) {
+          e.stopPropagation();
+          $dropdown.fadeToggle(150);
+          $('#bulk-info-popover').fadeOut(150);
+        });
+
+        $(document).on('mousedown touchstart', function(e) {
+          if (!$dropdown.is(e.target) && $dropdown.has(e.target).length === 0 && !$btn.is(e.target) && $btn.has(e.target).length === 0) {
+            $dropdown.fadeOut(150);
+          }
+        });
+      }
     })();
 
     // --- Utility Banner: Bulk Discount Popover ---

@@ -8,6 +8,14 @@
 @endphp
 
 <tr class="{{ $item['availability_status'] }} title woocommerce-cart-form__cart-item {{ esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ) }}">
+  <td class="product-name" colspan="4" data-title="{{ __( 'Product', 'woocommerce' ) }}">
+    @if ( ! $product_permalink )
+      {!! wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;' ) !!}
+    @else
+      {!! wp_kses_post( apply_filters( 'woocommerce_cart_item_name', sprintf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $_product->get_name() ), $cart_item, $cart_item_key ) ) !!}
+    @endif
+    @php do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key ) @endphp
+  </td>
   <td class="product-remove">
     {!! apply_filters(
       'woocommerce_cart_item_remove_link',
@@ -21,18 +29,10 @@
       $cart_item_key
     ) !!}
   </td>
-  <td class="product-name" colspan="4" data-title="{{ __( 'Product', 'woocommerce' ) }}">
-    @if ( ! $product_permalink )
-      {!! wp_kses_post( apply_filters( 'woocommerce_cart_item_name', $_product->get_name(), $cart_item, $cart_item_key ) . '&nbsp;' ) !!}
-    @else
-      {!! wp_kses_post( apply_filters( 'woocommerce_cart_item_name', sprintf( '<a href="%s">%s</a>', esc_url( $product_permalink ), $_product->get_name() ), $cart_item, $cart_item_key ) ) !!}
-    @endif
-    @php do_action( 'woocommerce_after_cart_item_name', $cart_item, $cart_item_key ) @endphp
-  </td>
 </tr>
 
 <tr class="{{ $item['availability_status'] }} woocommerce-cart-form__cart-item {{ esc_attr( apply_filters( 'woocommerce_cart_item_class', 'cart_item', $cart_item, $cart_item_key ) ) }}">
-  <td class="d-none d-sm-block"></td>
+  <td class="d-none d-sm-table-cell"></td>
   <td class="product-meta" data-title="{{ __( 'Product', 'woocommerce' ) }}">
  
     {{-- Day-of-week availability badges --}}

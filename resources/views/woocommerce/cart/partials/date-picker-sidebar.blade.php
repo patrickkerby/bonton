@@ -3,7 +3,7 @@
 
   @unless($is_wholesale_user)
     {{-- Loyalty modal lives outside <form> to avoid nested-form issues (woocommerce_login_form generates its own <form>) --}}
-    <div id="loyalty-points-slidein" class="loyalty-modal">
+    <div id="loyalty-points-slidein" class="loyalty-modal d-sm-none">
       <button type="button" class="close-loyalty-modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>

@@ -71,11 +71,35 @@ class App extends Controller
         return \App\Helpers\BulkPricing::get_progress();
     }
 
+    /**
+     * If the cart form just POSTed a date, flush it into the session
+     * before any template reads the stale value.
+     */
+    protected function syncPostDateToSession()
+    {
+        static $done = false;
+        if ($done || !function_exists('WC') || !WC()->session) {
+            return;
+        }
+        $done = true;
+
+        if (isset($_POST['date']) && !empty($_POST['date'])) {
+            $raw = sanitize_text_field($_POST['date']);
+            $date_obj = \DateTime::createFromFormat('!d/m/Y', $raw);
+            if ($date_obj) {
+                WC()->session->set('pickup_date', $date_obj->format('l, F j, Y'));
+                WC()->session->set('pickup_date_formatted', $date_obj->format('Y-m-d'));
+                WC()->session->set('pickup_date_object', $date_obj);
+            }
+        }
+    }
+
     public function globalPickupDate()
     {
         if (!function_exists('WC') || !WC()->session) {
             return null;
         }
+        $this->syncPostDateToSession();
         return WC()->session->get('pickup_date');
     }
 
@@ -84,6 +108,7 @@ class App extends Controller
         if (!function_exists('WC') || !WC()->session) {
             return null;
         }
+        $this->syncPostDateToSession();
         $formatted = WC()->session->get('pickup_date_formatted');
         if (!$formatted) {
             return null;
