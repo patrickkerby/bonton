@@ -13,6 +13,9 @@
     @php acf_form_head() @endphp
   @endif
   
+  {{-- GA4: Define gtag early so inline scripts in content can call it before the footer loads --}}
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}</script>
+
   @php wp_head() @endphp
   <link rel="stylesheet" rel="preload" href="https://use.typekit.net/wvm4dbv.css" crossorigin>
 

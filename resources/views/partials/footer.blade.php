@@ -1,11 +1,6 @@
-{{-- GA4: Load on all pages (shop, cart, checkout use layouts.contained/products/shop which lack gtag) --}}
+{{-- GA4: gtag() is defined in head.blade.php; load the library and send config here --}}
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HTCXG3J87J"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-HTCXG3J87J');
-</script>
+<script>gtag('js', new Date());gtag('config', 'G-HTCXG3J87J');</script>
 
 <footer class="container-fluid">
   <div class="row justify-content-center">

@@ -106,12 +106,14 @@ This document tracks the custom functionalities and recent development work on t
 - `resources/views/woocommerce/checkout/form-checkout.blade.php` — `begin_checkout` event via inline script
 - `resources/views/woocommerce/checkout/thankyou.php` — `purchase` event via inline script (client-side backup)
 - `app/filters.php` — Server-side `purchase` event via GA4 Measurement Protocol (primary, fires on payment complete)
-- `resources/views/partials/footer.blade.php` — GA4 gtag added here so it loads on all layouts (shop, contained, products); removed from `layouts/app.blade.php` to avoid duplication
+- `resources/views/partials/head.blade.php` — GA4 `gtag()` function stub defined early so inline scripts can call it before footer loads
+- `resources/views/partials/footer.blade.php` — GA4 async library + config; removed from `layouts/app.blade.php` to avoid duplication
 
 **Technical Details**:
 
 - All JS events use `window.gtag` with a guard check, so they degrade silently if GA4 is ever removed
 - The `add_to_cart` tracking uses three detection methods: (1) **click handler** on `.single_add_to_cart_button` for quick view and single product pages — WooCommerce uses form POST (page reload), not AJAX, so `added_to_cart` never fires; the click handler uses `transport_type: 'beacon'` so the event sends before the page navigates; (2) WooCommerce `added_to_cart` jQuery event for AJAX add-to-cart (loop products); (3) `ajaxComplete` fallback for any plugin-converted AJAX add-to-cart. A 2-second debounce prevents double-counting.
+- Both `purchase` and `begin_checkout` events include a full `items` array with `item_id`, `item_name`, `price`, `quantity`, and `item_category` — this is required for GA4's Monetization reports (revenue, ecommerce purchases, purchase journey, checkout journey)
 - The `purchase` event uses GA4's `transaction_id` deduplication plus a `sessionStorage` guard to prevent double-counting on page refresh
 - The `begin_checkout` event only fires when the checkout form is valid (not when the "Oops, something went wrong" error state is shown)
 - The `cart_date_conflict` event identifies specific conflict types: `product_not_available`, `sold_out`, `no_date_selected`
@@ -122,7 +124,9 @@ This document tracks the custom functionalities and recent development work on t
 3. **Explore > Funnel Exploration** — Create a funnel: `product_quick_view` → `add_to_cart` → `begin_checkout` → `purchase`
 4. **Date comparison** — Compare any date range before vs. after these features launched to measure impact
 
-**Note**: The GA4 tag is loaded via `resources/views/partials/footer.blade.php` so it appears on all customer-facing pages. Previously it was only in `layouts/app.blade.php`, which meant shop, cart, checkout, and single-product pages (which use `layouts.shop`, `layouts.contained`, `layouts.products`) had no gtag — so `filter_category`, `cart_date_conflict`, `begin_checkout`, and `purchase` never reached GA4. Moving gtag to the footer partial fixes this.
+**Note**: The `gtag()` function stub is defined in `resources/views/partials/head.blade.php` (early, before content) so inline scripts in templates like `thankyou.php` and `form-checkout.blade.php` can call `window.gtag()` immediately. The async gtag.js library and `gtag('config', ...)` are loaded in `resources/views/partials/footer.blade.php`. This split is intentional — `gtag()` just pushes to `window.dataLayer`, and the library processes the queue when it loads.
+
+Previously, the entire gtag setup was only in `layouts/app.blade.php`, which meant shop, cart, checkout, and single-product pages (using `layouts.shop`, `layouts.contained`, `layouts.products`) had no gtag at all. Moving it to head+footer partials fixed this.
 
 **Server-side purchase tracking (February 2026)**:
 

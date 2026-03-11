@@ -131,12 +131,26 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		<div id="order_review" class="woocommerce-checkout-review-order">
 			@php do_action( 'woocommerce_checkout_order_review' ); @endphp
 		</div>
+		@php
+			$ga4_checkout_items = [];
+			foreach ( WC()->cart->get_cart() as $cart_item ) {
+				$product = $cart_item['data'];
+				$categories = wp_get_post_terms( $cart_item['product_id'], 'product_cat', [ 'fields' => 'names' ] );
+				$ga4_checkout_items[] = [
+					'item_id'       => $product->get_sku() ?: (string) $cart_item['product_id'],
+					'item_name'     => $product->get_name(),
+					'price'         => (float) $product->get_price(),
+					'quantity'      => (int) $cart_item['quantity'],
+					'item_category' => ! empty( $categories ) && ! is_wp_error( $categories ) ? $categories[0] : '',
+				];
+			}
+		@endphp
 		<script>
 		if (window.gtag) {
 			window.gtag('event', 'begin_checkout', {
 				value: {{ (float) WC()->cart->get_total('edit') }},
 				currency: '{{ get_woocommerce_currency() }}',
-				items_count: {{ (int) WC()->cart->get_cart_contents_count() }},
+				items: {!! wp_json_encode( $ga4_checkout_items ) !!},
 			});
 		}
 		</script>

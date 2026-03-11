@@ -1430,6 +1430,19 @@ add_action('woocommerce_payment_complete', function ($order_id) {
     // Client ID: use order-based value for server-side attribution (GA4 deduplicates by transaction_id)
     $client_id = 'server_' . $order_id . '_' . $order->get_date_created()->format('U');
 
+    $ga4_items = [];
+    foreach ($order->get_items() as $item) {
+        $product = $item->get_product();
+        $categories = wp_get_post_terms($item->get_product_id(), 'product_cat', ['fields' => 'names']);
+        $ga4_items[] = [
+            'item_id'       => $product ? ($product->get_sku() ?: (string) $item->get_product_id()) : (string) $item->get_product_id(),
+            'item_name'     => $item->get_name(),
+            'price'         => (float) ($item->get_total() / max($item->get_quantity(), 1)),
+            'quantity'      => (int) $item->get_quantity(),
+            'item_category' => !empty($categories) && !is_wp_error($categories) ? $categories[0] : '',
+        ];
+    }
+
     $payload = [
         'client_id' => $client_id,
         'events' => [
@@ -1441,8 +1454,7 @@ add_action('woocommerce_payment_complete', function ($order_id) {
                     'currency' => $order->get_currency(),
                     'shipping' => (float) $order->get_shipping_total(),
                     'tax' => (float) $order->get_total_tax(),
-                    'items_count' => (int) $order->get_item_count(),
-                    'shipping_method' => $order->get_shipping_method(),
+                    'items' => $ga4_items,
                 ],
             ],
         ],
