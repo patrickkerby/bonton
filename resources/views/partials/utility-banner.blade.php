@@ -66,7 +66,7 @@
         <div class="utility-banner__popover" id="bulk-info-popover" style="display:none;">
           <div class="utility-banner__popover-content">
             <strong>Bulk Bread Discount</strong>
-            <p>Buy more bread, buns & bagels to unlock automatic discounts:</p>
+            <p>Buy more bread, buns & bagels to get automatic discounts:</p>
             <ul>
               <li><strong>5+ items</strong> &rarr; 10% off</li>
               <li><strong>10+ items</strong> &rarr; 20% off</li>

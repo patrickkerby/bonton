@@ -15,6 +15,33 @@
 
 <div class="row justify-content-center">
   <div class="col-sm-10 col-md-8">
+    @unless($is_wholesale_user)
+      <div class="points-coupons d-none d-md-block">
+        @if(is_user_logged_in())
+          @php
+            $user_points = WC_Points_Rewards_Manager::get_users_points( get_current_user_id() );
+          @endphp
+          <button type="button" class="btn btn-link" id="show-loyalty-points-btn">
+            <i class="fa fa-star" aria-hidden="true"></i>Points: {{ number_format_i18n( $user_points ) }}
+          </button>
+        @else
+          <button type="button" class="btn btn-link" id="show-loyalty-points-btn">
+            <i class="fa fa-user" aria-hidden="true"></i>Login for loyalty points
+          </button>
+        @endif
+        
+        <button type="button" class="btn btn-link" id="show-coupon-btn">
+          <i class="fa fa-gift" aria-hidden="true"></i>Redeem Coupon
+        </button>
+      </div>
+
+      <div id="coupon-slidein" class="coupon">
+        <input type="text" name="coupon_code" class="input-text" id="coupon_code" value="" placeholder="{{ __( 'Coupon code', 'woocommerce' ) }}" />
+        <button type="submit" class="button" name="apply_coupon" value="{{ __( 'Apply coupon', 'woocommerce' ) }}">{{ __( 'Apply', 'woocommerce' ) }}</button>
+        @php do_action( 'woocommerce_cart_coupon' ) @endphp
+      </div>
+    @endunless
+
     <h4>Your Items:</h4>
     <form class="woocommerce-cart-form" action="{{ esc_url( wc_get_cart_url() ) }}" method="post">
       @php do_action( 'woocommerce_before_cart_table' ) @endphp

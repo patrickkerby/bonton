@@ -3,7 +3,7 @@
 
   @unless($is_wholesale_user)
     {{-- Loyalty modal lives outside <form> to avoid nested-form issues (woocommerce_login_form generates its own <form>) --}}
-    <div id="loyalty-points-slidein" class="loyalty-modal d-sm-none">
+    <div id="loyalty-points-slidein" class="loyalty-modal">
       <button type="button" class="close-loyalty-modal" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -45,7 +45,7 @@
   <form method="post" class="acf-form">
     
     @unless($is_wholesale_user)
-      <div class="points-coupons">
+      <div class="points-coupons d-block d-md-none">
         @if(is_user_logged_in())
           @php
             $user_points = WC_Points_Rewards_Manager::get_users_points( get_current_user_id() );
