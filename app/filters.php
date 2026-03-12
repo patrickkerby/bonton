@@ -1404,13 +1404,13 @@ add_filter('upload_dir', function (array $uploads) {
  * lands on the thank-you page. Fixes missing purchase events when payment
  * gateways redirect users externally.
  *
- * Requires: Add your GA4 API secret to wp-config.php:
- *   define('BONTON_GA4_API_SECRET', 'your_api_secret_here');
+ * Requires: Add your GA4 API secret to .env:
+ *   BONTON_GA4_API_SECRET=your_api_secret_here
  *
  * Create the secret in GA4: Admin > Data Streams > [Web stream] > Measurement Protocol API secrets
  */
 add_action('woocommerce_payment_complete', function ($order_id) {
-    $api_secret = defined('BONTON_GA4_API_SECRET') ? BONTON_GA4_API_SECRET : '';
+    $api_secret = env('BONTON_GA4_API_SECRET', '');
     if (empty($api_secret)) {
         return;
     }
