@@ -96,6 +96,19 @@ Edit `app/setup.php` to enable or disable theme features, setup navigation menus
 
 ## Documentation
 
+### Bon Ton Custom Documentation
+
+All project-specific documentation lives in the `documentation/` folder:
+
+* **[custom-features.md](documentation/custom-features.md)** — Main feature tracker with development summaries and detailed implementation docs
+* **[custom-functionality.md](documentation/custom-functionality.md)** — Comprehensive technical reference for all custom WooCommerce and WordPress functionality
+* **[bulk-discount.md](documentation/bulk-discount.md)** — Bulk bread discount system: tiers, eligibility, unit counting, ACF controls
+* **[two-days-notice-feature.md](documentation/two-days-notice-feature.md)** — Two days notice product feature documentation
+* **[3pm-cutoff-analysis.md](documentation/3pm-cutoff-analysis.md)** — 3PM order cutoff security analysis and fixes
+* **[priorities.md](documentation/priorities.md)** — Development roadmap and hour estimates
+
+### Sage / Framework
+
 * [Sage documentation](https://roots.io/sage/docs/)
 * [Controller documentation](https://github.com/soberwp/controller#usage)
 

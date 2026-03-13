@@ -45,8 +45,22 @@ This document tracks the custom functionalities and recent development work on t
 
 ## 2026 Development Summary
 
+### March 2026
+- **Cart 2.0 — Major UI/UX Overhaul** - Complete refactor of cart page architecture, new utility banner, bulk pricing engine, and modular Blade template structure
+- **Bulk Bread Discount System** - Tiered volume discount engine (10% at 5 units, 20% at 10 units) with ACF admin controls
+- **Utility Banner** - Sticky site-wide bar with global date picker and visual bulk discount progress tracker
+- **WoocommerceCart Controller** - New dedicated controller encapsulating all cart business logic
+- **BulkPricing Helper** - Standalone helper class for discount calculations with blackout date support
+- **AJAX Pickup Date Selector** - Save pickup date from any page without a full form submission
+- **Cart Template Decomposition** - Split monolithic cart.blade.php into focused partials
+
 ### February 2026
 - **GA4 Custom Event Tracking** - Full-funnel analytics tracking from homepage through purchase
+
+### January 2026
+- **Homepage Redesign** - New hero slider with CTA overlays, featured product categories with tabbed navigation, dynamic "Most Popular" and "Newest" product tabs, and reusable product grid partial
+- **Helper Functions** - New `app/helpers.php` with product display category logic, popularity queries, and category tree utilities
+- **Font Awesome Upgrade** - Migrated to Font Awesome 7 webfonts with explicit SCSS imports
 
 ---
 
@@ -81,6 +95,117 @@ This document tracks the custom functionalities and recent development work on t
 ---
 
 ## Recent Development Work
+
+### Homepage Redesign (January 2026)
+
+**Purpose**: Modernize the homepage with a structured hero section, categorized product browsing via tabs, and dynamic product discovery — replacing the previous static layout with a more engaging, conversion-oriented experience.
+
+#### Hero Slider with CTA Overlays
+
+**File**: `resources/views/home-page.blade.php`
+
+The hero section uses a Bootstrap carousel with configurable slides managed through ACF:
+- Full-bleed background images with white inset border
+- Content overlay card (right-aligned on desktop, centered on mobile) with:
+  - Heading, description text, and CTA button with configurable link
+  - Previous/next navigation controls
+- Auto-advances every 6 seconds with 10-second per-slide intervals
+- Responsive: on mobile, the content card floats below the image with a drop shadow
+
+**ACF Configuration**: Each slide is configured via the existing ACF `slide` repeater field with `title`, `content`, `link` (URL + title), and `image` fields.
+
+#### Featured Categories with Tabbed Navigation
+
+A new section below the hero displays products organized by category in a tabbed interface:
+
+**Tabs** (dynamically rendered — only tabs with products appear):
+
+| Tab | Source | Products |
+|---|---|---|
+| Bakery | ACF field `featured_categories.bakery_products` | Admin-curated product selection |
+| Pâtisserie | ACF field `featured_categories.patisserie_products` | Admin-curated product selection |
+| Grocery | ACF field `featured_categories.grocery_products` | Admin-curated product selection |
+| Most Popular | `App\get_most_popular_products(6)` | Top 6 by `total_sales` meta |
+| Newest | `App\get_newest_products(6)` | 6 most recently published |
+
+Each tab links to the corresponding filtered shop page. Tabs use Bootstrap's tab component with pill-style buttons.
+
+**ACF Configuration**: The `featured_categories` group (under the existing `featured_products` field group) has sub-fields for bakery, patisserie, and grocery product selections. The "Most Popular" and "Newest" tabs are dynamically queried.
+
+#### Featured Product Grid Partial
+
+**File**: `resources/views/partials/featured-product-grid.blade.php`
+
+A reusable partial that displays products in a 2-column card grid:
+- Product thumbnail (medium size, 160×120px, object-fit cover)
+- Product name (serif font)
+- Display category label (smart selection via `get_product_display_category()`)
+- Clicking any card opens the Quick View popover
+- Responsive: stacks to single column on mobile
+- Card hover effect with elevated shadow
+
+#### Helper Functions
+
+**File**: `app/helpers.php` (new functions added)
+
+Three new helper functions were added to support the homepage:
+
+1. **`get_product_display_category($product_id)`** — Intelligent category label selection:
+   - Priority 1: Yoast SEO primary category (if set, is a subcategory, and not in "collections" tree)
+   - Priority 2: First subcategory not in the "collections" tree
+   - Returns empty string for top-level-only or "collections" products (intentionally hidden)
+
+2. **`get_most_popular_products($count)`** — Fetches top products ordered by `total_sales` meta value
+
+3. **`get_newest_products($count)`** — Fetches most recently published products by date
+
+4. **`is_in_collections($term, $collections_term_id)`** — Utility to walk the term parent chain and check if a category belongs to the "collections" tree (excluded from display labels)
+
+#### Styling
+
+**File**: `resources/assets/styles/layouts/_home.scss`
+
+Major updates to the homepage layout:
+- Hero slider: full-height with responsive breakpoints (730px desktop → 290px mobile)
+- CTA content card: white background, right-aligned on desktop, centered with shadow on mobile
+- Carousel nav controls using Font Awesome 7 chevron icons
+- Story/process thumbnails section with cream background and hover effects
+
+**File**: `resources/assets/styles/components/_featuredproducts.scss`
+
+Expanded significantly with:
+- Featured categories tab navigation: pill-style buttons with brand colors, horizontal scroll on mobile with fade-out gradient
+- Product grid: 2-column CSS grid layout with responsive single-column fallback
+- Product cards: horizontal card with thumbnail, title, category label, and chevron arrow
+- Carousel indicators: vertical text list with decorative dot separators and arrow indicators
+- Carousel items: 490px height with white inset border and brand-colored caption overlay
+
+#### Font Awesome Upgrade
+
+**File**: `resources/assets/styles/autoload/_fontawesome.scss`
+
+Added explicit Font Awesome 7 webfont imports (Solid, Regular, Brands) with proper `font-display: block` for reliable icon rendering across the site.
+
+#### ACF Field Changes
+
+- `resources/acf-json/group_5eb733297d6bd.json` — Updated homepage field group with new `featured_categories` sub-group containing bakery, patisserie, and grocery product relationship fields
+- `resources/acf-json/group_5ecebf98326d8.json` — Updated related field group configuration
+
+#### Files Modified / Created
+
+**New files**:
+- `resources/views/partials/featured-product-grid.blade.php`
+- `resources/assets/styles/autoload/_fontawesome.scss`
+
+**Modified files**:
+- `app/helpers.php` — Added `get_product_display_category()`, `get_most_popular_products()`, `get_newest_products()`, `is_in_collections()`
+- `app/setup.php` — Font Awesome webfont registration
+- `resources/views/home-page.blade.php` — Complete restructure with tabbed categories and hero CTA
+- `resources/assets/styles/layouts/_home.scss` — Hero slider and homepage section styling
+- `resources/assets/styles/components/_featuredproducts.scss` — Category tabs, product grid, and carousel styling
+- `resources/acf-json/group_5eb733297d6bd.json` — Homepage ACF field updates
+- `resources/acf-json/group_5ecebf98326d8.json` — Related ACF field updates
+- `package.json` — Updated dependencies
 
 ### GA4 Custom Event Tracking (February 2026)
 
@@ -138,6 +263,200 @@ All GA4 Event tags have "Send Ecommerce data" enabled with Data Layer as the sou
 **Server-side purchase tracking (currently disabled)**:
 
 The GA4 Measurement Protocol server-side `purchase` event in `app/filters.php` is currently commented out. It caused duplicate revenue in GA4 because the Measurement Protocol uses a synthetic `client_id` that doesn't match the browser's, and GA4's `transaction_id` deduplication was unreliable across different client IDs. GTM + gtm4wp handles purchase tracking client-side. To re-enable in the future, implement passing the browser's real GA4 `client_id` (from the `_ga` cookie) to the server-side code, which would allow GA4 to deduplicate correctly. The API secret is configured via `BONTON_GA4_API_SECRET` in `.env`.
+
+### Cart 2.0 — Major UI/UX Overhaul (March 2026)
+
+**Purpose**: Complete refactor of the WooCommerce cart experience — separating business logic from templates, introducing a modular Blade partial structure, adding a bulk bread discount system with visual progress tracking, and providing a sticky utility banner for date selection and discount awareness across all pages.
+
+#### Architecture Changes
+
+**New `WoocommerceCart` Controller** (`app/Controllers/WoocommerceCart.php`)
+
+Extracts all cart business logic from Blade templates into a dedicated Sage controller, providing clean data to views via auto-wired public methods.
+
+Key methods and their responsibilities:
+- `post3pm()` — Whether the current time is past the 3PM cutoff (Edmonton timezone)
+- `sessionPickupDate()` — Human-readable pickup date string from WC session
+- `sessionDateObject()` — The DateTime object for the selected pickup date
+- `sessionFormatted()` — ISO Y-m-d date string, with legacy `d/m/Y` format migration
+- `pickupDayOfWeek()` — Day-of-week name for the pickup date (e.g., "Saturday")
+- `cartItemsData()` — Core method that computes per-item availability, sold-out conflicts, restrictions, long fermentation, two-days-notice, and bulk pricing eligibility. Returns an array of item data for the view to loop over. Sets internal flags used by other accessor methods.
+- `conflict()` — Whether there is a date/availability conflict preventing checkout
+- `giftcertificateOnlyItemInCart()` — Whether the cart only contains gift certificates
+- `longFermentationInCart()` / `twoDaysNoticeInCart()` / `restrictedInCart()` — Cart-level flags
+- `datetimeButtonCopy()` — Dynamic button label ("Update" vs "Select date to continue")
+- `allAvailableDates()` — Accumulated override dates across all items (Y-m-d strings)
+- `restrictedStartDateJs()` / `restrictedEndDateJs()` / `sessionPickupDateJs()` — Date strings formatted for JavaScript consumption
+
+**New `BulkPricing` Helper** (`app/Helpers/BulkPricing.php`)
+
+Standalone static helper class for the bulk bread discount system.
+
+Constants:
+- `TIER_1_THRESHOLD = 5` (units for 10% off)
+- `TIER_2_THRESHOLD = 10` (units for 20% off)
+- `TIER_1_DISCOUNT = 0.10`, `TIER_2_DISCOUNT = 0.20`
+
+Key methods:
+- `is_enabled()` — Checks ACF toggle and blackout dates (compares against session pickup date)
+- `is_product_eligible($product_id)` — Checks category (Bread 52, Buns & Bagels 91), hardcoded exclusion list, and per-product ACF exclusion field
+- `quantity_to_units($cart_item)` — Converts quantities to "units" based on package size (single = 1/6, half-dozen = 1, dozen = 2)
+- `get_item_discount($cart_item, $discount_rate)` — Calculates per-item savings; singles are discounted only in full batches of 6
+- `get_progress()` — Read-only calculation returning current tier, units, savings, next-tier target, and eligible product IDs. Used by both the cart totals and the utility banner.
+
+**Unit Counting Logic**:
+
+| Package Size | Units per Quantity |
+|---|---|
+| Single | 1/6 |
+| Half-Dozen / 6-pack | 1 |
+| Dozen | 2 |
+
+**ACF Admin Controls**:
+- `bulk_discount` (Options page) — Global enable/disable toggle
+- `bulk_discount_blackout_dates` (Options page) — Repeater of dates to disable bulk pricing
+- `bulk_discount_exclusion` (Per-product) — Exclude individual products
+
+#### Utility Banner
+
+**Files**: `resources/views/partials/utility-banner.blade.php`, `resources/assets/styles/layouts/_utility-banner.scss`
+
+A sticky banner at the top of every page (except for wholesale users) with two interactive sections:
+
+1. **Global Date Picker** — Button displaying the selected pickup date (or "Select pickup date"). On non-cart pages, opens a Bootstrap datepicker dropdown for AJAX date selection. On the cart page, scrolls to the existing calendar with a highlight animation to avoid duplicate datepicker conflicts.
+
+2. **Bulk Discount Progress Tracker** — Visual dot-based progress indicator (10 dots, split into two tiers of 5). Shows:
+   - Current tier reached (10% or 20%)
+   - How many more units needed for the next tier
+   - An info popover explaining the discount tiers
+   - Responsive design: labels hidden on mobile, popover slides up from bottom
+
+**AJAX Endpoint** (`app/filters.php`):
+- Action: `save_pickup_date` (both `wp_ajax_` and `wp_ajax_nopriv_`)
+- Accepts `date` in `d/m/Y` format, stores in WC session
+- Returns `date_display` (short format like "Mar 15") for live label update
+- Security: nonce verification via `bontonData.nonce`
+
+**JavaScript** (`resources/assets/scripts/routes/common.js`):
+- Date picker initialization and dropdown toggle
+- Cart page: button scrolls to existing calendar instead of opening dropdown
+- Non-cart pages: Bootstrap datepicker with AJAX save on date change
+- Bulk info popover toggle with outside-click dismissal
+
+#### Cart Template Decomposition
+
+The monolithic `cart.blade.php` (previously 600+ lines) was refactored into focused partials:
+
+| File | Purpose |
+|---|---|
+| `cart.blade.php` | Main layout: items table, cart collaterals, conflict alerts |
+| `partials/cart-item-row.blade.php` | Single cart item row: name, availability badges, day-of-week dots, quantity, subtotal with bulk discount strikethrough |
+| `partials/date-picker-sidebar.blade.php` | Right sidebar: loyalty points modal, coupon input, jQuery UI datepicker calendar, fermentation/notice/restriction warnings, delivery info links |
+| `partials/js-pickup-data.blade.php` | Hidden div passing PHP variables to cart.js (restriction dates, session date, flags) |
+| `partials/modal-delivery.blade.php` | Bootstrap modal with delivery details (Deeleeo, Saturday 10am-2pm window) |
+| `partials/modal-bags.blade.php` | Bootstrap modal explaining Edmonton single-use bag bylaw options |
+
+#### Cart Item Row Features
+
+Each cart item row now displays:
+- **Day-of-week availability badges** — Visual S/M/T/W/T/F/S dot indicators showing which days the product is available
+- **Bulk discount eligible label** — "Bulk discount eligible" tag with dollar icon
+- **Long fermentation / Two days notice** — Clock icon with "2 days notice req." label
+- **Sold out dates** — Per-item sold-out date display with conflict detection
+- **Special availability overrides** — Dates when an item is available outside its normal schedule
+- **Delivery exclusion** — "Not available for delivery" indicator
+- **Bulk discount pricing** — Strikethrough original price with discounted price when bulk tier is active
+
+#### Cart Totals Enhancements
+
+**File**: `resources/views/woocommerce/cart/cart-totals.blade.php`
+
+- **Dynamic date label** — Shows "Delivery date:" or "Pickup date:" based on chosen shipping method
+- **Shipping info modals** — Info icon links to delivery details modal
+- **Bulk discount line** — Displayed as a fee row with special `.bulk-discount` class styling
+- **Bag fee info** — Info icon links to bag bylaw modal
+
+#### Cart Shipping Logic
+
+**File**: `resources/views/woocommerce/cart/cart-shipping.blade.php`
+
+Refactored delivery availability logic:
+- **Delivery blackout dates array** — Configurable array for dates at delivery capacity (replaces hardcoded date checks)
+- **Saturday-only delivery** — Delivery available on Saturdays unless blackout, ice cream in cart, or delivery-excluded product
+- **Wholesale user override** — Wholesale users always see delivery option
+- **Dynamic messaging** — Capacity messages for blackout dates, general "Saturdays only" message otherwise
+
+#### Styling
+
+**File**: `resources/assets/styles/layouts/_cart.scss` (expanded significantly)
+
+Major styling additions for the new cart layout:
+- Day-of-week availability badges (`.day-badges`, `.day-badge`)
+- Bulk discount indicators and strikethrough pricing
+- Special notes container for per-item metadata
+- Points/coupon slide-in panels
+- Calendar container and date picker sidebar
+- Conflict and not-available state styling
+- Loyalty modal styling
+- Responsive breakpoints for mobile cart experience
+
+**File**: `resources/assets/styles/layouts/_utility-banner.scss` (new)
+
+Complete utility banner styling including:
+- Sticky positioning with cream background
+- Date picker dropdown with jQuery UI datepicker overrides
+- Dot-based progress visualization with tier milestones
+- Info popover with responsive bottom-sheet on mobile
+- All responsive breakpoints
+
+**File**: `resources/assets/styles/components/_forms.scss`
+
+Added quantity input styling for the custom +/- quantity controls in the cart.
+
+#### Layout Integration
+
+The utility banner and bulk discount data were integrated into all site layouts:
+
+- `resources/views/layouts/app.blade.php` — Added `@include('partials.utility-banner')`
+- `resources/views/layouts/contained.blade.php` — Added utility banner include
+- `resources/views/layouts/products.blade.php` — Added utility banner include
+- `resources/views/layouts/shop.blade.php` — Added utility banner include
+- `resources/views/partials/page-header.blade.php` — Passes `$bulk_discount_progress` data
+- `app/Controllers/App.php` — Added `globalPickupDateShort()` and `bulkDiscountProgress()` methods for site-wide data
+- `app/setup.php` — Registered AJAX handlers for `save_pickup_date`
+
+#### Files Modified / Created
+
+**New files**:
+- `app/Controllers/WoocommerceCart.php`
+- `app/Helpers/BulkPricing.php`
+- `resources/views/partials/utility-banner.blade.php`
+- `resources/views/woocommerce/cart/partials/cart-item-row.blade.php`
+- `resources/views/woocommerce/cart/partials/date-picker-sidebar.blade.php`
+- `resources/views/woocommerce/cart/partials/js-pickup-data.blade.php`
+- `resources/views/woocommerce/cart/partials/modal-delivery.blade.php`
+- `resources/views/woocommerce/cart/partials/modal-bags.blade.php`
+- `resources/assets/styles/layouts/_utility-banner.scss`
+
+**Modified files**:
+- `app/Controllers/App.php` — Global pickup date and bulk progress methods
+- `app/filters.php` — AJAX handler, reduced inline cart logic (moved to controller)
+- `app/setup.php` — AJAX action registration
+- `resources/assets/scripts/routes/common.js` — Utility banner JS (date picker, bulk popover)
+- `resources/assets/scripts/routes/cart.js` — Simplified date picker init and GA4 tracking
+- `resources/assets/styles/layouts/_cart.scss` — Major expansion for new cart UI
+- `resources/assets/styles/components/_forms.scss` — Quantity input styling
+- `resources/assets/styles/main.scss` — Imported utility-banner stylesheet
+- `resources/views/woocommerce/cart/cart.blade.php` — Restructured to use partials and controller data
+- `resources/views/woocommerce/cart/cart-totals.blade.php` — Dynamic labels, bulk discount display
+- `resources/views/woocommerce/cart/cart-shipping.blade.php` — Blackout dates array, cleaner logic
+- `resources/views/layouts/app.blade.php` — Utility banner include
+- `resources/views/layouts/contained.blade.php` — Utility banner include
+- `resources/views/layouts/products.blade.php` — Utility banner include
+- `resources/views/layouts/shop.blade.php` — Utility banner include
+- `resources/views/partials/page-header.blade.php` — Bulk discount data pass-through
+
+**Reference**: See `documentation/bulk-discount.md` for original bulk discount business rules.
 
 ### Product Purchase Restriction System (November 2025)
 
@@ -219,7 +538,7 @@ When a restricted product/variation is selected, customers see:
 - Date picker prevents selection within 57 hours
 - Info banner: "One or more products in your cart require at least two days notice for preparation"
 
-**Reference**: See `TWO_DAYS_NOTICE_FEATURE.md` for complete technical documentation.
+**Reference**: See `documentation/two-days-notice-feature.md` for complete technical documentation.
 
 ### HPOS Migration (August 2025)
 
@@ -340,7 +659,7 @@ When a restricted product/variation is selected, customers see:
 
 **Impact**: Critical business logic affecting order fulfillment and customer expectations
 
-**Reference**: See `3PM_CUTOFF_ANALYSIS.md` for complete vulnerability analysis and recommended fixes.
+**Reference**: See `documentation/3pm-cutoff-analysis.md` for complete vulnerability analysis and recommended fixes.
 
 ### Pickup Date Column Sorting (December 2024)
 
@@ -481,11 +800,17 @@ Located in `views/print/` and `views/partials/print-*`:
 
 ### Custom Controllers
 Located in `app/Controllers/`:
+- `App.php` - Base controller: site name, container logic, wholesale detection, global pickup date, bulk discount progress
+- `WoocommerceCart.php` - Cart page controller: pickup date processing, cart item data computation, conflict detection, bulk pricing integration
 - `BakingList.php` - Manages baking production data
 - `PackingList.php` - Handles order packing logic
 - `PickupList.php` - Customer pickup management
 - `FrontPage.php` - Homepage customizations
 - `Stories.php` - Custom content type handling
+
+### Custom Helpers
+Located in `app/Helpers/`:
+- `BulkPricing.php` - Bulk bread discount calculations, tier logic, and eligibility checks
 
 ## WooCommerce Extensions Integration
 
@@ -530,13 +855,13 @@ All custom order-related functionality has been updated for WordPress/WooCommerc
 
 ## Additional Resources
 
-- **TWO_DAYS_NOTICE_FEATURE.md** - Detailed documentation for two days notice feature
-- **3PM_CUTOFF_ANALYSIS.md** - Security analysis and fixes for order cutoff system
-- **CUSTOM_FUNCTIONALITY_DOCUMENTATION.md** - Comprehensive technical documentation of all custom features
-- **documentation/bulk-discount.md** - Bulk discount system documentation
+- **documentation/two-days-notice-feature.md** - Detailed documentation for two days notice feature
+- **documentation/3pm-cutoff-analysis.md** - Security analysis and fixes for order cutoff system
+- **documentation/custom-functionality.md** - Comprehensive technical documentation of all custom features
+- **documentation/bulk-discount.md** - Bulk discount business rules and unit counting logic
 
 ---
 
-*Last Updated: February 25, 2026*  
+*Last Updated: March 13, 2026*  
 *Document tracks development work from January 2024 to present*  
 *For technical questions, refer to the individual files or contact the development team.*
