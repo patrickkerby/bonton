@@ -124,7 +124,8 @@ export default {
         const endDate = maxDateFormatted.format('YYYY-MM-DD');
         const daterange = getDatesBetweenDates(startDate, endDate);
 
-        const vacationDays = ['2026-02-17' ];
+        const vacationDays = ['2026-04-03', '2026-04-7', '2026-05-12', '2026-06-30', '2026-07-01', '2026-07-02' ];
+        
         const enableDays = ['']; 
 
         const allowedDates = daterange.filter(date => !vacationDays.includes(date)).concat(enableDays, availableDatesFormatted);
