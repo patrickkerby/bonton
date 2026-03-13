@@ -1400,15 +1400,15 @@ add_filter('upload_dir', function (array $uploads) {
 /**
  * GA4 Server-side purchase tracking (Measurement Protocol)
  *
- * Fires when WooCommerce confirms payment, regardless of whether the customer
- * lands on the thank-you page. Fixes missing purchase events when payment
- * gateways redirect users externally.
+ * DISABLED: Causes duplicate revenue in GA4 because the Measurement Protocol
+ * uses a synthetic client_id that doesn't match the browser's, so GA4's
+ * transaction_id deduplication doesn't reliably merge them. GTM + gtm4wp
+ * handles purchase tracking client-side. Re-enable if dedup improves or if
+ * a method to pass the real client_id from browser to server is implemented.
  *
- * Requires: Add your GA4 API secret to .env:
- *   BONTON_GA4_API_SECRET=your_api_secret_here
- *
- * Create the secret in GA4: Admin > Data Streams > [Web stream] > Measurement Protocol API secrets
+ * Requires: BONTON_GA4_API_SECRET in .env
  */
+/* DISABLED — uncomment to re-enable
 add_action('woocommerce_payment_complete', function ($order_id) {
     $api_secret = env('BONTON_GA4_API_SECRET', '');
     if (empty($api_secret)) {
@@ -1467,3 +1467,4 @@ add_action('woocommerce_payment_complete', function ($order_id) {
         'timeout' => 5,
     ]);
 }, 10, 1);
+*/
