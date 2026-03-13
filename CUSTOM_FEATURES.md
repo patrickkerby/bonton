@@ -43,6 +43,13 @@ This document tracks the custom functionalities and recent development work on t
 
 ---
 
+## 2026 Development Summary
+
+### February 2026
+- **GA4 Custom Event Tracking** - Full-funnel analytics tracking from homepage through purchase
+
+---
+
 ## 2025 Development Summary
 
 ### November 2025
@@ -74,6 +81,63 @@ This document tracks the custom functionalities and recent development work on t
 ---
 
 ## Recent Development Work
+
+### GA4 Custom Event Tracking (February 2026)
+
+**Purpose**: Measure the impact of new homepage features (hero CTA, featured products by category, homepage add-to-cart) and track the full customer purchase funnel.
+
+**Architecture**: Hybrid approach using two systems:
+1. **GTM + gtm4wp plugin** — Handles all standard ecommerce events (`page_view`, `add_to_cart`, `begin_checkout`, `purchase`, `view_item`, etc.) automatically via the GTM container `GTM-WFXR55C` and the "Google Tag Manager for WordPress" plugin (gtm4wp v1.22+). A GA4 Configuration tag in GTM forwards these to property `G-HTCXG3J87J`.
+2. **Direct gtag.js** — Handles custom events unique to Bon Ton that no plugin provides (`homepage_product_click`, `view_item`, `filter_category`, `cart_date_conflict`). Configured with `send_page_view: false` to avoid duplicating page views with GTM.
+
+**Custom Events (via direct gtag.js in theme code)**:
+
+| Event | Location | Fires When | Key Parameters |
+|---|---|---|---|
+| `homepage_product_click` | Homepage only | Product clicked in featured grid or carousels | `product_name`, `source_section`, `category_tab` or `carousel_id` |
+| `view_item` | All pages with quick-view | Quick-view modal opened for any product | `items[].item_id`, `items[].item_name` |
+| `filter_category` | Shop pages | Category filter selected in sidebar | `category_name` |
+| `cart_date_conflict` | Cart page | Cart loads with availability/date conflict | `conflict_reasons`, `items_in_cart` |
+
+**Standard Ecommerce Events (via GTM + gtm4wp plugin)**:
+
+| Event | GTM Tag | GTM Trigger |
+|---|---|---|
+| `page_view` | GA4 - Bon Ton (Google Tag) | Initialization - All Pages |
+| `add_to_cart` | GA4 - add_to_cart | CE - add_to_cart |
+| `begin_checkout` | GA4 - begin_checkout | CE - begin_checkout |
+| `purchase` | GA4 - purchase | CE - purchase |
+| `add_shipping_info` | GA4 - add_shipping_info | CE - add_shipping_info (`gtm4wp.addShippingInfoEEC`) |
+| `add_payment_info` | GA4 - add_payment_info | CE - add_payment_info (`gtm4wp.addPaymentInfoEEC`) |
+
+All GA4 Event tags have "Send Ecommerce data" enabled with Data Layer as the source.
+
+**Files Modified**:
+- `resources/assets/scripts/routes/home.js` — Homepage product click tracking (featured grid + carousels)
+- `resources/assets/scripts/routes/common.js` — `view_item` on quick-view modal open (site-wide) + shop page filter tracking (`filter_category`)
+- `resources/assets/scripts/routes/cart.js` — Cart conflict detection on page load
+- `resources/views/partials/head.blade.php` — Direct gtag.js init with `send_page_view: false` (custom events only)
+- `app/filters.php` — Server-side `purchase` via Measurement Protocol (currently **disabled**, see below)
+
+**Technical Details**:
+
+- All custom JS events use `window.gtag` with a guard check, so they degrade silently if GA4 is ever removed
+- The `view_item` event populates GA4's "Items viewed" column in Monetization > Ecommerce purchases, enabling a full viewed → added to cart → purchased funnel per product
+- The `cart_date_conflict` event identifies specific conflict types: `product_not_available`, `sold_out`, `no_date_selected`
+- The gtag.js config uses `send_page_view: false` because GTM's GA4 tag handles page views — without this flag, every page would be double-counted
+- GTM's legacy Universal Analytics tags (from ~2019-2020) are defunct since UA was sunset in July 2023. They can be cleaned up but cause no harm.
+
+**How to Use in GA4**:
+1. **Reports > Engagement > Events** — See all custom events and their counts
+2. **Reports > Monetization > Ecommerce purchases** — Per-product funnel: items viewed → added to cart → purchased
+3. **Reports > Monetization > Purchase journey** — Full session funnel: session start → view product → add to cart → checkout → purchase
+4. **Reports > Monetization > Checkout journey** — Checkout funnel: begin checkout → add shipping → add payment → purchase
+5. **Explore > Free Form** — Build custom reports filtering by event parameters (e.g., `filter_category` by `category_name`)
+6. **Date comparison** — Compare any date range before vs. after features launched to measure impact
+
+**Server-side purchase tracking (currently disabled)**:
+
+The GA4 Measurement Protocol server-side `purchase` event in `app/filters.php` is currently commented out. It caused duplicate revenue in GA4 because the Measurement Protocol uses a synthetic `client_id` that doesn't match the browser's, and GA4's `transaction_id` deduplication was unreliable across different client IDs. GTM + gtm4wp handles purchase tracking client-side. To re-enable in the future, implement passing the browser's real GA4 `client_id` (from the `_ga` cookie) to the server-side code, which would allow GA4 to deduplicate correctly. The API secret is configured via `BONTON_GA4_API_SECRET` in `.env`.
 
 ### Product Purchase Restriction System (November 2025)
 
@@ -473,6 +537,6 @@ All custom order-related functionality has been updated for WordPress/WooCommerc
 
 ---
 
-*Last Updated: November 17, 2025*  
+*Last Updated: February 25, 2026*  
 *Document tracks development work from January 2024 to present*  
 *For technical questions, refer to the individual files or contact the development team.*

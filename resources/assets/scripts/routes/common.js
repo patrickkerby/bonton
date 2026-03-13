@@ -133,8 +133,13 @@ export default {
       $('.checked').removeClass('checked');
       $( this ).addClass( 'checked' );
       $('.wpf_submenu input').prop('checked',false);
-      //.checkboxradio('refresh')  add this to end of line 26. maybe.
 
+      // GA4: Track which product category filters are used
+      if (window.gtag) {
+        window.gtag('event', 'filter_category', {
+          category_name: $(this).text().trim(),
+        });
+      }
     });
 
     // The following is to control the background overflow on body while a product modal is opened.
@@ -144,6 +149,22 @@ export default {
     $(document).ready(function() {
       $(document).on('click', '.inside-thumb', function() {
         $('body').addClass('quickview-open');
+      });
+
+      // GA4: fire view_item when quick-view modal opens
+      $(document).on('click', '.quick-view-button', function() {
+        if (!window.gtag) return;
+        var productId = $(this).data('product_id');
+        var productName = $(this).attr('title') ||
+                          $(this).find('h3').text().trim() ||
+                          $(this).closest('.carousel-caption').find('h4').text().trim() ||
+                          '';
+        window.gtag('event', 'view_item', {
+          items: [{
+            item_id: String(productId),
+            item_name: productName,
+          }],
+        });
       });
       // remove class from body when close button is clicked  
       $(document).on('click', '.close-product', function(e) {
@@ -331,6 +352,7 @@ export default {
           }, 50);
         }
       });
+
     });
   },
 };

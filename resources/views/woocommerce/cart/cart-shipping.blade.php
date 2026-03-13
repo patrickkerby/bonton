@@ -56,7 +56,7 @@
 
     // Delivery blackout dates -- add future dates here as needed
     // TODO: Move to ACF date picker for easier management
-    $delivery_blackout_dates = [];
+    $delivery_blackout_dates = ['2026-03-14'];
 
     if ($pickup_day_of_week === 'Saturday' && !in_array($pickup_date, $delivery_blackout_dates) && !$icecream_conflict && !$delivery_override) {
       $delivery_available = true;

@@ -13,6 +13,11 @@
     @php acf_form_head() @endphp
   @endif
   
+  {{-- GA4: gtag.js for custom events (homepage_product_click, view_item, filter_category, cart_date_conflict).
+       Standard ecommerce + page_view handled by GTM via gtm4wp plugin. --}}
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-HTCXG3J87J"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-HTCXG3J87J',{send_page_view:false});</script>
+
   @php wp_head() @endphp
   <link rel="stylesheet" rel="preload" href="https://use.typekit.net/wvm4dbv.css" crossorigin>
 

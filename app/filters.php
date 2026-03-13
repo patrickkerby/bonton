@@ -1166,3 +1166,75 @@ add_filter('upload_dir', function (array $uploads) {
 
     return $uploads;
 });
+
+/**
+ * GA4 Server-side purchase tracking (Measurement Protocol)
+ *
+ * DISABLED: Causes duplicate revenue in GA4 because the Measurement Protocol
+ * uses a synthetic client_id that doesn't match the browser's, so GA4's
+ * transaction_id deduplication doesn't reliably merge them. GTM + gtm4wp
+ * handles purchase tracking client-side. Re-enable if dedup improves or if
+ * a method to pass the real client_id from browser to server is implemented.
+ *
+ * Requires: BONTON_GA4_API_SECRET in .env
+ */
+/* DISABLED — uncomment to re-enable
+add_action('woocommerce_payment_complete', function ($order_id) {
+    $api_secret = env('BONTON_GA4_API_SECRET', '');
+    if (empty($api_secret)) {
+        return;
+    }
+
+    $order = wc_get_order($order_id);
+    if (!$order || !$order->get_id()) {
+        return;
+    }
+
+    $measurement_id = 'G-HTCXG3J87J';
+    $endpoint = sprintf(
+        'https://www.google-analytics.com/mp/collect?measurement_id=%s&api_secret=%s',
+        urlencode($measurement_id),
+        urlencode($api_secret)
+    );
+
+    // Client ID: use order-based value for server-side attribution (GA4 deduplicates by transaction_id)
+    $client_id = 'server_' . $order_id . '_' . $order->get_date_created()->format('U');
+
+    $ga4_items = [];
+    foreach ($order->get_items() as $item) {
+        $product = $item->get_product();
+        $categories = wp_get_post_terms($item->get_product_id(), 'product_cat', ['fields' => 'names']);
+        $ga4_items[] = [
+            'item_id'       => $product ? ($product->get_sku() ?: (string) $item->get_product_id()) : (string) $item->get_product_id(),
+            'item_name'     => $item->get_name(),
+            'price'         => (float) ($item->get_total() / max($item->get_quantity(), 1)),
+            'quantity'      => (int) $item->get_quantity(),
+            'item_category' => !empty($categories) && !is_wp_error($categories) ? $categories[0] : '',
+        ];
+    }
+
+    $payload = [
+        'client_id' => $client_id,
+        'events' => [
+            [
+                'name' => 'purchase',
+                'params' => [
+                    'transaction_id' => (string) $order->get_order_number(),
+                    'value' => (float) $order->get_total(),
+                    'currency' => $order->get_currency(),
+                    'shipping' => (float) $order->get_shipping_total(),
+                    'tax' => (float) $order->get_total_tax(),
+                    'items' => $ga4_items,
+                ],
+            ],
+        ],
+    ];
+
+    wp_remote_post($endpoint, [
+        'body' => wp_json_encode($payload),
+        'headers' => ['Content-Type' => 'application/json'],
+        'blocking' => false,
+        'timeout' => 5,
+    ]);
+}, 10, 1);
+*/
