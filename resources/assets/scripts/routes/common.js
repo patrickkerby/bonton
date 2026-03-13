@@ -47,6 +47,22 @@ export default {
       $(document).on('click', '.inside-thumb', function() {
         $('body').addClass('quickview-open');
       });
+
+      // GA4: fire view_item when quick-view modal opens
+      $(document).on('click', '.quick-view-button', function() {
+        if (!window.gtag) return;
+        var productId = $(this).data('product_id');
+        var productName = $(this).attr('title') ||
+                          $(this).find('h3').text().trim() ||
+                          $(this).closest('.carousel-caption').find('h4').text().trim() ||
+                          '';
+        window.gtag('event', 'view_item', {
+          items: [{
+            item_id: String(productId),
+            item_name: productName,
+          }],
+        });
+      });
       // remove class from body when close button is clicked  
       $(document).on('click', '.close-product', function(e) {
         if (!$(e.target).is('.quickview'))
