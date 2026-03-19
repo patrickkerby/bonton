@@ -5,7 +5,7 @@
 	It handles special business logic for delivery availability based on user type, cart contents,
 	and selected pickup date. Notable features include:
 
-	- Delivery is only available on Saturdays, except for specific blackout dates (e.g., June 14, 2025).
+	- Delivery is only available on Saturdays, except for dynamically managed blackout dates from an ACF repeater field.
 	- Wholesale users are always eligible for delivery.
 	- If the cart contains a product with ID 2045 (ice cream), delivery is disabled and a message is shown.
 	- The template dynamically updates the available shipping methods and displays context-aware messages.
@@ -64,8 +64,25 @@ $icecream_conflict = false;
 $delivery_message = "";
 $delivery_day = false;
 
+// New: Pull blackout dates from an ACF repeater field set on an options page or appropriate location
+// The field group should be a repeater called 'delivery_blackout_dates' with a sub field 'blackout_date' in 'Y-m-d' format
+$delivery_blackout_dates = [];
+if (function_exists('have_rows')) {
+	if (have_rows('delivery_blackout_dates', 'option')) {
+		while (have_rows('delivery_blackout_dates', 'option')) {
+			the_row();
+			$date = get_sub_field('blackout_date');
+			// Guarantee correct format
+			if ($date) {
+				// Optionally format/validate
+				$delivery_blackout_dates[] = $date;
+			}
+		}
+	}
+}
+
 if ($is_wholesale_user) {
-	$delivery_available = true;
+	$delivery_available = true; // Wholesale users always get delivery
 }
 
 foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
@@ -88,23 +105,25 @@ if($session_date_object) {
 	$pickup_day_of_week = $session_date_object->format('l');
 	$pickup_date = $session_date_object->format('Y-m-d');
 
-	if ($pickup_day_of_week === "Saturday") {
-		$delivery_day = true;
-	}
-	
-	if ($pickup_day_of_week === "Saturday" && $pickup_date != "2026-04-04" && !$icecream_conflict && !$delivery_override) {
+	$delivery_day = ($pickup_day_of_week === "Saturday");
+
+	// Check if the selected date is in the ACF blackout dates list
+	$is_blackout_date = in_array($pickup_date, $delivery_blackout_dates);
+
+	// Only allow delivery if it's Saturday, not a blackout date, and there are no conflicts
+	if ($pickup_day_of_week === "Saturday" && !$is_blackout_date && !$icecream_conflict && !$delivery_override) {
 		$delivery_available = true;
-	}
-	elseif ($is_wholesale_user) {
+	} elseif ($is_wholesale_user) {
 		$delivery_available = true;
-	}
-	else {
+	} else {
 		$delivery_available = false;
 	}
-	if ($pickup_date == "2026-04-04" ) {
-		$delivery_message = "Sorry! we're at capacity for delivery on Saturday, April 4, but we'd love to see your face in the store!";
-	}
-	else {
+	// Delivery message logic
+	if ($is_blackout_date) {
+		// Human readable blackout date (optional: format to something like "April 4")
+		$human_date = date_i18n('l, F j', strtotime($pickup_date));
+		$delivery_message = "Sorry! we're at capacity for delivery on $human_date, but we'd love to see your face in the store!";
+	} else {
 		$delivery_message = "(Delivery is currently only available on Saturdays)";
 	}
 }
@@ -155,7 +174,7 @@ if($icecream_conflict) {
 			@if ( is_cart() && $icecream_conflict)
 				<p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
 			@elseif ( is_cart() && $delivery_override && $delivery_day)
-				<p class="small">We do deliver on this day, however you have a product in your cart that's not available for delivery. Please remove the that item if you'd like delivery</p>	 
+				<p class="small">We do deliver on this day, however you have a product in your cart that's not available for delivery. Please remove that item if you'd like delivery</p>	 
 			@elseif ( is_cart() && $delivery_available )
 				<p class="woocommerce-shipping-destination">
 					<?php
