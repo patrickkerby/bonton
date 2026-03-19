@@ -45,7 +45,7 @@
   <form method="post" class="acf-form">
     
     @unless($is_wholesale_user)
-      <div class="points-coupons d-block d-md-none">
+      <div class="points-coupons d-flex d-md-none">
         @if(is_user_logged_in())
           @php
             $user_points = WC_Points_Rewards_Manager::get_users_points( get_current_user_id() );

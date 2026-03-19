@@ -16,7 +16,7 @@
 <div class="row justify-content-center">
   <div class="col-sm-10 col-md-8">
     @unless($is_wholesale_user)
-      <div class="points-coupons d-none d-md-block">
+      <div class="points-coupons d-none d-md-flex">
         @if(is_user_logged_in())
           @php
             $user_points = WC_Points_Rewards_Manager::get_users_points( get_current_user_id() );
