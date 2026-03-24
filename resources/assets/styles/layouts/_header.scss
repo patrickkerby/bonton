@@ -27,10 +27,10 @@ body.is-active {
   padding: 0;
 
   .hours {
-    background: $cream;
-    padding: 0.5rem 1rem;
-    font-size: 14px;
-    font-weight: 500;
+    padding: 1rem;
+    font-size: 12px;
+    font-weight: 600;
+    border-bottom: solid 2px $cream;
 
     .mb-bhi-display {
       padding-left: 1.25rem;
@@ -61,6 +61,7 @@ body.is-active {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: solid 2px $cream;
   }
 
   .top-nav {
@@ -74,9 +75,9 @@ body.is-active {
     li {
       a {
         margin: 0 0 0 1.5rem;
-        padding: 0.5rem 0 0.5rem 1.25rem;
-        font-size: 14px;
-        font-weight: 500;
+        padding: 1rem 0 1rem 1.25rem;
+        font-size: 12px;
+        font-weight: 600;
         display: flex;
         color: $charcoal;
 
@@ -118,8 +119,8 @@ body.is-active {
 
         &::after {
           content: "Search Products";
-          font-size: 14px;
-          font-weight: 500;
+          font-size: 12px;
+          font-weight: 600;
           display: inline-flex;
           position: relative;
         }
@@ -142,7 +143,6 @@ body.is-active {
 .cart-icon {
   padding: 0.5rem 1rem 0.65rem 2.5rem;
   background: url("../../images/cart-icon.svg") 16px 10px no-repeat;
-  background-color: $cream;
   font-weight: 600;
   font-size: 15px;
 

@@ -26,7 +26,7 @@
           <i class="fa fa-caret-down utility-banner__date-caret" aria-hidden="true"></i>
         </button>
         <div class="utility-banner__date-dropdown" id="global-date-dropdown" style="display:none;">
-          <div id="global-datepicker"></div>
+          <div id="global-datepicker" data-selected-date="{{ $global_pickup_date_picker ?? '' }}"></div>
         </div>
       </div>
 

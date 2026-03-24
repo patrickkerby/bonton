@@ -1,5 +1,9 @@
 /* stylelint-disable no-descending-specificity */
 
+.cart {
+  background-image: linear-gradient(180deg, #fff 2%, #faf9f5 44%, #fff 100%);
+}
+
 ul.woocommerce-thankyou-order-details li {
   margin-top: 1.5rem;
 }
@@ -28,8 +32,6 @@ ul.woocommerce-thankyou-order-details li {
 }
 
 .cart .woocommerce {
-  margin-top: 1rem;
-
   input[type="text"],
   input[type="password"] {
     border: solid 3px #f8f7f3;
@@ -78,17 +80,27 @@ ul.woocommerce-thankyou-order-details li {
       margin-top: 1rem;
     }
   }
+
+  @include media-breakpoint-down(md) {
+    margin-top: 1rem;
+  }
 }
 
-.page-header {
+.cart .page-header {
   align-items: center;
   display: flex;
 
   h1 {
-    margin: 0;
+    margin: 0 0 0.5rem 0;
     font-size: 2rem;
     width: auto;
     display: inline-flex;
+
+    @include media-breakpoint-up(md) {
+      font-size: 3.75rem;
+      line-height: 3rem;
+      margin-top: 3.5rem;
+    }
   }
 
   .back-link {
@@ -101,6 +113,12 @@ ul.woocommerce-thankyou-order-details li {
     margin-right: 0.75rem;
     overflow: hidden;
   }
+}
+
+.tagline {
+  margin: 0 auto 0 0;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .woocommerce .quantity .qty,
@@ -179,6 +197,24 @@ ul.woocommerce-thankyou-order-details li {
   }
 }
 
+.calendar-container {
+  background: #fff;
+  margin: auto;
+  width: 100%;
+  box-shadow: 0 0 38px -20px rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+
+  .acf-field-date-picker .acf-label {
+    background: none;
+  }
+
+  .small {
+    font-size: 0.875rem;
+    margin: 0 1.125rem;
+    font-style: italic;
+  }
+}
+
 @include media-breakpoint-down(sm) {
   .order-first {
     background-image: linear-gradient(180deg, #f8f7f2 72%, #f8f7f2 72%, #fff 100%, #fff 100%);
@@ -189,22 +225,8 @@ ul.woocommerce-thankyou-order-details li {
   }
 
   .calendar-container {
-    background: #fff;
-    margin: auto;
-    box-shadow: 0 16px 44px -36px rgba(0, 0, 0, 0.5);
-    border-radius: 4px;
     max-width: 25rem;
     width: 90%;
-
-    .acf-field-date-picker .acf-label {
-      background: none;
-    }
-
-    .small {
-      font-size: 0.875rem;
-      margin: 0 1.125rem;
-      font-style: italic;
-    }
   }
 }
 
@@ -212,6 +234,7 @@ ul.woocommerce-thankyou-order-details li {
   display: flex;
   flex-direction: column;
   margin: 0 0 3rem 0;
+  // padding-top: 4.5rem;
 
   h4 {
     font-size: 1.25rem;
@@ -228,6 +251,8 @@ ul.woocommerce-thankyou-order-details li {
   }
 
   @include media-breakpoint-down(sm) {
+    padding-top: 0;
+
     .acf-fields {
       display: flex;
       flex-direction: row;
@@ -306,6 +331,44 @@ ul.woocommerce-thankyou-order-details li {
           justify-content: center;
         }
       }
+    }
+
+    .ui-datepicker .ui-datepicker-prev,
+    .ui-datepicker .ui-datepicker-next,
+    .ui-datepicker .ui-datepicker-prev-hover,
+    .ui-datepicker .ui-datepicker-next-hover {
+      border: none;
+      background: none;
+    }
+
+    .ui-datepicker .ui-datepicker-prev,
+    .ui-datepicker .ui-datepicker-prev-hover {
+      left: 0.5rem !important;
+      top: 0.25rem !important;
+    }
+
+    .ui-datepicker .ui-datepicker-next,
+    .ui-datepicker .ui-datepicker-next-hover {
+      right: 1rem !important;
+      top: 0.25rem !important;
+    }
+
+    .ui-datepicker .ui-datepicker-prev span,
+    .ui-datepicker .ui-datepicker-next span {
+      width: 10px;
+      height: 10px;
+      margin: 0.5rem auto;
+      rotate: 45deg;
+      border-color: $highlight;
+      border-style: solid;
+      border-width: 2px 2px 0 0;
+      pointer-events: none;
+      background: none !important;
+      top: unset;
+    }
+
+    .ui-datepicker .ui-datepicker-prev span {
+      rotate: -135deg;
     }
 
     .ui-state-default,
@@ -611,7 +674,8 @@ ul.woocommerce-thankyou-order-details li {
 //Mobile cart items table
 .woocommerce-cart-form__contents {
   border: none !important;
-  box-shadow: 0 0 52px -22px rgba(0, 0, 0, 0.2);
+  background: #fff;
+  box-shadow: 0 0 38px -20px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
 
   p,
@@ -630,6 +694,10 @@ ul.woocommerce-thankyou-order-details li {
 
     td {
       padding-right: 0 !important;
+    }
+
+    @include media-breakpoint-up(md) {
+      padding: 0 2rem;
     }
   }
 
@@ -809,6 +877,7 @@ ul.woocommerce-thankyou-order-details li {
     font-size: 17px;
     padding: 0.25rem 0 0.25rem 1.5rem !important;
     border-top: solid 3px #fff !important;
+    width: 40%;
   }
 
   td {
@@ -944,6 +1013,10 @@ td.product-meta {
     margin-right: 0.25rem;
     color: $highlight;
   }
+
+  @include media-breakpoint-up(md) {
+    gap: 4rem;
+  }
 }
 
 // Strikethrough pricing for discounted items
@@ -974,6 +1047,12 @@ td.product-meta {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
+  &.desktop {
+    justify-content: flex-end;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
 }
 
 #show-coupon-btn {
@@ -997,6 +1076,10 @@ td.product-meta {
   &:hover {
     background: transparent;
   }
+
+  .desktop & {
+    margin: 0;
+  }
 }
 
 #show-loyalty-points-btn {
@@ -1016,6 +1099,11 @@ td.product-meta {
 
   i {
     margin-right: 0.5em;
+  }
+
+  .desktop & {
+    border-radius: 2rem;
+    margin: 0;
   }
 }
 

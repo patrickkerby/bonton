@@ -1167,6 +1167,17 @@ add_filter('upload_dir', function (array $uploads) {
     return $uploads;
 });
 
+add_filter( 'woocommerce_states', 'App\custom_woocommerce_states' );
+
+function custom_woocommerce_states( $states ) {
+    // Restrict provinces for Spain (ES)
+    $states['CA'] = array(
+        'AB' => __( 'Alberta', 'woocommerce' ),
+    );
+
+    return $states;
+}
+
 /**
  * GA4 Server-side purchase tracking (Measurement Protocol)
  *

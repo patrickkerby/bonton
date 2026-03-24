@@ -43,7 +43,7 @@
         $is_everyday = in_array('Everyday', $item['days_available_array']);
         $everyday_days = ['Tuesday','Wednesday','Thursday','Friday','Saturday'];
       @endphp
-      <span class="day-badges" title="{{ $is_everyday ? 'All week!' : $item['days_available_string'] }}">
+      <span class="day-badges" title="Available: {{ $is_everyday ? 'All week!' : $item['days_available_string'] }}">
         @foreach ($all_days as $i => $day)
           <span class="day-badge {{ ($is_everyday && in_array($day, $everyday_days)) || in_array($day, $item['days_available_array']) ? 'active' : '' }}">{{ $letters[$i] }}</span>
         @endforeach
@@ -52,9 +52,14 @@
     
     @if($item['long_fermentation'] || $item['two_days_notice'] || $item['sold_out_msg'] || $item['special_availability_msg'] || $item['delivery_exclusion'] || $item['bulk_eligible'])
       <div class="special-notes-container">
-        @if($item['bulk_eligible'])
+        
+        @if($item['bulk_discount_amount'] > 0)
+          <span class="bulk-label"><i class="fa fa-dollar-sign" aria-hidden="true"></i> Bulk discount applied</span>
+        @elseif($item['bulk_eligible'])
           <span class="bulk-label"><i class="fa fa-dollar-sign" aria-hidden="true"></i> Bulk discount eligible</span>
         @endif
+
+        
 
         {{-- Meta data --}}
         {!! wc_get_formatted_cart_item_data( $cart_item ) !!}

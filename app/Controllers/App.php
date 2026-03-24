@@ -116,5 +116,22 @@ class App extends Controller
         $date_obj = \DateTime::createFromFormat('Y-m-d', $formatted);
         return $date_obj ? $date_obj->format('D, M j') : null;
     }
+
+    /**
+     * Selected pickup date in dd/mm/yyyy for the Bootstrap Datepicker initial value.
+     */
+    public function globalPickupDatePicker()
+    {
+        if (!function_exists('WC') || !WC()->session) {
+            return null;
+        }
+        $this->syncPostDateToSession();
+        $formatted = WC()->session->get('pickup_date_formatted');
+        if (!$formatted) {
+            return null;
+        }
+        $date_obj = \DateTime::createFromFormat('Y-m-d', $formatted);
+        return $date_obj ? $date_obj->format('d/m/Y') : null;
+    }
 }
 

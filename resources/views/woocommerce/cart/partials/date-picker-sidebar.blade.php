@@ -71,7 +71,7 @@
       </div>
     @endunless
 
-    <h4>Pickup / delivery date:</h4>
+    <h4 class="d-flex d-md-none">Pickup / delivery date:</h4>
     
     <div class="calendar-container">
       <div class="acf-field acf-field-date-picker">

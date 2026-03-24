@@ -1,6 +1,5 @@
 .utility-banner {
   background: $cream;
-  border-bottom: solid 2px darken($cream, 4%);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -82,27 +81,24 @@
 
       table {
         width: 100%;
+        min-width: 20rem;
       }
 
       td,
       th {
         text-align: center;
-        width: 2rem;
-        height: 2rem;
+        width: 2.5rem;
+        height: 2.5rem;
         border-radius: 50%;
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 0.9rem;
       }
 
       td.day {
         cursor: pointer;
 
-        &:hover {
-          background: $cream;
-          border-radius: 50%;
-        }
-
         &.disabled {
-          opacity: 0.2;
+          opacity: 0.15;
           cursor: default;
 
           &:hover {
@@ -112,8 +108,20 @@
 
         &.active,
         &.active:hover {
-          background: $highlight;
-          color: #fff;
+          margin: 0 auto;
+          position: relative;
+
+          &::after {
+            content: "";
+            width: 2rem;
+            height: 2rem;
+            border: solid 3px $highlight;
+            border-radius: 1rem;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          }
         }
 
         &.today {
@@ -128,14 +136,32 @@
 
       .prev,
       .next {
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 1rem;
+        text-indent: -9999px;
+        padding: 0;
+        margin: 0;
+        border-radius: 0;
+        background: none !important;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
 
-        &:hover {
-          background: $cream;
-          border-radius: 50%;
-        }
+      .prev::after,
+      .next::after {
+        content: "";
+        cursor: pointer;
+        width: 10px;
+        height: 10px;
+        rotate: 45deg;
+        border-color: $highlight;
+        border-style: solid;
+        border-width: 2px 2px 0 0;
+        pointer-events: none;
+        display: flex;
+      }
+
+      .prev::after {
+        rotate: -135deg;
       }
 
       .dow {
@@ -144,6 +170,7 @@
         color: #999;
         text-transform: uppercase;
         padding-bottom: 0.25rem;
+        border-bottom: solid 3px $cream;
       }
     }
 

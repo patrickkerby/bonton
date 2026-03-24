@@ -54,6 +54,8 @@ export default {
       }
 
       function initBootstrap() {
+        var selectedDate = $picker.data('selected-date');
+
         $picker.datepicker({
           format: 'dd/mm/yyyy',
           startDate: startDate,
@@ -61,6 +63,14 @@ export default {
           todayHighlight: true,
           maxViewMode: 0,
         });
+
+        if (selectedDate) {
+          var parts = selectedDate.split('/');
+          if (parts.length === 3) {
+            var d = new Date(parts[2], parts[1] - 1, parts[0]);
+            $picker.datepicker('setDate', d);
+          }
+        }
 
         $picker.on('changeDate', function(e) {
           var d = e.date;
