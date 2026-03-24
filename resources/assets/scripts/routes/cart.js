@@ -167,9 +167,8 @@ export default {
         const endDate = maxDateFormatted.format('YYYY-MM-DD');
         const daterange = getDatesBetweenDates(startDate, endDate);
 
-        // Vacation/closure blackout dates — add future dates here as needed (format: YYYY-MM-DD)
-        // TODO: Move to ACF date picker for easier management
-        const vacationDays = [];
+        // Vacation/closure blackout dates (YYYY-MM-DD). Kept in sync with master until driven from PHP/ACF.
+        const vacationDays = ['2026-04-03', '2026-04-07', '2026-05-12', '2026-06-30', '2026-07-01', '2026-07-02'];
         const enableDays = [''];
 
         const allowedDates = daterange.filter(date => !vacationDays.includes(date)).concat(enableDays, availableDatesFormatted);

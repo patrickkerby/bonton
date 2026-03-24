@@ -211,7 +211,8 @@ add_action('acf/init', function() {
 			'menu_title'	=> 'Bon Ton Settings',
 			'menu_slug' 	=> 'bonton-general-settings',
 			'capability'	=> 'edit_posts',
-			'redirect'		=> false
+			'redirect'		=> false,
+            'position'      => 1
 		));
 	}
 });

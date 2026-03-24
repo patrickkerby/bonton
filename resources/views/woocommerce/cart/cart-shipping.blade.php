@@ -5,8 +5,11 @@
   It handles special business logic for delivery availability based on user type, cart contents,
   and selected pickup date.
 
-  On the cart page, this outputs a div-based "Pickup / Delivery Options" section.
-  On checkout, it outputs a table row for the review-order table.
+  - Delivery Saturdays only, except ACF-managed blackout dates (options repeater delivery_blackout_dates).
+  - Wholesale users are always eligible for delivery.
+  - Product 2045 (ice cream) disables delivery with a message.
+  - On the cart page, this outputs a div-based "Pickup / Delivery Options" section.
+  - On checkout, it outputs a table row for the review-order table.
 
   @see https://docs.woocommerce.com/document/template-structure/
   @package WooCommerce\Templates
@@ -28,6 +31,19 @@
   $delivery_message = '';
   $delivery_day = false;
   $delivery_override = false;
+
+  $delivery_blackout_dates = [];
+  if (function_exists('have_rows')) {
+    if (have_rows('delivery_blackout_dates', 'option')) {
+      while (have_rows('delivery_blackout_dates', 'option')) {
+        the_row();
+        $date = get_sub_field('blackout_date');
+        if ($date) {
+          $delivery_blackout_dates[] = $date;
+        }
+      }
+    }
+  }
 
   if ($is_wholesale_user) {
     $delivery_available = true;
@@ -54,11 +70,9 @@
       $delivery_day = true;
     }
 
-    // Delivery blackout dates -- add future dates here as needed
-    // TODO: Move to ACF date picker for easier management
-    $delivery_blackout_dates = ['2026-03-14'];
+    $is_blackout_date = in_array($pickup_date, $delivery_blackout_dates, true);
 
-    if ($pickup_day_of_week === 'Saturday' && !in_array($pickup_date, $delivery_blackout_dates) && !$icecream_conflict && !$delivery_override) {
+    if ($pickup_day_of_week === 'Saturday' && !$is_blackout_date && !$icecream_conflict && !$delivery_override) {
       $delivery_available = true;
     } elseif ($is_wholesale_user) {
       $delivery_available = true;
@@ -66,8 +80,9 @@
       $delivery_available = false;
     }
 
-    if (in_array($pickup_date, $delivery_blackout_dates)) {
-      $delivery_message = "Sorry! We're at capacity for delivery on this date, but we'd love to see your face in the store!";
+    if ($is_blackout_date) {
+      $human_date = date_i18n('l, F j', strtotime($pickup_date));
+      $delivery_message = "Sorry! we're at capacity for delivery on $human_date, but we'd love to see your face in the store!";
     } else {
       $delivery_message = '(Delivery is currently only available on Saturdays)';
     }
