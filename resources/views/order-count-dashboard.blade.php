@@ -391,7 +391,7 @@
     @if (count($blackout_dates) > 0)
       <div class="blackout-section">
         <h2>⚠️ Suggested Blackout Dates</h2>
-        <p style="font-size: 13px; margin-bottom: 10px;">Add these dates to cart.js vacationDays array:</p>
+        <p style="font-size: 13px; margin-bottom: 10px;">Add these dates to ACF → Options → Pickup vacation dates (repeater <code>pickup_vacation_dates</code>):</p>
         <div class="blackout-dates">
           <code>const vacationDays = [{{ implode(', ', array_map(function($date) { return "'" . $date . "'"; }, $blackout_dates)) }}];</code>
         </div>

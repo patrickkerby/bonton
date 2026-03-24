@@ -10,6 +10,7 @@
   @endphp
 
   <div class="utility-banner" data-total-units="{{ $total_units }}">
+    <div id="pickup_vacation_dates_global" class="d-none" aria-hidden="true">{!! json_encode($pickup_vacation_dates) !!}</div>
     <div class="utility-banner__inner">
 
       {{-- Pickup date selector --}}

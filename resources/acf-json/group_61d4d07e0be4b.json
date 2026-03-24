@@ -6,6 +6,7 @@
             "key": "field_61d5f9519e51a",
             "label": "Program Scheduler",
             "name": "program_scheduler",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -20,11 +21,13 @@
             "max": 0,
             "layout": "block",
             "button_label": "Add New Program",
+            "rows_per_page": 20,
             "sub_fields": [
                 {
                     "key": "field_61d5f65a81093",
                     "label": "Timing",
                     "name": "",
+                    "aria-label": "",
                     "type": "tab",
                     "instructions": "",
                     "required": 0,
@@ -35,12 +38,15 @@
                         "id": ""
                     },
                     "placement": "left",
-                    "endpoint": 0
+                    "endpoint": 0,
+                    "selected": 0,
+                    "parent_repeater": "field_61d5f9519e51a"
                 },
                 {
                     "key": "field_61d5edeb81085",
                     "label": "Program Title",
                     "name": "program_title",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 0,
@@ -54,12 +60,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": ""
+                    "maxlength": "",
+                    "parent_repeater": "field_61d5f9519e51a"
                 },
                 {
                     "key": "field_61d5ee3a81086",
                     "label": "Start Date",
                     "name": "start_date",
+                    "aria-label": "",
                     "type": "date_picker",
                     "instructions": "",
                     "required": 0,
@@ -71,12 +79,15 @@
                     },
                     "display_format": "l, F j, Y",
                     "return_format": "l, F j, Y",
-                    "first_day": 1
+                    "first_day": 1,
+                    "default_to_current_date": 0,
+                    "parent_repeater": "field_61d5f9519e51a"
                 },
                 {
                     "key": "field_61d5f01e81087",
                     "label": "End Date",
                     "name": "end_date",
+                    "aria-label": "",
                     "type": "date_picker",
                     "instructions": "",
                     "required": 0,
@@ -88,12 +99,15 @@
                     },
                     "display_format": "l, F j, Y",
                     "return_format": "l, F j, Y",
-                    "first_day": 1
+                    "first_day": 1,
+                    "default_to_current_date": 0,
+                    "parent_repeater": "field_61d5f9519e51a"
                 },
                 {
                     "key": "field_61d5f02f81088",
                     "label": "Frequency",
                     "name": "frequency",
+                    "aria-label": "",
                     "type": "radio",
                     "instructions": "",
                     "required": 0,
@@ -114,12 +128,14 @@
                     "default_value": "Weekly",
                     "layout": "vertical",
                     "return_format": "value",
-                    "save_other_choice": 0
+                    "save_other_choice": 0,
+                    "parent_repeater": "field_61d5f9519e51a"
                 },
                 {
                     "key": "field_61d5f68381094",
                     "label": "Sizes",
                     "name": "",
+                    "aria-label": "",
                     "type": "tab",
                     "instructions": "",
                     "required": 0,
@@ -130,12 +146,15 @@
                         "id": ""
                     },
                     "placement": "left",
-                    "endpoint": 0
+                    "endpoint": 0,
+                    "selected": 0,
+                    "parent_repeater": "field_61d5f9519e51a"
                 },
                 {
                     "key": "field_61d5f62881092",
                     "label": "Number of Sizes offered",
                     "name": "sizes_count",
+                    "aria-label": "",
                     "type": "number",
                     "instructions": "",
                     "required": 0,
@@ -151,12 +170,14 @@
                     "append": "",
                     "min": 1,
                     "max": "",
-                    "step": 1
+                    "step": 1,
+                    "parent_repeater": "field_61d5f9519e51a"
                 },
                 {
                     "key": "field_61d5f27281089",
                     "label": "Size Titles",
                     "name": "size_titles",
+                    "aria-label": "",
                     "type": "repeater",
                     "instructions": "For each size option offered, provide a title (ex: Smaller, Bigger \/ 1 Loaf, 2 Loaves, 3 Loaves)",
                     "required": 0,
@@ -171,11 +192,14 @@
                     "max": 0,
                     "layout": "row",
                     "button_label": "Add Size",
+                    "rows_per_page": 20,
+                    "parent_repeater": "field_61d5f9519e51a",
                     "sub_fields": [
                         {
                             "key": "field_61d5f3918108a",
                             "label": "Size Title",
                             "name": "size_title",
+                            "aria-label": "",
                             "type": "text",
                             "instructions": "",
                             "required": 0,
@@ -189,7 +213,8 @@
                             "placeholder": "",
                             "prepend": "",
                             "append": "",
-                            "maxlength": ""
+                            "maxlength": "",
+                            "parent_repeater": "field_61d5f27281089"
                         }
                     ]
                 },
@@ -197,6 +222,7 @@
                     "key": "field_61d5f69981095",
                     "label": "Products",
                     "name": "",
+                    "aria-label": "",
                     "type": "tab",
                     "instructions": "",
                     "required": 0,
@@ -207,12 +233,15 @@
                         "id": ""
                     },
                     "placement": "left",
-                    "endpoint": 0
+                    "endpoint": 0,
+                    "selected": 0,
+                    "parent_repeater": "field_61d5f9519e51a"
                 },
                 {
                     "key": "field_61d5f4e18108c",
                     "label": "Program Products",
                     "name": "bc_program_products",
+                    "aria-label": "",
                     "type": "repeater",
                     "instructions": "For each pickup day, list the products for each size option.\r\nThis creates a repeating pattern. If the program length is 10 weeks, and 4 pickup days are added, those 4 days will auto repeat for 10 weeks.",
                     "required": 0,
@@ -227,11 +256,14 @@
                     "max": 0,
                     "layout": "row",
                     "button_label": "Add Pickup",
+                    "rows_per_page": 20,
+                    "parent_repeater": "field_61d5f9519e51a",
                     "sub_fields": [
                         {
                             "key": "field_61d5f4e18108e",
                             "label": "Size 1 Products",
                             "name": "products_size_1",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -249,12 +281,15 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d5f4e18108c"
                         },
                         {
                             "key": "field_61d5f4e18108f",
                             "label": "Size 2 Products",
                             "name": "products_size_2",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -280,12 +315,15 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d5f4e18108c"
                         },
                         {
                             "key": "field_61d5fc8fec7cf",
                             "label": "Size 3 Products",
                             "name": "products_size_3",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -311,12 +349,15 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d5f4e18108c"
                         },
                         {
                             "key": "field_61d5fc9dec7d0",
                             "label": "Size 4 Products",
                             "name": "products_size_4",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -342,12 +383,15 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d5f4e18108c"
                         },
                         {
                             "key": "field_61d5f4e181090",
                             "label": "Add-ons",
                             "name": "addons",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -365,7 +409,9 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d5f4e18108c"
                         }
                     ]
                 },
@@ -373,6 +419,7 @@
                     "key": "field_61d4d08c94662",
                     "label": "Schedule Exceptions",
                     "name": "bc_exceptions",
+                    "aria-label": "",
                     "type": "repeater",
                     "instructions": "",
                     "required": 0,
@@ -387,11 +434,14 @@
                     "max": 0,
                     "layout": "row",
                     "button_label": "Add Exceptions",
+                    "rows_per_page": 20,
+                    "parent_repeater": "field_61d5f9519e51a",
                     "sub_fields": [
                         {
                             "key": "field_61d4d0b994663",
                             "label": "Pickup Day",
                             "name": "bc_day",
+                            "aria-label": "",
                             "type": "date_picker",
                             "instructions": "",
                             "required": 0,
@@ -403,12 +453,15 @@
                             },
                             "display_format": "l, F j, Y",
                             "return_format": "l, F j, Y",
-                            "first_day": 2
+                            "first_day": 2,
+                            "default_to_current_date": 0,
+                            "parent_repeater": "field_61d4d08c94662"
                         },
                         {
                             "key": "field_61d600799050c",
                             "label": "Size 1 Products",
                             "name": "products_size_1",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -426,12 +479,15 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d4d08c94662"
                         },
                         {
                             "key": "field_61d600999050d",
                             "label": "Size 2 Products",
                             "name": "products_size_2",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -457,12 +513,15 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d4d08c94662"
                         },
                         {
                             "key": "field_61d600ad9050e",
                             "label": "Size 3 Products",
                             "name": "products_size_3",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -488,12 +547,15 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d4d08c94662"
                         },
                         {
                             "key": "field_61d600b79050f",
                             "label": "Size 4 Products",
                             "name": "products_size_4",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -519,12 +581,15 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d4d08c94662"
                         },
                         {
                             "key": "field_61d4d6c9773a5",
                             "label": "Add-ons",
                             "name": "addons",
+                            "aria-label": "",
                             "type": "post_object",
                             "instructions": "",
                             "required": 0,
@@ -542,7 +607,9 @@
                             "allow_null": 0,
                             "multiple": 1,
                             "return_format": "object",
-                            "ui": 1
+                            "ui": 1,
+                            "bidirectional_target": [],
+                            "parent_repeater": "field_61d4d08c94662"
                         }
                     ]
                 }
@@ -565,14 +632,15 @@
             }
         ]
     ],
-    "menu_order": 0,
+    "menu_order": 5,
     "position": "normal",
     "style": "seamless",
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": true,
+    "active": false,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1641414976
+    "display_title": "",
+    "modified": 1774366537
 }

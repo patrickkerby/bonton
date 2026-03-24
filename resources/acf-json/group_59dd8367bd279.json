@@ -6,6 +6,7 @@
             "key": "field_5ec9c21fb7711",
             "label": "Use custom header?",
             "name": "use_custom_header",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "",
             "required": 0,
@@ -25,6 +26,7 @@
             "key": "field_5c53e94bea220",
             "label": "Sub Title",
             "name": "sub_title",
+            "aria-label": "",
             "type": "wysiwyg",
             "instructions": "This content displays below the page title, over top of the image in the header. It's best to keep this very short.",
             "required": 0,
@@ -52,6 +54,7 @@
             "key": "field_59dd8c69489c4",
             "label": "Background Image",
             "name": "background_image",
+            "aria-label": "",
             "type": "image",
             "instructions": "",
             "required": 0,
@@ -84,6 +87,7 @@
             "key": "field_59dd8ca8489c5",
             "label": "Dark Overlay",
             "name": "overlay",
+            "aria-label": "",
             "type": "range",
             "instructions": "Depending on the photo, the dark overlay may need to be adjusted. 90% is always a safe bet, but this will give you finer control.",
             "required": 0,
@@ -112,6 +116,7 @@
             "key": "field_5fb0bcfe76680",
             "label": "Transform into landing page?",
             "name": "landing_page",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "",
             "required": 0,
@@ -156,6 +161,11 @@
                 "param": "post_type",
                 "operator": "!=",
                 "value": "product"
+            },
+            {
+                "param": "post",
+                "operator": "!=",
+                "value": "6076"
             }
         ]
     ],
@@ -170,5 +180,7 @@
     ],
     "active": true,
     "description": "",
-    "modified": 1605418300
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1774366536
 }

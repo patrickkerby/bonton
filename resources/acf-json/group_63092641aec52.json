@@ -6,6 +6,7 @@
             "key": "field_6309265331d9c",
             "label": "Customer Special Products",
             "name": "customer_special_products",
+            "aria-label": "",
             "type": "post_object",
             "instructions": "",
             "required": 0,
@@ -23,12 +24,14 @@
             "allow_null": 0,
             "multiple": 1,
             "return_format": "id",
-            "ui": 1
+            "ui": 1,
+            "bidirectional_target": []
         },
         {
             "key": "field_63335af3b4aef",
             "label": "Allow customer to order on credit?",
             "name": "allow_customer_to_order_on_credit",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "",
             "required": 0,
@@ -48,6 +51,7 @@
             "key": "field_635725e6647dd",
             "label": "Delivery Discount",
             "name": "wholesale_user_delivery_discount",
+            "aria-label": "",
             "type": "number",
             "instructions": "Default delivery cost is $20. If this user qualifies for cheaper delivery, provide the amount to discount from default.",
             "required": 0,
@@ -69,6 +73,7 @@
             "key": "field_635818f977f5c",
             "label": "Special Delivery Instructions",
             "name": "special_delivery_instructions",
+            "aria-label": "",
             "type": "textarea",
             "instructions": "",
             "required": 0,
@@ -103,5 +108,6 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1666717969
+    "display_title": "",
+    "modified": 1774366537
 }

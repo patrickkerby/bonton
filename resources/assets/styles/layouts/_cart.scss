@@ -1055,7 +1055,9 @@ td.product-meta {
   }
 }
 
-#show-coupon-btn {
+// IDs restore original specificity vs .btn-link (JS hooks: .js-show-coupon-btn / .js-show-loyalty-points-btn)
+#show-coupon-btn,
+#show-coupon-btn-mobile {
   font-size: 0.8125rem;
   font-weight: 600;
   border: solid 2px $highlight;
@@ -1082,7 +1084,8 @@ td.product-meta {
   }
 }
 
-#show-loyalty-points-btn {
+#show-loyalty-points-btn,
+#show-loyalty-points-btn-mobile {
   font-size: 0.8125rem;
   font-weight: 600;
   background: $highlight;
@@ -1198,6 +1201,61 @@ td.product-meta {
     input[type="text"] {
       width: 65%;
       max-width: 14rem;
+    }
+  }
+}
+
+// Desktop: center modals in the viewport with a dimmed backdrop (mobile keeps in-column panels)
+@include media-breakpoint-up(md) {
+  body.cart-modal-open {
+    overflow: hidden;
+
+    &::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.42);
+      z-index: 1040;
+    }
+  }
+
+  .loyalty-modal {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    bottom: auto;
+    right: auto;
+    transform: translate(-50%, -50%);
+    width: min(22rem, calc(100vw - 2rem));
+    max-width: 22rem;
+    max-height: min(85vh, 32rem);
+    overflow-y: auto;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+    z-index: 1050;
+  }
+
+  #coupon-slidein.show-coupon {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    bottom: auto;
+    right: auto;
+    transform: translate(-50%, -50%);
+    width: min(24rem, calc(100vw - 2rem));
+    max-width: 24rem;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
+    z-index: 1050;
+
+    input[type="text"] {
+      width: 100%;
+      max-width: none;
     }
   }
 }

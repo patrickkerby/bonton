@@ -53,13 +53,37 @@ export default {
         });
       }
 
+      function parseVacationYmdToDates(ymdList) {
+        return (ymdList || []).map(function (ymd) {
+          var parts = String(ymd).split('-');
+          if (parts.length !== 3) return null;
+          var y = parseInt(parts[0], 10);
+          var m = parseInt(parts[1], 10) - 1;
+          var d = parseInt(parts[2], 10);
+          if (isNaN(y) || isNaN(m) || isNaN(d)) return null;
+          return new Date(y, m, d);
+        }).filter(Boolean);
+      }
+
       function initBootstrap() {
         var selectedDate = $picker.data('selected-date');
+        var vacationRaw = document.getElementById('pickup_vacation_dates_global');
+        var vacationYmd = [];
+        if (vacationRaw && vacationRaw.textContent.trim()) {
+          try {
+            vacationYmd = JSON.parse(vacationRaw.textContent.trim());
+            if (!Array.isArray(vacationYmd)) vacationYmd = [];
+          } catch (err) {
+            vacationYmd = [];
+          }
+        }
+        var datesDisabled = parseVacationYmdToDates(vacationYmd);
 
         $picker.datepicker({
           format: 'dd/mm/yyyy',
           startDate: startDate,
           daysOfWeekDisabled: [0, 1],
+          datesDisabled: datesDisabled,
           todayHighlight: true,
           maxViewMode: 0,
         });

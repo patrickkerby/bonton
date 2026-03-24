@@ -50,16 +50,16 @@
           @php
             $user_points = WC_Points_Rewards_Manager::get_users_points( get_current_user_id() );
           @endphp
-          <button type="button" class="btn btn-link" id="show-loyalty-points-btn">
+          <button type="button" class="btn btn-link js-show-loyalty-points-btn" id="show-loyalty-points-btn-mobile">
             <i class="fa fa-star" aria-hidden="true"></i>Points: {{ number_format_i18n( $user_points ) }}
           </button>
         @else
-          <button type="button" class="btn btn-link" id="show-loyalty-points-btn">
+          <button type="button" class="btn btn-link js-show-loyalty-points-btn" id="show-loyalty-points-btn-mobile">
             <i class="fa fa-user" aria-hidden="true"></i>Login for loyalty points
           </button>
         @endif
         
-        <button type="button" class="btn btn-link" id="show-coupon-btn">
+        <button type="button" class="btn btn-link js-show-coupon-btn" id="show-coupon-btn-mobile">
           <i class="fa fa-gift" aria-hidden="true"></i>Redeem Coupon
         </button>
       </div>

@@ -6,6 +6,7 @@
             "key": "field_5ed58beb62add",
             "label": "Pickup Date",
             "name": "list_date",
+            "aria-label": "",
             "type": "date_picker",
             "instructions": "",
             "required": 0,
@@ -17,7 +18,8 @@
             },
             "display_format": "F j, Y",
             "return_format": "l, F j, Y",
-            "first_day": 0
+            "first_day": 0,
+            "default_to_current_date": 0
         }
     ],
     "location": [
@@ -35,7 +37,9 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1591061269
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1774366537
 }

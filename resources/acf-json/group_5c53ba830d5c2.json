@@ -6,6 +6,7 @@
             "key": "field_616ee96a0b2e6",
             "label": "FAQ Categories",
             "name": "faq_categories",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -20,11 +21,13 @@
             "max": 0,
             "layout": "row",
             "button_label": "Add Category",
+            "rows_per_page": 20,
             "sub_fields": [
                 {
                     "key": "field_616ee9880b2e7",
                     "label": "FAQ Category",
                     "name": "faq_category",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 0,
@@ -38,7 +41,8 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": ""
+                    "maxlength": "",
+                    "parent_repeater": "field_616ee96a0b2e6"
                 }
             ]
         },
@@ -46,6 +50,7 @@
             "key": "field_5c53ba9144c52",
             "label": "FAQ",
             "name": "faq",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -59,12 +64,14 @@
             "min": 0,
             "max": 0,
             "layout": "row",
-            "button_label": "",
+            "button_label": "Add Row",
+            "rows_per_page": 20,
             "sub_fields": [
                 {
                     "key": "field_616eea99651d7",
                     "label": "FAQ Category",
                     "name": "faq_category",
+                    "aria-label": "",
                     "type": "taxonomy",
                     "instructions": "",
                     "required": 0,
@@ -81,12 +88,15 @@
                     "save_terms": 1,
                     "load_terms": 0,
                     "return_format": "object",
-                    "multiple": 0
+                    "multiple": 0,
+                    "bidirectional_target": [],
+                    "parent_repeater": "field_5c53ba9144c52"
                 },
                 {
                     "key": "field_5c53baba44c53",
                     "label": "Title",
                     "name": "faq_title",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 0,
@@ -100,12 +110,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": ""
+                    "maxlength": "",
+                    "parent_repeater": "field_5c53ba9144c52"
                 },
                 {
                     "key": "field_5c53bac244c54",
                     "label": "Content",
                     "name": "faq_content",
+                    "aria-label": "",
                     "type": "wysiwyg",
                     "instructions": "",
                     "required": 0,
@@ -119,7 +131,8 @@
                     "tabs": "all",
                     "toolbar": "full",
                     "media_upload": 1,
-                    "delay": 0
+                    "delay": 0,
+                    "parent_repeater": "field_5c53ba9144c52"
                 }
             ]
         }
@@ -142,5 +155,6 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1648276701
+    "display_title": "",
+    "modified": 1774366536
 }

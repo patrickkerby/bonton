@@ -19,29 +19,44 @@ export default {
     dayjs.tz.setDefault('America/Edmonton');
 
 
+    function setCartModalBackdrop(on) {
+      if (typeof window.matchMedia === 'function' && !window.matchMedia('(min-width: 768px)').matches) {
+        return;
+      }
+      $('body').toggleClass('cart-modal-open', on);
+    }
+
     // Coupon slidein
-    $(document).on('click', '#show-coupon-btn', function() {
+    $(document).on('click', '.js-show-coupon-btn', function() {
+      $('#loyalty-points-slidein').stop(true, true).fadeOut(200);
       $('#coupon-slidein').addClass('show-coupon');
+      setCartModalBackdrop(true);
     });
 
     $(document).on('mousedown touchstart', function(event) {
       var $slidein = $('#coupon-slidein');
       if (
         $slidein.hasClass('show-coupon') &&
-        !$slidein.is(event.target) && 
-        $slidein.has(event.target).length === 0
+        !$slidein.is(event.target) &&
+        $slidein.has(event.target).length === 0 &&
+        !$(event.target).closest('.js-show-coupon-btn').length
       ) {
         $slidein.removeClass('show-coupon');
+        setCartModalBackdrop(false);
       }
     });
 
     // Loyalty points login slidein
-    $(document).on('click', '#show-loyalty-points-btn', function() {
+    $(document).on('click', '.js-show-loyalty-points-btn', function() {
+      $('#coupon-slidein').removeClass('show-coupon');
+      setCartModalBackdrop(true);
       $('#loyalty-points-slidein').fadeIn(200);
     });
 
     $(document).on('click', '.close-loyalty-modal', function() {
-      $('#loyalty-points-slidein').fadeOut(200);
+      $('#loyalty-points-slidein').fadeOut(200, function() {
+        setCartModalBackdrop(false);
+      });
     });
 
     $(document).on('mousedown touchstart', function(event) {
@@ -50,9 +65,11 @@ export default {
         $modal.is(':visible') &&
         !$modal.is(event.target) &&
         $modal.has(event.target).length === 0 &&
-        !$(event.target).is('#show-loyalty-points-btn')
+        !$(event.target).closest('.js-show-loyalty-points-btn').length
       ) {
-        $modal.fadeOut(200);
+        $modal.fadeOut(200, function() {
+          setCartModalBackdrop(false);
+        });
       }
     });
 
@@ -131,6 +148,22 @@ export default {
     // All dates are now in YYYY-MM-DD format from PHP, no conversion needed
     const availableDatesFormatted = availableDatesArray;
 
+    const vacationDaysTarget = document.getElementById('pickup_vacation_dates_in_cart');
+    let vacationDays = [];
+    if (vacationDaysTarget) {
+      const rawVacation = vacationDaysTarget.textContent.trim();
+      if (rawVacation) {
+        try {
+          vacationDays = JSON.parse(rawVacation);
+          if (!Array.isArray(vacationDays)) {
+            vacationDays = [];
+          }
+        } catch (e) {
+          vacationDays = [];
+        }
+      }
+    }
+
     jQuery(function ($) {
       $('body').on('updated_cart_totals', function () {
         location.reload();
@@ -167,8 +200,7 @@ export default {
         const endDate = maxDateFormatted.format('YYYY-MM-DD');
         const daterange = getDatesBetweenDates(startDate, endDate);
 
-        // Vacation/closure blackout dates (YYYY-MM-DD). Kept in sync with master until driven from PHP/ACF.
-        const vacationDays = ['2026-04-03', '2026-04-07', '2026-05-12', '2026-06-30', '2026-07-01', '2026-07-02'];
+        // Vacation/closure dates: YYYY-MM-DD from PHP (ACF options repeater pickup_vacation_dates → pickup_vacation_dates_in_cart).
         const enableDays = [''];
 
         const allowedDates = daterange.filter(date => !vacationDays.includes(date)).concat(enableDays, availableDatesFormatted);

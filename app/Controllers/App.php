@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Helpers\PickupVacationDates;
 use Sober\Controller\Controller;
 
 class App extends Controller
@@ -132,6 +133,16 @@ class App extends Controller
         }
         $date_obj = \DateTime::createFromFormat('Y-m-d', $formatted);
         return $date_obj ? $date_obj->format('d/m/Y') : null;
+    }
+
+    /**
+     * Pickup vacation / closure dates (Y-m-d) for utility banner datepicker — same source as cart.
+     *
+     * @return string[]
+     */
+    public function pickupVacationDates()
+    {
+        return PickupVacationDates::getDates();
     }
 }
 

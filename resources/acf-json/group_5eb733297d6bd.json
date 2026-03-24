@@ -59,123 +59,12 @@
                     "new_lines": ""
                 },
                 {
-                    "key": "field_698a282e57ca8",
-                    "label": "Featured Categories",
-                    "name": "featured_categories",
-                    "aria-label": "",
-                    "type": "group",
-                    "instructions": "Select up to 6 items per category. Use this to quickly showcase the scope of what Bon Ton has to offer. (We're not just bread!)",
-                    "required": 0,
-                    "conditional_logic": 0,
-                    "wrapper": {
-                        "width": "",
-                        "class": "",
-                        "id": ""
-                    },
-                    "layout": "row",
-                    "sub_fields": [
-                        {
-                            "key": "field_698a28e857caa",
-                            "label": "Bakery Products",
-                            "name": "bakery_products",
-                            "aria-label": "",
-                            "type": "post_object",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "post_type": [
-                                "product"
-                            ],
-                            "post_status": [
-                                "publish"
-                            ],
-                            "taxonomy": [
-                                "product_cat:bakery"
-                            ],
-                            "return_format": "object",
-                            "multiple": 1,
-                            "allow_null": 0,
-                            "allow_in_bindings": 0,
-                            "bidirectional": 0,
-                            "ui": 1,
-                            "bidirectional_target": []
-                        },
-                        {
-                            "key": "field_698a292757cab",
-                            "label": "Patisserie Products",
-                            "name": "patisserie_products",
-                            "aria-label": "",
-                            "type": "post_object",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "post_type": [
-                                "product"
-                            ],
-                            "post_status": [
-                                "publish"
-                            ],
-                            "taxonomy": [
-                                "product_cat:patisserie"
-                            ],
-                            "return_format": "object",
-                            "multiple": 1,
-                            "allow_null": 0,
-                            "allow_in_bindings": 0,
-                            "bidirectional": 0,
-                            "ui": 1,
-                            "bidirectional_target": []
-                        },
-                        {
-                            "key": "field_698a296a57cac",
-                            "label": "Grocery Products",
-                            "name": "grocery_products",
-                            "aria-label": "",
-                            "type": "post_object",
-                            "instructions": "",
-                            "required": 0,
-                            "conditional_logic": 0,
-                            "wrapper": {
-                                "width": "",
-                                "class": "",
-                                "id": ""
-                            },
-                            "post_type": [
-                                "product"
-                            ],
-                            "post_status": [
-                                "publish"
-                            ],
-                            "taxonomy": [
-                                "product_cat:grocery"
-                            ],
-                            "return_format": "object",
-                            "multiple": 1,
-                            "allow_null": 0,
-                            "allow_in_bindings": 0,
-                            "bidirectional": 0,
-                            "ui": 1,
-                            "bidirectional_target": []
-                        }
-                    ]
-                },
-                {
                     "key": "field_5eb7a020c9480",
-                    "label": "Featured Products Carousels",
+                    "label": "Featured Products Row 1",
                     "name": "featured_row_1",
                     "aria-label": "",
                     "type": "group",
-                    "instructions": "These settings manage the product carousels (sliders). Choose the products, and the product photos will be automatically populated. Use the additional fields to override and default descriptions etc.",
+                    "instructions": "",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -187,7 +76,7 @@
                     "sub_fields": [
                         {
                             "key": "field_5eb7a063c9481",
-                            "label": "Carousel 1",
+                            "label": "Product Group 1",
                             "name": "product",
                             "aria-label": "",
                             "type": "repeater",
@@ -199,11 +88,10 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "layout": "row",
-                            "pagination": 0,
+                            "collapsed": "",
                             "min": 0,
                             "max": 0,
-                            "collapsed": "",
+                            "layout": "table",
                             "button_label": "Add Row",
                             "rows_per_page": 20,
                             "sub_fields": [
@@ -299,7 +187,7 @@
                         },
                         {
                             "key": "field_5eb9fcf8cf569",
-                            "label": "Carousel 2",
+                            "label": "Product Group 2",
                             "name": "product_2",
                             "aria-label": "",
                             "type": "repeater",
@@ -311,11 +199,10 @@
                                 "class": "",
                                 "id": ""
                             },
-                            "layout": "row",
-                            "pagination": 0,
+                            "collapsed": "",
                             "min": 0,
                             "max": 0,
-                            "collapsed": "",
+                            "layout": "table",
                             "button_label": "Add Row",
                             "rows_per_page": 20,
                             "sub_fields": [
@@ -490,11 +377,10 @@
                 "class": "",
                 "id": ""
             },
-            "layout": "row",
-            "pagination": 0,
+            "collapsed": "",
             "min": 0,
             "max": 0,
-            "collapsed": "",
+            "layout": "table",
             "button_label": "Add Row",
             "rows_per_page": 20,
             "sub_fields": [
@@ -583,20 +469,10 @@
     "style": "default",
     "label_placement": "top",
     "instruction_placement": "label",
-    "hide_on_screen": [
-        "the_content",
-        "excerpt",
-        "discussion",
-        "comments",
-        "author",
-        "format",
-        "featured_image",
-        "categories",
-        "tags",
-        "send-trackbacks"
-    ],
+    "hide_on_screen": "",
     "active": true,
     "description": "",
-    "show_in_rest": 0,
-    "modified": 1770666771
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1774366537
 }

@@ -6,6 +6,7 @@
             "key": "field_5eb050868b169",
             "label": "Pickup Date",
             "name": "pickup_date",
+            "aria-label": "",
             "type": "date_picker",
             "instructions": "",
             "required": 0,
@@ -17,12 +18,14 @@
             },
             "display_format": "F j, Y",
             "return_format": "l, F j, Y",
-            "first_day": 0
+            "first_day": 0,
+            "default_to_current_date": 0
         },
         {
             "key": "field_5ec9f34de105e",
             "label": "Timeslot",
             "name": "timeslot",
+            "aria-label": "",
             "type": "radio",
             "instructions": "",
             "required": 0,
@@ -60,7 +63,9 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1591061239
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1774366537
 }

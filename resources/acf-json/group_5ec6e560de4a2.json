@@ -6,6 +6,7 @@
             "key": "field_5ec6e566333e8",
             "label": "Story Builder",
             "name": "story_builder",
+            "aria-label": "",
             "type": "flexible_content",
             "instructions": "",
             "required": 0,
@@ -26,6 +27,7 @@
                             "key": "field_5ec6f0cd333e9",
                             "label": "Content",
                             "name": "content",
+                            "aria-label": "",
                             "type": "wysiwyg",
                             "instructions": "",
                             "required": 0,
@@ -55,6 +57,7 @@
                             "key": "field_5ec6f6319578f",
                             "label": "Full Width Photo",
                             "name": "full_width_photo",
+                            "aria-label": "",
                             "type": "image",
                             "instructions": "",
                             "required": 0,
@@ -89,6 +92,7 @@
                             "key": "field_5ec6f68095791",
                             "label": "Photos",
                             "name": "photos",
+                            "aria-label": "",
                             "type": "gallery",
                             "instructions": "",
                             "required": 0,
@@ -151,7 +155,9 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1591645279
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1774366537
 }

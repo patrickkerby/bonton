@@ -484,4 +484,14 @@ class WoocommerceCart extends Controller
         $dateObj = $this->sessionDateObject();
         return $dateObj ? $dateObj->format('Y-m-d') : null;
     }
+
+    /**
+     * Store vacation / closure dates for the cart datepicker (Y-m-d), from ACF options repeater pickup_vacation_dates.
+     *
+     * @return string[]
+     */
+    public function pickupVacationDates()
+    {
+        return \App\Helpers\PickupVacationDates::getDates();
+    }
 }

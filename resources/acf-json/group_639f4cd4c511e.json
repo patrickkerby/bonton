@@ -6,6 +6,7 @@
             "key": "field_639f4ce3a2096",
             "label": "Enable Bulk Discount",
             "name": "bulk_discount",
+            "aria-label": "",
             "type": "true_false",
             "instructions": "",
             "required": 0,
@@ -15,7 +16,6 @@
                 "class": "",
                 "id": ""
             },
-            "aria-label": "",
             "message": "",
             "default_value": 1,
             "ui": 1,
@@ -26,6 +26,7 @@
             "key": "field_657614e22c8ce",
             "label": "Bulk Discount Blackout Dates",
             "name": "bulk_discount_blackout_dates",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -35,7 +36,6 @@
                 "class": "",
                 "id": ""
             },
-            "aria-label": "",
             "layout": "table",
             "pagination": 0,
             "min": 0,
@@ -48,6 +48,7 @@
                     "key": "field_65760ad1f2822",
                     "label": "Date",
                     "name": "date",
+                    "aria-label": "",
                     "type": "date_picker",
                     "instructions": "",
                     "required": 0,
@@ -57,11 +58,11 @@
                         "class": "",
                         "id": ""
                     },
-                    "aria-label": "",
                     "display_format": "d\/m\/Y",
                     "return_format": "d\/m\/Y",
                     "first_day": 1,
-                    "parent_repeater": "field_657614e22c8ce"
+                    "parent_repeater": "field_657614e22c8ce",
+                    "default_to_current_date": 0
                 }
             ]
         }
@@ -75,7 +76,7 @@
             }
         ]
     ],
-    "menu_order": -1,
+    "menu_order": 4,
     "position": "normal",
     "style": "default",
     "label_placement": "top",
@@ -84,5 +85,6 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1702238236
+    "display_title": "",
+    "modified": 1774366537
 }

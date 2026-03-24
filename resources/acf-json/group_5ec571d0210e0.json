@@ -6,6 +6,7 @@
             "key": "field_5ec59a5a2d28d",
             "label": "Intro Paragraph",
             "name": "intro",
+            "aria-label": "",
             "type": "textarea",
             "instructions": "",
             "required": 0,
@@ -25,6 +26,7 @@
             "key": "field_5ec575f85dd00",
             "label": "Stories",
             "name": "stories",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -39,11 +41,13 @@
             "max": 0,
             "layout": "row",
             "button_label": "Add Story",
+            "rows_per_page": 20,
             "sub_fields": [
                 {
                     "key": "field_5ec572ce35a46",
                     "label": "Story Image",
                     "name": "image",
+                    "aria-label": "",
                     "type": "image",
                     "instructions": "",
                     "required": 0,
@@ -62,12 +66,14 @@
                     "max_width": "",
                     "max_height": "",
                     "max_size": "",
-                    "mime_types": ""
+                    "mime_types": "",
+                    "parent_repeater": "field_5ec575f85dd00"
                 },
                 {
                     "key": "field_5ec5724735a44",
                     "label": "Story Title",
                     "name": "title",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 0,
@@ -81,12 +87,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": ""
+                    "maxlength": "",
+                    "parent_repeater": "field_5ec575f85dd00"
                 },
                 {
                     "key": "field_5ec5729335a45",
                     "label": "Story Excerpt",
                     "name": "story_excerpt",
+                    "aria-label": "",
                     "type": "wysiwyg",
                     "instructions": "It's best to use a single Heading 3, and regular paragraph text.",
                     "required": 0,
@@ -100,12 +108,14 @@
                     "tabs": "all",
                     "toolbar": "basic",
                     "media_upload": 0,
-                    "delay": 0
+                    "delay": 0,
+                    "parent_repeater": "field_5ec575f85dd00"
                 },
                 {
                     "key": "field_637a6e4b9bafa",
                     "label": "Link Type",
                     "name": "link_type",
+                    "aria-label": "",
                     "type": "button_group",
                     "instructions": "",
                     "required": 0,
@@ -123,12 +133,14 @@
                     "allow_null": 0,
                     "default_value": "",
                     "layout": "horizontal",
-                    "return_format": "value"
+                    "return_format": "value",
+                    "parent_repeater": "field_5ec575f85dd00"
                 },
                 {
                     "key": "field_612e6ec8908b8",
                     "label": "Story Link Button Label",
                     "name": "story_link_button_label",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 0,
@@ -150,12 +162,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": ""
+                    "maxlength": "",
+                    "parent_repeater": "field_5ec575f85dd00"
                 },
                 {
                     "key": "field_5ec572e535a47",
                     "label": "Story Link",
                     "name": "story_link",
+                    "aria-label": "",
                     "type": "page_link",
                     "instructions": "",
                     "required": 0,
@@ -179,12 +193,14 @@
                     "taxonomy": "",
                     "allow_null": 0,
                     "allow_archives": 0,
-                    "multiple": 0
+                    "multiple": 0,
+                    "parent_repeater": "field_5ec575f85dd00"
                 },
                 {
                     "key": "field_637a6ddc9baf9",
                     "label": "Popup Information",
                     "name": "modal",
+                    "aria-label": "",
                     "type": "wysiwyg",
                     "instructions": "",
                     "required": 0,
@@ -206,7 +222,8 @@
                     "tabs": "all",
                     "toolbar": "full",
                     "media_upload": 1,
-                    "delay": 0
+                    "delay": 0,
+                    "parent_repeater": "field_5ec575f85dd00"
                 }
             ]
         },
@@ -214,6 +231,7 @@
             "key": "field_5ec61bdae0c38",
             "label": "Our Process",
             "name": "our_process",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -227,12 +245,14 @@
             "min": 0,
             "max": 0,
             "layout": "row",
-            "button_label": "",
+            "button_label": "Add Row",
+            "rows_per_page": 20,
             "sub_fields": [
                 {
                     "key": "field_5ec61bf1e0c39",
                     "label": "Title",
                     "name": "title",
+                    "aria-label": "",
                     "type": "text",
                     "instructions": "",
                     "required": 0,
@@ -246,12 +266,14 @@
                     "placeholder": "",
                     "prepend": "",
                     "append": "",
-                    "maxlength": ""
+                    "maxlength": "",
+                    "parent_repeater": "field_5ec61bdae0c38"
                 },
                 {
                     "key": "field_5ec61c31e0c3a",
                     "label": "Image",
                     "name": "image",
+                    "aria-label": "",
                     "type": "image",
                     "instructions": "",
                     "required": 0,
@@ -270,12 +292,14 @@
                     "max_width": "",
                     "max_height": "",
                     "max_size": "",
-                    "mime_types": ""
+                    "mime_types": "",
+                    "parent_repeater": "field_5ec61bdae0c38"
                 },
                 {
                     "key": "field_5ec61c3ee0c3b",
                     "label": "Content",
                     "name": "content",
+                    "aria-label": "",
                     "type": "wysiwyg",
                     "instructions": "",
                     "required": 0,
@@ -289,7 +313,8 @@
                     "tabs": "all",
                     "toolbar": "basic",
                     "media_upload": 0,
-                    "delay": 0
+                    "delay": 0,
+                    "parent_repeater": "field_5ec61bdae0c38"
                 }
             ]
         },
@@ -297,6 +322,7 @@
             "key": "field_61ae364a6d6bb",
             "label": "Call to actions",
             "name": "call_to_actions",
+            "aria-label": "",
             "type": "repeater",
             "instructions": "",
             "required": 0,
@@ -311,11 +337,13 @@
             "max": 3,
             "layout": "row",
             "button_label": "Add call to action",
+            "rows_per_page": 20,
             "sub_fields": [
                 {
                     "key": "field_61ae32896708c",
                     "label": "Call to Action",
                     "name": "call_to_action",
+                    "aria-label": "",
                     "type": "link",
                     "instructions": "",
                     "required": 0,
@@ -325,7 +353,8 @@
                         "class": "",
                         "id": ""
                     },
-                    "return_format": "array"
+                    "return_format": "array",
+                    "parent_repeater": "field_61ae364a6d6bb"
                 }
             ]
         }
@@ -357,5 +386,6 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1668968207
+    "display_title": "",
+    "modified": 1774366537
 }

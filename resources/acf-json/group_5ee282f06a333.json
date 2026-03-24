@@ -6,6 +6,7 @@
             "key": "field_5ee282f998688",
             "label": "Text added to shop menu",
             "name": "shop_menu",
+            "aria-label": "",
             "type": "text",
             "instructions": "",
             "required": 0,
@@ -37,7 +38,9 @@
     "label_placement": "top",
     "instruction_placement": "label",
     "hide_on_screen": "",
-    "active": 1,
+    "active": true,
     "description": "",
-    "modified": 1591904548
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1774366537
 }

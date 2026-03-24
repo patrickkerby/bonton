@@ -1,0 +1,115 @@
+{
+    "key": "group_640bfbefb784f",
+    "title": "Cart Page Blackout Dates",
+    "fields": [
+        {
+            "key": "field_640bfbf0dea05",
+            "label": "Cart Blackout Dates",
+            "name": "pickup_vacation_dates",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "!!! This is not yet enabled !!!\r\n@todo: figure out how to feed this through .js in order to update date picker.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "layout": "row",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Add new blackout date",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_640bfc55dea06",
+                    "label": "Blackout Date",
+                    "name": "vacation_date",
+                    "aria-label": "",
+                    "type": "date_picker",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "display_format": "F j, Y",
+                    "return_format": "Y-m-d",
+                    "first_day": 1,
+                    "default_to_current_date": 0,
+                    "allow_in_bindings": 1,
+                    "parent_repeater": "field_640bfbf0dea05"
+                }
+            ]
+        },
+        {
+            "key": "field_69bc23f3fa6af",
+            "label": "Delivery Blackout Dates",
+            "name": "delivery_blackout_dates",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "The dates listed will not be available for delivery.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "layout": "row",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "field_69bc240ffa6b0",
+            "button_label": "Disable a delivery date",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_69bc240ffa6b0",
+                    "label": "Blackout Date",
+                    "name": "blackout_date",
+                    "aria-label": "",
+                    "type": "date_picker",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "display_format": "F j, Y",
+                    "return_format": "Y-m-d",
+                    "first_day": 1,
+                    "default_to_current_date": 0,
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_69bc23f3fa6af"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "bonton-general-settings"
+            }
+        ]
+    ],
+    "menu_order": -1,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1774366752
+}
