@@ -594,7 +594,7 @@ ul.woocommerce-thankyou-order-details li {
       display: flex;
       background: #ffd6d5;
       color: #d22020;
-      padding: 0.5rem 2.5rem;
+      padding: 0.5rem 2.25rem;
       border-radius: 3px;
       width: calc(100% - 2rem);
       margin: 0 auto 0.5rem auto;
@@ -1421,15 +1421,52 @@ td.product-meta {
 .cart .alert {
   position: fixed;
   z-index: 9999999999;
-  bottom: 10px;
-  width: 96%;
-  height: 100px;
+  bottom: 0;
+  width: 100%;
+  min-height: 100px;
   margin: 0 auto;
-  left: 2%;
-  box-shadow: 0 0 900px #999;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 0;
+  border: none;
+  padding: 0 2.25rem 0 0;
+
+  &.alert-danger {
+    background: #ffd6d5;
+    box-shadow: 0 -5px 20px -10px rgba(0, 0, 0, 0.2);
+  }
+
+  .alert-danger {
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 15px;
+    color: #d22020;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    border: none;
+    width: auto;
+    margin: 0 0 0 2.75rem;
+    position: relative;
+
+    &::before {
+      content: "\f06a";
+      font-family: "Font Awesome 7 Free", sans-serif;
+      font-weight: 900;
+      font-style: normal;
+      color: #d22020;
+      font-size: 17px;
+      margin-right: 0.5rem;
+      display: inline-block;
+      position: absolute;
+      left: -1.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
 }
 
 input[name="update_cart"] {

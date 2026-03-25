@@ -103,7 +103,7 @@
 @if ($conflict && $session_pickup_date)
   <div class="alert alert-danger alert-dismissible fade show" role="alert">
     <div class="alert-danger">
-      <strong>Whoops! </strong> It looks like product(s) you have selected aren't available on your chosen pickup date. Please remove the product(s) or select a different pickup date.
+      <strong>Whoops! </strong> It looks like product(s) you have selected aren't available on your chosen date. Please remove them or select a different date.
     </div>
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
       <span aria-hidden="true">&times;</span>
