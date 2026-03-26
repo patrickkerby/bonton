@@ -458,6 +458,8 @@ The utility banner and bulk discount data were integrated into all site layouts:
 
 **Reference**: See `documentation/bulk-discount.md` for original bulk discount business rules.
 
+**See also**: [cart-2-0-overview-and-qa.md](cart-2-0-overview-and-qa.md) — branch summary and client/peer QA checklist.
+
 ### Product Purchase Restriction System (November 2025)
 
 **Purpose**: Enable administrators to restrict certain products from online purchase, requiring customers to call or visit in person for items that need more interaction (e.g., full-sized custom cakes).

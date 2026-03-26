@@ -106,6 +106,7 @@ All project-specific documentation lives in the `documentation/` folder:
 * **[two-days-notice-feature.md](documentation/two-days-notice-feature.md)** — Two days notice product feature documentation
 * **[3pm-cutoff-analysis.md](documentation/3pm-cutoff-analysis.md)** — 3PM order cutoff security analysis and fixes
 * **[priorities.md](documentation/priorities.md)** — Development roadmap and hour estimates
+* **[cart-2-0-overview-and-qa.md](documentation/cart-2-0-overview-and-qa.md)** — Cart 2.0 summary and client/peer QA checklist
 
 ### Sage / Framework
 
