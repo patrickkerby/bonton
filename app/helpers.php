@@ -243,6 +243,65 @@ function get_product_display_category($product_id)
 }
 
 /**
+ * Single category for inventory/list tables: Yoast primary when set on the product,
+ * otherwise the first category in the same order as WooCommerce's category list
+ * (get_the_terms / get_the_term_list).
+ *
+ * @param  int    $product_id  WooCommerce product ID.
+ * @return array{html: string, parent: string} Linked category HTML and parent term ID.
+ */
+function get_product_inventory_category_row($product_id)
+{
+    $empty = ['html' => '', 'parent' => ''];
+    $terms = get_the_terms($product_id, 'product_cat');
+
+    if (!$terms || is_wp_error($terms) || !count($terms)) {
+        return $empty;
+    }
+
+    $selected = null;
+
+    if (class_exists('WPSEO_Primary_Term')) {
+        try {
+            $wpseo          = new \WPSEO_Primary_Term('product_cat', $product_id);
+            $primary_cat_id = $wpseo->get_primary_term();
+
+            if ($primary_cat_id && !is_wp_error($primary_cat_id)) {
+                foreach ($terms as $term) {
+                    if ((int) $term->term_id === (int) $primary_cat_id) {
+                        $selected = $term;
+                        break;
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            $selected = null;
+        }
+    }
+
+    if (!$selected) {
+        $selected = $terms[0];
+    }
+
+    $link = get_term_link($selected, 'product_cat');
+
+    if (is_wp_error($link)) {
+        $html = esc_html($selected->name);
+    } else {
+        $html = sprintf(
+            '<a href="%s" rel="tag">%s</a>',
+            esc_url($link),
+            esc_html($selected->name)
+        );
+    }
+
+    return [
+        'html'    => $html,
+        'parent'  => (string) (int) $selected->parent,
+    ];
+}
+
+/**
  * Fetch the most popular WooCommerce products by total sales.
  *
  * @param  int   $count  Number of products to return.

@@ -109,10 +109,10 @@
           $variation_id = $item->get_variation_id(); 
           $product = $item->get_product();
           $prod_name = $item->get_name();
-          // $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.              
-          $categories = wc_get_product_category_list($prod_id);
-          $term_obj_list = get_the_terms( $prod_id, 'product_cat' );
-          $parent_cat_id = join(', ', wp_list_pluck($term_obj_list, 'parent'));
+          // $excluded_categories = array(83,84,94); // use these to exclude categories from appearing.
+          $inv_category_row = \App\get_product_inventory_category_row($prod_id);
+          $categories = $inv_category_row['html'];
+          $parent_cat_id = $inv_category_row['parent'];
           $option = $product->get_attribute( 'variety' );
           $topping = $product->get_attribute( 'topping' );
           $package_size = $product->get_attribute( 'package-size' );
