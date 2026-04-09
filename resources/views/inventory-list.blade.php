@@ -250,6 +250,8 @@
               @foreach ($uniqueListedProducts as $product)
               @php
                 $totalQuantity = 0;
+                $category = '';
+                $category_sort = '';
               @endphp
               <tr>
                 <td style="min-width: 350px;">{{ $product }}</td>
@@ -257,10 +259,11 @@
                     @if (array_key_exists($product, $value))
                       @php
                           $category = $value[$product]['category'];
-                      @endphp 
+                          $category_sort = trim(wp_strip_all_tags($category));
+                      @endphp
                   @endif
                 @endforeach
-                <td style="min-width: 220px; font-size: 14px;">{!! $category !!}</td>
+                <td style="min-width: 220px; font-size: 14px;" data-order="{{ esc_attr($category_sort) }}">{!! $category !!}</td>
 
                 @foreach ($dailyProducts as $key => $value)
 
