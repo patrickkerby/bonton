@@ -15,7 +15,7 @@ export default {
         {
           'paging': false,
           'info': false,
-          'order': [[ 1, 'desc' ], [ 0, 'asc' ]],
+          'order': [[ 1, 'asc' ], [ 0, 'asc' ]],
           'dom': 'Bfrtip',
           'buttons': [
             'copy',
