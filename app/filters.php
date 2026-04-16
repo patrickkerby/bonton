@@ -423,9 +423,14 @@ function ajax_save_pickup_date() {
         wp_send_json_error(['message' => 'Invalid date format']);
     }
 
+    if (!WC()->session->has_session()) {
+        WC()->session->set_customer_session_cookie(true);
+    }
+
     WC()->session->set('pickup_date', $date_obj->format('l, F j, Y'));
     WC()->session->set('pickup_date_formatted', $date_obj->format('Y-m-d'));
     WC()->session->set('pickup_date_object', $date_obj);
+    WC()->session->save_data();
 
     wp_send_json_success([
         'date_display' => $date_obj->format('D, M j'),
