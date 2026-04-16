@@ -59,9 +59,21 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_script('sage/lists.js', asset_path('scripts/lists.js'), [], null, true);
     }
 
+    $needs_extra_lead_time = false;
+    if (function_exists('WC') && WC()->cart) {
+        foreach (WC()->cart->get_cart() as $cart_item) {
+            $pid = $cart_item['product_id'];
+            if (has_term(['long-fermentation'], 'product_tag', $pid) || get_field('requires_two_days_notice', $pid)) {
+                $needs_extra_lead_time = true;
+                break;
+            }
+        }
+    }
+
     wp_localize_script('sage/main.js', 'bontonData', [
-        'ajaxUrl' => admin_url('admin-ajax.php'),
-        'nonce'   => wp_create_nonce('bonton_nonce'),
+        'ajaxUrl'            => admin_url('admin-ajax.php'),
+        'nonce'              => wp_create_nonce('bonton_nonce'),
+        'needsExtraLeadTime' => $needs_extra_lead_time ? 1 : 0,
     ]);
 }, 100);
 

@@ -33,7 +33,8 @@ export default {
       if (!$btn.length) return;
 
       var dayjs = require('dayjs');
-      var startDate = dayjs().add(33, 'hour').toDate();
+      var leadHours = (window.bontonData && window.bontonData.needsExtraLeadTime == 1) ? 57 : 33;
+      var startDate = dayjs().add(leadHours, 'hour').toDate();
       var isCartPage = $('body').hasClass('woocommerce-cart');
 
       function saveDateAndUpdate(dateText) {

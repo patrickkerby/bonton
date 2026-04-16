@@ -118,6 +118,19 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 			if(isset($pickup_date) && !in_array($pickup_day_of_week, $days_available)){
 				$conflict = true;
 			}
+
+			// Lead-time conflict: LF / 2-day-notice items need 57 hours minimum
+			$is_lf = has_term(['long-fermentation'], 'product_tag', $product_id);
+			$is_2dn = get_field('requires_two_days_notice', $product_id);
+			if (($is_lf || $is_2dn) && $session_date_object) {
+				$now_tz = new DateTime('now', new DateTimeZone('America/Edmonton'));
+				$min_pickup = clone $now_tz;
+				$min_pickup->modify('+57 hours');
+				$min_pickup_date = DateTime::createFromFormat('!Y-m-d', $min_pickup->format('Y-m-d'));
+				if ($session_date_object < $min_pickup_date) {
+					$conflict = true;
+				}
+			}
 			
 		@endphp
 	@endforeach

@@ -493,58 +493,64 @@ function write_my_log( $log ) {
 add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validation');
 
 function after_checkout_validation( $posted ) {
-    date_default_timezone_set('MST');
-	$today = date('Ymd');
-	$currenthour = date('H');
-	$cutoffhour = '15:00';
+    date_default_timezone_set('America/Edmonton');
+    $today = date('Ymd');
+    $currenthour = date('H');
+    $cutoffhour = '15:00';
     $cutoff = date('H', strtotime($cutoffhour));
     $tomorrow = date("Ymd", strtotime('tomorrow'));
     $pickup_date = WC()->session->get('pickup_date');
-	$pickup_date_formatted = date("Ymd", strtotime($pickup_date));
+    $pickup_date_formatted = date("Ymd", strtotime($pickup_date));
 
     $giftcertificate_in_cart = false;
+    $giftcertificate_only_item_in_cart = false;
+    $needs_extra_lead_time = false;
     $cart_count = 0;
     $gc_cart_count = 0;
 
+    foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+        $cart_count++;
+        $product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
 
-        foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-            $giftcertificate_in_cart = false;
-            $cart_count++;
-        
-            $product_id = apply_filters( 'woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key );
-        
-            if ( $product_id == 5317 ) {
-                $giftcertificate_in_cart = true;
-                $gc_cart_count++;
-            }	
+        if ( $product_id == 5317 ) {
+            $giftcertificate_in_cart = true;
+            $gc_cart_count++;
         }
-        
-        $cart_count = $cart_count - $gc_cart_count;
-        
-        if ( $giftcertificate_in_cart && $cart_count < 1) {
-            $giftcertificate_only_item_in_cart = true;
-            WC()->session->set('giftcertificate_only_item_in_cart', $giftcertificate_only_item_in_cart);
-        }
-        
-        return $giftcertificate_in_cart;
-        return $giftcertificate_only_item_in_cart;
 
-	if ($currenthour > $cutoff) {
-        $post3pm = true;
-      }
-      elseif ($currenthour < $cutoff) {
-        $post3pm = false;
-      }
-      else {
-          //
-      }
-    
-    if ($giftcertificate_only_item_in_cart == false && $pickup_date_formatted == "" || !$giftcertificate_only_item_in_cart && is_empty($pickup_date_formatted)) {
-        wc_add_notice( __( "We seem to have lost your pickup date, please return to cart and select a pickup date", 'woocommerce' ), 'error' );							
-        write_my_log( 'Pickup date is empty' );
+        if (has_term(['long-fermentation'], 'product_tag', $product_id) || get_field('requires_two_days_notice', $product_id)) {
+            $needs_extra_lead_time = true;
+        }
     }
-    if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
-        wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );							
+
+    $cart_count = $cart_count - $gc_cart_count;
+
+    if ( $giftcertificate_in_cart && $cart_count < 1) {
+        $giftcertificate_only_item_in_cart = true;
+        WC()->session->set('giftcertificate_only_item_in_cart', $giftcertificate_only_item_in_cart);
+        return;
+    }
+
+    $post3pm = ($currenthour > $cutoff);
+
+    if ($pickup_date_formatted == "" || empty($pickup_date_formatted)) {
+        wc_add_notice( __( "We seem to have lost your pickup date, please return to cart and select a pickup date", 'woocommerce' ), 'error' );
+    }
+
+    if ($post3pm && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
+        wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );
+    }
+
+    if ($needs_extra_lead_time) {
+        $session_date_object = WC()->session->get('pickup_date_object');
+        if ($session_date_object) {
+            $now_tz = new \DateTime('now', new \DateTimeZone('America/Edmonton'));
+            $min_pickup = clone $now_tz;
+            $min_pickup->modify('+57 hours');
+            $min_pickup_date = \DateTime::createFromFormat('!Y-m-d', $min_pickup->format('Y-m-d'));
+            if ($session_date_object < $min_pickup_date) {
+                wc_add_notice( __( "Your cart contains items that require 2 days notice. Please return to cart and select a later pickup date.", 'woocommerce' ), 'error' );
+            }
+        }
     }
 }
 

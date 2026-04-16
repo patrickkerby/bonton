@@ -244,6 +244,20 @@ class WoocommerceCart extends Controller
                 $this->_two_days_notice_in_cart = true;
             }
 
+            // Lead-time conflict: LF / 2-day-notice items need 57 hours minimum
+            if (($long_fermentation || $two_days_notice) && $session_date_object) {
+                $now_tz = new DateTime('now', new \DateTimeZone(self::TIMEZONE));
+                $min_pickup = clone $now_tz;
+                $min_pickup->modify('+57 hours');
+                $min_pickup_date = DateTime::createFromFormat('!Y-m-d', $min_pickup->format('Y-m-d'));
+
+                if ($session_date_object < $min_pickup_date) {
+                    $this->_conflict = true;
+                    $availability_status = 'not-available';
+                    $availability_msg = '<span class="not-available-message">This item requires 2 days notice. Your selected pickup date is too soon!<br>Please select a later date or remove this item from your cart.</span>';
+                }
+            }
+
             // Gift certificate check
             if ($product_id == self::GIFT_CERTIFICATE_ID) {
                 $giftcertificate_in_cart = true;
