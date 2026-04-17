@@ -241,10 +241,12 @@ add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
 }, 10, 3 );
 
 
-// Add a custom fragment to the cart so we can update the cart count in the header
+// Cart count in header: fragment selector must match `a.cart-icon` in `partials/header.blade.php`
 add_filter( 'woocommerce_add_to_cart_fragments', 'add_to_cart_fragment' );
 function add_to_cart_fragment( $fragments ) {
-    $fragments[ '.misha-cart' ] = '<a href="' . esc_url( wc_get_cart_url() ) . '" class="misha-cart">Cart (' . absint( WC()->cart->get_cart_contents_count() ) . ')</a>';
+    $count = absint( WC()->cart->get_cart_contents_count() );
+    $html  = '<a class="cart-icon" href="' . esc_url( wc_get_cart_url() ) . '">' . $count . '</a>';
+    $fragments['.cart-icon'] = $html;
     return $fragments;
 }
 

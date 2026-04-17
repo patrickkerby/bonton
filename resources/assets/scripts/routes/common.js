@@ -107,9 +107,38 @@ export default {
       }
 
       if (isCartPage) {
-        // On the cart page, the main calendar already handles date selection.
-        // jQuery UI Datepicker can't run two inline instances reliably, so the
-        // utility banner button scrolls to the existing calendar instead.
+        // Cart page: scroll to the main cart calendar when it exists (avoid two
+        // inline pickers). After the last item is removed, WooCommerce AJAX can
+        // replace markup and remove #datepicker — fall back to the same global
+        // dropdown used on other pages so the date is never "stuck".
+        var cartPageGlobalPickerInited = false;
+        var cartPageOutsideCloseBound = false;
+
+        var ensureCartPageGlobalPicker = function () {
+          if (cartPageGlobalPickerInited) {
+            return;
+          }
+          initBootstrap();
+          cartPageGlobalPickerInited = true;
+        };
+
+        var ensureCartPageOutsideClose = function () {
+          if (cartPageOutsideCloseBound) {
+            return;
+          }
+          $(document).on('mousedown touchstart', function(e) {
+            if (
+              !$dropdown.is(e.target) &&
+              $dropdown.has(e.target).length === 0 &&
+              !$btn.is(e.target) &&
+              $btn.has(e.target).length === 0
+            ) {
+              $dropdown.fadeOut(150);
+            }
+          });
+          cartPageOutsideCloseBound = true;
+        };
+
         $btn.on('click', function(e) {
           e.stopPropagation();
           var $calendar = $('#datepicker');
@@ -119,6 +148,11 @@ export default {
             setTimeout(function() {
               $calendar.closest('.calendar-container').css('outline', '');
             }, 1500);
+          } else {
+            ensureCartPageGlobalPicker();
+            ensureCartPageOutsideClose();
+            $dropdown.fadeToggle(150);
+            $('#bulk-info-popover').fadeOut(150);
           }
         });
       } else {
