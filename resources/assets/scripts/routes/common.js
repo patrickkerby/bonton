@@ -21,16 +21,23 @@ export default {
     });
 
     // --- Utility Banner: Global Date Picker ---
-    // On the cart page, WooCommerce loads jQuery UI Datepicker as a separate
-    // script that may not be ready when common.js init fires. Use the body
-    // class (always available) instead of runtime library detection, and defer
-    // initialisation on the cart page so jQuery UI is guaranteed to be loaded.
+    // Uses bootstrap-datepicker (see main.js). On cart/checkout, WooCommerce loads
+    // jQuery UI datepicker later and replaces `jQuery.fn.datepicker`, so we always
+    // call the saved bootstrap plugin for #global-datepicker.
     (function() {
       var $btn = $('#global-date-picker-btn');
       var $dropdown = $('#global-date-dropdown');
       var $picker = $('#global-datepicker');
 
       if (!$btn.length) return;
+
+      function utilityBannerDatepicker() {
+        var p = window.bontonBootstrapDatepickerPlugin;
+        if (p && p.DPGlobal) {
+          return p;
+        }
+        return $.fn.datepicker;
+      }
 
       var dayjs = require('dayjs');
       var leadHours = (window.bontonData && window.bontonData.needsExtraLeadTime == 1) ? 57 : 33;
@@ -80,7 +87,8 @@ export default {
         }
         var datesDisabled = parseVacationYmdToDates(vacationYmd);
 
-        $picker.datepicker({
+        var dp = utilityBannerDatepicker();
+        dp.call($picker, {
           format: 'dd/mm/yyyy',
           startDate: startDate,
           daysOfWeekDisabled: [0, 1],
@@ -93,7 +101,7 @@ export default {
           var parts = selectedDate.split('/');
           if (parts.length === 3) {
             var d = new Date(parts[2], parts[1] - 1, parts[0]);
-            $picker.datepicker('setDate', d);
+            dp.call($picker, 'setDate', d);
           }
         }
 

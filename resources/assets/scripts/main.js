@@ -7,6 +7,13 @@ import 'slick-carousel/slick/slick.min.js';
 import 'slick-lightbox/dist/slick-lightbox.min.js';
 import 'bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js';
 
+// WooCommerce enqueues jQuery UI Datepicker after this bundle and overwrites
+// `jQuery.fn.datepicker`. Keep bootstrap-datepicker so the utility banner always
+// uses the same widget/markup/CSS as on non-cart pages (see common.js).
+if (typeof jQuery !== 'undefined' && jQuery.fn.datepicker && jQuery.fn.datepicker.DPGlobal) {
+  window.bontonBootstrapDatepickerPlugin = jQuery.fn.datepicker;
+}
+
 // Import everything from autoload
 import './autoload/**/*'
 
