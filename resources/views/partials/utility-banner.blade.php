@@ -73,7 +73,7 @@
               <li><strong>5+ items</strong> &rarr; 10% off</li>
               <li><strong>10+ items</strong> &rarr; 20% off</li>
             </ul>
-            <p class="utility-banner__popover-note">A half-dozen = 1 item, a dozen = 2 items, singles count as 1/6 each.</p>
+            <p class="utility-banner__popover-note">A half-dozen buns/bagels = 1 item, a dozen = 2 items, singles count as 1/6 each.</p>
           </div>
         </div>
       </div>

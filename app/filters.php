@@ -710,7 +710,7 @@ function delivery_bag_fee() {
 	$chosen_shipping_method = WC()->session->get('chosen_shipping_methods'); 
 
 	if (strpos($chosen_shipping_method[0], 'flat_rate') !== false) {
-		WC()->cart->add_fee(__('Delivery Bag Fee (includes tax)', 'txtdomain'), 0.5, true);
+		WC()->cart->add_fee(__('Delivery Bag Fee', 'txtdomain'), 0.5, true);
 	}
 }
 
