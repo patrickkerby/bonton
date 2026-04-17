@@ -200,6 +200,22 @@ export default {
       });
     })();
 
+    // Classic cart "remove line" uses GET + update_wc_div (not mini-cart remove_from_cart).
+    // WooCommerce triggers fragment refresh on updated_wc_div, but the header count can
+    // stay stale for the last item (race / timing). wc_cart_emptied only fires when the
+    // cart becomes empty — force sync after the session has settled.
+    (function () {
+      $(document.body).on('wc_cart_emptied', function () {
+        $('a.cart-icon').text('0');
+        if (typeof wc_cart_fragments_params === 'undefined') {
+          return;
+        }
+        setTimeout(function () {
+          $(document.body).trigger('wc_fragment_refresh');
+        }, 150);
+      });
+    })();
+
     //Initialise popovers
     $(function () {
       $('[data-toggle="tooltip"]').tooltip();
