@@ -28,6 +28,7 @@
         </button>
         <div class="utility-banner__date-dropdown" id="global-date-dropdown" style="display:none;">
           <div id="global-datepicker" data-selected-date="{{ $global_pickup_date_picker ?? '' }}"></div>
+          <p class="utility-banner__date-note">Home Delivery available on Saturdays!</p>
         </div>
       </div>
 
