@@ -13,6 +13,8 @@
  * @see     https://docs.woocommerce.com/document/template-structure/
  * @package WooCommerce/Templates
  * @version 3.6.0
+ * 
+ * THIS FILE IS FOR THE PRODUCT SINGLE PAGE (NOT QUICK VIEW)
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -65,19 +67,19 @@ if(isset($pickup_restriction_end_data_check)) {
 				 */
 
 					$terms = get_the_terms( $product_id, 'pa_availability' );
-					$prefix = $days_available = '';
+					$days_available = array();
 					$long_fermentation = '';
 					$bulk_discount = '';
 
-					if (is_array($terms) || is_object($terms)) {
-							
-							foreach ($terms as $term) {
-									$days = $term->name;
-									$days_available .= $prefix . '' . $days . '';
-									$prefix = ', ';
-							}
+					// Match quick-view.php: order by term_id so days follow calendar order, not alphabetical.
+					if ( is_array( $terms ) && ! is_wp_error( $terms ) ) {
+						usort( $terms, function ( $a, $b ) {
+							return strcmp( $a->term_id, $b->term_id );
+						} );
+						foreach ( $terms as $term ) {
+							$days_available[] = $term->name;
+						}
 					}
-					$days_available = explode(",",$days_available);
 					
 					//Check if requires long fermentation lead time
 					if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
@@ -115,7 +117,7 @@ if(isset($pickup_restriction_end_data_check)) {
 				}
 			?>
 		<div class="sidebar d-none d-md-block">
-			@unless ($product_id == 18200)		
+			@unless ($product_id == 18200)
 			<ul>
 				<?php
 				
