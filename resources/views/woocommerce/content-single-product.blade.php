@@ -130,8 +130,8 @@ if(isset($pickup_restriction_end_data_check)) {
 						echo '<li>Available: <span>Every day! (Tuesday - Saturday)</span></li>';
 					}
 					else {
-							$days = implode(', ', $days_available);
-							echo '<li>Available: <span>'.$days .'</span></li>';
+						$days = implode(', ', $days_available);
+						echo '<li>Available: <span>'.$days .'</span></li>';
 					}
 					
 					// get product_tags of the current product
