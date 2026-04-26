@@ -113,6 +113,7 @@
           $inv_category_row = \App\get_product_inventory_category_row($prod_id);
           $categories = $inv_category_row['html'];
           $parent_cat_id = $inv_category_row['parent'];
+          $category_sort = $inv_category_row['sort'];
           $option = $product->get_attribute( 'variety' );
           $topping = $product->get_attribute( 'topping' );
           $package_size = $product->get_attribute( 'package-size' );
@@ -153,34 +154,34 @@
             if (!empty($variation_id)) {  
                 //size, option, topping
               if (!empty($option) && !empty($product_size) && !empty($topping)) {
-                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_sort' => $category_sort, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
               }
               //option, topping
               if (!empty($option) && empty($product_size) && !empty($topping)) {
-                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_sort' => $category_sort, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
               }
               //size, topping
               if (empty($option) && !empty($product_size) && !empty($topping)) {
-                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option ." - " .$topping, 'total_quantity' => $quantity, 'category' => $categories, 'category_sort' => $category_sort, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
               }
               //option, size
               if (!empty($option) && !empty($product_size)) {
-                $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id,'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option ." (".$product_size .") " , 'total_quantity' => $quantity, 'category' => $categories, 'category_sort' => $category_sort, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
               }
               //option
               elseif (!empty($option) && empty($product_size)) {
-                $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." - " .$option, 'total_quantity' => $quantity, 'category' => $categories, 'category_sort' => $category_sort, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
               }
               //size
               elseif (!empty($product_size) && empty($option)) {
-                $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name ." (" .$product_size .") ", 'total_quantity' => $quantity, 'category' => $categories, 'category_sort' => $category_sort, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
               }
               else {
-                $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
+                $prod[] = array('name' => $prod_name , 'total_quantity' => $quantity, 'category' => $categories, 'category_sort' => $category_sort, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date); 
               }
             }
             else {
-              $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
+              $prod[] = array('name' => $prod_name, 'total_quantity' => $quantity, 'category' => $categories, 'category_sort' => $category_sort, 'category_parent' => $parent_cat_id, 'day' => $order_pickup_date, 'is_bundle_parent' => $is_bundle_parent); 
             }
           }
         @endphp
@@ -214,10 +215,10 @@
           foreach($productsPerDay as $value){
 
             if(isset($value['is_bundle_parent'])) {
-              $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category'], 'is_bundle_parent' => $bundle_parent_value);
+              $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category'], 'category_sort' => $value['category_sort'], 'is_bundle_parent' => $bundle_parent_value);
             }
             else {
-              $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category']);
+              $dailyProducts[$value['day']][$value['name']] = array('quantity' => $value['total_quantity'], 'category' => $value['category'], 'category_sort' => $value['category_sort']);
             }
           }
 
@@ -259,7 +260,7 @@
                     @if (array_key_exists($product, $value))
                       @php
                           $category = $value[$product]['category'];
-                          $category_sort = trim(wp_strip_all_tags($category));
+                          $category_sort = $value[$product]['category_sort'] ?? trim(wp_strip_all_tags($category));
                       @endphp
                   @endif
                 @endforeach

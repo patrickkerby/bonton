@@ -243,23 +243,24 @@ function get_product_display_category($product_id)
 }
 
 /**
- * Single category for inventory/list tables: Yoast primary when set on the product,
- * otherwise the first category in the same order as WooCommerce's category list
- * (get_the_terms / get_the_term_list).
+ * All product categories for inventory/list tables, same markup as
+ * wc_get_product_category_list(), with Yoast primary first when set
+ * (display + sort by that leading category).
  *
  * @param  int    $product_id  WooCommerce product ID.
- * @return array{html: string, parent: string} Linked category HTML and parent term ID.
+ * @return array{html: string, parent: string, sort: string} HTML list, parent ids (comma-joined), sort key = first category name.
  */
 function get_product_inventory_category_row($product_id)
 {
-    $empty = ['html' => '', 'parent' => ''];
-    $terms = get_the_terms($product_id, 'product_cat');
+    $empty = ['html' => '', 'parent' => '', 'sort' => ''];
+    $terms   = get_the_terms($product_id, 'product_cat');
 
     if (!$terms || is_wp_error($terms) || !count($terms)) {
         return $empty;
     }
 
-    $selected = null;
+    $ordered = array_values($terms);
+    $primary_id = null;
 
     if (class_exists('WPSEO_Primary_Term')) {
         try {
@@ -267,37 +268,51 @@ function get_product_inventory_category_row($product_id)
             $primary_cat_id = $wpseo->get_primary_term();
 
             if ($primary_cat_id && !is_wp_error($primary_cat_id)) {
-                foreach ($terms as $term) {
-                    if ((int) $term->term_id === (int) $primary_cat_id) {
-                        $selected = $term;
-                        break;
-                    }
-                }
+                $primary_id = (int) $primary_cat_id;
             }
         } catch (\Throwable $e) {
-            $selected = null;
+            $primary_id = null;
         }
     }
 
-    if (!$selected) {
-        $selected = $terms[0];
+    if ($primary_id) {
+        $primary_term = null;
+        $rest         = [];
+        foreach ($ordered as $term) {
+            if ((int) $term->term_id === $primary_id) {
+                $primary_term = $term;
+            } else {
+                $rest[] = $term;
+            }
+        }
+        if ($primary_term) {
+            $ordered = array_merge([$primary_term], $rest);
+        }
     }
 
-    $link = get_term_link($selected, 'product_cat');
+    $links   = [];
+    $parents = [];
+    foreach ($ordered as $term) {
+        $parents[] = (string) (int) $term->parent;
+        $link      = get_term_link($term, 'product_cat');
 
-    if (is_wp_error($link)) {
-        $html = esc_html($selected->name);
-    } else {
-        $html = sprintf(
-            '<a href="%s" rel="tag">%s</a>',
-            esc_url($link),
-            esc_html($selected->name)
-        );
+        if (is_wp_error($link)) {
+            $links[] = esc_html($term->name);
+        } else {
+            $links[] = sprintf(
+                '<a href="%s" rel="tag">%s</a>',
+                esc_url($link),
+                esc_html($term->name)
+            );
+        }
     }
+
+    $first = $ordered[0];
 
     return [
-        'html'    => $html,
-        'parent'  => (string) (int) $selected->parent,
+        'html'    => implode(', ', $links),
+        'parent'  => implode(', ', $parents),
+        'sort'    => $first->name,
     ];
 }
 
