@@ -204,9 +204,22 @@ export default {
     // WooCommerce triggers fragment refresh on updated_wc_div, but the header count can
     // stay stale for the last item (race / timing). wc_cart_emptied only fires when the
     // cart becomes empty — force sync after the session has settled.
+    // The utility banner bulk progress is Blade-rendered; reset it when the cart empties via AJAX.
     (function () {
+      function resetUtilityBannerBulkProgress() {
+        var $banner = $('.utility-banner');
+        if (!$banner.length) {
+          return;
+        }
+        $banner.attr('data-total-units', '0');
+        $banner.find('.utility-banner__dot').removeClass('filled tier-reached');
+        $banner.find('.utility-banner__milestone').removeClass('reached');
+        $banner.find('.utility-banner__bulk-label').text('Add bread for bulk savings');
+      }
+
       $(document.body).on('wc_cart_emptied', function () {
         $('a.cart-icon').text('0');
+        resetUtilityBannerBulkProgress();
         if (typeof wc_cart_fragments_params === 'undefined') {
           return;
         }
