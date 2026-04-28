@@ -27,7 +27,13 @@
           <i class="fa fa-caret-down utility-banner__date-caret" aria-hidden="true"></i>
         </button>
         <div class="utility-banner__date-dropdown" id="global-date-dropdown" style="display:none;">
-          <div id="global-datepicker" data-selected-date="{{ $global_pickup_date_picker ?? '' }}"></div>
+          <div class="utility-banner__date-picker-wrap">
+            <div class="utility-banner__date-saving" id="utility-banner-date-saving" aria-hidden="true">
+              <i class="fa fa-circle-notch fa-spin" aria-hidden="true"></i>
+              <span>Saving date…</span>
+            </div>
+            <div id="global-datepicker" data-selected-date="{{ $global_pickup_date_picker ?? '' }}"></div>
+          </div>
           <p class="utility-banner__date-note">Home Delivery available on Saturdays!</p>
         </div>
       </div>

@@ -43,22 +43,70 @@ export default {
       var leadHours = (window.bontonData && window.bontonData.needsExtraLeadTime == 1) ? 57 : 33;
       var startDate = dayjs().add(leadHours, 'hour').toDate();
       var isCartPage = $('body').hasClass('woocommerce-cart');
+      var savePickupDateInFlight = false;
 
-      function saveDateAndUpdate(dateText) {
-        $.post(window.bontonData.ajaxUrl, {
-          action: 'save_pickup_date',
-          nonce: window.bontonData.nonce,
-          date: dateText,
-        }, function(response) {
-          if (response.success) {
+      function formatPickupLabelFromDate(d) {
+        var w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        var m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return w[d.getDay()] + ', ' + m[d.getMonth()] + ' ' + d.getDate();
+      }
+
+      function setUtilityBannerDateSaving(on) {
+        var $overlay = $('#utility-banner-date-saving');
+        if ($overlay.length) {
+          $overlay.toggleClass('is-visible', on);
+          $overlay.attr('aria-hidden', on ? 'false' : 'true');
+        }
+        $dropdown.toggleClass('is-saving', on);
+        $btn.attr('aria-busy', on ? 'true' : 'false');
+      }
+
+      function saveDateAndUpdate(dateText, pickedDate) {
+        if (savePickupDateInFlight) {
+          return;
+        }
+        savePickupDateInFlight = true;
+        var $label = $btn.find('.utility-banner__date-label');
+        var prevLabel = $label.text();
+        var optimistic = formatPickupLabelFromDate(pickedDate);
+        $label.text(optimistic);
+        setUtilityBannerDateSaving(true);
+
+        $.ajax({
+          url: window.bontonData.ajaxUrl,
+          type: 'POST',
+          cache: false,
+          data: {
+            action: 'save_pickup_date',
+            nonce: window.bontonData.nonce,
+            date: dateText,
+          },
+          dataType: 'json',
+          timeout: 30000,
+        })
+          .done(function (response) {
+            if (!response || !response.success) {
+              savePickupDateInFlight = false;
+              setUtilityBannerDateSaving(false);
+              $label.text(prevLabel);
+              return;
+            }
+            if (response.data && response.data.date_display) {
+              $label.text(response.data.date_display);
+            }
             if (isCartPage) {
               window.location.reload();
-            } else {
-              $btn.find('.utility-banner__date-label').text(response.data.date_display);
-              $dropdown.fadeOut(150);
+              return;
             }
-          }
-        });
+            setUtilityBannerDateSaving(false);
+            savePickupDateInFlight = false;
+            $dropdown.fadeOut(150);
+          })
+          .fail(function () {
+            savePickupDateInFlight = false;
+            setUtilityBannerDateSaving(false);
+            $label.text(prevLabel);
+          });
       }
 
       function parseVacationYmdToDates(ymdList) {
@@ -97,21 +145,29 @@ export default {
           maxViewMode: 0,
         });
 
-        if (selectedDate) {
-          var parts = selectedDate.split('/');
-          if (parts.length === 3) {
-            var d = new Date(parts[2], parts[1] - 1, parts[0]);
-            dp.call($picker, 'setDate', d);
-          }
-        }
-
+        var ignorePickerChange = true;
         $picker.on('changeDate', function(e) {
+          if (ignorePickerChange) {
+            return;
+          }
           var d = e.date;
           var dd = ('0' + d.getDate()).slice(-2);
           var mm = ('0' + (d.getMonth() + 1)).slice(-2);
           var yyyy = d.getFullYear();
-          saveDateAndUpdate(dd + '/' + mm + '/' + yyyy);
+          saveDateAndUpdate(dd + '/' + mm + '/' + yyyy, d);
         });
+
+        if (selectedDate) {
+          var parts = selectedDate.split('/');
+          if (parts.length === 3) {
+            var d0 = new Date(parts[2], parts[1] - 1, parts[0]);
+            dp.call($picker, 'setDate', d0);
+          }
+        }
+        // setDate may fire changeDate on a later tick — avoid an unwanted save on load.
+        setTimeout(function() {
+          ignorePickerChange = false;
+        }, 100);
       }
 
       if (isCartPage) {

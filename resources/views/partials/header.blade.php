@@ -25,7 +25,8 @@ $sub_title = get_field('sub_title');
   <header class="banner d-none d-sm-flex">
 @endif
   <div class="util-nav">    	
-    <div class="hours">@php echo do_shortcode('[mbhi location="Bon Ton Bakery"]'); @endphp</div>
+    {{-- caching="false" = render hours in PHP (no extra AJAX / "checking…" placeholder). Enable caching in shortcode only if full-page cache would serve stale open/closed text. --}}
+    <div class="hours">@php echo do_shortcode('[mbhi location="Bon Ton Bakery" caching="false"]'); @endphp</div>
     <div class="top-nav-row">
       @if (has_nav_menu('top_navigation'))
         {!! wp_nav_menu(['theme_location' => 'top_navigation', 'menu_class' => 'top-nav']) !!}
