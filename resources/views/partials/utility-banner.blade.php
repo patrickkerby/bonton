@@ -44,6 +44,7 @@
       <div class="utility-banner__bulk">
         <button type="button" class="utility-banner__bulk-trigger" id="bulk-info-btn" aria-label="Bulk discount info">
           <div class="utility-banner__progress">
+            
             {{-- Tier 1: 5 dots --}}
             @for($i = 1; $i <= 5; $i++)
               <span class="utility-banner__dot {{ $total_units >= $i ? 'filled' : '' }} {{ $current_tier >= 10 ? 'tier-reached' : '' }}"></span>
