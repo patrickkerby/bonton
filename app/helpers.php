@@ -582,13 +582,58 @@ function bonton_order_shipping_address_for_lists(\WC_Order $order)
 }
 
 /**
- * WooCommerce category IDs used for bread/bun GST quantity rules (same as bulk discount).
+ * Top-level WooCommerce category IDs for six+ GST zero-rating (not bulk discount).
+ *
+ * 83 = Bakery, 84 = Pâtisserie (child categories such as Sweet Buns are included
+ * via bonton_gst_all_category_term_ids()).
  *
  * @return int[]
  */
 function bonton_gst_bakery_category_ids()
 {
-    return \App\Helpers\BulkPricing::get_bulk_terms();
+    return [83, 84];
+}
+
+/**
+ * Parent GST categories plus all descendant product_cat term IDs.
+ *
+ * @return int[]
+ */
+function bonton_gst_all_category_term_ids()
+{
+    static $cached = null;
+
+    if ($cached !== null) {
+        return $cached;
+    }
+
+    $cached = array_map('intval', bonton_gst_bakery_category_ids());
+
+    foreach (bonton_gst_bakery_category_ids() as $parent_id) {
+        $children = get_term_children($parent_id, 'product_cat');
+
+        if (is_wp_error($children) || empty($children)) {
+            continue;
+        }
+
+        foreach ($children as $child_id) {
+            $cached[] = (int) $child_id;
+        }
+    }
+
+    $cached = array_values(array_unique($cached));
+
+    return $cached;
+}
+
+/**
+ * Whether a product is in Bakery, Pâtisserie, or any of their subcategories.
+ *
+ * @param int $product_id
+ */
+function bonton_product_in_gst_tax_categories($product_id)
+{
+    return has_term(bonton_gst_all_category_term_ids(), 'product_cat', $product_id);
 }
 
 /**
@@ -601,7 +646,7 @@ function bonton_gst_six_plus_serving_threshold()
 }
 
 /**
- * Count GST "single serving" equivalents for bread/bun category items in the cart.
+ * Count GST "single serving" equivalents for Bakery / Pâtisserie category items in the cart.
  * Used for paragraph 1(m)-style quantity relief on multi-serving bakery orders.
  *
  * @param \WC_Cart $cart
@@ -611,7 +656,7 @@ function bonton_gst_cart_serving_count($cart)
     $total = 0;
 
     foreach ($cart->get_cart() as $cart_item) {
-        if (!has_term(bonton_gst_bakery_category_ids(), 'product_cat', $cart_item['product_id'])) {
+        if (!bonton_product_in_gst_tax_categories($cart_item['product_id'])) {
             continue;
         }
 
@@ -644,7 +689,7 @@ function bonton_gst_cart_serving_count($cart)
 }
 
 /**
- * When the cart has six or more bread/bun servings (see bonton_gst_cart_serving_count),
+ * When the cart has six or more Bakery/Pâtisserie servings (see bonton_gst_cart_serving_count),
  * set zero-rate on taxable lines in those categories for checkout.
  *
  * @param \WC_Cart $cart
@@ -668,7 +713,7 @@ function bonton_apply_gst_cart_zero_rate($cart)
             $cart_item['data']->set_price($cart_item['price_excl_tax']);
         }
 
-        if (!has_term(bonton_gst_bakery_category_ids(), 'product_cat', $cart_item['product_id'])) {
+        if (!bonton_product_in_gst_tax_categories($cart_item['product_id'])) {
             continue;
         }
 

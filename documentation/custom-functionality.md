@@ -188,13 +188,13 @@ This WordPress theme is built on the Sage framework and contains extensive custo
 - Wholesale user exclusions
 - Real-time savings display on cart page
 
-### 2. GST / zero-rating (six+ bread/bun servings)
+### 2. GST / zero-rating (six+ Bakery / Pâtisserie servings)
 **Location:** `app/helpers.php` (`bonton_gst_*`), hooks in `app/filters.php`
 
-**Purpose:** Applies CRA-style six-serving zero-rating to taxable bread/bun category lines when the cart reaches six or more serving equivalents.
+**Purpose:** Applies CRA-style six-serving zero-rating to taxable Bakery/Pâtisserie lines when the cart reaches six or more serving equivalents.
 
 **Business rules:**
-- Categories **52** (Bread) and **91** (Buns & Bagels)—same IDs as bulk discount
+- Categories **83** (Bakery) and **84** (Pâtisserie), including subcategories—not the same as bulk discount (**52**, **91**)
 - Uses the **cart line product** tax status (variation inherits parent tax status in WooCommerce)
 - Bulk discount negative fees do not reduce GST on other items (see `bonton_zero_bulk_discount_fee_taxes`)
 
@@ -328,7 +328,7 @@ This WordPress theme is built on the Sage framework and contains extensive custo
 **Location:** `app/filters.php`
 
 **Key Functions:**
-- `bonton_gst_bakery_category_ids()`: Bread/bun category IDs for GST automation (52, 91)
+- `bonton_gst_bakery_category_ids()`: GST six+ parent category IDs (83, 84); `bonton_product_in_gst_tax_categories()` includes descendants
 - `get_my_bulk_terms()`: Returns bulk discount category IDs (same as above)
 - `handle_custom_query_var()`: Custom order query handling
 - `write_my_log()`: Debug logging function

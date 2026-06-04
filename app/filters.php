@@ -314,7 +314,7 @@ add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $
 }, 10, 2 );
 
 
-// GST: six+ bread/bun servings → zero-rate on eligible category lines (see helpers + documentation/gst-alberta-bakery.md).
+// GST: six+ Bakery (83) / Pâtisserie (84) servings → zero-rate (see helpers + documentation/gst-alberta-bakery.md).
 add_action('woocommerce_before_calculate_totals', __NAMESPACE__ . '\\bonton_apply_gst_cart_zero_rate', 30, 1);
 
 add_filter('woocommerce_cart_totals_get_fees_from_cart_taxes', __NAMESPACE__ . '\\bonton_zero_bulk_discount_fee_taxes', 10, 3);
