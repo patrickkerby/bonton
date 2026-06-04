@@ -73,14 +73,7 @@
 
     <h4 class="d-flex d-md-none">Pickup / delivery date:</h4>
     
-    <div class="calendar-container @if($conflict && $session_pickup_date) calendar-container--needs-date @endif">
-      @if ($conflict && $session_pickup_date)
-        <div class="lf_notice lf_notice--calendar-hint" role="note">
-          <strong>{{ $session_pickup_date }} isn't available</strong><br>
-          Pick a new date below, then tap <strong>Update</strong>.
-        </div>
-      @endif
-
+    <div class="calendar-container">
       <div class="acf-field acf-field-date-picker">
         <div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
           <div class="datepicker" id="datepicker">
@@ -102,21 +95,21 @@
 
       @if ($long_fermentation_in_cart || $two_days_notice_in_cart)
         <div class="lf_notice">
-          <strong>Extra prep time</strong><br>
+          <strong>About pickup dates</strong><br>
           @if ($long_fermentation_in_cart && $two_days_notice_in_cart)
-            Sourdough and other items in your cart need about two days. After 3&nbsp;PM, count an extra day.
+            Sourdough breads need about 40 hours of fermentation. Other items in your cart also require at least two days notice for preparation.
           @elseif ($long_fermentation_in_cart)
-            Sourdough needs about two days. After 3&nbsp;PM, count an extra day.
+            Sourdough breads need about 40 hours of fermentation (roughly two days notice).
           @else
-            Some items need about two days. After 3&nbsp;PM, count an extra day.
+            One or more products in your cart require at least two days notice for preparation.
           @endif
+          Orders placed after 3&nbsp;PM may need an extra day before your earliest pickup date is available.
         </div>
       @endif
 
       @if ($restricted_in_cart)
         <div class="lf_notice">
-          <strong>Limited availability</strong><br>
-          A special item in your cart is only available on the dates shown above.
+          <strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
         </div>
       @endif
     </div>

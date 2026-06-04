@@ -3,6 +3,8 @@
   <div id="pickup_restriction_data">{{ $restricted_start_date_js }}</div>
   <div id="pickup_restriction_end_data">{{ $restricted_end_date_js }}</div>
   <div id="session_pickup_date">{{ $session_pickup_date_js }}</div>
+  <div id="earliest_pickup_date">{{ \App\bonton_cart_earliest_pickup_date_ymd() }}</div>
+  <div id="cart_lead_time_hours">{{ \App\bonton_cart_lead_time_hours() }}</div>
   <div id="long_fermentation_in_cart">{{ $long_fermentation_in_cart ? '1' : '' }}</div>
   <div id="two_days_notice_in_cart">{{ $two_days_notice_in_cart ? '1' : '' }}</div>
   @if($all_available_dates)

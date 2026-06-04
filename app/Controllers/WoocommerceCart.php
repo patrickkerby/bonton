@@ -13,15 +13,11 @@ class WoocommerceCart extends Controller
     const TIMEZONE = 'America/Edmonton';
 
     /**
-     * Whether the current time is past the daily cutoff hour (3pm).
+     * Whether the current time is at or after the daily order cutoff (3:00 PM Edmonton, inclusive).
      */
     public function post3pm()
     {
-        date_default_timezone_set(self::TIMEZONE);
-        $currenthour = (int) date('H');
-        $cutoff = (int) date('H', strtotime(self::CUTOFF_HOUR));
-
-        return $currenthour > $cutoff;
+        return \App\bonton_is_past_order_cutoff();
     }
 
     private $_post_date_processed = false;
@@ -248,14 +244,12 @@ class WoocommerceCart extends Controller
                 $this->_two_days_notice_in_cart = true;
             }
 
-            // Lead-time conflict: LF / 2-day-notice items need 57 hours minimum
-            if (($long_fermentation || $two_days_notice) && $session_date_object) {
-                $now_tz = new DateTime('now', new \DateTimeZone(self::TIMEZONE));
-                $min_pickup = clone $now_tz;
-                $min_pickup->modify('+57 hours');
-                $min_pickup_date = DateTime::createFromFormat('!Y-m-d', $min_pickup->format('Y-m-d'));
+            // Lead-time conflict: LF / 2-day-notice items need 57 hours minimum (not restricted-date windows).
+            if (($long_fermentation || $two_days_notice)) {
+                $session_ymd = $this->sessionFormatted();
+                $min_ymd = $this->computeLeadTimeEarliestYmd(57);
 
-                if ($session_date_object < $min_pickup_date) {
+                if ($session_ymd && $session_ymd < $min_ymd) {
                     $this->_conflict = true;
                     $availability_status = 'not-available';
                     $availability_msg = '<span class="not-available-message">Needs 2 days notice (3&nbsp;PM cutoff). This pickup date is too soon—choose a later date or remove this item.</span>';
@@ -343,9 +337,17 @@ class WoocommerceCart extends Controller
                 }
             }
 
-            // Stale session date check
-            if ($this->post3pm() && $session_date_object && $session_date_object <= $tomorrow || $session_date_object && $session_date_object == $today) {
-                $this->_conflict = true;
+            // Same-day pickup and post-3pm "tomorrow" cutoff (Y-m-d avoids DateTime/session quirks).
+            $session_ymd_for_cutoff = $this->sessionFormatted();
+            if ($session_ymd_for_cutoff) {
+                $today_ymd = $today->format('Y-m-d');
+                $tomorrow_ymd = $tomorrow->format('Y-m-d');
+
+                if ($session_ymd_for_cutoff === $today_ymd) {
+                    $this->_conflict = true;
+                } elseif ($this->post3pm() && $session_ymd_for_cutoff <= $tomorrow_ymd) {
+                    $this->_conflict = true;
+                }
             }
 
             // Availability message conflict (must occur in loop)
@@ -501,6 +503,63 @@ class WoocommerceCart extends Controller
     {
         $dateObj = $this->sessionDateObject();
         return $dateObj ? $dateObj->format('Y-m-d') : null;
+    }
+
+    /**
+     * Earliest selectable pickup date (Y-m-d) for the current cart — matches lead-time conflict logic.
+     */
+    public function earliestPickupDateJs()
+    {
+        if (!$this->_cart_items_computed) {
+            $this->cartItemsData();
+        }
+
+        return $this->computeEarliestPickupDateYmd();
+    }
+
+    /**
+     * Lead-time hours used for the cart datepicker (33 default, 57 with LF / two-day notice).
+     */
+    public function cartLeadTimeHours()
+    {
+        if (!$this->_cart_items_computed) {
+            $this->cartItemsData();
+        }
+
+        return ($this->_long_fermentation_in_cart || $this->_two_days_notice_in_cart) ? 57 : 33;
+    }
+
+    /**
+     * Earliest pickup day from lead-time hours only (33 or 57), Edmonton TZ.
+     */
+    private function computeLeadTimeEarliestYmd(?int $hours = null)
+    {
+        if ($hours === null) {
+            $hours = ($this->_long_fermentation_in_cart || $this->_two_days_notice_in_cart) ? 57 : 33;
+        }
+
+        $now_tz = new DateTime('now', new \DateTimeZone(self::TIMEZONE));
+        $min_pickup = clone $now_tz;
+        $min_pickup->modify(sprintf('+%d hours', $hours));
+
+        return $min_pickup->format('Y-m-d');
+    }
+
+    /**
+     * First calendar day allowed for pickup given cart lead time and restricted-date windows.
+     */
+    private function computeEarliestPickupDateYmd()
+    {
+        $earliest = $this->computeLeadTimeEarliestYmd();
+
+        if ($this->_restricted_start_date) {
+            $restricted = $this->_restricted_start_date->format('Y-m-d');
+            if ($restricted > $earliest) {
+                $earliest = $restricted;
+            }
+        }
+
+        return $earliest;
     }
 
     /**

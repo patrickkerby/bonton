@@ -20,16 +20,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 //variables
-date_default_timezone_set('MST');
+date_default_timezone_set('America/Edmonton');
 $today = date('Ymd');
-$currenthour = date('H');
-$cutoffhour = '15:00';
-$cutoff = date('H', strtotime($cutoffhour));
 $tomorrow = date("Ymd", strtotime('tomorrow'));
 $pickup_date = WC()->session->get('pickup_date');
 $pickup_date_formatted = date("Ymd", strtotime($pickup_date));
 $session_date_object = WC()->session->get('pickup_date_object');
-$post3pm = "";
+$post3pm = \App\bonton_is_past_order_cutoff();
 $conflict = false;
 
 
@@ -146,21 +143,7 @@ if ( ! $checkout->is_registration_enabled() && $checkout->is_registration_requir
 		</div>
 	@endif
 	
-	@php
-	 if ($currenthour > $cutoff) {
-			$post3pm = true;
-			echo "<div style=\"display:none;\">Current hour IS after cutoff</div>";
-		}
-		elseif ($currenthour < $cutoff) {
-			$post3pm = false;
-			echo "<div style=\"display:none;\">Current hour is NOT after cutoff</div>";
-		}
-		else {
-				//
-		}
-	@endphp
-	 
-	 @if ($post3pm == true && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today)
+	 @if ($post3pm && ($pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today))
 		 <div style="display:none;">It's after 3 and the pickup day is equal to or less than tomorrow OR the pickup day is today</div>
 	 @endif
 

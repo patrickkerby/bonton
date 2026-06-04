@@ -978,17 +978,6 @@ ul.woocommerce-thankyou-order-details li {
   }
 }
 
-.lf_notice--calendar-hint {
-  margin-bottom: 1rem;
-  border-radius: 4px 4px 0 0;
-}
-
-.calendar-container--needs-date .lf_notice--calendar-hint + .acf-field {
-  .lf_notice {
-    border-radius: 0;
-  }
-}
-
 // Bulk discount eligibility label in the meta area
 .bulk-label {
   font-size: 0.875rem;

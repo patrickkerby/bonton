@@ -34,9 +34,36 @@ add_filter('body_class', function (array $classes) {
 add_filter('body_class', function (array $classes) {
     if (function_exists('is_cart') && is_cart()) {
         $classes[] = 'woocommerce-cart-data';
+        $classes[] = 'cart';
     }
     return $classes;
 }, 20);
+
+/**
+ * Earliest pickup date (Y-m-d) for cart calendar — matches WoocommerceCart conflict logic.
+ */
+function bonton_cart_earliest_pickup_date_ymd() {
+    if (!function_exists('WC') || !WC()->cart || WC()->cart->is_empty()) {
+        return '';
+    }
+
+    $controller = new \App\Controllers\WoocommerceCart();
+
+    return $controller->earliestPickupDateJs() ?: '';
+}
+
+/**
+ * Lead-time hours (33 or 57) for cart calendar JS fallback.
+ */
+function bonton_cart_lead_time_hours() {
+    if (!function_exists('WC') || !WC()->cart || WC()->cart->is_empty()) {
+        return 33;
+    }
+
+    $controller = new \App\Controllers\WoocommerceCart();
+
+    return $controller->cartLeadTimeHours();
+}
 
 /**
  * Add "… Continued" to the excerpt
@@ -436,10 +463,48 @@ function bonton_persist_pickup_date_to_session(\DateTime $date_obj) {
     if (!WC()->session->has_session()) {
         WC()->session->set_customer_session_cookie(true);
     }
-    WC()->session->set('pickup_date', $date_obj->format('l, F j, Y'));
-    WC()->session->set('pickup_date_formatted', $date_obj->format('Y-m-d'));
-    WC()->session->set('pickup_date_object', $date_obj);
+
+    $tz = new \DateTimeZone('America/Edmonton');
+    $normalized = \DateTime::createFromFormat(
+        '!Y-m-d',
+        $date_obj->format('Y-m-d'),
+        $tz
+    );
+
+    if (!$normalized) {
+        return;
+    }
+
+    WC()->session->set('pickup_date', $normalized->format('l, F j, Y'));
+    WC()->session->set('pickup_date_formatted', $normalized->format('Y-m-d'));
+    WC()->session->set('pickup_date_object', $normalized);
     WC()->session->save_data();
+}
+
+/**
+ * Timezone used for order cutoff and pickup-date business rules.
+ */
+function bonton_order_cutoff_timezone(): \DateTimeZone {
+    return new \DateTimeZone('America/Edmonton');
+}
+
+/**
+ * Whether the current time is at or after the daily order cutoff (3:00 PM Edmonton, inclusive).
+ */
+function bonton_is_past_order_cutoff(): bool {
+    $tz = bonton_order_cutoff_timezone();
+    $now = new \DateTime('now', $tz);
+    $cutoff = \DateTime::createFromFormat(
+        'Y-m-d H:i',
+        $now->format('Y-m-d') . ' ' . \App\Controllers\WoocommerceCart::CUTOFF_HOUR,
+        $tz
+    );
+
+    if (!$cutoff) {
+        return false;
+    }
+
+    return $now >= $cutoff;
 }
 
 // Cart on-page calendar: POST-redirect-GET so reload() / replace() never replays a stale date POST.
@@ -454,6 +519,17 @@ add_action('template_redirect', function () {
     if (!$date_obj) {
         return;
     }
+
+    $earliest = bonton_cart_earliest_pickup_date_ymd();
+    if ($earliest && $date_obj->format('Y-m-d') < $earliest) {
+        wc_add_notice(
+            __('That pickup date is not available for the items in your cart. Please choose a later date.', 'woocommerce'),
+            'error'
+        );
+        wp_safe_redirect(wc_get_cart_url());
+        exit;
+    }
+
     bonton_persist_pickup_date_to_session($date_obj);
     wp_safe_redirect(wc_get_cart_url());
     exit;
@@ -538,9 +614,6 @@ add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validati
 function after_checkout_validation( $posted ) {
     date_default_timezone_set('America/Edmonton');
     $today = date('Ymd');
-    $currenthour = date('H');
-    $cutoffhour = '15:00';
-    $cutoff = date('H', strtotime($cutoffhour));
     $tomorrow = date("Ymd", strtotime('tomorrow'));
     $pickup_date = WC()->session->get('pickup_date');
     $pickup_date_formatted = date("Ymd", strtotime($pickup_date));
@@ -573,24 +646,28 @@ function after_checkout_validation( $posted ) {
         return;
     }
 
-    $post3pm = ($currenthour > $cutoff);
+    $post3pm = bonton_is_past_order_cutoff();
 
     if ($pickup_date_formatted == "" || empty($pickup_date_formatted)) {
         wc_add_notice( __( 'Pickup date missing. Return to the cart and choose a pickup date.', 'woocommerce' ), 'error' );
     }
 
-    if ($post3pm && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
+    if ($pickup_date_formatted == $today || ($post3pm && $pickup_date_formatted <= $tomorrow)) {
         wc_add_notice( __( 'Pickup date is no longer valid. Return to the cart and choose a new date.', 'woocommerce' ), 'error' );
     }
 
     if ($needs_extra_lead_time) {
-        $session_date_object = WC()->session->get('pickup_date_object');
-        if ($session_date_object) {
+        $session_ymd = WC()->session->get('pickup_date_formatted');
+        if ($session_ymd && preg_match('#^\d{2}/\d{2}/\d{4}$#', $session_ymd)) {
+            $legacy = \DateTime::createFromFormat('!d/m/Y', $session_ymd);
+            $session_ymd = $legacy ? $legacy->format('Y-m-d') : $session_ymd;
+        }
+        if ($session_ymd) {
             $now_tz = new \DateTime('now', new \DateTimeZone('America/Edmonton'));
             $min_pickup = clone $now_tz;
             $min_pickup->modify('+57 hours');
-            $min_pickup_date = \DateTime::createFromFormat('!Y-m-d', $min_pickup->format('Y-m-d'));
-            if ($session_date_object < $min_pickup_date) {
+            $min_ymd = $min_pickup->format('Y-m-d');
+            if ($session_ymd < $min_ymd) {
                 wc_add_notice( __( 'Your cart has items that need 2 days notice. Return to the cart and choose a later pickup date.', 'woocommerce' ), 'error' );
             }
         }
