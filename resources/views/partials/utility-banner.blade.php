@@ -34,7 +34,7 @@
             </div>
             <div id="global-datepicker" data-selected-date="{{ $global_pickup_date_picker ?? '' }}"></div>
           </div>
-          <p class="utility-banner__date-note">After 3&nbsp;PM, allow an extra day before pickup.<br>Home delivery on Saturdays.</p>
+          <p class="utility-banner__date-note">3&nbsp;PM cutoff for next-day pickup.<br>Home delivery available on Saturdays!</p>
         </div>
       </div>
 
