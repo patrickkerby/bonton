@@ -256,6 +256,19 @@ export default {
       }
     }
 
+    function markCartPickupCalendarReady() {
+      $('#cart-pickup-calendar').addClass('cart-pickup-calendar--ready');
+    }
+
+    function cartDatepickerPluginReady() {
+      return (
+        typeof jQuery !== 'undefined' &&
+        jQuery.fn &&
+        typeof jQuery.fn.datepicker === 'function' &&
+        !jQuery.fn.datepicker.DPGlobal
+      );
+    }
+
     function initCartPickupCalendar() {
       if (!document.getElementById('datepicker')) {
         return;
@@ -306,6 +319,7 @@ export default {
         );
 
       initializeDatePicker(allowedDates, data.selectedDate, earliestPickupFormatted);
+      markCartPickupCalendarReady();
 
       if (window.gtag && $('.cart-collaterals').hasClass('conflict')) {
         const reasons = [];
@@ -319,18 +333,36 @@ export default {
       }
     }
 
+    function initCartPickupCalendarWhenReady(attempt) {
+      const tries = attempt || 0;
+
+      if (!document.getElementById('datepicker')) {
+        return;
+      }
+
+      if ($('#datepicker').hasClass('hasDatepicker')) {
+        markCartPickupCalendarReady();
+        return;
+      }
+
+      if (!cartDatepickerPluginReady()) {
+        if (tries < 60) {
+          window.setTimeout(function () {
+            initCartPickupCalendarWhenReady(tries + 1);
+          }, 50);
+        }
+        return;
+      }
+
+      initCartPickupCalendar();
+    }
+
     jQuery(function ($) {
       $('body').on('updated_cart_totals', function () {
         window.location.replace(window.location.pathname + window.location.search);
       });
 
-      $(document).ready(initCartPickupCalendar);
-      // WooCommerce can load jQuery UI after this bundle — init once if the first pass missed it.
-      $(window).on('load', function () {
-        if (!$('#datepicker').hasClass('hasDatepicker')) {
-          initCartPickupCalendar();
-        }
-      });
+      initCartPickupCalendarWhenReady(0);
     });
   },
 };

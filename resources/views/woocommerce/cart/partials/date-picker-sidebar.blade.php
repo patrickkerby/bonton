@@ -76,8 +76,10 @@
     <div class="calendar-container">
       <div class="acf-field acf-field-date-picker">
         <div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
-          <div class="datepicker" id="datepicker">
-            <input type='hidden' name="date" id="dateInput" value="{{ $session_formatted }}" />
+          <div class="cart-pickup-calendar" id="cart-pickup-calendar">
+            <div class="datepicker" id="datepicker">
+              <input type='hidden' name="date" id="dateInput" value="{{ $session_formatted }}" />
+            </div>
           </div>
 
           <span class="input-group-addon">

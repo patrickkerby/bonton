@@ -304,6 +304,26 @@ ul.woocommerce-thankyou-order-details li {
       overflow: visible;
     }
 
+    // Reserve space before jQuery UI injects the inline calendar (avoids sidebar layout jump).
+    .cart-pickup-calendar {
+      min-height: 19.5rem;
+      width: 100%;
+    }
+
+    .cart-pickup-calendar--ready .ui-datepicker {
+      animation: cart-calendar-fade-in 0.15s ease-out;
+    }
+
+    @keyframes cart-calendar-fade-in {
+      from {
+        opacity: 0.6;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
     .ui-datepicker {
       width: 100%;
       border: none;
