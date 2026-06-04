@@ -72,7 +72,10 @@
     }
 
     $delivery_note = \App\bonton_delivery_note_for_pickup_date($pickup_date);
-    $delivery_message = $delivery_note['html'];
+    // Blackout messaging lives on the cart calendar only — not under shipping options.
+    if ($delivery_note['variant'] !== 'warning') {
+      $delivery_message = $delivery_note['html'];
+    }
   }
 
   if ($icecream_conflict) {
