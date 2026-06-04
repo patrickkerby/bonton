@@ -105,6 +105,8 @@ When a tier is active, discount on a **single** line item applies only to full b
 5. A WooCommerce fee hook in `filters.php` applies the negative fee (discount) to the cart total
 6. Cart totals display the discount as a line item
 
+**GST:** Bulk discount is a price promotion only—it must not change GST on taxable non-bread items. See [gst-alberta-bakery.md](gst-alberta-bakery.md).
+
 ## Customer Experience
 
 - **Before adding bread**: Utility banner shows empty dots with "Add bread for bulk savings"

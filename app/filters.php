@@ -314,71 +314,19 @@ add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $
 }, 10, 2 );
 
 
-// TAX RULES
-// if category is not Grocery
-// if product is_taxable
-//   get_quantity of each line item
-//     if line item = "1/2 dozen", quantity = quantity * 6
-//     if line item = "Dozen", quantity = quantity * 12
-//       calculate total cart quantity
-//         if total cart quantity > 5, change line-item tax class to 'zero-rate'
+// GST: six+ bread/bun servings → zero-rate on eligible category lines (see helpers + documentation/gst-alberta-bakery.md).
+add_action('woocommerce_before_calculate_totals', 'App\bonton_apply_gst_cart_zero_rate', 30, 1);
 
-// Your product categories settings
-function get_my_terms(){
-    return array( 83, 84 );
+function bonton_apply_gst_cart_zero_rate($cart)
+{
+    \App\bonton_apply_gst_cart_zero_rate($cart);
 }
- // ToDO add all sub cats of the above
 
-add_action( 'woocommerce_before_calculate_totals', 'App\zero_tax_items_based_on_invoice_choice', 30, 1 );
-function zero_tax_items_based_on_invoice_choice( $cart ) {
-    if ( is_admin() && ! defined( 'DOING_AJAX' ) )
-        return;
+add_filter('woocommerce_cart_totals_get_fees_from_cart_taxes', 'App\bonton_zero_bulk_discount_fee_taxes', 10, 3);
 
-    if ( did_action( 'woocommerce_before_calculate_totals' ) >= 2 )
-        return;
-
-    $total_item_quantity = 0;
-
-    // Loop through cart items
-    foreach ( $cart->get_cart() as $cart_item ) {
-        if( has_term( get_my_terms(), 'product_cat', $cart_item['product_id'] ) ){
-            $attributes = $cart_item['data']->get_attributes();            
-            $quantity = $cart_item['quantity'];
-            $product = wc_get_product( $cart_item['product_id'] );
-            $tax_status = $product->get_tax_status();
-        
-            if ($tax_status == 'taxable') {
-
-
-                if (isset($attributes['pa_package-size'])) {
-
-                    $size = $attributes['pa_package-size'];
-                    
-                    if ($size === 'half-dozen') {
-                        $quantity = $quantity * 6;                
-                    }
-                    if ($size === '6-pack') {
-                        $quantity = $quantity * 6;
-                    }                    
-                    if ($size === 'dozen') {
-                        $quantity = $quantity * 12;
-                    }
-                }                
-                $total_item_quantity +=  $quantity;
-            }
-        }
-    }
-    if ( $total_item_quantity > 5 ) {
-        foreach ( $cart->get_cart() as $cart_item ) {      
-            // Set price excluding taxes
-            if( isset($cart_item['price_excl_tax']) ){
-                $cart_item['data']->set_price($cart_item['price_excl_tax']);
-            }  
-            if ( has_term( get_my_terms(), 'product_cat', $cart_item['product_id'] ) ) {
-                $cart_item['data']->set_tax_class( 'zero-rate' );
-            }
-        }
-    }
+function bonton_zero_bulk_discount_fee_taxes($fee_taxes, $fee, $cart_totals = null)
+{
+    return \App\bonton_zero_bulk_discount_fee_taxes($fee_taxes, $fee);
 }
 
 // Don't show individual item prices in cart
@@ -607,7 +555,8 @@ function apply_bulk_discount_fee($cart) {
     }
 
     $label = 'Bulk discount (' . $progress['current_tier'] . '% off)';
-    $cart->add_fee($label, -$progress['savings']);
+    // Third argument false: not a taxable fee; filter below also blocks WC proportional tax spread.
+    $cart->add_fee($label, -$progress['savings'], false);
 }
 
 /**

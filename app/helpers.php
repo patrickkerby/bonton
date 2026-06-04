@@ -581,3 +581,115 @@ function bonton_order_shipping_address_for_lists(\WC_Order $order)
     ];
 }
 
+/**
+ * WooCommerce category IDs used for bread/bun GST quantity rules (same as bulk discount).
+ *
+ * @return int[]
+ */
+function bonton_gst_bakery_category_ids()
+{
+    return \App\Helpers\BulkPricing::get_bulk_terms();
+}
+
+/**
+ * Minimum number of single-serving equivalents in the cart before the theme
+ * applies zero-rate to eligible bread/bun lines (CRA: more than five = six or more).
+ */
+function bonton_gst_six_plus_serving_threshold()
+{
+    return 6;
+}
+
+/**
+ * Count GST "single serving" equivalents for bread/bun category items in the cart.
+ * Used for paragraph 1(m)-style quantity relief on multi-serving bakery orders.
+ *
+ * @param \WC_Cart $cart
+ */
+function bonton_gst_cart_serving_count($cart)
+{
+    $total = 0;
+
+    foreach ($cart->get_cart() as $cart_item) {
+        if (!has_term(bonton_gst_bakery_category_ids(), 'product_cat', $cart_item['product_id'])) {
+            continue;
+        }
+
+        $product = $cart_item['data'];
+        if (!$product || !is_a($product, \WC_Product::class)) {
+            continue;
+        }
+
+        if ($product->get_tax_status() !== 'taxable') {
+            continue;
+        }
+
+        $quantity = (int) $cart_item['quantity'];
+        $attributes = $product->get_attributes();
+
+        if (isset($attributes['pa_package-size'])) {
+            $size = $attributes['pa_package-size'];
+
+            if ($size === 'half-dozen' || $size === '6-pack') {
+                $quantity *= 6;
+            } elseif ($size === 'dozen') {
+                $quantity *= 12;
+            }
+        }
+
+        $total += $quantity;
+    }
+
+    return $total;
+}
+
+/**
+ * When the cart has six or more bread/bun servings (see bonton_gst_cart_serving_count),
+ * set zero-rate on taxable lines in those categories for checkout.
+ *
+ * @param \WC_Cart $cart
+ */
+function bonton_apply_gst_cart_zero_rate($cart)
+{
+    if (is_admin() && !defined('DOING_AJAX')) {
+        return;
+    }
+
+    if (did_action('woocommerce_before_calculate_totals') >= 2) {
+        return;
+    }
+
+    if (bonton_gst_cart_serving_count($cart) < bonton_gst_six_plus_serving_threshold()) {
+        return;
+    }
+
+    foreach ($cart->get_cart() as $cart_item) {
+        if (isset($cart_item['price_excl_tax'])) {
+            $cart_item['data']->set_price($cart_item['price_excl_tax']);
+        }
+
+        if (!has_term(bonton_gst_bakery_category_ids(), 'product_cat', $cart_item['product_id'])) {
+            continue;
+        }
+
+        $cart_item['data']->set_tax_class('zero-rate');
+    }
+}
+
+/**
+ * Bulk discount is a non-tax promotional fee; prevent WooCommerce from spreading
+ * negative fee tax across other taxable cart lines.
+ *
+ * @param array  $fee_taxes
+ * @param object $fee
+ * @return array
+ */
+function bonton_zero_bulk_discount_fee_taxes($fee_taxes, $fee)
+{
+    if (!empty($fee->object->name) && stripos($fee->object->name, 'Bulk discount') !== false) {
+        return [];
+    }
+
+    return $fee_taxes;
+}
+

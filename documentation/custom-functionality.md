@@ -188,15 +188,17 @@ This WordPress theme is built on the Sage framework and contains extensive custo
 - Wholesale user exclusions
 - Real-time savings display on cart page
 
-### 2. Tax Logic for Bulk Items
-**Location:** `app/filters.php` (lines 286-341)
+### 2. GST / zero-rating (six+ bread/bun servings)
+**Location:** `app/helpers.php` (`bonton_gst_*`), hooks in `app/filters.php`
 
-**Purpose:** Implements tax-free bulk purchases for qualifying items.
+**Purpose:** Applies CRA-style six-serving zero-rating to taxable bread/bun category lines when the cart reaches six or more serving equivalents.
 
-**Business Rules:**
-- Items in categories 83, 84 become tax-free when cart has 6+ qualifying items
-- Quantity calculation includes package sizes (half-dozen = 6, dozen = 12)
-- Only applies to taxable products
+**Business rules:**
+- Categories **52** (Bread) and **91** (Buns & Bagels)—same IDs as bulk discount
+- Uses the **cart line product** tax status (variation inherits parent tax status in WooCommerce)
+- Bulk discount negative fees do not reduce GST on other items (see `bonton_zero_bulk_discount_fee_taxes`)
+
+**Full reference:** [gst-alberta-bakery.md](gst-alberta-bakery.md) (CRA summary + **admin product checklist**)
 
 ### 3. Delivery Fees
 **Location:** `app/filters.php` (lines 905-943)
@@ -326,8 +328,8 @@ This WordPress theme is built on the Sage framework and contains extensive custo
 **Location:** `app/filters.php`
 
 **Key Functions:**
-- `get_my_terms()`: Returns tax-exempt category IDs
-- `get_my_bulk_terms()`: Returns bulk discount category IDs
+- `bonton_gst_bakery_category_ids()`: Bread/bun category IDs for GST automation (52, 91)
+- `get_my_bulk_terms()`: Returns bulk discount category IDs (same as above)
 - `handle_custom_query_var()`: Custom order query handling
 - `write_my_log()`: Debug logging function
 
@@ -338,7 +340,7 @@ This WordPress theme is built on the Sage framework and contains extensive custo
 ### 🎯 **Business Logic Features**
 1. **Pickup Date Management** - Complete system for scheduling and validating pickup dates
 2. **Bulk Pricing** - Complex discount system with quantity calculations and exclusions
-3. **Tax Management** - Automatic tax exemptions for bulk purchases
+3. **Tax Management** - Six+ serving zero-rating on bread/bun categories; see [gst-alberta-bakery.md](gst-alberta-bakery.md)
 4. **Wholesale Integration** - Separate pricing, workflows, and features for wholesale customers
 
 ### 🛠 **Operational Features**

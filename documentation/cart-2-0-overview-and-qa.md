@@ -60,6 +60,7 @@ Use this for UAT; peers can add technical checks (nonces, session, HPOS, caching
 9. **Row metadata** — Badges and notes (availability dots, bulk eligible, 2-day notice, long fermentation, not for delivery, sold-out / overrides) match real products.
 10. **Conflicts** — Date / availability conflicts still block or warn appropriately with new styling.
 11. **Totals** — Pickup vs delivery label; bulk discount line; bag and delivery modals open with correct copy.
+12. **GST** — Singles taxable where configured; six+ bread/bun servings zero-rated; bulk discount does not shrink GST on pastries ([gst-alberta-bakery.md](gst-alberta-bakery.md)).
 12. **Sidebar** — Coupon, loyalty/points, calendar: no layout breaks on mobile or desktop.
 
 ### Shipping & delivery

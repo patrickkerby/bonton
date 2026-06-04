@@ -103,6 +103,8 @@ All project-specific documentation lives in the `documentation/` folder:
 * **[custom-features.md](documentation/custom-features.md)** — Main feature tracker with development summaries and detailed implementation docs
 * **[custom-functionality.md](documentation/custom-functionality.md)** — Comprehensive technical reference for all custom WooCommerce and WordPress functionality
 * **[bulk-discount.md](documentation/bulk-discount.md)** — Bulk bread discount system: tiers, eligibility, unit counting, ACF controls
+* **[gst-simple-checklist.md](documentation/gst-simple-checklist.md)** — One-page GST: what’s automatic, exclusions, admin steps
+* **[gst-alberta-bakery.md](documentation/gst-alberta-bakery.md)** — GST rules summary, theme behavior, assumptions, full admin detail
 * **[two-days-notice-feature.md](documentation/two-days-notice-feature.md)** — Two days notice product feature documentation
 * **[3pm-cutoff-analysis.md](documentation/3pm-cutoff-analysis.md)** — 3PM order cutoff security analysis and fixes
 * **[priorities.md](documentation/priorities.md)** — Development roadmap and hour estimates
