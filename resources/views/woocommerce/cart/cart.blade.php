@@ -75,7 +75,7 @@
 
     @php do_action( 'woocommerce_before_cart_collaterals' ) @endphp
 
-    <div class="cart-collaterals @if($conflict) conflict @endif col-sm-12 @if($giftcertificate_only_item_in_cart) giftcertificate @endif">
+    <div class="cart-collaterals @if($conflict) conflict @endif @if($shipping_options_incomplete) shipping-options-incomplete @endif col-sm-12 @if($giftcertificate_only_item_in_cart) giftcertificate @endif">
       @php
         /**
          * Cart collaterals hook.

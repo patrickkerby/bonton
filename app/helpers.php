@@ -336,3 +336,97 @@ function get_newest_products($count = 6)
     ]);
 }
 
+/**
+ * Gift certificate product IDs (digital-only carts skip pickup/bag/timeslot requirements).
+ *
+ * @return int[]
+ */
+function bonton_gift_certificate_product_ids()
+{
+    return [5317, 18153, 18200];
+}
+
+/**
+ * Whether the cart contains only gift certificate line items.
+ */
+function bonton_is_gift_certificate_only_cart()
+{
+    if (!function_exists('WC') || !WC()->cart || WC()->cart->is_empty()) {
+        return false;
+    }
+
+    $cart_count = 0;
+    $gc_count = 0;
+    $gc_ids = bonton_gift_certificate_product_ids();
+
+    foreach (WC()->cart->get_cart() as $cart_item) {
+        $cart_count++;
+        $product_id = (int) apply_filters(
+            'woocommerce_cart_item_product_id',
+            $cart_item['product_id'],
+            $cart_item,
+            $cart_item['key'] ?? ''
+        );
+
+        if (in_array($product_id, $gc_ids, true)) {
+            $gc_count++;
+        }
+    }
+
+    return $gc_count > 0 && ($cart_count - $gc_count) < 1;
+}
+
+/**
+ * Whether a shipping-option select (session / POST) has no real choice yet.
+ */
+function bonton_shipping_select_is_empty($field_id)
+{
+    if (isset($_POST[$field_id])) {
+        return $_POST[$field_id] === '' || $_POST[$field_id] === '0';
+    }
+
+    if (!function_exists('WC') || !WC()->session || !WC()->session->__isset($field_id)) {
+        return true;
+    }
+
+    $value = WC()->session->get($field_id);
+
+    return $value === '' || $value === null || $value === 0 || $value === '0';
+}
+
+/**
+ * Human-readable labels for required shipping selects that are still empty.
+ *
+ * @return string[]
+ */
+function bonton_missing_shipping_options()
+{
+    if (bonton_is_gift_certificate_only_cart()) {
+        return [];
+    }
+
+    $missing = [];
+
+    if (has_timeslot_field() && bonton_shipping_select_is_empty('timeslot')) {
+        $missing[] = __('delivery time', 'woocommerce');
+    }
+
+    if (has_timeslot_pickup_field() && bonton_shipping_select_is_empty('timeslot_pickup')) {
+        $missing[] = __('pickup time slot', 'woocommerce');
+    }
+
+    if (has_pickup_bag_fee_field() && bonton_shipping_select_is_empty('pickup_bag_fee')) {
+        $missing[] = __('bag option', 'woocommerce');
+    }
+
+    return $missing;
+}
+
+/**
+ * Whether all required pickup/delivery selects have been chosen.
+ */
+function bonton_cart_shipping_options_complete()
+{
+    return bonton_missing_shipping_options() === [];
+}
+

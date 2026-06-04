@@ -423,6 +423,18 @@ class WoocommerceCart extends Controller
     }
 
     /**
+     * Whether pickup time slot and/or bag option (etc.) still need to be selected.
+     */
+    public function shippingOptionsIncomplete()
+    {
+        if ($this->giftcertificateOnlyItemInCart()) {
+            return false;
+        }
+
+        return !\App\bonton_cart_shipping_options_complete();
+    }
+
+    /**
      * Whether any item in the cart requires long fermentation lead time.
      */
     public function longFermentationInCart()

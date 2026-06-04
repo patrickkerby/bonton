@@ -125,7 +125,7 @@ function timeslot_company_custom_select_field($method, $index)
 
         woocommerce_form_field($field_id, [
             'type'     => $field_type,
-            'label'    => '',
+            'label'    => __('Delivery time', 'woocommerce'),
             'class'    => ['form-row-wide ' . $field_id . '-' . $field_type],
             'required' => true,
             'options'  => $options,
@@ -200,25 +200,9 @@ function has_timeslot_field()
         return false;
     }
 
-    return array_intersect($chosen_methods, $settings['targeted_methods']);
+    return (bool) array_intersect($chosen_methods, $settings['targeted_methods']);
 }
 
-add_action('woocommerce_checkout_process', __NAMESPACE__ . '\\timeslot_company_checkout_validation');
-
-function timeslot_company_checkout_validation()
-{
-    extract(timeslot_settings());
-
-    if (has_timeslot_field() && isset($_POST[$field_id]) && empty($_POST[$field_id])) {
-        wc_add_notice(
-            sprintf(
-                __('Please select a %s as it is a required field.', 'woocommerce'),
-                '<strong>' . $label_name . '</strong>'
-            ),
-            'error'
-        );
-    }
-}
 
 add_action('woocommerce_checkout_create_order', __NAMESPACE__ . '\\save_timeslot_company_as_order_meta', 30, 1);
 
@@ -309,7 +293,6 @@ function timeslot_pickup_company_custom_select_field($method, $index)
 
     if (!empty($chosen) && $method->id === $chosen[$index] && in_array($method->id, $targeted_methods)) {
         echo '<div class="custom-timeslot_pickup">';
-        echo '<h6><strong>Pickup Timeslot:</strong></h6>';
 
         foreach ($field_options as $key => $option_value) {
             $option_key = $key == 0 ? '' : $key;
@@ -318,7 +301,7 @@ function timeslot_pickup_company_custom_select_field($method, $index)
 
         woocommerce_form_field($field_id, [
             'type'     => $field_type,
-            'label'    => '',
+            'label'    => __('Pickup time slot', 'woocommerce'),
             'class'    => ['form-row-wide pickup_options ' . $field_id . '-' . $field_type],
             'required' => true,
             'options'  => $options,
@@ -393,19 +376,9 @@ function has_timeslot_pickup_field()
         return false;
     }
 
-    return array_intersect($chosen_methods, $settings['targeted_methods']);
+    return (bool) array_intersect($chosen_methods, $settings['targeted_methods']);
 }
 
-add_action('woocommerce_checkout_process', __NAMESPACE__ . '\\timeslot_pickup_company_checkout_validation');
-
-function timeslot_pickup_company_checkout_validation()
-{
-    extract(timeslot_pickup_settings());
-
-    if (has_timeslot_pickup_field() && isset($_POST[$field_id]) && empty($_POST[$field_id])) {
-        // Intentionally no notice (legacy).
-    }
-}
 
 add_action('woocommerce_checkout_create_order', __NAMESPACE__ . '\\save_timeslot_pickup_company_as_order_meta', 30, 1);
 

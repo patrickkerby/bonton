@@ -828,6 +828,21 @@ ul.woocommerce-thankyou-order-details li {
     margin-right: 1rem;
   }
 
+  .form-row {
+    margin-bottom: 1rem;
+
+    label {
+      display: block;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: $charcoal;
+      margin-bottom: 0.35rem;
+      background: transparent;
+      padding: 0;
+    }
+  }
+
   select,
   span.select2-selection,
   input[type="text"] {
@@ -838,6 +853,26 @@ ul.woocommerce-thankyou-order-details li {
     font-size: 0.9375rem;
     width: 100%;
     border-radius: 3px;
+  }
+
+  select:not(.woocommerce-invalid):valid,
+  select option:checked {
+    color: $charcoal;
+    font-style: normal;
+  }
+
+  label .required {
+    color: $highlight;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  select.woocommerce-invalid {
+    border-color: darken($highlight, 8%) !important;
+  }
+
+  .form-row.validate-required .woocommerce-input-wrapper::after {
+    content: none;
   }
 
   @include media-breakpoint-down(sm) {
@@ -953,7 +988,8 @@ ul.woocommerce-thankyou-order-details li {
   }
 }
 
-.cart-collaterals.conflict {
+.cart-collaterals.conflict,
+.cart-collaterals.shipping-options-incomplete {
   a.checkout-button {
     opacity: 0.2;
     pointer-events: none;
