@@ -549,3 +549,35 @@ function bonton_delivery_note_for_pickup_date($pickup_ymd = null)
     ];
 }
 
+/**
+ * Shipping address parts for staff lists / exports.
+ *
+ * Legacy orders (third-party delivery layout) stored house # + street in address_1/2
+ * and unit in billing_unitno/shipping_unitno meta. New orders use standard WooCommerce
+ * address_1 (street) and address_2 (apartment, when provided).
+ *
+ * @return array{unit: string, street: string}
+ */
+function bonton_order_shipping_address_for_lists(\WC_Order $order)
+{
+    $legacy_unit = trim((string) $order->get_meta('shipping_unitno', true));
+    if ($legacy_unit === '') {
+        $legacy_unit = trim((string) $order->get_meta('billing_unitno', true));
+    }
+
+    $line1 = trim((string) $order->get_shipping_address_1());
+    $line2 = trim((string) $order->get_shipping_address_2());
+
+    if ($legacy_unit !== '') {
+        return [
+            'unit'   => $legacy_unit,
+            'street' => trim($line1 . ' ' . $line2),
+        ];
+    }
+
+    return [
+        'unit'   => $line2,
+        'street' => $line1,
+    ];
+}
+

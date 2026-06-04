@@ -228,10 +228,10 @@ $cooler_list = array(  '22', '53', '51','107','103' );
               $order_id = $details->get_id();
               $first_name = $details->get_shipping_first_name();
               $last_name = $details->get_shipping_last_name();
-              $address1 = $details->get_shipping_address_1();
-              $address2 = $details->get_shipping_address_2();
-              $unitno_shipping = $details->get_meta( 'shipping_unitno', true );
-              $unitno_billing = $details->get_meta( 'billing_unitno', true );
+              $delivery_address = \App\bonton_order_shipping_address_for_lists($details);
+              $delivery_unit = $delivery_address['unit'];
+              $delivery_street = $delivery_address['street'];
+              $address1 = $delivery_street;
               $city = $details->get_shipping_city();
               $state = $details->get_shipping_state();
               $postcode = $details->get_shipping_postcode();
@@ -245,16 +245,8 @@ $cooler_list = array(  '22', '53', '51','107','103' );
             {{-- @if($order_timeslot == $timeslot) --}}
               <tr>
                 <td class="name"><strong>{{ $last_name }}, {{ $first_name }}</strong></td>
-                <td>
-                  @if($unitno_shipping)
-                  {{ $unitno_shipping }}
-                  @else
-                  {{ $unitno_billing }}
-                  @endif
-                </td>
-                <td class="">
-                  {{ $address1 }} {{ $address2 }}
-                </td>
+                <td>{{ $delivery_unit }}</td>
+                <td class="">{{ $delivery_street }}</td>
                 <td>{{ $city }}</td>
                 <td>{{ $state }}</td>
                 {{-- <td>Canada</td> --}}

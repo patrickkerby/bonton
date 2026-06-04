@@ -60,16 +60,6 @@ This WordPress theme is built on the Sage framework and contains extensive custo
 - HPOS (High-Performance Order Storage) compatible
 - Automatic date formatting for sorting
 
-#### Custom Address Fields
-**Location:** `app/admin.php` (lines 95-157)
-
-**Purpose:** Adds unit/apartment number fields to billing and shipping addresses.
-
-**Features:**
-- Unit/apartment fields in order edit screens
-- Proper display in formatted addresses
-- HPOS compatible meta data handling
-
 #### Missing Pickup Dates Dashboard Widget
 **Location:** `app/filters.php` (lines 991-1055)
 
@@ -130,17 +120,6 @@ This WordPress theme is built on the Sage framework and contains extensive custo
 - Custom cart fragments for real-time updates
 
 ### 3. Checkout Customizations
-
-#### Address Field Modifications
-**Location:** `app/filters.php` (lines 779-867)
-
-**Purpose:** Customizes address fields for better Canadian address format.
-
-**Features:**
-- Separates house number and street name
-- Adds unit/apartment fields
-- Custom field labels and placeholders
-- Proper address formatting in emails and displays
 
 #### Pickup Date Integration
 **Location:** `app/filters.php` (lines 346-366, 701-757)
@@ -371,7 +350,7 @@ This WordPress theme is built on the Sage framework and contains extensive custo
 ### 🛒 **Customer Experience Features**
 1. **Quick View** - Product modals without page navigation
 2. **Smart Pricing** - Dynamic pricing display with bulk discounts
-3. **Address Handling** - Canadian-optimized address fields
+3. **Address Handling** - Standard WooCommerce fields; Canada/Alberta defaults; legacy unit meta supported in delivery lists
 4. **Site Notices** - Easy-to-manage announcements system
 
 ### 🔧 **Technical Features**

@@ -125,14 +125,10 @@
     <div class="customer">
       <strong>{{ $last_name }}, {{ $first_name }}</strong><br>
       <strong>Phone:</strong> {{ $phone }}<br>
-      <strong>Address:</strong> {{ $address1 }} {{ $address2 }}<br>
-      
-        @if($unitno_shipping)
-          <strong>Unit: </strong>{{ $unitno_shipping }}<br>
-        @elseif($unitno_billing)
-          <strong>Unit: </strong>{{ $unitno_billing }}<br>
-        @else
-        @endif
+      <strong>Address:</strong> {{ $delivery_street ?? $address1 }}<br>
+      @if(!empty($delivery_unit))
+        <strong>Unit: </strong>{{ $delivery_unit }}<br>
+      @endif
         <strong>City: </strong> {{ $city }} <br>
         <strong>Postcode: </strong>{{ $postcode }}
       </div>

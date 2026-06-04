@@ -748,13 +748,6 @@ wp bonton delivery_export_preview --start-date=2025-01-01 --end-date=2025-03-31
   - Automatically generates sortable date format for admin column sorting
   - HPOS (High-Performance Order Storage) compatible
 
-#### Custom Address Fields
-- **Location**: `app/admin.php` (lines 84-146)
-- **Functionality**:
-  - Adds unit/apartment number fields to both billing and shipping addresses
-  - Editable from order admin screen
-  - HPOS compatible
-
 #### Custom Admin Columns
 - **Location**: `app/admin.php` (lines 157-197)
 - **Functionality**:
