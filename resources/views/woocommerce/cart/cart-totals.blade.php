@@ -28,7 +28,7 @@
       @php
         $chosen_methods = WC()->session->get('chosen_shipping_methods');
         $is_delivery = $chosen_methods && isset($chosen_methods[0]) && strpos($chosen_methods[0], 'flat_rate') !== false;
-        $date_label = $is_delivery ? 'Delivery date' : 'Pickup date:';
+        $date_label = $is_delivery ? 'Delivery date' : 'Pickup date';
       @endphp
 
       @if ($session_pickup_date)
