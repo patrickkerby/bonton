@@ -151,6 +151,39 @@ export default {
       };
     }
 
+    function formatPickerDateForInput(date) {
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      const yyyy = date.getFullYear();
+
+      return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function syncDateInputFromPicker($picker, $input) {
+      if (!$picker.length || !$input.length || !$picker.hasClass('hasDatepicker')) {
+        return;
+      }
+
+      const picked = $picker.datepicker('getDate');
+      if (picked) {
+        $input.val(formatPickerDateForInput(picked));
+      }
+    }
+
+    function bindCartPickupDateFormSync($picker, $input) {
+      const $form = $picker.closest('form');
+
+      if (!$form.length || $form.data('bontonDateSyncBound')) {
+        return;
+      }
+
+      $form.data('bontonDateSyncBound', true);
+
+      $form.on('submit', function () {
+        syncDateInputFromPicker($picker, $input);
+      });
+    }
+
     function initializeDatePicker(allowedDates, selectedDate, earliestPickupFormatted) {
       const $picker = $('#datepicker');
       const $input = $('#dateInput');
@@ -160,6 +193,7 @@ export default {
       }
 
       if ($picker.hasClass('hasDatepicker')) {
+        $picker.off('click.bontonPickupDate');
         $picker.datepicker('destroy');
       }
 
@@ -171,8 +205,8 @@ export default {
       const firstDate = firstSelectableDate(allowedDates, earliestPickupFormatted);
 
       $picker.datepicker({
-        onSelect: function (dateText) {
-          $input.val(dateText);
+        onSelect: function () {
+          syncDateInputFromPicker($picker, $input);
         },
         dateFormat: 'dd/mm/yy',
         beforeShowDay: function (date) {
@@ -191,6 +225,16 @@ export default {
         },
       });
 
+      // jQuery UI often skips onSelect when changing from one highlighted day to another;
+      // sync after the widget updates its internal selection.
+      $picker.on('click.bontonPickupDate', '.ui-datepicker-calendar td a', function () {
+        window.setTimeout(function () {
+          syncDateInputFromPicker($picker, $input);
+        }, 0);
+      });
+
+      bindCartPickupDateFormSync($picker, $input);
+
       $picker.find('.ui-state-active').removeClass('ui-state-active');
 
       if (selectable) {
@@ -199,6 +243,7 @@ export default {
           'setDate',
           selectedDateFormatted.format('DD/MM/YYYY')
         );
+        syncDateInputFromPicker($picker, $input);
       } else {
         $input.val('');
         if (firstDate) {
@@ -280,8 +325,12 @@ export default {
       });
 
       $(document).ready(initCartPickupCalendar);
-      // WooCommerce can load jQuery UI datepicker after this bundle; re-apply rules once.
-      $(window).on('load', initCartPickupCalendar);
+      // WooCommerce can load jQuery UI after this bundle — init once if the first pass missed it.
+      $(window).on('load', function () {
+        if (!$('#datepicker').hasClass('hasDatepicker')) {
+          initCartPickupCalendar();
+        }
+      });
     });
   },
 };
