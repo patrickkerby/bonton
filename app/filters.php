@@ -535,6 +535,29 @@ add_action('template_redirect', function () {
     exit;
 }, 5);
 
+// AJAX: Cart calendar state after line-item add/remove (lead time, earliest day, restrictions)
+add_action('wp_ajax_bonton_cart_pickup_calendar_state', 'App\bonton_ajax_cart_pickup_calendar_state');
+add_action('wp_ajax_nopriv_bonton_cart_pickup_calendar_state', 'App\bonton_ajax_cart_pickup_calendar_state');
+
+function bonton_ajax_cart_pickup_calendar_state() {
+    check_ajax_referer('bonton_nonce', 'nonce');
+
+    $controller = new \App\Controllers\WoocommerceCart();
+    $controller->cartItemsData();
+
+    wp_send_json_success([
+        'lead_time_hours'         => bonton_cart_lead_time_hours(),
+        'earliest_pickup_date'    => bonton_cart_earliest_pickup_date_ymd(),
+        'session_pickup_date'     => $controller->sessionPickupDateJs() ?: '',
+        'pickup_restriction'      => $controller->restrictedStartDateJs() ?: '',
+        'pickup_restriction_end'  => $controller->restrictedEndDateJs() ?: '',
+        'long_fermentation_in_cart' => $controller->longFermentationInCart(),
+        'two_days_notice_in_cart'   => $controller->twoDaysNoticeInCart(),
+        'available_dates'         => $controller->allAvailableDates(),
+        'vacation_dates'          => $controller->pickupVacationDates(),
+    ]);
+}
+
 // AJAX: Save pickup date to WC session (used by the global utility banner date picker)
 add_action('wp_ajax_save_pickup_date', 'App\ajax_save_pickup_date');
 add_action('wp_ajax_nopriv_save_pickup_date', 'App\ajax_save_pickup_date');

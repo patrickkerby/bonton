@@ -102,7 +102,7 @@
       </div>
 
       @if ($long_fermentation_in_cart || $two_days_notice_in_cart)
-        <div class="lf_notice">
+        <div class="lf_notice lf_notice--lead-time">
           <strong>About pickup dates</strong><br>
           @if ($long_fermentation_in_cart && $two_days_notice_in_cart)
             Sourdough breads need about 40 hours of fermentation. Other items in your cart also require at least two days notice for preparation.

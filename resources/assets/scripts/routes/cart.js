@@ -108,6 +108,54 @@ export default {
       return candidates.length ? candidates[0] : null;
     }
 
+    function setPickupDetailText(id, value) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.textContent = value == null ? '' : String(value);
+      }
+    }
+
+    function setPickupDetailJson(id, value) {
+      const el = document.getElementById(id);
+      if (!el) {
+        return;
+      }
+      el.textContent = JSON.stringify(Array.isArray(value) ? value : []);
+    }
+
+    function applyPickupCalendarState(data) {
+      if (!data) {
+        return;
+      }
+
+      setPickupDetailText('cart_lead_time_hours', data.lead_time_hours);
+      setPickupDetailText('earliest_pickup_date', data.earliest_pickup_date);
+      setPickupDetailText('session_pickup_date', data.session_pickup_date);
+      setPickupDetailText('pickup_restriction_data', data.pickup_restriction);
+      setPickupDetailText('pickup_restriction_end_data', data.pickup_restriction_end);
+      setPickupDetailText(
+        'long_fermentation_in_cart',
+        data.long_fermentation_in_cart ? '1' : ''
+      );
+      setPickupDetailText(
+        'two_days_notice_in_cart',
+        data.two_days_notice_in_cart ? '1' : ''
+      );
+      setPickupDetailJson('pickup_vacation_dates_in_cart', data.vacation_dates);
+
+      const availableEl = document.getElementById('available_dates_in_cart');
+      if (availableEl) {
+        setPickupDetailJson('available_dates_in_cart', data.available_dates);
+      }
+
+      const $leadNotice = $('.calendar-container .lf_notice--lead-time');
+      if ($leadNotice.length) {
+        $leadNotice.toggle(
+          Boolean(data.long_fermentation_in_cart || data.two_days_notice_in_cart)
+        );
+      }
+    }
+
     function readPickupDataFromDom() {
       const text = (id) => {
         const el = document.getElementById(id);
@@ -333,14 +381,14 @@ export default {
       }
     }
 
-    function initCartPickupCalendarWhenReady(attempt) {
+    function initCartPickupCalendarWhenReady(attempt, force) {
       const tries = attempt || 0;
 
       if (!document.getElementById('datepicker')) {
         return;
       }
 
-      if ($('#datepicker').hasClass('hasDatepicker')) {
+      if ($('#datepicker').hasClass('hasDatepicker') && !force) {
         markCartPickupCalendarReady();
         return;
       }
@@ -348,7 +396,7 @@ export default {
       if (!cartDatepickerPluginReady()) {
         if (tries < 60) {
           window.setTimeout(function () {
-            initCartPickupCalendarWhenReady(tries + 1);
+            initCartPickupCalendarWhenReady(tries + 1, force);
           }, 50);
         }
         return;
@@ -357,12 +405,45 @@ export default {
       initCartPickupCalendar();
     }
 
+    function refreshCartPickupCalendarFromServer() {
+      if (!document.getElementById('datepicker') || typeof window.bontonData === 'undefined') {
+        return;
+      }
+
+      $.ajax({
+        type: 'POST',
+        url: window.bontonData.ajaxUrl,
+        data: {
+          action: 'bonton_cart_pickup_calendar_state',
+          nonce: window.bontonData.nonce,
+        },
+        dataType: 'json',
+      }).done(function (response) {
+        if (!response || !response.success || !response.data) {
+          return;
+        }
+        applyPickupCalendarState(response.data);
+        initCartPickupCalendarWhenReady(0, true);
+      });
+    }
+
     jQuery(function ($) {
       $('body').on('updated_cart_totals', function () {
         window.location.replace(window.location.pathname + window.location.search);
       });
 
-      initCartPickupCalendarWhenReady(0);
+      // Line-item remove uses updated_wc_div (not always updated_cart_totals) — refresh lead-time rules.
+      $(document.body).on(
+        'updated_wc_div removed_from_cart wc_cart_emptied',
+        function () {
+          if (!document.getElementById('datepicker')) {
+            return;
+          }
+          refreshCartPickupCalendarFromServer();
+        }
+      );
+
+      initCartPickupCalendarWhenReady(0, false);
     });
   },
 };
