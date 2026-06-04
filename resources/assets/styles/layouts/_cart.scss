@@ -213,6 +213,22 @@ ul.woocommerce-thankyou-order-details li {
     margin: 0 1.125rem;
     font-style: italic;
   }
+
+  .cart-delivery-note {
+    &--default {
+      color: $highlight;
+    }
+
+    &--warning {
+      color: darken($highlight, 12%);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    &--muted {
+      color: $charcoal;
+    }
+  }
 }
 
 @include media-breakpoint-down(sm) {

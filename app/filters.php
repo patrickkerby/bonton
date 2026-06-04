@@ -551,9 +551,13 @@ function ajax_save_pickup_date() {
 
     bonton_persist_pickup_date_to_session($date_obj);
 
+    $delivery_note = bonton_delivery_note_for_pickup_date($date_obj->format('Y-m-d'));
+
     wp_send_json_success([
-        'date_display' => $date_obj->format('D, M j'),
-        'date_full'    => $date_obj->format('l, F j, Y'),
+        'date_display'          => $date_obj->format('D, M j'),
+        'date_full'             => $date_obj->format('l, F j, Y'),
+        'delivery_toast'        => $delivery_note['toast'],
+        'delivery_note_variant' => $delivery_note['variant'],
     ]);
 }
 

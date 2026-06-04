@@ -32,18 +32,9 @@
   $delivery_day = false;
   $delivery_override = false;
 
-  $delivery_blackout_dates = [];
-  if (function_exists('have_rows')) {
-    if (have_rows('delivery_blackout_dates', 'option')) {
-      while (have_rows('delivery_blackout_dates', 'option')) {
-        the_row();
-        $date = get_sub_field('blackout_date');
-        if ($date) {
-          $delivery_blackout_dates[] = $date;
-        }
-      }
-    }
-  }
+  $delivery_blackout_dates = function_exists('App\bonton_delivery_blackout_dates_ymd')
+    ? \App\bonton_delivery_blackout_dates_ymd()
+    : [];
 
   if ($is_wholesale_user) {
     $delivery_available = true;
@@ -80,12 +71,8 @@
       $delivery_available = false;
     }
 
-    if ($is_blackout_date) {
-      $human_date = date_i18n('l, F j', strtotime($pickup_date));
-      $delivery_message = "Sorry! we're at capacity for delivery on $human_date, but we'd love to see your face in the store!";
-    } else {
-      $delivery_message = '(Delivery is currently only available on Saturdays)';
-    }
+    $delivery_note = \App\bonton_delivery_note_for_pickup_date($pickup_date);
+    $delivery_message = $delivery_note['html'];
   }
 
   if ($icecream_conflict) {

@@ -61,6 +61,35 @@ export default {
         $btn.attr('aria-busy', on ? 'true' : 'false');
       }
 
+      var deliveryToastTimer = null;
+
+      function showUtilityDeliveryToast(message) {
+        if (!message) {
+          return;
+        }
+
+        var $host = $('.utility-banner__date');
+        if (!$host.length) {
+          return;
+        }
+
+        var $toast = $('#utility-banner-delivery-toast');
+        if (!$toast.length) {
+          $toast = $('<div id="utility-banner-delivery-toast" class="utility-banner__date-toast" role="status" aria-live="polite"></div>');
+          $host.append($toast);
+        }
+
+        $toast.text(message).addClass('is-visible');
+
+        if (deliveryToastTimer) {
+          window.clearTimeout(deliveryToastTimer);
+        }
+
+        deliveryToastTimer = window.setTimeout(function () {
+          $toast.removeClass('is-visible');
+        }, 6000);
+      }
+
       function saveDateAndUpdate(dateText, pickedDate) {
         if (savePickupDateInFlight) {
           return;
@@ -93,6 +122,9 @@ export default {
             }
             if (response.data && response.data.date_display) {
               $label.text(response.data.date_display);
+            }
+            if (!isCartPage && response.data && response.data.delivery_toast) {
+              showUtilityDeliveryToast(response.data.delivery_toast);
             }
             if (isCartPage) {
               // Keep sidebar hidden field in sync so a stray form POST cannot restore an old date.

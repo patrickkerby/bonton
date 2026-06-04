@@ -88,7 +88,13 @@
         </div>
       </div>
       
-      <p class="small">Home Delivery available on Saturdays <a href="" data-toggle="modal" data-target="#delivery" class="shipping-info shipping-info--mobile"><i class="fas fa-circle-info"></i></a></p>
+      @php
+        $cart_delivery_note = \App\bonton_delivery_note_for_pickup_date($session_formatted ?? null);
+      @endphp
+      <p class="small cart-delivery-note cart-delivery-note--{{ $cart_delivery_note['variant'] }}">
+        {{ $cart_delivery_note['html'] }}
+        <a href="" data-toggle="modal" data-target="#delivery" class="shipping-info shipping-info--mobile"><i class="fas fa-circle-info"></i></a>
+      </p>
 
       <div class="acf-form-submit">
         <input type="submit" name="bonton_set_pickup_date" class="acf-button button button-primary button-large" value="{{ $datetime_button_copy }}">

@@ -430,3 +430,122 @@ function bonton_cart_shipping_options_complete()
     return bonton_missing_shipping_options() === [];
 }
 
+/**
+ * Delivery blackout dates (Y-m-d) from ACF options.
+ *
+ * @return string[]
+ */
+function bonton_delivery_blackout_dates_ymd()
+{
+    static $cache = null;
+
+    if ($cache !== null) {
+        return $cache;
+    }
+
+    $cache = [];
+
+    if (!function_exists('have_rows') || !have_rows('delivery_blackout_dates', 'option')) {
+        return $cache;
+    }
+
+    while (have_rows('delivery_blackout_dates', 'option')) {
+        the_row();
+        $date = get_sub_field('blackout_date');
+        if (!$date) {
+            continue;
+        }
+
+        $normalized = bonton_normalize_date_to_ymd($date);
+        if ($normalized) {
+            $cache[] = $normalized;
+        }
+    }
+
+    return $cache;
+}
+
+/**
+ * Normalize ACF / session date strings to Y-m-d.
+ */
+function bonton_normalize_date_to_ymd($date)
+{
+    $date = trim((string) $date);
+    if ($date === '') {
+        return null;
+    }
+
+    foreach (['!Y-m-d', '!Ymd', '!d/m/Y'] as $format) {
+        $parsed = \DateTime::createFromFormat($format, $date);
+        if ($parsed) {
+            return $parsed->format('Y-m-d');
+        }
+    }
+
+    $timestamp = strtotime($date);
+
+    return $timestamp ? date('Y-m-d', $timestamp) : null;
+}
+
+/**
+ * Delivery messaging for a selected pickup date.
+ *
+ * @param string|null $pickup_ymd Selected pickup date (Y-m-d), or null if none.
+ * @return array{variant: string, html: string, toast: string}
+ */
+function bonton_delivery_note_for_pickup_date($pickup_ymd = null)
+{
+    $default_html = __('Home delivery available on Saturdays!', 'sage');
+    $result = [
+        'variant' => 'default',
+        'html'    => $default_html,
+        'toast'   => '',
+    ];
+
+    if (!$pickup_ymd) {
+        return $result;
+    }
+
+    $pickup_ymd = bonton_normalize_date_to_ymd($pickup_ymd);
+    if (!$pickup_ymd) {
+        return $result;
+    }
+
+    $tz = new \DateTimeZone('America/Edmonton');
+    $pickup = \DateTime::createFromFormat('!Y-m-d', $pickup_ymd, $tz);
+    if (!$pickup) {
+        return $result;
+    }
+
+    $blackouts = bonton_delivery_blackout_dates_ymd();
+    $day = $pickup->format('l');
+    $human = $pickup->format('l, F j');
+
+    if ($day === 'Saturday' && in_array($pickup_ymd, $blackouts, true)) {
+        $line = sprintf(
+            __('FYI: Home delivery is not available on %s. In-store pickup is still available.', 'sage'),
+            $human
+        );
+
+        return [
+            'variant' => 'warning',
+            'html'    => $line,
+            'toast'   => $line,
+        ];
+    }
+
+    if ($day === 'Saturday') {
+        return [
+            'variant' => 'default',
+            'html'    => __('Home delivery is available on your selected Saturday!', 'sage'),
+            'toast'   => '',
+        ];
+    }
+
+    return [
+        'variant' => 'muted',
+        'html'    => __('Home delivery is only available when your pickup date is a Saturday.', 'sage'),
+        'toast'   => '',
+    ];
+}
+
