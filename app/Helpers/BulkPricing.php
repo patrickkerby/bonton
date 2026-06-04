@@ -66,8 +66,61 @@ class BulkPricing
     }
 
     /**
+     * Stable key for grouping identical bulk-eligible items (variation, else product).
+     */
+    public static function cart_item_bulk_key($cart_item)
+    {
+        $variation_id = !empty($cart_item['variation_id']) ? (int) $cart_item['variation_id'] : 0;
+
+        return $variation_id > 0
+            ? 'v' . $variation_id
+            : 'p' . (int) $cart_item['product_id'];
+    }
+
+    /**
+     * Whether a cart line is a single bun/bagel package size.
+     */
+    public static function is_single_package($cart_item)
+    {
+        $attributes = $cart_item['data']->get_attributes();
+
+        return isset($attributes['pa_package-size'])
+            && $attributes['pa_package-size'] === 'single';
+    }
+
+    /**
+     * Units contributed by single buns/bagels: only when 6+ of the same item (grouped by bulk key).
+     */
+    public static function singles_grouped_units(array $cart_items)
+    {
+        $qty_by_key = [];
+
+        foreach ($cart_items as $cart_item) {
+            if (!self::is_product_eligible($cart_item['product_id'])) {
+                continue;
+            }
+            if (!self::is_single_package($cart_item)) {
+                continue;
+            }
+
+            $key = self::cart_item_bulk_key($cart_item);
+            $qty_by_key[$key] = ($qty_by_key[$key] ?? 0) + (int) $cart_item['quantity'];
+        }
+
+        $units = 0.0;
+        foreach ($qty_by_key as $qty) {
+            if ($qty >= 6) {
+                $units += $qty / 6;
+            }
+        }
+
+        return $units;
+    }
+
+    /**
      * Convert a cart item's raw quantity to "units" based on package size.
      * 1 unit = 1 half-dozen (6 individual items).
+     * Singles are not counted here — use singles_grouped_units() for those.
      */
     public static function quantity_to_units($cart_item)
     {
@@ -82,7 +135,7 @@ class BulkPricing
 
         switch ($size) {
             case 'single':
-                return $quantity * (1 / 6);
+                return 0;
             case 'dozen':
                 return $quantity * 2;
             case 'half-dozen':
@@ -165,11 +218,12 @@ class BulkPricing
             return $default;
         }
 
-        $total_units = 0;
+        $cart_items = WC()->cart->get_cart();
+        $total_units = self::singles_grouped_units($cart_items);
         $eligible_ids = [];
         $savings = 0;
 
-        foreach (WC()->cart->get_cart() as $cart_item) {
+        foreach ($cart_items as $cart_item) {
             $product_id = $cart_item['product_id'];
 
             if (!self::is_product_eligible($product_id)) {
@@ -177,7 +231,10 @@ class BulkPricing
             }
 
             $eligible_ids[] = $product_id;
-            $total_units += self::quantity_to_units($cart_item);
+
+            if (!self::is_single_package($cart_item)) {
+                $total_units += self::quantity_to_units($cart_item);
+            }
         }
 
         // Determine current tier

@@ -38,23 +38,32 @@ Automatic tiered volume discount for bread, buns, and bagels. Customers see thei
 
 ## Unit Counting
 
-Each cart item's quantity is converted to "units" based on its `pa_package-size` attribute:
+Each cart item's quantity is converted to "units" based on its `pa_package-size` attribute (1 unit = one half-dozen):
 
-| Package Size | Units per Quantity |
+| Package Size | Units toward tier |
 |---|---|
-| Single | 1/6 (six singles = 1 unit) |
-| Half-Dozen / 6-pack | 1 |
-| Dozen | 2 |
+| Half-Dozen / 6-pack | 1 per qty |
+| Dozen | 2 per qty |
+| Single | See singles rule below |
+| (no package attribute) | 1 per qty (e.g. loaves) |
 
-All eligible items' units are summed to determine the discount tier.
+**Singles rule (buns/bagels only):** Singles count toward the tier **only when there are 6 or more of the same item** (same variation, or same product if not variable). Quantities are grouped per item before counting — mixed singles do not add up.
 
-## Singles Rounding Rule
+| Example cart | Units toward tier |
+|---|---|
+| 4 loaves + 6 sesame singles + 6 cheddar singles | 4 + 1 + 1 = **5** → 10% tier |
+| 4 loaves + 3 sesame + 3 plain + 3 poppy + 3 everything singles | **4** (loaves only) |
+| 12 sesame singles (one line) | 2 units |
 
-When applying the discount to items with package size "single", only full batches of 6 receive the discount. Remainders are charged at full price.
+Half-dozen and dozen always count per the table above; no grouping required.
 
-**Example**: Customer has 32 single buns at $1.50 each with 10% discount active:
-- 30 items (5 full batches of 6) receive 10% off → 30 × $1.50 × 0.10 = $4.50 savings
-- 2 remaining items → full price, no discount
+## Singles discount application
+
+When a tier is active, discount on a **single** line item applies only to full batches of 6 on **that line** (same as before). Remainders on that line are full price.
+
+**Example**: 32 single sesame buns at $1.50 with 10% active → 30 discounted, 2 full price.
+
+**Note:** Tier progress uses grouped singles (6+ per identical item). If the same variation appeared on two cart lines, WooCommerce normally merges them into one line.
 
 ## ACF Admin Controls
 
