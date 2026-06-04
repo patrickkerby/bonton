@@ -542,11 +542,8 @@ function bonton_delivery_note_for_pickup_date($pickup_ymd = null)
         ];
     }
 
-    return [
-        'variant' => 'muted',
-        'html'    => __('Home delivery is only available when your pickup date is a Saturday.', 'sage'),
-        'toast'   => '',
-    ];
+    // Weekday pickup: keep the same FYI as before (don't imply they wanted delivery today).
+    return $result;
 }
 
 /**
