@@ -1185,35 +1185,8 @@ function bonton_default_customer_location( $location ) {
     return 'CA:AB';
 }
 
-add_action( 'woocommerce_init', 'App\bonton_apply_local_customer_address_defaults', 20 );
-
-function bonton_apply_local_customer_address_defaults() {
-    if ( ! function_exists( 'WC' ) || ! WC()->customer ) {
-        return;
-    }
-
-    $customer = WC()->customer;
-    $changed  = false;
-
-    foreach ( array( 'billing', 'shipping' ) as $type ) {
-        $country = $customer->{"get_{$type}_country"}();
-
-        if ( ! $country ) {
-            $customer->{"set_{$type}_country"}( 'CA' );
-            $country = 'CA';
-            $changed   = true;
-        }
-
-        if ( 'CA' === $country && ! $customer->{"get_{$type}_state"}() ) {
-            $customer->{"set_{$type}_state"}( 'AB' );
-            $changed = true;
-        }
-    }
-
-    if ( $changed ) {
-        $customer->save();
-    }
-}
+// Checkout field defaults only — do not persist CA/AB on the customer before they enter
+// city/postcode; that made the cart show "AB." + "Change address" instead of the calculator CTA.
 
 add_filter( 'woocommerce_checkout_fields', 'App\bonton_default_checkout_country_state', 10000 );
 

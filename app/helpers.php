@@ -582,6 +582,20 @@ function bonton_order_shipping_address_for_lists(\WC_Order $order)
 }
 
 /**
+ * Whether the customer has entered enough of a shipping address to show on the cart
+ * (city or postcode). Country/state defaults alone should not count.
+ *
+ * @param array<string, string> $destination WooCommerce package destination.
+ */
+function bonton_has_meaningful_shipping_destination($destination)
+{
+    $city = isset($destination['city']) ? trim((string) $destination['city']) : '';
+    $postcode = isset($destination['postcode']) ? trim((string) $destination['postcode']) : '';
+
+    return $city !== '' || $postcode !== '';
+}
+
+/**
  * Top-level WooCommerce category IDs for six+ GST zero-rating (not bulk discount).
  *
  * 83 = Bakery, 84 = Pâtisserie (child categories such as Sweet Buns are included

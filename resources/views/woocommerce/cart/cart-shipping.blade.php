@@ -19,7 +19,10 @@
 @php
   defined( 'ABSPATH' ) || exit;
 
-  $formatted_destination    = isset( $formatted_destination ) ? $formatted_destination : WC()->countries->get_formatted_address( $package['destination'], ', ' );
+  $package_destination    = isset( $package['destination'] ) ? $package['destination'] : array();
+  $formatted_destination  = \App\bonton_has_meaningful_shipping_destination( $package_destination )
+    ? WC()->countries->get_formatted_address( $package_destination, ', ' )
+    : '';
   $has_calculated_shipping  = ! empty( $has_calculated_shipping );
   $show_shipping_calculator = ! empty( $show_shipping_calculator );
   $calculator_text = '';
@@ -131,7 +134,7 @@
           {!! sprintf( esc_html__( '%s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) !!}
           @php $calculator_text = esc_html__( 'Change address', 'woocommerce' ) @endphp
         @else
-          {!! wp_kses_post( apply_filters( 'woocommerce_shipping_estimate_html', __( '', 'woocommerce' ) ) ) !!}
+          <p class="woocommerce-shipping-estimate">{{ esc_html__( 'Check your address for delivery!', 'woocommerce' ) }}</p>
         @endif
       </p>
     @else

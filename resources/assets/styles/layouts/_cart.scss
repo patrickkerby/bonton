@@ -1458,6 +1458,113 @@ td.product-meta {
   font-size: 1rem;
 }
 
+.shipping-calculator-form {
+  margin-top: 0.75rem;
+  padding: 0 1.5rem 0.5rem;
+  max-width: 28rem;
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  &__field {
+    flex: 1 1 calc(50% - 0.375rem);
+    min-width: 8rem;
+    margin-bottom: 0;
+    float: none !important;
+    width: auto !important;
+    clear: none !important;
+    position: relative;
+
+    .input-text {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+
+  // SelectWoo (WooCommerce) — one arrow, aligned right; avoid styling hidden native <select>
+  .select2-container {
+    display: block;
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .select2-container--default .select2-selection--single {
+    height: auto;
+    min-height: 2.5rem;
+    border: solid 3px #f8f7f3;
+    border-radius: 3px;
+    background: #fff;
+
+    .select2-selection__rendered {
+      padding: 0.45rem 2rem 0.45rem 0.5rem;
+      color: #7e7e7e;
+      font-style: italic;
+      line-height: 1.35;
+    }
+
+    .select2-selection__arrow {
+      position: absolute;
+      top: 0;
+      right: 0.5rem;
+      left: auto !important;
+      width: 1.25rem;
+      height: 100%;
+
+      b {
+        left: 50%;
+        margin-left: -4px;
+        margin-top: -2px;
+        border-color: rgb(56, 56, 56) transparent transparent transparent;
+      }
+    }
+  }
+
+  select.select2-hidden-accessible {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    clip: rect(0, 0, 0, 0);
+    overflow: hidden;
+  }
+
+  // Native <select> only (city/postcode are text inputs — no arrow)
+  &__field:has(> select):not(:has(.select2-container)) {
+    select {
+      appearance: none;
+      width: 100%;
+      padding: 0.45rem 2rem 0.45rem 0.5rem;
+      box-sizing: border-box;
+      border: solid 3px #f8f7f3;
+      border-radius: 3px;
+      background-color: #fff;
+    }
+
+    &::after {
+      position: absolute;
+      top: 50%;
+      right: 0.75rem;
+      content: "";
+      margin-top: -5px;
+      width: 8px;
+      height: 8px;
+      rotate: 135deg;
+      border-color: rgb(56, 56, 56);
+      border-style: solid;
+      border-width: 2px 2px 0 0;
+      pointer-events: none;
+    }
+  }
+
+  &__actions {
+    margin: 0.25rem 0 0;
+  }
+}
+
 .cart .shipping-calculator-form button {
   font-size: 15px;
   height: 30px !important;
