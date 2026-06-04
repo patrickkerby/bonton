@@ -85,12 +85,15 @@ class App extends Controller
         $done = true;
 
         if (isset($_POST['date']) && !empty($_POST['date'])) {
-            $raw = sanitize_text_field($_POST['date']);
-            $date_obj = \DateTime::createFromFormat('!d/m/Y', $raw);
+            if (isset($_POST['bonton_set_pickup_date'])) {
+                return;
+            }
+            if (function_exists('is_cart') && is_cart() && !isset($_POST['apply_coupon'])) {
+                return;
+            }
+            $date_obj = \App\bonton_parse_pickup_date_string(wp_unslash($_POST['date']));
             if ($date_obj) {
-                WC()->session->set('pickup_date', $date_obj->format('l, F j, Y'));
-                WC()->session->set('pickup_date_formatted', $date_obj->format('Y-m-d'));
-                WC()->session->set('pickup_date_object', $date_obj);
+                \App\bonton_persist_pickup_date_to_session($date_obj);
             }
         }
     }

@@ -70,7 +70,7 @@
         @endif
 
         @if($item['long_fermentation'] || $item['two_days_notice'])
-          <span class="availability"><span class="availability-icon"><i class="fa-regular fa-clock"></i></span> 2 days notice req.</span>
+          <span class="availability"><span class="availability-icon"><i class="fa-regular fa-clock"></i></span> 2-day notice</span>
         @endif
         
         {!! $item['sold_out_msg'] !!}

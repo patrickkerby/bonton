@@ -87,11 +87,43 @@ export default {
       return dates;
     }
 
+    function sessionDateIsSelectable(selectedDate, allowedDates, minDateFormatted) {
+      if (!selectedDate) {
+        return false;
+      }
+      const parsed = dayjs(selectedDate, 'YYYY-MM-DD');
+      if (!parsed.isValid()) {
+        return false;
+      }
+      if (parsed.isBefore(minDateFormatted, 'day')) {
+        return false;
+      }
+      return allowedDates.includes(selectedDate);
+    }
+
+    function firstSelectableDate(allowedDates, minDateFormatted) {
+      const candidates = allowedDates
+        .filter((date) => date && dayjs(date, 'YYYY-MM-DD').isValid())
+        .filter((date) => !dayjs(date, 'YYYY-MM-DD').isBefore(minDateFormatted, 'day'))
+        .sort();
+
+      return candidates.length ? candidates[0] : null;
+    }
+
     function initializeDatePicker(allowedDates, selectedDate, standardFormulaMinDateFormatted) {
       jQuery(function ($) {
-        $('#datepicker').datepicker({
+        const $picker = $('#datepicker');
+        const $input = $('#dateInput');
+        const selectable = sessionDateIsSelectable(
+          selectedDate,
+          allowedDates,
+          standardFormulaMinDateFormatted
+        );
+        const firstDate = firstSelectableDate(allowedDates, standardFormulaMinDateFormatted);
+
+        $picker.datepicker({
           onSelect: function (dateText) {
-            $('#dateInput').val(dateText);
+            $input.val(dateText);
           },
           dateFormat: 'dd/mm/yy',
           beforeShowDay: function (date) {
@@ -110,16 +142,25 @@ export default {
 
             return [allowedDates.includes(string)];
           },
-        }).find('.ui-state-active').removeClass('ui-state-active');
+        });
 
-        if (selectedDate) {
-          // Parse ISO date from PHP and set on datepicker
+        $picker.find('.ui-state-active').removeClass('ui-state-active');
+
+        if (selectable) {
           const selectedDateFormatted = dayjs(selectedDate, 'YYYY-MM-DD');
-          if (selectedDateFormatted.isAfter(standardFormulaMinDateFormatted)) {
-            // Convert to datepicker's display format (dd/mm/yy) for setDate
-            $('#datepicker').datepicker('setDate', selectedDateFormatted.format('DD/MM/YYYY'));
-          } else {
-            $('#datepicker').datepicker('setDate', standardFormulaMinDateFormatted.format('DD/MM/YYYY'));
+          $picker.datepicker(
+            'setDate',
+            selectedDateFormatted.format('DD/MM/YYYY')
+          );
+        } else {
+          // Session date is invalid for this cart: show no selected day (Option 1).
+          $input.val('');
+          if (firstDate) {
+            $picker.datepicker(
+              'option',
+              'defaultDate',
+              dayjs(firstDate, 'YYYY-MM-DD').format('DD/MM/YYYY')
+            );
           }
         }
       });
@@ -166,7 +207,7 @@ export default {
 
     jQuery(function ($) {
       $('body').on('updated_cart_totals', function () {
-        location.reload();
+        window.location.replace(window.location.pathname + window.location.search);
       });
 
       $(document).ready(function () {

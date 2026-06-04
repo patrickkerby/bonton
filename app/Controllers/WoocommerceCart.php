@@ -53,13 +53,17 @@ class WoocommerceCart extends Controller
         $this->_post_date_processed = true;
 
         if (isset($_POST['date'])) {
-            $pickupdate = $_POST['date'];
-            $pickupdate_object = DateTime::createFromFormat(self::DATE_FORMAT, $pickupdate);
-
+            // Cart calendar submit uses template_redirect + redirect; ignore replayed POST bodies.
+            if (isset($_POST['bonton_set_pickup_date'])) {
+                return;
+            }
+            // Same form also applies coupons; only sync date on that action.
+            if (!isset($_POST['apply_coupon'])) {
+                return;
+            }
+            $pickupdate_object = \App\bonton_parse_pickup_date_string(wp_unslash($_POST['date']));
             if ($pickupdate_object) {
-                WC()->session->set('pickup_date', $pickupdate_object->format('l, F j, Y'));
-                WC()->session->set('pickup_date_formatted', $pickupdate_object->format('Y-m-d'));
-                WC()->session->set('pickup_date_object', $pickupdate_object);
+                \App\bonton_persist_pickup_date_to_session($pickupdate_object);
             }
         }
     }
@@ -227,7 +231,7 @@ class WoocommerceCart extends Controller
 
             if ($session_pickup_date && $pickup_day_of_week && !in_array($pickup_day_of_week, $days_available_array)) {
                 $availability_status = 'not-available';
-                $availability_msg = '<span class="not-available-message">Not available on your selected pickup date!<br> Please remove, or select a different date.</span>';
+                $availability_msg = '<span class="not-available-message">Not available on your pickup date. Remove this item or choose another date.</span>';
             }
 
             // Long fermentation check
@@ -254,7 +258,7 @@ class WoocommerceCart extends Controller
                 if ($session_date_object < $min_pickup_date) {
                     $this->_conflict = true;
                     $availability_status = 'not-available';
-                    $availability_msg = '<span class="not-available-message">This item requires 2 days notice with an order cut-off time of 3 PM. Your selected pickup date is too soon!<br>Please select a later date or remove this item from your cart.</span>';
+                    $availability_msg = '<span class="not-available-message">Needs 2 days notice (3&nbsp;PM cutoff). This pickup date is too soon—choose a later date or remove this item.</span>';
                 }
             }
 
@@ -285,7 +289,7 @@ class WoocommerceCart extends Controller
                         $this->_conflict = true;
                         $sold_out_conflict = 'sold_out_conflict';
                         $availability_status = 'not-available';
-                        $availability_msg = '<span class="not-available-message">This product is not available on your selected pickup date!<br> Please remove, or select different pickup date.</span>';
+                        $availability_msg = '<span class="not-available-message">Not available on your pickup date. Remove this item or choose another date.</span>';
                     }
                 }
             }
@@ -454,7 +458,7 @@ class WoocommerceCart extends Controller
      */
     public function datetimeButtonCopy()
     {
-        return $this->sessionPickupDate() ? 'Update' : 'Select date to continue';
+        return $this->sessionPickupDate() ? 'Update pickup date' : 'Select pickup date';
     }
 
     /**

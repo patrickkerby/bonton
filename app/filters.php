@@ -411,6 +411,54 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 }
 
 
+/**
+ * Parse a pickup date string from cart form (d/m/Y) or session hidden field (Y-m-d).
+ */
+function bonton_parse_pickup_date_string($raw) {
+    $raw = trim(sanitize_text_field((string) $raw));
+    if ($raw === '') {
+        return null;
+    }
+    $date_obj = \DateTime::createFromFormat('!d/m/Y', $raw);
+    if (!$date_obj) {
+        $date_obj = \DateTime::createFromFormat('!Y-m-d', $raw);
+    }
+    return $date_obj ?: null;
+}
+
+/**
+ * Write pickup date fields to the WooCommerce session.
+ */
+function bonton_persist_pickup_date_to_session(\DateTime $date_obj) {
+    if (!function_exists('WC') || !WC()->session) {
+        return;
+    }
+    if (!WC()->session->has_session()) {
+        WC()->session->set_customer_session_cookie(true);
+    }
+    WC()->session->set('pickup_date', $date_obj->format('l, F j, Y'));
+    WC()->session->set('pickup_date_formatted', $date_obj->format('Y-m-d'));
+    WC()->session->set('pickup_date_object', $date_obj);
+    WC()->session->save_data();
+}
+
+// Cart on-page calendar: POST-redirect-GET so reload() / replace() never replays a stale date POST.
+add_action('template_redirect', function () {
+    if (!function_exists('is_cart') || !is_cart() || ($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+        return;
+    }
+    if (empty($_POST['bonton_set_pickup_date']) || empty($_POST['date'])) {
+        return;
+    }
+    $date_obj = bonton_parse_pickup_date_string(wp_unslash($_POST['date']));
+    if (!$date_obj) {
+        return;
+    }
+    bonton_persist_pickup_date_to_session($date_obj);
+    wp_safe_redirect(wc_get_cart_url());
+    exit;
+}, 5);
+
 // AJAX: Save pickup date to WC session (used by the global utility banner date picker)
 add_action('wp_ajax_save_pickup_date', 'App\ajax_save_pickup_date');
 add_action('wp_ajax_nopriv_save_pickup_date', 'App\ajax_save_pickup_date');
@@ -418,21 +466,14 @@ add_action('wp_ajax_nopriv_save_pickup_date', 'App\ajax_save_pickup_date');
 function ajax_save_pickup_date() {
     check_ajax_referer('bonton_nonce', 'nonce');
 
-    $date_raw = isset($_POST['date']) ? sanitize_text_field($_POST['date']) : '';
-    $date_obj = \DateTime::createFromFormat('!d/m/Y', $date_raw);
+    $date_raw = isset($_POST['date']) ? wp_unslash($_POST['date']) : '';
+    $date_obj = bonton_parse_pickup_date_string($date_raw);
 
     if (!$date_obj) {
         wp_send_json_error(['message' => 'Invalid date format']);
     }
 
-    if (!WC()->session->has_session()) {
-        WC()->session->set_customer_session_cookie(true);
-    }
-
-    WC()->session->set('pickup_date', $date_obj->format('l, F j, Y'));
-    WC()->session->set('pickup_date_formatted', $date_obj->format('Y-m-d'));
-    WC()->session->set('pickup_date_object', $date_obj);
-    WC()->session->save_data();
+    bonton_persist_pickup_date_to_session($date_obj);
 
     wp_send_json_success([
         'date_display' => $date_obj->format('D, M j'),
@@ -535,11 +576,11 @@ function after_checkout_validation( $posted ) {
     $post3pm = ($currenthour > $cutoff);
 
     if ($pickup_date_formatted == "" || empty($pickup_date_formatted)) {
-        wc_add_notice( __( "We seem to have lost your pickup date, please return to cart and select a pickup date", 'woocommerce' ), 'error' );
+        wc_add_notice( __( 'Pickup date missing. Return to the cart and choose a pickup date.', 'woocommerce' ), 'error' );
     }
 
     if ($post3pm && $pickup_date_formatted <= $tomorrow || $pickup_date_formatted == $today) {
-        wc_add_notice( __( "Your pickup date is not valid, please return to cart and select a new pickup date", 'woocommerce' ), 'error' );
+        wc_add_notice( __( 'Pickup date is no longer valid. Return to the cart and choose a new date.', 'woocommerce' ), 'error' );
     }
 
     if ($needs_extra_lead_time) {
@@ -550,7 +591,7 @@ function after_checkout_validation( $posted ) {
             $min_pickup->modify('+57 hours');
             $min_pickup_date = \DateTime::createFromFormat('!Y-m-d', $min_pickup->format('Y-m-d'));
             if ($session_date_object < $min_pickup_date) {
-                wc_add_notice( __( "Your cart contains items that require 2 days notice. Please return to cart and select a later pickup date.", 'woocommerce' ), 'error' );
+                wc_add_notice( __( 'Your cart has items that need 2 days notice. Return to the cart and choose a later pickup date.', 'woocommerce' ), 'error' );
             }
         }
     }

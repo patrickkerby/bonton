@@ -73,7 +73,14 @@
 
     <h4 class="d-flex d-md-none">Pickup / delivery date:</h4>
     
-    <div class="calendar-container">
+    <div class="calendar-container @if($conflict && $session_pickup_date) calendar-container--needs-date @endif">
+      @if ($conflict && $session_pickup_date)
+        <div class="lf_notice lf_notice--calendar-hint" role="note">
+          <strong>{{ $session_pickup_date }} isn't available</strong><br>
+          Pick a new date below, then tap <strong>Update</strong>.
+        </div>
+      @endif
+
       <div class="acf-field acf-field-date-picker">
         <div class='input date acf-date-picker acf-input-wrap' id='datetimepicker1'>
           <div class="datepicker" id="datepicker">
@@ -89,25 +96,27 @@
       <p class="small">Home Delivery available on Saturdays <a href="" data-toggle="modal" data-target="#delivery" class="shipping-info shipping-info--mobile"><i class="fas fa-circle-info"></i></a></p>
 
       <div class="acf-form-submit">
-        <input type="submit" class="acf-button button button-primary button-large" value="{{ $datetime_button_copy }}">
+        <input type="submit" name="bonton_set_pickup_date" class="acf-button button button-primary button-large" value="{{ $datetime_button_copy }}">
         <span class="acf-spinner"></span>
       </div>
 
-      @if ($long_fermentation_in_cart)
+      @if ($long_fermentation_in_cart || $two_days_notice_in_cart)
         <div class="lf_notice">
-          <strong>Why can't I choose tomorrow?</strong> <br>Next-day pickup is unavailable for Sourdough breads (They need 40 hours of fermentation).
-        </div>
-      @endif
-
-      @if ($two_days_notice_in_cart)
-        <div class="lf_notice">
-          <strong>Why can't I choose tomorrow?</strong> <br>One or more products in your cart require at least two days notice for preparation.
+          <strong>Extra prep time</strong><br>
+          @if ($long_fermentation_in_cart && $two_days_notice_in_cart)
+            Sourdough and other items in your cart need about two days. After 3&nbsp;PM, count an extra day.
+          @elseif ($long_fermentation_in_cart)
+            Sourdough needs about two days. After 3&nbsp;PM, count an extra day.
+          @else
+            Some items need about two days. After 3&nbsp;PM, count an extra day.
+          @endif
         </div>
       @endif
 
       @if ($restricted_in_cart)
         <div class="lf_notice">
-          <strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
+          <strong>Limited availability</strong><br>
+          A special item in your cart is only available on the dates shown above.
         </div>
       @endif
     </div>

@@ -95,7 +95,13 @@ export default {
               $label.text(response.data.date_display);
             }
             if (isCartPage) {
-              window.location.reload();
+              // Keep sidebar hidden field in sync so a stray form POST cannot restore an old date.
+              var $dateInput = $('#dateInput');
+              if ($dateInput.length) {
+                $dateInput.val(dateText);
+              }
+              // replace() avoids re-POSTing the cart calendar form (reload() replays the last POST).
+              window.location.replace(window.location.pathname + window.location.search);
               return;
             }
             setUtilityBannerDateSaving(false);
