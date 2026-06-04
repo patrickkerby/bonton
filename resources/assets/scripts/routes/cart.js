@@ -405,43 +405,18 @@ export default {
       initCartPickupCalendar();
     }
 
-    function refreshCartPickupCalendarFromServer() {
-      if (!document.getElementById('datepicker') || typeof window.bontonData === 'undefined') {
-        return;
-      }
-
-      $.ajax({
-        type: 'POST',
-        url: window.bontonData.ajaxUrl,
-        data: {
-          action: 'bonton_cart_pickup_calendar_state',
-          nonce: window.bontonData.nonce,
-        },
-        dataType: 'json',
-      }).done(function (response) {
-        if (!response || !response.success || !response.data) {
-          return;
-        }
-        applyPickupCalendarState(response.data);
-        initCartPickupCalendarWhenReady(0, true);
-      });
-    }
-
     jQuery(function ($) {
       $('body').on('updated_cart_totals', function () {
         window.location.replace(window.location.pathname + window.location.search);
       });
 
-      // Line-item remove uses updated_wc_div (not always updated_cart_totals) — refresh lead-time rules.
-      $(document.body).on(
-        'updated_wc_div removed_from_cart wc_cart_emptied',
-        function () {
-          if (!document.getElementById('datepicker')) {
-            return;
-          }
-          refreshCartPickupCalendarFromServer();
+      $(document.body).on('bonton_pickup_calendar_state_updated', function (e, data) {
+        if (!document.getElementById('datepicker')) {
+          return;
         }
-      );
+        applyPickupCalendarState(data);
+        initCartPickupCalendarWhenReady(0, true);
+      });
 
       initCartPickupCalendarWhenReady(0, false);
     });

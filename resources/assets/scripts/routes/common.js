@@ -44,6 +44,7 @@ export default {
       var startDate = dayjs().add(leadHours, 'hour').toDate();
       var isCartPage = $('body').hasClass('woocommerce-cart');
       var savePickupDateInFlight = false;
+      var ignorePickerChange = true;
 
       function formatPickupLabelFromDate(d) {
         var w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -159,7 +160,24 @@ export default {
         }).filter(Boolean);
       }
 
+      function destroyUtilityPicker() {
+        if (!$picker.length) {
+          return;
+        }
+        var dp = utilityBannerDatepicker();
+        if ($picker.data('datepicker')) {
+          dp.call($picker, 'destroy');
+        }
+        $picker.off('changeDate');
+      }
+
       function initBootstrap() {
+        if (!$picker.length) {
+          return;
+        }
+
+        destroyUtilityPicker();
+
         var selectedDate = $picker.data('selected-date');
         var vacationRaw = document.getElementById('pickup_vacation_dates_global');
         var vacationYmd = [];
@@ -183,8 +201,8 @@ export default {
           maxViewMode: 0,
         });
 
-        var ignorePickerChange = true;
-        $picker.on('changeDate', function(e) {
+        ignorePickerChange = true;
+        $picker.on('changeDate', function (e) {
           if (ignorePickerChange) {
             return;
           }
@@ -202,27 +220,72 @@ export default {
             dp.call($picker, 'setDate', d0);
           }
         }
-        // setDate may fire changeDate on a later tick — avoid an unwanted save on load.
-        setTimeout(function() {
+
+        setTimeout(function () {
           ignorePickerChange = false;
         }, 100);
       }
+
+      function applyUtilityBannerFromState(data) {
+        if (!data) {
+          return;
+        }
+
+        leadHours = parseInt(data.lead_time_hours, 10) || 33;
+        if (window.bontonData) {
+          window.bontonData.needsExtraLeadTime = leadHours >= 57 ? 1 : 0;
+        }
+        startDate = dayjs().add(leadHours, 'hour').toDate();
+
+        if (data.session_pickup_date) {
+          var ymd = String(data.session_pickup_date).split('-');
+          if (ymd.length === 3) {
+            $picker.data('selected-date', ymd[2] + '/' + ymd[1] + '/' + ymd[0]);
+          }
+        }
+
+        initBootstrap();
+      }
+
+      function fetchPickupCalendarState() {
+        if (!window.bontonData) {
+          return $.Deferred().reject().promise();
+        }
+
+        return $.ajax({
+          type: 'POST',
+          url: window.bontonData.ajaxUrl,
+          data: {
+            action: 'bonton_cart_pickup_calendar_state',
+            nonce: window.bontonData.nonce,
+          },
+          dataType: 'json',
+        });
+      }
+
+      function refreshPickupCalendarState() {
+        return fetchPickupCalendarState().done(function (response) {
+          if (!response || !response.success || !response.data) {
+            return;
+          }
+          applyUtilityBannerFromState(response.data);
+          $(document.body).trigger('bonton_pickup_calendar_state_updated', [response.data]);
+        });
+      }
+
+      $(document.body).on(
+        'updated_wc_div removed_from_cart wc_cart_emptied added_to_cart',
+        function () {
+          refreshPickupCalendarState();
+        }
+      );
 
       if (isCartPage) {
         // Cart page: scroll to the main cart calendar when it exists (avoid two
         // inline pickers). After the last item is removed, WooCommerce AJAX can
         // replace markup and remove #datepicker — fall back to the same global
         // dropdown used on other pages so the date is never "stuck".
-        var cartPageGlobalPickerInited = false;
         var cartPageOutsideCloseBound = false;
-
-        var ensureCartPageGlobalPicker = function () {
-          if (cartPageGlobalPickerInited) {
-            return;
-          }
-          initBootstrap();
-          cartPageGlobalPickerInited = true;
-        };
 
         var ensureCartPageOutsideClose = function () {
           if (cartPageOutsideCloseBound) {
@@ -251,10 +314,11 @@ export default {
               $calendar.closest('.calendar-container').css('outline', '');
             }, 1500);
           } else {
-            ensureCartPageGlobalPicker();
-            ensureCartPageOutsideClose();
-            $dropdown.fadeToggle(150);
-            $('#bulk-info-popover').fadeOut(150);
+            refreshPickupCalendarState().always(function () {
+              ensureCartPageOutsideClose();
+              $dropdown.fadeToggle(150);
+              $('#bulk-info-popover').fadeOut(150);
+            });
           }
         });
       } else {
@@ -262,8 +326,10 @@ export default {
 
         $btn.on('click', function(e) {
           e.stopPropagation();
-          $dropdown.fadeToggle(150);
-          $('#bulk-info-popover').fadeOut(150);
+          refreshPickupCalendarState().always(function () {
+            $dropdown.fadeToggle(150);
+            $('#bulk-info-popover').fadeOut(150);
+          });
         });
 
         $(document).on('mousedown touchstart', function(e) {
