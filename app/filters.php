@@ -315,19 +315,9 @@ add_filter( 'woocommerce_product_data_store_cpt_get_products_query', function( $
 
 
 // GST: six+ bread/bun servings → zero-rate on eligible category lines (see helpers + documentation/gst-alberta-bakery.md).
-add_action('woocommerce_before_calculate_totals', 'App\bonton_apply_gst_cart_zero_rate', 30, 1);
+add_action('woocommerce_before_calculate_totals', __NAMESPACE__ . '\\bonton_apply_gst_cart_zero_rate', 30, 1);
 
-function bonton_apply_gst_cart_zero_rate($cart)
-{
-    \App\bonton_apply_gst_cart_zero_rate($cart);
-}
-
-add_filter('woocommerce_cart_totals_get_fees_from_cart_taxes', 'App\bonton_zero_bulk_discount_fee_taxes', 10, 3);
-
-function bonton_zero_bulk_discount_fee_taxes($fee_taxes, $fee, $cart_totals = null)
-{
-    return \App\bonton_zero_bulk_discount_fee_taxes($fee_taxes, $fee);
-}
+add_filter('woocommerce_cart_totals_get_fees_from_cart_taxes', __NAMESPACE__ . '\\bonton_zero_bulk_discount_fee_taxes', 10, 3);
 
 // Don't show individual item prices in cart
 add_filter( 'woocommerce_cart_item_price', '__return_empty_string' );   
