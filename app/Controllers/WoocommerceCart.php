@@ -252,7 +252,7 @@ class WoocommerceCart extends Controller
                 if ($session_ymd && $session_ymd < $min_ymd) {
                     $this->_conflict = true;
                     $availability_status = 'not-available';
-                    $availability_msg = '<span class="not-available-message">Needs 2 days notice (3&nbsp;PM cutoff). This pickup date is too soon—choose a later date or remove this item.</span>';
+                    $availability_msg = '<span class="not-available-message">Requires 2 days notice (3&nbsp;PM cutoff). This pickup date is too soon! Choose a later date or remove this item.</span>';
                 }
             }
 
