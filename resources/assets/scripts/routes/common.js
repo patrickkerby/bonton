@@ -45,6 +45,8 @@ export default {
       var isCartPage = $('body').hasClass('woocommerce-cart');
       var savePickupDateInFlight = false;
       var ignorePickerChange = true;
+      var calendarStateStale = false;
+      var refreshInFlight = null;
 
       function formatPickupLabelFromDate(d) {
         var w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -264,18 +266,47 @@ export default {
       }
 
       function refreshPickupCalendarState() {
-        return fetchPickupCalendarState().done(function (response) {
-          if (!response || !response.success || !response.data) {
-            return;
-          }
-          applyUtilityBannerFromState(response.data);
-          $(document.body).trigger('bonton_pickup_calendar_state_updated', [response.data]);
-        });
+        if (refreshInFlight) {
+          return refreshInFlight;
+        }
+
+        refreshInFlight = fetchPickupCalendarState()
+          .done(function (response) {
+            if (!response || !response.success || !response.data) {
+              return;
+            }
+            applyUtilityBannerFromState(response.data);
+            calendarStateStale = false;
+            $(document.body).trigger('bonton_pickup_calendar_state_updated', [response.data]);
+          })
+          .always(function () {
+            refreshInFlight = null;
+          });
+
+        return refreshInFlight;
+      }
+
+      function openUtilityDateDropdown() {
+        $dropdown.fadeToggle(150);
+        $('#bulk-info-popover').fadeOut(150);
+      }
+
+      function openUtilityDateDropdownWhenReady() {
+        if (calendarStateStale || refreshInFlight) {
+          $.when(refreshInFlight || refreshPickupCalendarState()).always(openUtilityDateDropdown);
+          return;
+        }
+
+        if (!$picker.data('datepicker')) {
+          initBootstrap();
+        }
+        openUtilityDateDropdown();
       }
 
       $(document.body).on(
         'updated_wc_div removed_from_cart wc_cart_emptied added_to_cart',
         function () {
+          calendarStateStale = true;
           refreshPickupCalendarState();
         }
       );
@@ -314,11 +345,8 @@ export default {
               $calendar.closest('.calendar-container').css('outline', '');
             }, 1500);
           } else {
-            refreshPickupCalendarState().always(function () {
-              ensureCartPageOutsideClose();
-              $dropdown.fadeToggle(150);
-              $('#bulk-info-popover').fadeOut(150);
-            });
+            ensureCartPageOutsideClose();
+            openUtilityDateDropdownWhenReady();
           }
         });
       } else {
@@ -326,10 +354,7 @@ export default {
 
         $btn.on('click', function(e) {
           e.stopPropagation();
-          refreshPickupCalendarState().always(function () {
-            $dropdown.fadeToggle(150);
-            $('#bulk-info-popover').fadeOut(150);
-          });
+          openUtilityDateDropdownWhenReady();
         });
 
         $(document).on('mousedown touchstart', function(e) {
