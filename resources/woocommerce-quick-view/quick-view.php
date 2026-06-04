@@ -93,7 +93,7 @@ if(isset($pickup_restriction_end_data_check)) {
 				}
 				else {
 						// $days = implode(', ', $days_available_);
-						echo '<strong>Available:</strong> <span>.'.$days_available_string . $long_fermentation.'</span>';
+						echo '<strong>Available:</strong> <span>'.$days_available_string . $long_fermentation.'</span>';
 				}				
 			?>
 		</div>
