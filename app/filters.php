@@ -1328,12 +1328,65 @@ add_filter('upload_dir', function (array $uploads) {
 add_filter( 'woocommerce_states', 'App\custom_woocommerce_states' );
 
 function custom_woocommerce_states( $states ) {
-    // Restrict provinces for Spain (ES)
     $states['CA'] = array(
         'AB' => __( 'Alberta', 'woocommerce' ),
     );
 
     return $states;
+}
+
+/**
+ * Default guest/customer location to Canada / Alberta (local Edmonton store).
+ */
+add_filter( 'woocommerce_customer_default_location', 'App\bonton_default_customer_location' );
+
+function bonton_default_customer_location( $location ) {
+    return 'CA:AB';
+}
+
+add_action( 'woocommerce_init', 'App\bonton_apply_local_customer_address_defaults', 20 );
+
+function bonton_apply_local_customer_address_defaults() {
+    if ( ! function_exists( 'WC' ) || ! WC()->customer ) {
+        return;
+    }
+
+    $customer = WC()->customer;
+    $changed  = false;
+
+    foreach ( array( 'billing', 'shipping' ) as $type ) {
+        $country = $customer->{"get_{$type}_country"}();
+
+        if ( ! $country ) {
+            $customer->{"set_{$type}_country"}( 'CA' );
+            $country = 'CA';
+            $changed   = true;
+        }
+
+        if ( 'CA' === $country && ! $customer->{"get_{$type}_state"}() ) {
+            $customer->{"set_{$type}_state"}( 'AB' );
+            $changed = true;
+        }
+    }
+
+    if ( $changed ) {
+        $customer->save();
+    }
+}
+
+add_filter( 'woocommerce_checkout_fields', 'App\bonton_default_checkout_country_state', 10000 );
+
+function bonton_default_checkout_country_state( $fields ) {
+    foreach ( array( 'billing', 'shipping' ) as $type ) {
+        if ( isset( $fields[ $type ][ "{$type}_country" ] ) ) {
+            $fields[ $type ][ "{$type}_country" ]['default'] = 'CA';
+        }
+        if ( isset( $fields[ $type ][ "{$type}_state" ] ) ) {
+            $fields[ $type ][ "{$type}_state" ]['default'] = 'AB';
+        }
+    }
+
+    return $fields;
 }
 
 /**
