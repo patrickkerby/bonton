@@ -72,6 +72,8 @@
     $available_methods ?? [],
     $formatted_destination
   );
+  $delivery_method_chosen = ! empty( $chosen_method )
+    && \App\bonton_is_delivery_shipping_method( $chosen_method );
 
   if ($icecream_conflict) {
     delete_user_meta( get_current_user_id(), 'shipping_method' );
@@ -128,7 +130,7 @@
       <p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
     @elseif ( $delivery_override && $delivery_day)
       <p class="small">We do deliver on this day, however you have a product in your cart that's not available for delivery. Please remove the that item if you'd like delivery</p>
-    @elseif ( $delivery_available )
+    @elseif ( $delivery_available && ! $delivery_address_unavailable && $delivery_method_chosen )
       
       <p class="woocommerce-shipping-destination">
         @if ( $formatted_destination )
@@ -138,10 +140,8 @@
           <p class="woocommerce-shipping-estimate">{{ esc_html__( 'Check your address for delivery!', 'woocommerce' ) }}</p>
         @endif
       </p>
-    @else
-      @if($delivery_message)
-        <p class="delivery-message">{{ $delivery_message }}</p>
-      @endif
+    @elseif ( $delivery_message && ! $delivery_address_unavailable )
+      <p class="delivery-message">{{ $delivery_message }}</p>
     @endif
 
   @elseif ( ! $has_calculated_shipping || ! $formatted_destination )
@@ -169,6 +169,7 @@
 <tr class="woocommerce-shipping-totals shipping">
   <th>{!! wp_kses_post( $package_name ) !!}</th>
   <td data-title="{{ esc_attr( $package_name ) }}">
+    <div class="checkout-shipment-panel">
 
     @if ( $available_methods )
       <ul id="shipping_method" class="woocommerce-shipping-methods">
@@ -214,7 +215,7 @@
         <p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
       @elseif ( $delivery_override && $delivery_day)
         <p class="small">We do deliver on this day, however you have a product in your cart that's not available for delivery. Please remove the that item if you'd like delivery</p>
-      @elseif ( $delivery_available )
+      @elseif ( $delivery_available && ! $delivery_address_unavailable && $delivery_method_chosen )
         <p class="woocommerce-shipping-destination">
           @if ( $formatted_destination )
             {!! sprintf( esc_html__( '%s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) !!}
@@ -223,10 +224,6 @@
             {!! wp_kses_post( apply_filters( 'woocommerce_shipping_estimate_html', __( 'Set your location if you would like delivery!', 'woocommerce' ) ) ) !!}
           @endif
         </p>
-      @else
-        @if($delivery_message)
-          <p class="small">{{ $delivery_message }}</p>
-        @endif
       @endif
 
     @elseif ( ! $has_calculated_shipping || ! $formatted_destination )
@@ -249,8 +246,7 @@
     @if ( $show_shipping_calculator && $delivery_available && !$icecream_conflict )
       @php woocommerce_shipping_calculator( $calculator_text ) @endphp
     @endif
-    <hr>
-
+    </div>
   </td>
 </tr>
 @endif

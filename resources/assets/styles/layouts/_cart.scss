@@ -860,6 +860,7 @@ ul.woocommerce-thankyou-order-details li {
   }
 
   .woocommerce-input-wrapper {
+    position: relative;
     width: 100%;
     margin-right: 1rem;
   }
@@ -907,8 +908,12 @@ ul.woocommerce-thankyou-order-details li {
     border-color: darken($highlight, 8%) !important;
   }
 
-  .form-row.validate-required .woocommerce-input-wrapper::after {
-    content: none;
+  select:not(.select2-hidden-accessible) {
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+    background-image: none !important;
+    padding-right: 2.25rem;
   }
 
   @include media-breakpoint-down(sm) {
@@ -1366,15 +1371,31 @@ td.product-meta {
   }
 }
 
-.woocommerce-error,
-.woocommerce-info,
-.woocommerce-message {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100vw;
-  margin: 0;
-  z-index: 1000000000000;
+body.woocommerce-cart,
+body.woocommerce-checkout {
+  .woocommerce-error,
+  .woocommerce-info,
+  .woocommerce-message {
+    position: fixed;
+    left: 0;
+    width: 100vw;
+    margin: 0;
+    z-index: 1000000;
+  }
+
+  .wc_points_rewards_earn_points {
+    margin: 0;
+    padding: 0;
+
+    .woocommerce-info,
+    .woocommerce-message {
+      border-radius: 0;
+    }
+  }
+
+  .cart .alert {
+    z-index: 1000001;
+  }
 }
 
 .wdgk_donation_content {
@@ -1587,13 +1608,19 @@ td.product-meta {
 
 .delivery-unavailable-notice {
   margin: 1rem 0 0;
-  padding: 0.85rem 1rem;
-  border: solid 2px $highlight;
-  background: #fff8f0;
-  font-weight: 600;
-  font-size: 0.9rem;
-  line-height: 1.45;
+  padding: 0.9rem 1rem 0.9rem 1.1rem;
+  border: none;
+  border-left: solid 4px $highlight;
+  border-radius: 0 4px 4px 0;
+  background: #fff5f0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  line-height: 1.55;
   color: $charcoal;
+
+  strong {
+    font-weight: 700;
+  }
 }
 
 .delivery-notice {

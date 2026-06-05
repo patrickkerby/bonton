@@ -33,37 +33,42 @@ a.ui-button:active {
   border: 1px solid darken($color: $highlight, $amount: 10);
 }
 
-//timeslot picker
-.custom-timeslot select,
-.custom-timeslot_pickup select {
+// Timeslot picker (cart shipping options only — not checkout order review)
+.cart .custom-timeslot select,
+.cart .custom-timeslot_pickup select {
   margin: 0.5rem 0 0 1.5rem !important;
 }
 
 .woocommerce-input-wrapper select:not(.select2-hidden-accessible) {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
   background-color: #fff;
-  background-image: none;
-  padding-right: 2rem;
+  background-image: none !important;
+  padding-right: 2.25rem;
 
   &::-ms-expand {
     display: none;
   }
 }
 
-// One custom chevron for native <select> and SelectWoo — hide both default arrows.
-.woocommerce-input-wrapper:has(select),
-.woocommerce-input-wrapper:has(.select2-container) {
+// One custom chevron (::after only — never ::before, avoids double arrows).
+.woocommerce-input-wrapper:has(> select:not(.select2-hidden-accessible)),
+.woocommerce-input-wrapper:has(> .select2-container) {
   position: relative;
 }
 
 .woocommerce-input-wrapper:has(select)::before,
 .woocommerce-input-wrapper:has(.select2-container)::before {
+  content: none !important;
+}
+
+.woocommerce-input-wrapper:has(> select:not(.select2-hidden-accessible))::after,
+.woocommerce-input-wrapper:has(> .select2-container)::after {
   position: absolute;
   top: 50%;
-  right: 0.75rem;
-  z-index: 1;
+  right: 0.85rem;
+  z-index: 2;
   content: "";
   margin-top: -5px;
   width: 8px;

@@ -20,6 +20,48 @@ export default {
       $( this ).toggleClass( 'packed' );
     });
 
+    // Stack cart/checkout bottom notices (loyalty points, errors, etc.) instead of overlapping.
+    function stackBottomNotices() {
+      var $body = $('body');
+
+      if (!$body.hasClass('woocommerce-cart') && !$body.hasClass('woocommerce-checkout')) {
+        return;
+      }
+
+      var $notices = $body.find('.woocommerce-error, .woocommerce-info, .woocommerce-message');
+      var $cartAlert = $body.find('.woocommerce-cart .alert:visible');
+      var $items = $notices.add($cartAlert);
+
+      if (!$items.length) {
+        $body.css('padding-bottom', '');
+        return;
+      }
+
+      var bottom = 0;
+
+      $($items.get().reverse()).each(function() {
+        var $el = $(this);
+
+        $el.css({
+          position: 'fixed',
+          bottom: bottom + 'px',
+          left: 0,
+          width: '100%',
+          margin: 0,
+          zIndex: 1000000,
+        });
+        bottom += this.offsetHeight;
+      });
+
+      $body.css('padding-bottom', bottom + 'px');
+    }
+
+    stackBottomNotices();
+    $(window).on('resize', stackBottomNotices);
+    $(document.body).on('updated_checkout updated_cart_totals updated_wc_div', function() {
+      window.requestAnimationFrame(stackBottomNotices);
+    });
+
     // --- Utility Banner: Global Date Picker ---
     // Uses bootstrap-datepicker (see main.js). On cart/checkout, WooCommerce loads
     // jQuery UI datepicker later and replaces `jQuery.fn.datepicker`, so we always
