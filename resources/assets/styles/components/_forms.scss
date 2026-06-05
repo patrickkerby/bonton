@@ -43,16 +43,22 @@ a.ui-button:active {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  padding-right: 2rem;
 }
 
-.woocommerce-input-wrapper {
+// Chevron on <select> only — not text inputs, email, phone, textarea, etc.
+.woocommerce-input-wrapper:has(select) {
   position: relative;
 }
 
-.woocommerce-input-wrapper::before {
+.woocommerce-input-wrapper:has(.select2-container)::before {
+  content: none;
+}
+
+.woocommerce-input-wrapper:has(> select):not(:has(.select2-container))::before {
   position: absolute;
   top: 50%;
-  right: 0.5rem;
+  right: 0.75rem;
   content: "";
   margin-top: -5px;
   width: 8px;
@@ -62,6 +68,30 @@ a.ui-button:active {
   border-style: solid;
   border-width: 2px 2px 0 0;
   pointer-events: none;
+}
+
+// SelectWoo (checkout, etc.)
+.woocommerce-input-wrapper .select2-container {
+  width: 100% !important;
+}
+
+.woocommerce-input-wrapper .select2-container--default .select2-selection--single {
+  height: auto;
+  min-height: 2.5rem;
+  border: solid 2px #eceade;
+
+  .select2-selection__rendered {
+    padding: 0.45rem 2rem 0.45rem 0.5rem;
+    line-height: 1.35;
+  }
+
+  .select2-selection__arrow {
+    position: absolute;
+    top: 0;
+    right: 0.5rem;
+    left: auto !important;
+    height: 100%;
+  }
 }
 
 // Custom radio buttons

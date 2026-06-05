@@ -39,10 +39,6 @@
     ? \App\bonton_delivery_blackout_dates_ymd()
     : [];
 
-  if ($is_wholesale_user) {
-    $delivery_available = true;
-  }
-
   foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
     $cart_product_id = $cart_item['product_id'];
     $delivery_exclusion = get_field('delivery_exclusion', $cart_product_id);
@@ -64,22 +60,14 @@
       $delivery_day = true;
     }
 
-    $is_blackout_date = in_array($pickup_date, $delivery_blackout_dates, true);
-
-    if ($pickup_day_of_week === 'Saturday' && !$is_blackout_date && !$icecream_conflict && !$delivery_override) {
-      $delivery_available = true;
-    } elseif ($is_wholesale_user) {
-      $delivery_available = true;
-    } else {
-      $delivery_available = false;
-    }
-
     $delivery_note = \App\bonton_delivery_note_for_pickup_date($pickup_date);
     // Blackout messaging lives on the cart calendar only — not under shipping options.
     if ($delivery_note['variant'] !== 'warning') {
       $delivery_message = $delivery_note['html'];
     }
   }
+
+  $delivery_available = \App\bonton_cart_delivery_eligible_by_date_rules();
 
   if ($icecream_conflict) {
     delete_user_meta( get_current_user_id(), 'shipping_method' );

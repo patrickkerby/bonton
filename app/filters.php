@@ -1188,6 +1188,22 @@ function bonton_default_customer_location( $location ) {
 // Checkout field defaults only — do not persist CA/AB on the customer before they enter
 // city/postcode; that made the cart show "AB." + "Change address" instead of the calculator CTA.
 
+add_filter( 'woocommerce_default_address_fields', 'App\bonton_optional_address_2_field', 10001 );
+
+/**
+ * Apartment / unit line is optional (legacy split-address checkout required both lines).
+ */
+function bonton_optional_address_2_field( $fields ) {
+    if ( ! isset( $fields['address_2'] ) ) {
+        return $fields;
+    }
+
+    $fields['address_2']['required']    = false;
+    $fields['address_2']['placeholder'] = esc_attr__( 'Apartment, suite, unit, etc. (optional)', 'woocommerce' );
+
+    return $fields;
+}
+
 add_filter( 'woocommerce_checkout_fields', 'App\bonton_default_checkout_country_state', 10000 );
 
 function bonton_default_checkout_country_state( $fields ) {
@@ -1198,9 +1214,114 @@ function bonton_default_checkout_country_state( $fields ) {
         if ( isset( $fields[ $type ][ "{$type}_state" ] ) ) {
             $fields[ $type ][ "{$type}_state" ]['default'] = 'AB';
         }
+        if ( isset( $fields[ $type ][ "{$type}_address_2" ] ) ) {
+            $fields[ $type ][ "{$type}_address_2" ]['required']    = false;
+            $fields[ $type ][ "{$type}_address_2" ]['placeholder'] = esc_attr__( 'Apartment, suite, unit, etc. (optional)', 'woocommerce' );
+        }
     }
 
     return $fields;
+}
+
+/**
+ * Checkout AJAX uses abbreviated address params that can leave shipping_postcode stale.
+ * Use the full serialized checkout form so package destination matches the visible fields.
+ */
+add_filter('woocommerce_cart_shipping_packages', 'App\bonton_checkout_shipping_packages_from_form', 5, 1);
+
+function bonton_checkout_shipping_packages_from_form($packages)
+{
+    if (!defined('WOOCOMMERCE_CHECKOUT') || !WOOCOMMERCE_CHECKOUT || empty($packages[0])) {
+        return $packages;
+    }
+
+    $data = bonton_get_checkout_posted_form_data();
+    if ($data === []) {
+        return $packages;
+    }
+
+    $destination = bonton_checkout_destination_from_post($data);
+    if (!bonton_has_meaningful_shipping_destination($destination)) {
+        return $packages;
+    }
+
+    bonton_apply_customer_shipping_destination($destination);
+    $packages[0]['destination'] = array_merge($packages[0]['destination'], $destination);
+
+    return $packages;
+}
+
+/**
+ * When home delivery is selected, re-validate date/cart rules and WooCommerce zone coverage
+ * for the actual delivery address (billing or ship-to-different shipping).
+ */
+add_action('woocommerce_checkout_process', 'App\bonton_validate_checkout_delivery_address', 15);
+
+function bonton_validate_checkout_delivery_address()
+{
+    if (!function_exists('WC') || !WC()->cart || WC()->cart->is_empty()) {
+        return;
+    }
+
+    $chosen = WC()->session->get('chosen_shipping_methods');
+    if (empty($chosen[0]) || !bonton_is_delivery_shipping_method($chosen[0])) {
+        return;
+    }
+
+    if (!bonton_cart_delivery_eligible_by_date_rules()) {
+        wc_add_notice(
+            __('Home delivery is not available for your cart or pickup date. Please choose pickup or return to the cart.', 'sage'),
+            'error'
+        );
+
+        return;
+    }
+
+    $data        = bonton_get_checkout_posted_form_data();
+    $destination = bonton_checkout_destination_from_post($data);
+
+    if (!bonton_has_meaningful_shipping_destination($destination)) {
+        wc_add_notice(
+            __('Please enter a complete delivery address, including postal code.', 'sage'),
+            'error'
+        );
+
+        return;
+    }
+
+    $postcode = isset($destination['postcode']) ? trim($destination['postcode']) : '';
+    $city     = isset($destination['city']) ? trim($destination['city']) : '';
+    $state    = isset($destination['state']) ? trim($destination['state']) : '';
+
+    if ($postcode === '' || $city === '' || $state === '') {
+        wc_add_notice(
+            __('Please enter city, province, and postal code for your delivery address.', 'sage'),
+            'error'
+        );
+
+        return;
+    }
+
+    bonton_apply_customer_shipping_destination($destination);
+    WC()->cart->calculate_shipping();
+
+    $packages = WC()->shipping()->get_packages();
+    if (!bonton_shipping_rates_include_delivery($packages)) {
+        wc_add_notice(
+            __('We cannot deliver to that address. Please choose pickup or enter a different delivery address.', 'sage'),
+            'error'
+        );
+
+        return;
+    }
+
+    $rates = $packages[0]['rates'];
+    if (!isset($rates[ $chosen[0] ])) {
+        wc_add_notice(
+            __('The delivery option is not available for that address. Please update your address or choose pickup.', 'sage'),
+            'error'
+        );
+    }
 }
 
 /**

@@ -593,6 +593,217 @@ function bonton_has_meaningful_shipping_destination($destination)
 }
 
 /**
+ * Whether the current user is a wholesale account.
+ */
+function bonton_is_wholesale_user()
+{
+    if (!is_user_logged_in()) {
+        return false;
+    }
+
+    return in_array('wcwp_wholesale', (array) wp_get_current_user()->roles, true);
+}
+
+/**
+ * Whether the cart contains ice cream (product 2045), which disables delivery.
+ */
+function bonton_cart_has_icecream()
+{
+    if (!function_exists('WC') || !WC()->cart) {
+        return false;
+    }
+
+    foreach (WC()->cart->get_cart() as $cart_item) {
+        if ((int) $cart_item['product_id'] === 2045) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Whether any cart line has ACF delivery_exclusion.
+ */
+function bonton_cart_has_delivery_exclusion_product()
+{
+    if (!function_exists('WC') || !WC()->cart) {
+        return false;
+    }
+
+    foreach (WC()->cart->get_cart() as $cart_item) {
+        if (get_field('delivery_exclusion', $cart_item['product_id'])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Saturday / blackout / cart rules for showing the delivery shipping option.
+ * Does not check WooCommerce zone coverage — use bonton_shipping_rates_include_delivery().
+ */
+function bonton_cart_delivery_eligible_by_date_rules()
+{
+    if (bonton_cart_has_icecream()) {
+        return false;
+    }
+
+    if (bonton_is_wholesale_user()) {
+        return true;
+    }
+
+    if (!function_exists('WC') || !WC()->session) {
+        return false;
+    }
+
+    $session_date_object = WC()->session->get('pickup_date_object');
+    if (!$session_date_object instanceof \DateTime) {
+        return false;
+    }
+
+    $pickup_date = $session_date_object->format('Y-m-d');
+
+    if ($session_date_object->format('l') !== 'Saturday') {
+        return false;
+    }
+
+    if (in_array($pickup_date, bonton_delivery_blackout_dates_ymd(), true)) {
+        return false;
+    }
+
+    if (bonton_cart_has_delivery_exclusion_product()) {
+        return false;
+    }
+
+    return true;
+}
+
+/**
+ * Whether a WooCommerce shipping method ID is home delivery (not pickup).
+ */
+function bonton_is_delivery_shipping_method($method_id)
+{
+    $method_id = (string) $method_id;
+
+    return str_contains($method_id, 'flat_rate') || str_contains($method_id, 'alg_wc_shipping');
+}
+
+/**
+ * Whether calculated shipping packages include a delivery rate for the current destination.
+ *
+ * @param array<int, array<string, mixed>>|null $packages
+ */
+function bonton_shipping_rates_include_delivery($packages = null)
+{
+    if ($packages === null && function_exists('WC') && WC()->shipping()) {
+        $packages = WC()->shipping()->get_packages();
+    }
+
+    if (empty($packages[0]['rates']) || !is_array($packages[0]['rates'])) {
+        return false;
+    }
+
+    foreach ($packages[0]['rates'] as $rate) {
+        if ($rate instanceof \WC_Shipping_Rate && bonton_is_delivery_shipping_method($rate->get_id())) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Parsed checkout form data from update_order_review AJAX (post_data) or [] when unavailable.
+ *
+ * @return array<string, string>
+ */
+function bonton_get_checkout_posted_form_data()
+{
+    if (!empty($_POST['post_data'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $parsed = [];
+        parse_str(wp_unslash($_POST['post_data']), $parsed); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+        return is_array($parsed) ? $parsed : [];
+    }
+
+    if (!empty($_POST['woocommerce-process-checkout-nonce'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $posted = [];
+        foreach ($_POST as $key => $value) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+            if (is_string($key) && is_scalar($value)) {
+                $posted[ $key ] = (string) $value;
+            }
+        }
+
+        return $posted;
+    }
+
+    return [];
+}
+
+/**
+ * Build a WooCommerce package destination from checkout billing or shipping fields.
+ *
+ * @param array<string, string> $data Posted checkout form values.
+ * @return array<string, string>
+ */
+function bonton_checkout_destination_from_post($data)
+{
+    $ship_elsewhere = !empty($data['ship_to_different_address']) && !wc_ship_to_billing_address_only();
+    $prefix         = $ship_elsewhere ? 'shipping' : 'billing';
+    $destination    = [];
+
+    foreach (['country', 'state', 'postcode', 'city', 'address_1', 'address_2'] as $field) {
+        $key = $prefix . '_' . $field;
+        if (!empty($data[ $key ])) {
+            $destination[ $field ] = wc_clean(wp_unslash($data[ $key ]));
+        }
+    }
+
+    if (!empty($destination['address_1'])) {
+        $destination['address'] = $destination['address_1'];
+    }
+
+    if (empty($destination['country'])) {
+        $destination['country'] = 'CA';
+    }
+
+    return $destination;
+}
+
+/**
+ * Persist shipping destination on the customer record (for rates + order review).
+ *
+ * @param array<string, string> $destination
+ */
+function bonton_apply_customer_shipping_destination($destination)
+{
+    if (!function_exists('WC') || !WC()->customer) {
+        return;
+    }
+
+    $customer = WC()->customer;
+    $map      = [
+        'country'   => 'set_shipping_country',
+        'state'     => 'set_shipping_state',
+        'postcode'  => 'set_shipping_postcode',
+        'city'      => 'set_shipping_city',
+        'address_1' => 'set_shipping_address_1',
+        'address_2' => 'set_shipping_address_2',
+    ];
+
+    foreach ($map as $field => $setter) {
+        if (isset($destination[ $field ]) && is_callable([$customer, $setter])) {
+            $customer->{$setter}($destination[ $field ]);
+        }
+    }
+
+    $customer->set_calculated_shipping(true);
+    $customer->save();
+}
+
+/**
  * Top-level WooCommerce category IDs for six+ GST zero-rating (not bulk discount).
  *
  * 83 = Bakery, 84 = Pâtisserie (child categories such as Sweet Buns are included
