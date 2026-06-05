@@ -39,26 +39,31 @@ a.ui-button:active {
   margin: 0.5rem 0 0 1.5rem !important;
 }
 
-.woocommerce-input-wrapper select {
+.woocommerce-input-wrapper select:not(.select2-hidden-accessible) {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+  background-color: #fff;
+  background-image: none;
   padding-right: 2rem;
+
+  &::-ms-expand {
+    display: none;
+  }
 }
 
-// Chevron on <select> only — not text inputs, email, phone, textarea, etc.
-.woocommerce-input-wrapper:has(select) {
+// One custom chevron for native <select> and SelectWoo — hide both default arrows.
+.woocommerce-input-wrapper:has(select),
+.woocommerce-input-wrapper:has(.select2-container) {
   position: relative;
 }
 
+.woocommerce-input-wrapper:has(select)::before,
 .woocommerce-input-wrapper:has(.select2-container)::before {
-  content: none;
-}
-
-.woocommerce-input-wrapper:has(> select):not(:has(.select2-container))::before {
   position: absolute;
   top: 50%;
   right: 0.75rem;
+  z-index: 1;
   content: "";
   margin-top: -5px;
   width: 8px;
@@ -70,7 +75,7 @@ a.ui-button:active {
   pointer-events: none;
 }
 
-// SelectWoo (checkout, etc.)
+// SelectWoo (checkout country/province, etc.)
 .woocommerce-input-wrapper .select2-container {
   width: 100% !important;
 }
@@ -86,11 +91,7 @@ a.ui-button:active {
   }
 
   .select2-selection__arrow {
-    position: absolute;
-    top: 0;
-    right: 0.5rem;
-    left: auto !important;
-    height: 100%;
+    display: none;
   }
 }
 

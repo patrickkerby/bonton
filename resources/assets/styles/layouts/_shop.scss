@@ -384,6 +384,17 @@
     th.product-name {
       font-family: $font-family-sans-serif;
     }
+
+    .delivery-unavailable-notice {
+      margin: 1rem 0 0;
+      padding: 0.85rem 1rem;
+      border: solid 2px $highlight;
+      background: #fff8f0;
+      font-weight: 600;
+      font-size: 0.9rem;
+      line-height: 1.45;
+      color: $charcoal;
+    }
   }
 }
 

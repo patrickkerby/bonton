@@ -1325,6 +1325,57 @@ function bonton_validate_checkout_delivery_address()
 }
 
 /**
+ * Remember the shipping method before checkout AJAX recalculates rates.
+ */
+add_action('woocommerce_checkout_update_order_review', 'App\bonton_remember_checkout_shipping_method', 1);
+
+function bonton_remember_checkout_shipping_method()
+{
+    if (!function_exists('WC') || !WC()->session) {
+        return;
+    }
+
+    $chosen = WC()->session->get('chosen_shipping_methods');
+    if (!empty($chosen[0])) {
+        WC()->session->set('bonton_prev_chosen_shipping_method', $chosen[0]);
+    }
+}
+
+/**
+ * Warn when WooCommerce silently switches from delivery to pickup after an address change.
+ */
+add_action('woocommerce_shipping_method_chosen', 'App\bonton_notice_when_delivery_switched_to_pickup', 10, 1);
+
+function bonton_notice_when_delivery_switched_to_pickup($chosen_method)
+{
+    if (!function_exists('WC') || !WC()->session) {
+        return;
+    }
+
+    if (!is_checkout() && !(defined('WOOCOMMERCE_CHECKOUT') && WOOCOMMERCE_CHECKOUT)) {
+        return;
+    }
+
+    $previous = WC()->session->get('bonton_prev_chosen_shipping_method');
+    if (!$previous || !bonton_is_delivery_shipping_method($previous)) {
+        return;
+    }
+
+    WC()->session->__unset('bonton_prev_chosen_shipping_method');
+
+    if (bonton_is_delivery_shipping_method($chosen_method)) {
+        return;
+    }
+
+    if (!bonton_shipping_rates_include_delivery()) {
+        wc_add_notice(
+            __('Home delivery is not available for that address. Your order is now set to pickup at Bon Ton — please confirm before placing your order, or use a deliverable address.', 'sage'),
+            'error'
+        );
+    }
+}
+
+/**
  * GA4 Server-side purchase tracking (Measurement Protocol)
  *
  * DISABLED: Causes duplicate revenue in GA4 because the Measurement Protocol

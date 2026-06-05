@@ -715,6 +715,43 @@ function bonton_shipping_rates_include_delivery($packages = null)
 }
 
 /**
+ * Whether a list of package shipping rates includes home delivery.
+ *
+ * @param \WC_Shipping_Rate[]|mixed $methods
+ */
+function bonton_available_methods_include_delivery($methods)
+{
+    if (!is_array($methods)) {
+        return false;
+    }
+
+    foreach ($methods as $method) {
+        $id = $method instanceof \WC_Shipping_Rate ? $method->get_id() : (string) $method;
+        if (bonton_is_delivery_shipping_method($id)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Delivery is allowed for the pickup date/cart, but the current address has no delivery rate.
+ */
+function bonton_delivery_unavailable_for_current_address($available_methods, $formatted_destination)
+{
+    if (!bonton_cart_delivery_eligible_by_date_rules()) {
+        return false;
+    }
+
+    if (trim((string) $formatted_destination) === '') {
+        return false;
+    }
+
+    return !bonton_available_methods_include_delivery($available_methods);
+}
+
+/**
  * Parsed checkout form data from update_order_review AJAX (post_data) or [] when unavailable.
  *
  * @return array<string, string>

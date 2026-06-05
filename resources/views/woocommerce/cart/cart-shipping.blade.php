@@ -68,6 +68,10 @@
   }
 
   $delivery_available = \App\bonton_cart_delivery_eligible_by_date_rules();
+  $delivery_address_unavailable = \App\bonton_delivery_unavailable_for_current_address(
+    $available_methods ?? [],
+    $formatted_destination
+  );
 
   if ($icecream_conflict) {
     delete_user_meta( get_current_user_id(), 'shipping_method' );
@@ -110,6 +114,15 @@
         @endif
       @endforeach
     </ul>
+
+    @if ( $delivery_address_unavailable )
+      <p class="delivery-unavailable-notice" role="alert">
+        {!! sprintf(
+          esc_html__( 'Home delivery is not available for %s. Only pickup at Bon Ton is offered for this address.', 'sage' ),
+          '<strong>' . esc_html( $formatted_destination ) . '</strong>'
+        ) !!}
+      </p>
+    @endif
 
     @if ( $icecream_conflict)
       <p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
@@ -187,6 +200,15 @@
           @endif
         @endforeach
       </ul>
+
+      @if ( $delivery_address_unavailable )
+        <p class="delivery-unavailable-notice" role="alert">
+          {!! sprintf(
+            esc_html__( 'Home delivery is not available for %s. Your order is set to pickup at Bon Ton — please confirm this is what you want before placing your order.', 'sage' ),
+            '<strong>' . esc_html( $formatted_destination ) . '</strong>'
+          ) !!}
+        </p>
+      @endif
 
       @if ( $icecream_conflict)
         <p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
