@@ -293,6 +293,109 @@
   }
 }
 
+@mixin bonton-checkout-review-order-table($checkout-value-col: 8.5rem) {
+  width: 100%;
+  padding: 1.25rem 1.75rem 0.5rem;
+  border: none !important;
+  display: flex;
+  flex-direction: column;
+
+  thead,
+  tbody,
+  tfoot {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  thead tr,
+  tbody tr,
+  tfoot tr {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    width: 100%;
+    gap: 1.25rem;
+    padding: 0.3rem 0;
+  }
+
+  thead th,
+  tbody td.product-name,
+  tfoot th {
+    flex: 1 1 auto;
+    min-width: 0;
+    text-align: left;
+    font-weight: 600;
+  }
+
+  thead th.product-total,
+  tbody td.product-total,
+  tfoot tr:not(.woocommerce-shipping-totals) td {
+    flex: 0 0 $checkout-value-col;
+    width: $checkout-value-col;
+    max-width: $checkout-value-col;
+    text-align: right;
+  }
+
+  tbody {
+    border-bottom: solid 3px $cream;
+    padding-bottom: 0.35rem;
+    margin-bottom: 0.15rem;
+  }
+
+  tfoot th {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding-top: 0.15rem;
+  }
+
+  tfoot td {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+
+  tfoot tr.order-total {
+    border-top: solid 3px $cream;
+    margin-top: 0.5rem;
+    padding-top: 0.85rem;
+
+    th,
+    td {
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+  }
+
+  tfoot tr.fee.bulk-discount {
+    th,
+    td {
+      color: $highlight;
+      font-weight: 600;
+      font-size: 0.875rem;
+    }
+  }
+
+  .cart_item .product-name,
+  .order_item .product-name {
+    font-family: $font-family-serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+
+    .variation,
+    .wc-item-meta {
+      font-weight: 400;
+      font-size: 15px;
+      font-family: $font-family-sans-serif;
+      min-width: 175px;
+    }
+  }
+
+  th.product-name {
+    font-family: $font-family-sans-serif;
+    font-weight: 600;
+  }
+}
+
 .woocommerce-checkout,
 .woocommerce-account {
   form .form-row {
@@ -358,95 +461,7 @@
   }
 
   .shop_table.woocommerce-checkout-review-order-table {
-    width: 100%;
-    padding: 1.25rem 1.75rem 0.5rem;
-    border: none !important;
-    display: flex;
-    flex-direction: column;
-
-    thead,
-    tbody,
-    tfoot {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-    }
-
-    thead tr,
-    tbody tr,
-    tfoot tr {
-      display: flex;
-      flex-direction: row;
-      align-items: flex-start;
-      width: 100%;
-      gap: 1.25rem;
-      padding: 0.3rem 0;
-    }
-
-    thead th,
-    tbody td.product-name,
-    tfoot th {
-      flex: 1 1 auto;
-      min-width: 0;
-      text-align: left;
-      font-weight: 600;
-    }
-
-    thead th.product-total,
-    tbody td.product-total,
-    tfoot tr:not(.woocommerce-shipping-totals) td {
-      flex: 0 0 $checkout-value-col;
-      width: $checkout-value-col;
-      max-width: $checkout-value-col;
-      text-align: right;
-    }
-
-    tbody {
-      border-bottom: solid 3px $cream;
-      padding-bottom: 0.35rem;
-      margin-bottom: 0.15rem;
-    }
-
-    tfoot th {
-      font-weight: 600;
-      font-size: 0.9375rem;
-      padding-top: 0.15rem;
-    }
-
-    tfoot td {
-      font-size: 0.9375rem;
-      line-height: 1.4;
-    }
-
-    tfoot tr.order-total {
-      border-top: solid 3px $cream;
-      margin-top: 0.5rem;
-      padding-top: 0.85rem;
-
-      th,
-      td {
-        font-size: 1.125rem;
-        font-weight: 700;
-      }
-    }
-
-    .cart_item .product-name {
-      font-family: $font-family-serif;
-      font-size: 1.05rem;
-      font-weight: 600;
-
-      .variation {
-        font-weight: 400;
-        font-size: 15px;
-        font-family: $font-family-sans-serif;
-        min-width: 175px;
-      }
-    }
-
-    th.product-name {
-      font-family: $font-family-sans-serif;
-      font-weight: 600;
-    }
+    @include bonton-checkout-review-order-table($checkout-value-col);
   }
 
   #payment.woocommerce-checkout-payment {
@@ -686,6 +701,54 @@
       thead th.product-total,
       tbody td.product-total,
       tfoot tr:not(.woocommerce-shipping-totals) td {
+        flex: 0 0 $checkout-value-col;
+        width: $checkout-value-col;
+        max-width: $checkout-value-col;
+      }
+    }
+  }
+}
+
+body.woocommerce-order-received {
+  $checkout-value-col: 8.5rem;
+
+  .woocommerce-order-details {
+    margin-top: 2rem;
+
+    &__title {
+      width: 100%;
+      margin: 0 0 1rem;
+      font-size: 1.75rem;
+      font-family: $font-family-serif;
+      font-weight: 600;
+    }
+
+    &__panel {
+      width: 100%;
+      background: #fff;
+      border: solid 3px $cream;
+      overflow: hidden;
+    }
+  }
+
+  .shop_table.woocommerce-checkout-review-order-table {
+    @include bonton-checkout-review-order-table($checkout-value-col);
+
+    td,
+    th {
+      border-top: none !important;
+    }
+  }
+
+  @include media-breakpoint-down(md) {
+    $checkout-value-col: 7.5rem;
+
+    .shop_table.woocommerce-checkout-review-order-table {
+      padding: 1rem 1.15rem 0.35rem;
+
+      thead th.product-total,
+      tbody td.product-total,
+      tfoot td {
         flex: 0 0 $checkout-value-col;
         width: $checkout-value-col;
         max-width: $checkout-value-col;

@@ -45,12 +45,13 @@ if ($show_downloads) {
 
     <h2 class="woocommerce-order-details__title"><?php esc_html_e('Order details', 'woocommerce'); ?></h2>
 
-    <table class="woocommerce-table woocommerce-table--order-details shop_table order_details">
+    <div class="woocommerce-order-details__panel">
+    <table class="shop_table woocommerce-checkout-review-order-table woocommerce-table woocommerce-table--order-details order_details">
 
         <thead>
             <tr>
                 <th class="woocommerce-table__product-name product-name"><?php esc_html_e('Product', 'woocommerce'); ?></th>
-                <th class="woocommerce-table__product-table product-total"><?php esc_html_e('Total', 'woocommerce'); ?></th>
+                <th class="woocommerce-table__product-table product-total"><?php esc_html_e('Subtotal', 'woocommerce'); ?></th>
             </tr>
         </thead>
 
@@ -102,13 +103,18 @@ if ($show_downloads) {
         <tfoot class="order-total-rows">
             <?php
             foreach ($order->get_order_item_totals() as $key => $total) {
-                $row_classes = [
-                    'order-total-row',
-                    'order-total-row--' . sanitize_html_class($key),
-                ];
+                $row_classes = [sanitize_html_class($key)];
+
+                if ('cart_subtotal' === $key) {
+                    $row_classes[] = 'cart-subtotal';
+                }
 
                 if ('order_total' === $key) {
                     $row_classes[] = 'order-total';
+                }
+
+                if (0 === strpos($key, 'fee')) {
+                    $row_classes[] = 'fee';
                 }
 
                 if (false !== stripos(wp_strip_all_tags($total['label']), 'bulk discount')) {
@@ -136,6 +142,7 @@ if ($show_downloads) {
             <?php endif; ?>
         </tfoot>
     </table>
+    </div>
 
     <?php do_action('woocommerce_order_details_after_order_table', $order); ?>
 </section>
