@@ -270,7 +270,7 @@ function timeslot_pickup_settings()
         'field_id'         => 'timeslot_pickup',
         'field_type'       => 'select',
         'field_label'      => '',
-        'label_name'       => __('Time Slot', 'woocommerce'),
+        'label_name'       => __('Time Slot:', 'woocommerce'),
         'field_options'    => [
             __('Choose a time slot', 'woocommerce'),
             '9am - 11am',

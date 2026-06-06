@@ -30,7 +30,7 @@ class App extends Controller
             return __('Not Found', 'sage');
         }
         if (function_exists('is_wc_endpoint_url') && is_checkout() && is_wc_endpoint_url('order-received')) {
-            return __('Order Confirmation', 'sage');
+            return __('Thank you!', 'sage');
         }
         return get_the_title();
     }
