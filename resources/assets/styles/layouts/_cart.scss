@@ -696,7 +696,7 @@ body:not(.woocommerce-order-received) ul.woocommerce-thankyou-order-details li {
   margin-bottom: 1.5rem;
 }
 
-.shop_table:not(.woocommerce-table--order-details) {
+.shop_table {
   border: solid 3px $cream !important;
   border-radius: 0 !important;
 
