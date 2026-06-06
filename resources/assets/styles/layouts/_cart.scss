@@ -4,7 +4,116 @@
   background-image: linear-gradient(180deg, #fff 2%, #faf9f5 44%, #fff 100%);
 }
 
-ul.woocommerce-thankyou-order-details li {
+body.woocommerce-order-received {
+  .wrap.main {
+    padding-top: 2rem;
+  }
+
+  .woocommerce-order {
+    max-width: 52rem;
+    margin: 0 auto;
+  }
+
+  .woocommerce-thankyou-order-received {
+    margin: 0 0 1.5rem;
+    padding: 1rem 1.25rem;
+    border-left: solid 4px $highlight;
+    border-radius: 0 4px 4px 0;
+    background: #f4fbf8;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.5;
+    color: $charcoal;
+  }
+
+  .woocommerce-order-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.75rem 1.25rem;
+    list-style: none;
+    margin: 0 0 2rem;
+    padding: 1.25rem 1.5rem;
+    border: solid 3px $cream;
+    background: #fff;
+
+    li {
+      margin: 0;
+      font-size: 0.875rem;
+      line-height: 1.45;
+      color: darken($charcoal, 8%);
+
+      strong {
+        display: block;
+        margin-top: 0.2rem;
+        font-size: 0.95rem;
+        color: $charcoal;
+      }
+    }
+  }
+
+  .woocommerce-order-details {
+    margin-top: 2rem;
+
+    &__title {
+      margin: 0 0 1rem;
+      font-family: $font-family-serif;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+  }
+
+  .woocommerce-table--order-details.shop_table {
+    width: 100%;
+    border: solid 3px $cream !important;
+    border-collapse: collapse;
+    background: #fff;
+
+    thead th {
+      padding: 0.85rem 1.25rem;
+      border-bottom: solid 3px $cream;
+      font-weight: 600;
+      text-align: left;
+    }
+
+    tbody td,
+    tfoot th,
+    tfoot td {
+      padding: 0.65rem 1.25rem;
+      border-top: solid 1px lighten($cream, 2%);
+      vertical-align: top;
+    }
+
+    tbody td.product-name {
+      font-family: $font-family-serif;
+      font-weight: 600;
+    }
+
+    tbody td.product-total,
+    tfoot td {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    tfoot tr:last-child th,
+    tfoot tr:last-child td {
+      border-top: solid 3px $cream;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .wc-item-meta {
+      margin: 0.35rem 0 0;
+      padding: 0;
+      list-style: none;
+      font-size: 0.8125rem;
+      font-weight: 400;
+      font-family: $font-family-sans-serif;
+      color: darken($charcoal, 10%);
+    }
+  }
+}
+
+body:not(.woocommerce-order-received) ul.woocommerce-thankyou-order-details li {
   margin-top: 1.5rem;
 }
 

@@ -711,6 +711,20 @@ body.is-active {
   }
 }
 
+.woocommerce-order-received {
+  .intro {
+    display: none !important;
+  }
+
+  .hero {
+    height: 300px;
+
+    @include media-breakpoint-down(md) {
+      height: 220px;
+    }
+  }
+}
+
 .post-type-archive-product,
 .cart,
 .woocommerce-checkout {

@@ -29,6 +29,9 @@ class App extends Controller
         if (is_404()) {
             return __('Not Found', 'sage');
         }
+        if (function_exists('is_wc_endpoint_url') && is_checkout() && is_wc_endpoint_url('order-received')) {
+            return __('Order Confirmation', 'sage');
+        }
         return get_the_title();
     }
 

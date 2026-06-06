@@ -96,7 +96,7 @@ function timeslot_settings()
         'field_id'         => 'timeslot',
         'field_type'       => 'select',
         'field_label'      => '',
-        'label_name'       => __('timeslot', 'woocommerce'),
+        'label_name'       => __('Delivery Time', 'woocommerce'),
         'field_options'    => [
             __('Choose a delivery time', 'woocommerce'),
             'Between 10 am &amp; 2 pm',
@@ -270,7 +270,7 @@ function timeslot_pickup_settings()
         'field_id'         => 'timeslot_pickup',
         'field_type'       => 'select',
         'field_label'      => '',
-        'label_name'       => __('timeslot_pickup', 'woocommerce'),
+        'label_name'       => __('Time Slot', 'woocommerce'),
         'field_options'    => [
             __('Choose a time slot', 'woocommerce'),
             '9am - 11am',

@@ -87,7 +87,7 @@ $sub_title = get_field('sub_title');
         <h1 class="hero-headline">{!! App::title() !!}</h1>
       </div>
     </header>
-    @if($sub_title)
+    @if($sub_title && !(function_exists('is_checkout') && is_checkout() && function_exists('is_wc_endpoint_url') && is_wc_endpoint_url('order-received')))
       <div class="intro">
         {!! $sub_title !!}
       </div>

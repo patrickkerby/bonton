@@ -62,6 +62,27 @@ export default {
       window.requestAnimationFrame(stackBottomNotices);
     });
 
+    // Checkout: keep processing feedback in view when placing an order.
+    $(document.body).on('checkout_place_order', function() {
+      var $target = $('#place_order').length ? $('#place_order') : $('#order_review');
+      if (!$target.length) {
+        return;
+      }
+      var top = Math.max(0, $target.offset().top - (window.innerHeight * 0.4));
+      $('html, body').animate({ scrollTop: top }, 250);
+    });
+
+    if ($('body').hasClass('woocommerce-order-received')) {
+      var $order = $('.woocommerce-order').first();
+      if ($order.length) {
+        window.setTimeout(function() {
+          $('html, body').animate({
+            scrollTop: Math.max(0, $order.offset().top - 20),
+          }, 300);
+        }, 150);
+      }
+    }
+
     // --- Utility Banner: Global Date Picker ---
     // Uses bootstrap-datepicker (see main.js). On cart/checkout, WooCommerce loads
     // jQuery UI datepicker later and replaces `jQuery.fn.datepicker`, so we always

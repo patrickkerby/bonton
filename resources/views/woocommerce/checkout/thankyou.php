@@ -39,7 +39,7 @@ defined( 'ABSPATH' ) || exit;
 
 		<?php else : ?>
 
-			<p class="woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received"><?php echo apply_filters( 'woocommerce_thankyou_order_received_text', esc_html__( 'Thank you. Your order has been received.', 'woocommerce' ), $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
+			<p class="woocommerce-notice woocommerce-notice--success woocommerce-thankyou-order-received"><?php echo apply_filters( 'woocommerce_thankyou_order_received_text', esc_html__( 'Thank you — your order has been placed. We\'ll send a confirmation email shortly.', 'woocommerce' ), $order ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></p>
 
 			<ul class="woocommerce-order-overview woocommerce-thankyou-order-details order_details">
 
@@ -73,15 +73,15 @@ defined( 'ABSPATH' ) || exit;
 					</li>
 				<?php endif; ?>
 
-				<li class="pickup">
-					<?php 
-						$pickup_date = WC()->session->get('pickup_date_calendar'); 
-						$date_old = get_post_meta( $order->get_order_number(), 'pickup_date', true );	
-						$date = $order->get_meta( 'pickup_date', true );
-
+				<?php
+				$pickup_date = $order->get_meta( 'pickup_date', true );
+				if ( $pickup_date ) :
 					?>
-					Pickup date: <strong><?php echo $date; ?></strong>
-				</li>
+					<li class="woocommerce-order-overview__pickup-date pickup">
+						<?php esc_html_e( 'Pick-up / Delivery date:', 'sage' ); ?>
+						<strong><?php echo esc_html( $pickup_date ); ?></strong>
+					</li>
+				<?php endif; ?>
 
 			</ul>
 
