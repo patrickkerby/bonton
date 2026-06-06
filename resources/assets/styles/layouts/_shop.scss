@@ -749,6 +749,7 @@ body.woocommerce-order-received {
       thead th.product-total,
       tbody td.product-total,
       tfoot td {
+        padding: 0.5rem 0 !important;
         flex: 0 0 $checkout-value-col;
         width: $checkout-value-col;
         max-width: $checkout-value-col;
