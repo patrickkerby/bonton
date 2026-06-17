@@ -614,6 +614,7 @@ export default {
       var scrollTicking = false;
       var scrollEndTimer = null;
       var SCROLL_END_MS = 200;
+      var ignoreScrollUntil = 0;
 
       function isMobileViewport() {
         return window.innerWidth <= mobileMax;
@@ -665,15 +666,20 @@ export default {
         }
 
         $utility.css('--banner-collapse', targetCollapse + 'px');
-
-        var scrollY = window.pageYOffset || 0;
-        var targetScrollY = scrollY - layoutDelta;
-
         collapseAmount = targetCollapse;
         hideAmount = targetCollapse;
-        lastScrollY = targetScrollY;
 
-        window.scrollTo(0, targetScrollY);
+        // Collapsing shrinks the document — compensate once after scroll stops.
+        // Expanding must not scrollTo: iOS treats it as downward scroll and re-hides the banner.
+        if (layoutDelta > 0) {
+          var scrollY = window.pageYOffset || 0;
+          var targetScrollY = scrollY - layoutDelta;
+          lastScrollY = targetScrollY;
+          ignoreScrollUntil = Date.now() + 200;
+          window.scrollTo(0, targetScrollY);
+        } else {
+          lastScrollY = window.pageYOffset || 0;
+        }
       }
 
       function scheduleBannerLayoutSettlement() {
@@ -684,6 +690,12 @@ export default {
       function syncBannerOnScroll() {
         if (!isMobileViewport()) {
           resetBannerScrollState();
+          scrollTicking = false;
+          return;
+        }
+
+        if (Date.now() < ignoreScrollUntil) {
+          lastScrollY = window.pageYOffset || 0;
           scrollTicking = false;
           return;
         }
@@ -699,9 +711,18 @@ export default {
           hideAmount = Math.max(0, hideAmount + delta);
         }
 
-        applyVisualShift();
         lastScrollY = scrollY;
-        scheduleBannerLayoutSettlement();
+
+        if (delta < 0 || scrollY <= 0) {
+          // Reveal: keep layout in sync while scrolling up so the banner stays visible after touch ends.
+          clearTimeout(scrollEndTimer);
+          settleBannerLayout();
+        } else if (delta > 0) {
+          // Hide: transform-only while scrolling down; settle after momentum stops.
+          applyVisualShift();
+          scheduleBannerLayoutSettlement();
+        }
+
         scrollTicking = false;
       }
 
