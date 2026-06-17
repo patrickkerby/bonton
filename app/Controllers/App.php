@@ -151,5 +151,34 @@ class App extends Controller
         return PickupVacationDates::getDates();
     }
 
+  /**
+   * Display name for the utility bar account menu (first name, else display name).
+   */
+  public function utilityAccountDisplayName()
+  {
+    if (!is_user_logged_in()) {
+      return '';
+    }
+    $user = wp_get_current_user();
+    if ($user->first_name) {
+      return $user->first_name;
+    }
+    if ($user->display_name) {
+      return $user->display_name;
+    }
+    return $user->user_login;
+  }
+
+  /**
+   * Loyalty points balance for the utility bar account menu.
+   */
+  public function utilityAccountPoints()
+  {
+    if (!is_user_logged_in() || !class_exists('\WC_Points_Rewards_Manager')) {
+      return 0;
+    }
+    return (int) \WC_Points_Rewards_Manager::get_users_points(get_current_user_id());
+  }
+
 }
 

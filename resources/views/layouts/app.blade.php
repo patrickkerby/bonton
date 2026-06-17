@@ -2,8 +2,9 @@
 <html {!! get_language_attributes() !!}>
   @include('partials.head')
   <body @php body_class() @endphp>
-  @include('partials.utility-banner')
   @php if ( function_exists( 'gtm4wp_the_gtm_tag' ) ) { gtm4wp_the_gtm_tag(); } @endphp
+  @include('partials.site-header-utility')
+  <div class="site-header-shell" id="site-header-shell">
     @php do_action('get_header') @endphp
       @if(isset($landing_page) && $landing_page == TRUE)
         @include('partials.header-landing')
@@ -12,6 +13,7 @@
       @else
         @include('partials.header')
       @endif
+    </div>
     <div class="wrap {{ $container }}" role="document">
       <div class="content">
         @if ( is_front_page() )

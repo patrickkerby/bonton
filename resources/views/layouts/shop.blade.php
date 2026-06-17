@@ -2,10 +2,12 @@
 <html {!! get_language_attributes() !!}>
   @include('partials.head')
   <body @php body_class() @endphp>
+    @include('partials.site-header-utility')
+    <div class="site-header-shell" id="site-header-shell">
     @php do_action('get_header') @endphp
-    @include('partials.utility-banner')
 
     @include('partials.header')
+    </div>
 
     <div class="container-fluid" role="document">
       {{-- <div class="row justify-content-center">

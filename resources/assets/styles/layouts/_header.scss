@@ -1,9 +1,14 @@
 /* stylelint-disable no-descending-specificity */
 body.is-active {
   position: fixed;
+  width: 100%;
 
   .mobile-banner button.hamburger {
     position: fixed;
+    z-index: 12001;
+    top: 1.5rem;
+    right: 0.75rem;
+    margin-top: 0;
   }
 }
 
@@ -141,23 +146,33 @@ body.is-active {
 }
 
 .cart-icon {
-  padding: 0.5rem 1rem 0.65rem 2.5rem;
-  background: url("../../images/cart-icon.svg") 16px 10px no-repeat;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.5rem 1rem;
   font-weight: 600;
   font-size: 15px;
+  color: $charcoal;
+  text-decoration: none;
+  line-height: 1;
 
-  .mobile-banner & {
-    background: url("../../images/cart-icon.svg") center left no-repeat;
-    background-color: transparent;
-    height: 2.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: end;
-    position: absolute;
-    left: 2rem;
-    width: 2rem;
-    padding: 0;
-    margin-top: 1.5rem;
+  @include slowfade(0.2);
+
+  &:hover {
+    color: $highlight;
+  }
+
+  &__symbol {
+    font-size: 1rem;
+    line-height: 1;
+    color: $highlight;
+  }
+
+  &__count {
+    font-size: inherit;
+    font-weight: 600;
+    color: $highlight;
+    line-height: 1;
   }
 }
 
@@ -437,7 +452,40 @@ body.is-active {
 // mobile nav
 .mobile-banner {
   display: flex;
+  align-items: flex-start;
+  justify-content: space-evenly;
+  padding: 0 0.75rem;
   position: relative;
+
+  &__shop {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    flex-shrink: 0;
+    width: 3rem;
+    margin-top: 1.75rem;
+    padding: 0.15rem 0;
+    font-size: 0.5625rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $highlight;
+    text-decoration: none;
+    z-index: 3;
+
+    @include slowfade(0.2);
+
+    .fa-store {
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    &:hover {
+      color: darken($highlight, 8%);
+    }
+  }
 
   .logo {
     display: flex;
@@ -446,20 +494,35 @@ body.is-active {
     text-indent: -999999px;
     background: url(../../images/BonTon-Logo.png) no-repeat center center $charcoal;
     background-size: cover;
-    margin: 1rem auto -1rem auto;
+    margin: 1rem 0 -1rem 0;
     border: solid #fff 7px;
     position: relative;
     z-index: 2;
+    flex-shrink: 0;
   }
 
   button {
-    position: absolute;
-    right: 0.5rem;
-    top: 1.5rem;
-    z-index: 2100;
+    position: relative;
+    right: auto;
+    top: auto;
+    margin-top: 1.75rem;
+    flex-shrink: 0;
+    z-index: 109;
 
     &:focus {
       outline: none;
+    }
+  }
+
+  &--minimal {
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0.25rem 0.75rem 0.15rem;
+
+    button.hamburger {
+      margin-top: 0;
+      position: absolute;
+      top: 1.5rem;
     }
   }
 
@@ -471,6 +534,18 @@ body.is-active {
     left: 0;
     background: $cream;
     z-index: 2000;
+
+    &.show,
+    &.is-active {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      max-width: none;
+      height: 100%;
+      height: 100vh;
+      z-index: 12000;
+      overflow-y: auto;
+    }
 
     &::after {
       content: "";

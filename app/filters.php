@@ -268,12 +268,11 @@ add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
 }, 10, 3 );
 
 
-// Cart count in header: fragment selector must match `a.cart-icon` in `partials/header.blade.php`
+// Cart count in header + mobile util bar: fragment updates `.cart-icon__count`
 add_filter( 'woocommerce_add_to_cart_fragments', 'add_to_cart_fragment' );
 function add_to_cart_fragment( $fragments ) {
     $count = absint( WC()->cart->get_cart_contents_count() );
-    $html  = '<a class="cart-icon" href="' . esc_url( wc_get_cart_url() ) . '">' . $count . '</a>';
-    $fragments['.cart-icon'] = $html;
+    $fragments['.cart-icon__count'] = '<span class="cart-icon__count">' . $count . '</span>';
     return $fragments;
 }
 

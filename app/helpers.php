@@ -997,3 +997,24 @@ function bonton_zero_bulk_discount_fee_taxes($fee_taxes, $fee)
     return $fee_taxes;
 }
 
+/**
+ * Points label from WooCommerce Points & Rewards (stored as "singular:plural").
+ *
+ * @param int $count
+ * @return string
+ */
+function bonton_points_rewards_points_label($count)
+{
+    $label = get_option('wc_points_rewards_points_label', __('Points', 'woocommerce-points-and-rewards'));
+
+    if (strpos($label, ':') !== false) {
+        $parts = explode(':', $label, 2);
+        $singular = trim($parts[0]);
+        $plural = trim($parts[1] !== '' ? $parts[1] : $parts[0]);
+
+        return (int) $count === 1 ? $singular : $plural;
+    }
+
+    return $label;
+}
+

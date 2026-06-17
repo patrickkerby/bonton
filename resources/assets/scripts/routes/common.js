@@ -432,20 +432,268 @@ export default {
     (function() {
       var $btn = $('#bulk-info-btn');
       var $popover = $('#bulk-info-popover');
+      var $banner = $('.utility-banner');
+      var mobileMax = 767;
 
       if (!$btn.length) return;
 
+      function isDesktopViewport() {
+        return window.innerWidth > mobileMax;
+      }
+
+      function measurePopoverWidth() {
+        if ($popover.is(':visible')) {
+          return $popover.outerWidth() || 0;
+        }
+
+        $popover.css({ display: 'block', visibility: 'hidden' });
+        var width = $popover.outerWidth() || 0;
+        $popover.css({ display: 'none', visibility: '' });
+
+        return width;
+      }
+
+      function positionBulkPopover() {
+        if (!isDesktopViewport() || !$banner.length) {
+          $popover.css({ left: '', right: '', top: '', bottom: '' });
+          return;
+        }
+
+        var popoverWidth = measurePopoverWidth() || 288;
+        var bannerEl = $banner[0];
+        var btnEl = $btn[0];
+        var bannerRect = bannerEl.getBoundingClientRect();
+        var btnRect = btnEl.getBoundingClientRect();
+        var left = btnRect.left - bannerRect.left + (btnRect.width / 2) - (popoverWidth / 2);
+        var maxLeft = Math.max(0, bannerRect.width - popoverWidth);
+
+        left = Math.max(0, Math.min(left, maxLeft));
+
+        $popover.css({
+          left: left + 'px',
+          right: 'auto',
+          top: '',
+          bottom: '',
+        });
+      }
+
       $btn.on('click', function(e) {
         e.stopPropagation();
-        $popover.fadeToggle(150);
+        if ($popover.is(':visible')) {
+          $popover.fadeOut(150);
+        } else {
+          positionBulkPopover();
+          $popover.fadeIn(150, positionBulkPopover);
+        }
         $('#global-date-dropdown').fadeOut(150);
       });
+
+      $(window).on('resize', positionBulkPopover);
 
       $(document).on('mousedown touchstart', function(e) {
         if (!$popover.is(e.target) && $popover.has(e.target).length === 0 && !$btn.is(e.target) && $btn.has(e.target).length === 0) {
           $popover.fadeOut(150);
         }
       });
+    })();
+
+    // --- Utility account dropdown (banner + mobile bar) ---
+    (function () {
+      var $accounts = $('.utility-account');
+      if (!$accounts.length) {
+        return;
+      }
+
+      function closeAllAccountPanels() {
+        $accounts.each(function () {
+          var $wrap = $(this);
+          $wrap.find('.utility-account__trigger').attr('aria-expanded', 'false');
+          $wrap.find('.utility-account__panel')
+            .attr('aria-hidden', 'true')
+            .prop('hidden', true);
+        });
+        $('body').removeClass('utility-account-open');
+      }
+
+      function openAccountPanel($wrap) {
+        var $btn = $wrap.find('.utility-account__trigger');
+        var $panel = $wrap.find('.utility-account__panel');
+        $panel.prop('hidden', false);
+        window.requestAnimationFrame(function () {
+          $btn.attr('aria-expanded', 'true');
+          $panel.attr('aria-hidden', 'false');
+          $('body').addClass('utility-account-open');
+        });
+      }
+
+      $accounts.each(function () {
+        var $wrap = $(this);
+        var $btn = $wrap.find('.utility-account__trigger');
+
+        $btn.on('click', function (e) {
+          e.stopPropagation();
+          var isOpen = $btn.attr('aria-expanded') === 'true';
+          closeAllAccountPanels();
+          if (!isOpen) {
+            openAccountPanel($wrap);
+            $('#global-date-dropdown').fadeOut(150);
+            $('#bulk-info-popover').fadeOut(150);
+          }
+        });
+      });
+
+      $(document).on('mousedown touchstart', function (e) {
+        if (!$(e.target).closest('.utility-account').length) {
+          closeAllAccountPanels();
+        }
+      });
+    })();
+
+    // --- Mobile: scroll-linked beige banner reveal (white util bar stays stuck) ---
+    (function () {
+      var $utility = $('#site-header-utility');
+      var $banner = $('.utility-banner');
+      if (!$utility.length || !$banner.length) {
+        return;
+      }
+
+      var mobileMax = 767;
+      var hideAmount = 0;
+      var appliedHide = 0;
+      var bannerHeight = 0;
+      var lastScrollY = window.pageYOffset || 0;
+      var scrollTicking = false;
+
+      function isMobileViewport() {
+        return window.innerWidth <= mobileMax;
+      }
+
+      function measureFullBannerHeight() {
+        var previousHide = appliedHide;
+        $banner.css('--banner-hide', '0px');
+        bannerHeight = $banner.outerHeight() || 0;
+        $banner.css('--banner-hide', previousHide + 'px');
+      }
+
+      function applyHideAmount() {
+        if (!isMobileViewport()) {
+          hideAmount = 0;
+          appliedHide = 0;
+          $banner.css('--banner-hide', '0px');
+          lastScrollY = window.pageYOffset || 0;
+          return;
+        }
+
+        var newHide = Math.max(0, Math.min(bannerHeight, hideAmount));
+        var layoutDelta = newHide - appliedHide;
+
+        if (layoutDelta === 0) {
+          lastScrollY = window.pageYOffset || 0;
+          return;
+        }
+
+        $banner.css('--banner-hide', newHide + 'px');
+
+        // Collapsing the banner changes document height; compensate so scroll position
+        // does not bounce (which caused jitter at partial conceal).
+        var scrollY = window.pageYOffset || 0;
+        window.scrollTo(0, scrollY - layoutDelta);
+
+        appliedHide = newHide;
+        hideAmount = newHide;
+        lastScrollY = window.pageYOffset || 0;
+      }
+
+      function syncBannerOnScroll() {
+        if (!isMobileViewport()) {
+          hideAmount = 0;
+          applyHideAmount();
+          scrollTicking = false;
+          return;
+        }
+
+        var scrollY = window.pageYOffset || 0;
+        var delta = scrollY - lastScrollY;
+
+        if (scrollY <= 0) {
+          hideAmount = 0;
+        } else if (delta > 0) {
+          hideAmount = Math.min(bannerHeight, hideAmount + delta);
+        } else if (delta < 0) {
+          hideAmount = Math.max(0, hideAmount + delta);
+        }
+
+        applyHideAmount();
+        scrollTicking = false;
+      }
+
+      measureFullBannerHeight();
+      applyHideAmount();
+
+      if (typeof ResizeObserver !== 'undefined') {
+        var resizeObserver = new ResizeObserver(function () {
+          var previousHeight = bannerHeight;
+          measureFullBannerHeight();
+          if (bannerHeight !== previousHeight) {
+            hideAmount = Math.min(hideAmount, bannerHeight);
+            applyHideAmount();
+          }
+        });
+        resizeObserver.observe($banner[0]);
+      }
+
+      $(window).on('scroll', function () {
+        if (!scrollTicking) {
+          window.requestAnimationFrame(syncBannerOnScroll);
+          scrollTicking = true;
+        }
+      });
+
+      $(window).on('resize', function () {
+        measureFullBannerHeight();
+        hideAmount = Math.min(hideAmount, bannerHeight);
+        applyHideAmount();
+      });
+    })();
+
+    // --- Mobile util bar: inline search field (override FiboSearch mobile layout) ---
+    (function () {
+      function initMobileUtilBarSearch() {
+        var $wrap = $('.mobile-util-bar__search--field .dgwt-wcas-search-wrapp');
+        if (!$wrap.length) {
+          return;
+        }
+
+        $wrap.find(
+          '.dgwt-wcas-search-icon, .js-dgwt-wcas-search-icon-handler, ' +
+          '.dgwt-wcas-enable-mobile-form, .js-dgwt-wcas-enable-mobile-form, ' +
+          '.dgwt-wcas-ico-magnifier-handler, .js-dgwt-wcas-ico-magnifier-handler'
+        ).hide();
+
+        var $form = $wrap.find('.dgwt-wcas-search-form');
+        if ($form.length) {
+          $form.css({
+            display: 'flex',
+            visibility: 'visible',
+            opacity: 1,
+            position: 'relative',
+            left: 'auto',
+            top: 'auto',
+            minWidth: 0,
+            width: '100%',
+            maxWidth: '100%',
+          }).show();
+        }
+
+        var $input = $wrap.find('.dgwt-wcas-search-input');
+        if ($input.length) {
+          $input.attr('placeholder', 'Search Products');
+        }
+      }
+
+      initMobileUtilBarSearch();
+      window.setTimeout(initMobileUtilBarSearch, 250);
+      window.setTimeout(initMobileUtilBarSearch, 800);
     })();
 
     // Classic cart "remove line" uses GET + update_wc_div (not mini-cart remove_from_cart).
@@ -466,7 +714,7 @@ export default {
       }
 
       $(document.body).on('wc_cart_emptied', function () {
-        $('a.cart-icon').text('0');
+        $('.cart-icon__count').text('0');
         resetUtilityBannerBulkProgress();
         if (typeof wc_cart_fragments_params === 'undefined') {
           return;

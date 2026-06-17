@@ -13,6 +13,7 @@
     <div id="pickup_vacation_dates_global" class="d-none" aria-hidden="true">{!! json_encode($pickup_vacation_dates) !!}</div>
     <div class="utility-banner__inner">
 
+      <div class="utility-banner__cluster">
       {{-- Pickup date selector --}}
       <div class="utility-banner__date">
         <button type="button" class="utility-banner__date-btn" id="global-date-picker-btn">
@@ -70,19 +71,29 @@
             @endif
           </span>
         </button>
+      </div>
+      </div>
 
-        {{-- Info popover --}}
-        <div class="utility-banner__popover" id="bulk-info-popover" style="display:none;">
-          <div class="utility-banner__popover-content">
-            <strong>Bulk Bread Discount</strong>
-            <p>Buy more bread, buns & bagels to get automatic discounts:</p>
-            <ul>
-              <li><strong>5+ items</strong> &rarr; 10% off</li>
-              <li><strong>10+ items</strong> &rarr; 20% off</li>
-            </ul>
-            <p class="utility-banner__popover-note">A half-dozen buns/bagels = 1 item, a dozen = 2 items, singles count as 1/6 each.</p>
-          </div>
-        </div>
+      <div class="utility-banner__account d-none d-md-flex">
+        @include('partials.utility-account', [
+          'modifier_class' => 'utility-account--banner',
+          'show_label' => true,
+          'show_caret' => true,
+          'id_suffix' => '-banner',
+        ])
+      </div>
+    </div>
+
+    {{-- Outside __inner so scroll transforms do not trap position:fixed popovers --}}
+    <div class="utility-banner__popover" id="bulk-info-popover" style="display:none;">
+      <div class="utility-banner__popover-content">
+        <strong>Bulk Bread Discount</strong>
+        <p>Buy more bread, buns & bagels to get automatic discounts:</p>
+        <ul>
+          <li><strong>5+ items</strong> &rarr; 10% off</li>
+          <li><strong>10+ items</strong> &rarr; 20% off</li>
+        </ul>
+        <p class="utility-banner__popover-note">A half-dozen buns/bagels = 1 item, a dozen = 2 items, singles count as 1/6 each.</p>
       </div>
     </div>
   </div>

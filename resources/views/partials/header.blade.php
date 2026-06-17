@@ -19,19 +19,15 @@ $sub_title = get_field('sub_title');
 
 @endphp
 
-@if(is_cart())
-  <header class="banner d-none d-md-flex">
-@else
-  <header class="banner d-none d-sm-flex">
-@endif
-  <div class="util-nav">    	
+<header class="banner d-none d-md-flex">
+  <div class="util-nav">
     {{-- caching="false" = render hours in PHP (no extra AJAX / "checking…" placeholder). Enable caching in shortcode only if full-page cache would serve stale open/closed text. --}}
     <div class="hours">@php echo do_shortcode('[mbhi location="Bon Ton Bakery" caching="false"]'); @endphp</div>
     <div class="top-nav-row">
       @if (has_nav_menu('top_navigation'))
         {!! wp_nav_menu(['theme_location' => 'top_navigation', 'menu_class' => 'top-nav']) !!}
       @endif
-      <a class="cart-icon" href="{{ wc_get_cart_url() }}">{{ WC()->cart->get_cart_contents_count() }}</a>
+      @include('partials.cart-icon')
     </div>
   </div>
   <div class="container-fluid">
@@ -45,19 +41,18 @@ $sub_title = get_field('sub_title');
   </div>
 </header>
 
-@if(is_cart())
-  <header class="mobile-banner d-md-none">
-@else
-  <header class="mobile-banner d-sm-none">
-@endif
+<header class="mobile-banner d-md-none{{ is_cart() ? ' mobile-banner--minimal' : '' }}">
+  @php
+    $mobile_shop_url = function_exists('wc_get_page_permalink') ? wc_get_page_permalink('shop') : home_url('/shop/');
+  @endphp
 
   @unless(is_cart())
-    <a class="cart-icon" href="{{ wc_get_cart_url() }}">{{ WC()->cart->get_cart_contents_count() }}</a> 
-  @endunless
-
-  @unless(is_cart())
+    <a href="{{ esc_url($mobile_shop_url) }}" class="mobile-banner__shop" aria-label="{{ __('Shop', 'woocommerce') }}">
+      <i class="fa fa-store" aria-hidden="true"></i>
+      <span>SHOP</span>
+    </a>
     <a href="{!! get_home_url() !!}" class="logo">Bon Ton Bakery &amp; Pâtisserie</a>
-  @endunless 
+  @endunless
 
   <button class="navbar-toggler hamburger hamburger--arrow" type="button" data-toggle="collapse" data-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1" aria-expanded="false" aria-label="Toggle navigation">
     <span class="hamburger-box">

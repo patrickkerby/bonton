@@ -14,6 +14,28 @@
     padding: 0.5rem 1rem;
     font-size: 0.8125rem;
     font-weight: 500;
+
+    @media screen and (min-width: 768px) {
+      max-width: none;
+      justify-content: space-between;
+      padding: 0.5rem 1.25rem;
+    }
+  }
+
+  &__cluster {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1 1 auto;
+
+    @media screen and (min-width: 768px) {
+      justify-content: center;
+    }
+  }
+
+  &__account {
+    flex-shrink: 0;
+    margin-left: auto;
   }
 
   &__divider {
@@ -413,8 +435,9 @@
   &__popover {
     position: absolute;
     top: calc(100% + 0.5rem);
-    right: 0;
-    z-index: 100;
+    right: auto;
+    left: 0;
+    z-index: 130;
     background: #fff;
     border-radius: 6px;
     box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.15);
@@ -455,6 +478,40 @@
 
   // --- Responsive ---
 
+  @media screen and (max-width: 767px) {
+    --banner-hide: 0;
+
+    position: relative;
+    top: auto;
+    z-index: 1;
+    overflow: visible;
+
+    &__inner {
+      transform: translateY(calc(-1 * var(--banner-hide)));
+      margin-bottom: calc(-1 * var(--banner-hide));
+      overflow: hidden;
+      justify-content: space-between;
+      padding: 0.35rem 0.5rem;
+      max-width: none;
+    }
+
+    &__account {
+      display: none !important;
+    }
+
+    &__popover {
+      position: fixed;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.15);
+      z-index: 130;
+    }
+  }
+
   @media screen and (max-width: 640px) {
     &__inner {
       justify-content: space-between;
@@ -491,17 +548,6 @@
     &__date-dropdown {
       left: 0;
       transform: none;
-    }
-
-    &__popover {
-      position: fixed;
-      top: auto;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      border-radius: 8px 8px 0 0;
-      box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.15);
     }
   }
 }
