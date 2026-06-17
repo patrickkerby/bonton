@@ -156,10 +156,7 @@
 
   &__date-dropdown {
     position: absolute;
-    top: calc(100% + 0.5rem);
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 100;
+    z-index: 130;
     background: #fff;
     border-radius: 6px;
     box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.15);
@@ -510,6 +507,18 @@
       box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.15);
       z-index: 130;
     }
+
+    &__date-dropdown {
+      position: fixed;
+      top: auto;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      border-radius: 8px 8px 0 0;
+      box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.15);
+      z-index: 130;
+    }
   }
 
   @media screen and (max-width: 640px) {
@@ -543,11 +552,6 @@
 
     &__milestone {
       font-size: 0.5625rem;
-    }
-
-    &__date-dropdown {
-      left: 0;
-      transform: none;
     }
   }
 }

@@ -91,8 +91,14 @@ export default {
       var $btn = $('#global-date-picker-btn');
       var $dropdown = $('#global-date-dropdown');
       var $picker = $('#global-datepicker');
+      var $banner = $('.utility-banner');
+      var mobileMax = 767;
 
       if (!$btn.length) return;
+
+      function isMobileUtilityViewport() {
+        return window.innerWidth <= mobileMax;
+      }
 
       function utilityBannerDatepicker() {
         var p = window.bontonBootstrapDatepickerPlugin;
@@ -110,6 +116,7 @@ export default {
       var ignorePickerChange = true;
       var calendarStateStale = false;
       var refreshInFlight = null;
+      var suppressOutsideCloseUntil = 0;
 
       function formatPickupLabelFromDate(d) {
         var w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -349,8 +356,50 @@ export default {
         return refreshInFlight;
       }
 
+      function measureDateDropdownWidth() {
+        if ($dropdown.is(':visible')) {
+          return $dropdown.outerWidth() || 0;
+        }
+
+        $dropdown.css({ display: 'block', visibility: 'hidden' });
+        var width = $dropdown.outerWidth() || 0;
+        $dropdown.css({ display: 'none', visibility: '' });
+
+        return width;
+      }
+
+      function positionDateDropdown() {
+        if (isMobileUtilityViewport() || !$banner.length) {
+          $dropdown.css({ left: '', right: '', top: '', bottom: '', transform: '' });
+          return;
+        }
+
+        var dropdownWidth = measureDateDropdownWidth() || 320;
+        var bannerEl = $banner[0];
+        var btnEl = $btn[0];
+        var bannerRect = bannerEl.getBoundingClientRect();
+        var btnRect = btnEl.getBoundingClientRect();
+        var left = btnRect.left - bannerRect.left + (btnRect.width / 2) - (dropdownWidth / 2);
+        var maxLeft = Math.max(0, bannerRect.width - dropdownWidth);
+
+        left = Math.max(0, Math.min(left, maxLeft));
+
+        $dropdown.css({
+          left: left + 'px',
+          right: 'auto',
+          top: (btnRect.bottom - bannerRect.top + 8) + 'px',
+          bottom: 'auto',
+          transform: 'none',
+        });
+      }
+
       function openUtilityDateDropdown() {
-        $dropdown.fadeToggle(150);
+        if ($dropdown.is(':visible')) {
+          $dropdown.fadeOut(150);
+        } else {
+          positionDateDropdown();
+          $dropdown.fadeIn(150, positionDateDropdown);
+        }
         $('#bulk-info-popover').fadeOut(150);
       }
 
@@ -374,58 +423,58 @@ export default {
         }
       );
 
-      if (isCartPage) {
-        // Cart page: scroll to the main cart calendar when it exists (avoid two
-        // inline pickers). After the last item is removed, WooCommerce AJAX can
-        // replace markup and remove #datepicker — fall back to the same global
-        // dropdown used on other pages so the date is never "stuck".
-        var cartPageOutsideCloseBound = false;
-
-        var ensureCartPageOutsideClose = function () {
-          if (cartPageOutsideCloseBound) {
+      function bindUtilityDateOutsideClose() {
+        $(document).on('mousedown touchstart', function(e) {
+          if (Date.now() < suppressOutsideCloseUntil) {
             return;
           }
-          $(document).on('mousedown touchstart', function(e) {
-            if (
-              !$dropdown.is(e.target) &&
-              $dropdown.has(e.target).length === 0 &&
-              !$btn.is(e.target) &&
-              $btn.has(e.target).length === 0
-            ) {
-              $dropdown.fadeOut(150);
-            }
-          });
-          cartPageOutsideCloseBound = true;
-        };
 
+          if (
+            !$dropdown.is(':visible') ||
+            $dropdown.is(e.target) ||
+            $dropdown.has(e.target).length > 0 ||
+            $btn.is(e.target) ||
+            $btn.has(e.target).length > 0
+          ) {
+            return;
+          }
+
+          $dropdown.fadeOut(150);
+        });
+      }
+
+      if (isCartPage) {
+        // Desktop cart: scroll to the main cart calendar when it exists. Mobile and
+        // empty-cart AJAX fallbacks use the same global dropdown as other pages.
         $btn.on('click', function(e) {
           e.stopPropagation();
+          suppressOutsideCloseUntil = Date.now() + 400;
           var $calendar = $('#datepicker');
-          if ($calendar.length) {
+          if ($calendar.length && !isMobileUtilityViewport()) {
             $('html, body').animate({ scrollTop: $calendar.offset().top - 80 }, 300);
             $calendar.closest('.calendar-container').css('outline', '2px solid #6fcf97');
             setTimeout(function() {
               $calendar.closest('.calendar-container').css('outline', '');
             }, 1500);
           } else {
-            ensureCartPageOutsideClose();
             openUtilityDateDropdownWhenReady();
           }
         });
+
+        bindUtilityDateOutsideClose();
       } else {
         initBootstrap();
 
         $btn.on('click', function(e) {
           e.stopPropagation();
+          suppressOutsideCloseUntil = Date.now() + 400;
           openUtilityDateDropdownWhenReady();
         });
 
-        $(document).on('mousedown touchstart', function(e) {
-          if (!$dropdown.is(e.target) && $dropdown.has(e.target).length === 0 && !$btn.is(e.target) && $btn.has(e.target).length === 0) {
-            $dropdown.fadeOut(150);
-          }
-        });
+        bindUtilityDateOutsideClose();
       }
+
+      $(window).on('resize', positionDateDropdown);
     })();
 
     // --- Utility Banner: Bulk Discount Popover ---
