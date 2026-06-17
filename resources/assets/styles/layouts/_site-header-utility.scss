@@ -14,5 +14,9 @@
     .utility-banner {
       transform: translateY(calc(-1 * var(--header-shift)));
     }
+
+    .mobile-util-bar {
+      margin-top: calc(-1 * var(--header-shift));
+    }
   }
 }

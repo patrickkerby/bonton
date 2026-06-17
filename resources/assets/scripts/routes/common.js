@@ -444,13 +444,14 @@ export default {
       }
 
       if (isCartPage) {
-        // Desktop cart: scroll to the main cart calendar when it exists. Mobile and
-        // empty-cart AJAX fallbacks use the same global dropdown as other pages.
+        // Cart: scroll to the main cart calendar when it exists (avoid two inline pickers).
+        // After the last item is removed, WooCommerce AJAX can replace markup and remove
+        // #datepicker — fall back to the global dropdown used on other pages.
         $btn.on('click', function(e) {
           e.stopPropagation();
           suppressOutsideCloseUntil = Date.now() + 400;
           var $calendar = $('#datepicker');
-          if ($calendar.length && !isMobileUtilityViewport()) {
+          if ($calendar.length) {
             $('html, body').animate({ scrollTop: $calendar.offset().top - 80 }, 300);
             $calendar.closest('.calendar-container').css('outline', '2px solid #6fcf97');
             setTimeout(function() {
