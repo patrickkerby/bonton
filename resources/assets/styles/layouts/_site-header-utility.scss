@@ -1,9 +1,17 @@
 // Mobile utility stack: beige banner + white util bar stick together; banner reveal is scroll-linked in JS.
 .site-header-utility {
   @media screen and (max-width: 767px) {
+    --header-shift: 0;
+    --banner-collapse: 0;
+
     position: sticky;
     top: 0;
     z-index: 110;
     overflow: visible;
+
+    .utility-banner,
+    .mobile-util-bar {
+      transform: translateY(calc(-1 * var(--header-shift)));
+    }
   }
 }

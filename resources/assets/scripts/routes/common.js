@@ -608,55 +608,82 @@ export default {
 
       var mobileMax = 767;
       var hideAmount = 0;
-      var appliedHide = 0;
+      var collapseAmount = 0;
       var bannerHeight = 0;
       var lastScrollY = window.pageYOffset || 0;
       var scrollTicking = false;
+      var scrollEndTimer = null;
+      var SCROLL_END_MS = 200;
 
       function isMobileViewport() {
         return window.innerWidth <= mobileMax;
       }
 
-      function measureFullBannerHeight() {
-        var previousHide = appliedHide;
-        $banner.css('--banner-hide', '0px');
-        bannerHeight = $banner.outerHeight() || 0;
-        $banner.css('--banner-hide', previousHide + 'px');
+      function resetBannerScrollState() {
+        hideAmount = 0;
+        collapseAmount = 0;
+        $utility.css({
+          '--header-shift': '0px',
+          '--banner-collapse': '0px',
+        });
+        lastScrollY = window.pageYOffset || 0;
       }
 
-      function applyHideAmount() {
+      function measureFullBannerHeight() {
+        var previousCollapse = collapseAmount;
+        $utility.css('--banner-collapse', '0px');
+        bannerHeight = $banner.outerHeight() || 0;
+        $utility.css('--banner-collapse', previousCollapse + 'px');
+      }
+
+      function applyVisualShift() {
         if (!isMobileViewport()) {
-          hideAmount = 0;
-          appliedHide = 0;
-          $banner.css('--banner-hide', '0px');
-          lastScrollY = window.pageYOffset || 0;
+          resetBannerScrollState();
           return;
         }
 
-        var newHide = Math.max(0, Math.min(bannerHeight, hideAmount));
-        var layoutDelta = newHide - appliedHide;
+        var shift = Math.max(0, Math.min(bannerHeight, hideAmount));
+        $utility.css('--header-shift', shift + 'px');
+      }
+
+      function settleBannerLayout() {
+        clearTimeout(scrollEndTimer);
+
+        if (!isMobileViewport()) {
+          resetBannerScrollState();
+          return;
+        }
+
+        var targetCollapse = Math.max(0, Math.min(bannerHeight, hideAmount));
+        var layoutDelta = targetCollapse - collapseAmount;
+
+        $utility.css('--header-shift', '0px');
 
         if (layoutDelta === 0) {
           lastScrollY = window.pageYOffset || 0;
           return;
         }
 
-        $banner.css('--banner-hide', newHide + 'px');
+        $utility.css('--banner-collapse', targetCollapse + 'px');
 
-        // Collapsing the banner changes document height; compensate so scroll position
-        // does not bounce (which caused jitter at partial conceal).
         var scrollY = window.pageYOffset || 0;
-        window.scrollTo(0, scrollY - layoutDelta);
+        var targetScrollY = scrollY - layoutDelta;
 
-        appliedHide = newHide;
-        hideAmount = newHide;
-        lastScrollY = window.pageYOffset || 0;
+        collapseAmount = targetCollapse;
+        hideAmount = targetCollapse;
+        lastScrollY = targetScrollY;
+
+        window.scrollTo(0, targetScrollY);
+      }
+
+      function scheduleBannerLayoutSettlement() {
+        clearTimeout(scrollEndTimer);
+        scrollEndTimer = window.setTimeout(settleBannerLayout, SCROLL_END_MS);
       }
 
       function syncBannerOnScroll() {
         if (!isMobileViewport()) {
-          hideAmount = 0;
-          applyHideAmount();
+          resetBannerScrollState();
           scrollTicking = false;
           return;
         }
@@ -672,12 +699,14 @@ export default {
           hideAmount = Math.max(0, hideAmount + delta);
         }
 
-        applyHideAmount();
+        applyVisualShift();
+        lastScrollY = scrollY;
+        scheduleBannerLayoutSettlement();
         scrollTicking = false;
       }
 
       measureFullBannerHeight();
-      applyHideAmount();
+      resetBannerScrollState();
 
       if (typeof ResizeObserver !== 'undefined') {
         var resizeObserver = new ResizeObserver(function () {
@@ -685,7 +714,9 @@ export default {
           measureFullBannerHeight();
           if (bannerHeight !== previousHeight) {
             hideAmount = Math.min(hideAmount, bannerHeight);
-            applyHideAmount();
+            collapseAmount = Math.min(collapseAmount, bannerHeight);
+            applyVisualShift();
+            settleBannerLayout();
           }
         });
         resizeObserver.observe($banner[0]);
@@ -698,10 +729,20 @@ export default {
         }
       });
 
+      if ('onscrollend' in window) {
+        window.addEventListener('scrollend', settleBannerLayout, { passive: true });
+      }
+
       $(window).on('resize', function () {
         measureFullBannerHeight();
         hideAmount = Math.min(hideAmount, bannerHeight);
-        applyHideAmount();
+        collapseAmount = Math.min(collapseAmount, bannerHeight);
+        if (!isMobileViewport()) {
+          resetBannerScrollState();
+        } else {
+          applyVisualShift();
+          settleBannerLayout();
+        }
       });
     })();
 
