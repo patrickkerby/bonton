@@ -2,5 +2,6 @@
   <div class="site-header-utility" id="site-header-utility">
     @include('partials.utility-banner')
     @include('partials.mobile-util-bar')
+    @include('partials.utility-banner-overlays')
   </div>
 @endunless

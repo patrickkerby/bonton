@@ -91,7 +91,7 @@ export default {
       var $btn = $('#global-date-picker-btn');
       var $dropdown = $('#global-date-dropdown');
       var $picker = $('#global-datepicker');
-      var $banner = $('.utility-banner');
+      var $utility = $('#site-header-utility');
       var mobileMax = 767;
 
       if (!$btn.length) return;
@@ -369,25 +369,25 @@ export default {
       }
 
       function positionDateDropdown() {
-        if (isMobileUtilityViewport() || !$banner.length) {
+        if (isMobileUtilityViewport() || !$utility.length) {
           $dropdown.css({ left: '', right: '', top: '', bottom: '', transform: '' });
           return;
         }
 
         var dropdownWidth = measureDateDropdownWidth() || 320;
-        var bannerEl = $banner[0];
+        var utilityEl = $utility[0];
         var btnEl = $btn[0];
-        var bannerRect = bannerEl.getBoundingClientRect();
+        var utilityRect = utilityEl.getBoundingClientRect();
         var btnRect = btnEl.getBoundingClientRect();
-        var left = btnRect.left - bannerRect.left + (btnRect.width / 2) - (dropdownWidth / 2);
-        var maxLeft = Math.max(0, bannerRect.width - dropdownWidth);
+        var left = btnRect.left - utilityRect.left + (btnRect.width / 2) - (dropdownWidth / 2);
+        var maxLeft = Math.max(0, utilityRect.width - dropdownWidth);
 
         left = Math.max(0, Math.min(left, maxLeft));
 
         $dropdown.css({
           left: left + 'px',
           right: 'auto',
-          top: (btnRect.bottom - bannerRect.top + 8) + 'px',
+          top: (btnRect.bottom - utilityRect.top + 8) + 'px',
           bottom: 'auto',
           transform: 'none',
         });
@@ -481,7 +481,7 @@ export default {
     (function() {
       var $btn = $('#bulk-info-btn');
       var $popover = $('#bulk-info-popover');
-      var $banner = $('.utility-banner');
+      var $utility = $('#site-header-utility');
       var mobileMax = 767;
 
       if (!$btn.length) return;
@@ -503,26 +503,26 @@ export default {
       }
 
       function positionBulkPopover() {
-        if (!isDesktopViewport() || !$banner.length) {
+        if (!isDesktopViewport() || !$utility.length) {
           $popover.css({ left: '', right: '', top: '', bottom: '' });
           return;
         }
 
         var popoverWidth = measurePopoverWidth() || 288;
-        var bannerEl = $banner[0];
+        var utilityEl = $utility[0];
         var btnEl = $btn[0];
-        var bannerRect = bannerEl.getBoundingClientRect();
+        var utilityRect = utilityEl.getBoundingClientRect();
         var btnRect = btnEl.getBoundingClientRect();
-        var left = btnRect.left - bannerRect.left + (btnRect.width / 2) - (popoverWidth / 2);
-        var maxLeft = Math.max(0, bannerRect.width - popoverWidth);
+        var left = btnRect.left - utilityRect.left + (btnRect.width / 2) - (popoverWidth / 2);
+        var maxLeft = Math.max(0, utilityRect.width - popoverWidth);
 
         left = Math.max(0, Math.min(left, maxLeft));
 
         $popover.css({
           left: left + 'px',
           right: 'auto',
-          top: '',
-          bottom: '',
+          top: (btnRect.bottom - utilityRect.top + 8) + 'px',
+          bottom: 'auto',
         });
       }
 
