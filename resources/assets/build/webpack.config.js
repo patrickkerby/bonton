@@ -123,8 +123,19 @@ let webpackConfig = {
         },
       },
       {
+        test: /\.(woff2?|woff|ttf|otf|eot)$/,
+        include: /fontawesome-free[/\\]webfonts/,
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath: 'fonts/fontawesome',
+          publicPath: '../fonts/fontawesome',
+        },
+      },
+      {
         test: /\.(ttf|otf|eot|woff2?|png|jpe?g|gif|svg|ico)$/,
         include: /node_modules/,
+        exclude: /fontawesome-free[/\\]webfonts/,
         loader: 'url-loader',
         options: {
           limit: 4096,
