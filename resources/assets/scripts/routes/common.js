@@ -1045,9 +1045,57 @@ export default {
 
       // Set up auto-update cart functionality - MOVED INSIDE document.ready
       if ($('body').hasClass('woocommerce-cart')) {
-        $(document).off('change.autoUpdate', 'input.qty').on('change.autoUpdate', 'input.qty', function() {
+        var triggerCartQtyUpdate = function($input) {
+          var current = String($input.val());
+          var committed = $input.data('qty-committed');
+
+          if (committed === current) {
+            return;
+          }
+
+          $input.data('qty-committed', current);
           $('[name="update_cart"]').trigger('click');
+        };
+
+        $(document)
+          .off('focus.autoUpdate', 'input.qty')
+          .on('focus.autoUpdate', 'input.qty', function() {
+            $(this).data('qty-committed', String($(this).val()));
+          })
+          .off('change.autoUpdate', 'input.qty')
+          .on('change.autoUpdate', 'input.qty', function() {
+            triggerCartQtyUpdate($(this));
+          })
+          .off('keydown.autoUpdate', 'input.qty')
+          .on('keydown.autoUpdate', 'input.qty', function(e) {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+              e.preventDefault();
+              triggerCartQtyUpdate($(this));
+              this.blur();
+            }
+          });
+
+        $(document.body).on('updated_cart_totals.autoUpdate', function() {
+          $('input.qty').each(function() {
+            $(this).data('qty-committed', String($(this).val()));
+          });
         });
+
+        // Chrome mobile keeps qty inputs focused when the keyboard is dismissed.
+        if (window.visualViewport) {
+          var viewportHeight = window.visualViewport.height;
+
+          window.visualViewport.addEventListener('resize', function() {
+            var active = document.activeElement;
+            var newHeight = window.visualViewport.height;
+
+            if (active && active.matches('input.qty') && newHeight > viewportHeight + 40) {
+              triggerCartQtyUpdate($(active));
+            }
+
+            viewportHeight = newHeight;
+          });
+        }
       }
 
       // Bind quantity button events
