@@ -808,6 +808,71 @@ export default {
       window.setTimeout(initMobileUtilBarSearch, 800);
     })();
 
+    // --- Mobile shop search: scroll past sticky header/hero to product results ---
+    (function () {
+      var mobileMax = 767;
+      var scrollFlagKey = 'bontonMobileShopSearchScroll';
+      var didScroll = false;
+
+      function isMobileViewport() {
+        return window.innerWidth <= mobileMax;
+      }
+
+      function getSearchQuery() {
+        var params = new URLSearchParams(window.location.search);
+        var query = params.get('s');
+        return query ? query.trim() : '';
+      }
+
+      function isShopResultsPage() {
+        var body = document.body;
+        return body.classList.contains('post-type-archive-product') ||
+          body.classList.contains('woocommerce-shop') ||
+          (body.classList.contains('search') && body.classList.contains('woocommerce'));
+      }
+
+      function shouldScrollToResults() {
+        if (!isMobileViewport() || !isShopResultsPage()) {
+          return false;
+        }
+
+        return getSearchQuery().length > 0 ||
+          window.sessionStorage.getItem(scrollFlagKey) === '1';
+      }
+
+      function scrollToProductResults() {
+        if (didScroll || !shouldScrollToResults()) {
+          return;
+        }
+
+        var $products = $('ul.products').first();
+        if (!$products.length) {
+          return;
+        }
+
+        didScroll = true;
+        window.sessionStorage.removeItem(scrollFlagKey);
+
+        var offset = ($('#site-header-utility').outerHeight() || 0) + 8;
+        var top = Math.max(0, $products.offset().top - offset);
+
+        window.scrollTo(0, top);
+      }
+
+      $(document).on('submit', '.dgwt-wcas-search-form', function () {
+        if (isMobileViewport()) {
+          window.sessionStorage.setItem(scrollFlagKey, '1');
+        }
+      });
+
+      $(function () {
+        window.setTimeout(scrollToProductResults, 50);
+        window.setTimeout(scrollToProductResults, 300);
+      });
+
+      $(window).on('load', scrollToProductResults);
+    })();
+
     // Classic cart "remove line" uses GET + update_wc_div (not mini-cart remove_from_cart).
     // WooCommerce triggers fragment refresh on updated_wc_div, but the header count can
     // stay stale for the last item (race / timing). wc_cart_emptied only fires when the
