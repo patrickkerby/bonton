@@ -2,8 +2,6 @@
 /**
  * Email Styles
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/emails/email-styles.php.
- *
  * @see     https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
  * @version 9.9.0
@@ -18,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 
-// Load colors.
 $bg               = get_option( 'woocommerce_email_background_color' );
 $body             = get_option( 'woocommerce_email_body_background_color' );
 $base             = get_option( 'woocommerce_email_base_color' );
@@ -74,27 +71,19 @@ $base_lighter_40 = wc_hex_lighter( $base, 40 );
 $text_lighter_20 = wc_hex_lighter( $text, 20 );
 $text_lighter_40 = wc_hex_lighter( $text, 40 );
 ?>
-:root {
-	color-scheme: light only;
-	supported-color-schemes: light;
-}
-
 body {
 	background-color: <?php echo esc_attr( $bg ); ?>;
-	background-image: linear-gradient(<?php echo esc_attr( $bg ); ?>, <?php echo esc_attr( $bg ); ?>);
 	padding: 0;
 	text-align: center;
 }
 
 #outer_wrapper {
 	background-color: <?php echo esc_attr( $bg ); ?>;
-	background-image: linear-gradient(<?php echo esc_attr( $bg ); ?>, <?php echo esc_attr( $bg ); ?>);
 }
 
 <?php if ( $email_improvements_enabled ) : ?>
 #inner_wrapper {
 	background-color: <?php echo esc_attr( $body ); ?>;
-	background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>);
 	border-radius: 8px;
 }
 <?php endif; ?>
@@ -110,14 +99,12 @@ body {
 #template_container {
 	box-shadow: <?php echo $email_improvements_enabled ? 'none' : '0 1px 4px rgba(0, 0, 0, 0.1) !important'; ?>;
 	background-color: <?php echo esc_attr( $body ); ?>;
-	background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>);
 	border: <?php echo $email_improvements_enabled ? '0' : '1px solid ' . esc_attr( $bg_darker_10 ); ?>;
 	border-radius: 3px !important;
 }
 
 #template_header {
 	background-color: <?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>;
-	background-image: linear-gradient(<?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>, <?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>);
 	border-radius: 3px 3px 0 0 !important;
 	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base_text ); ?>;
 	border-bottom: 0;
@@ -150,8 +137,6 @@ body {
 
 #template_header_image {
 	padding: 32px 32px 0;
-	background-color: <?php echo esc_attr( $body ); ?>;
-	background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>);
 }
 
 #template_header_image p {
@@ -225,7 +210,6 @@ body {
 
 #body_content {
 	background-color: <?php echo esc_attr( $body ); ?>;
-	background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>);
 }
 
 #body_content table td {
@@ -327,7 +311,7 @@ body {
 }
 
 #body_content_inner {
-	color: <?php echo esc_attr( $text ); ?>;
+	color: <?php echo esc_attr( $text_lighter_20 ); ?>;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 	font-size: <?php echo $email_improvements_enabled ? '16px' : '14px'; ?>;
 	line-height: 150%;
@@ -474,55 +458,6 @@ h2.email-order-detail-heading span {
 .text-align-right {
 	text-align: <?php echo is_rtl() ? 'left' : 'right'; ?>;
 }
-
-<?php if ( $email_improvements_enabled ) : ?>
-#template_container,
-#template_header,
-#template_body,
-#body_content,
-#template_header_image,
-#header_wrapper,
-#body_content_inner_cell {
-	background-color: <?php echo esc_attr( $body ); ?> !important;
-	background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>) !important;
-}
-
-#header_wrapper h1,
-#body_content_inner,
-#body_content_inner p,
-#body_content_inner li,
-#body_content_inner td,
-#body_content_inner th,
-#body_content_inner b,
-#body_content_inner strong,
-.email-introduction,
-.email-introduction p,
-.email-additional-content,
-.email-additional-content p,
-.text,
-.address-title,
-.order-item-data,
-h1,
-h2,
-h3 {
-	color: <?php echo esc_attr( $text ); ?> !important;
-}
-
-#header_wrapper h1 {
-	background-color: transparent !important;
-	background-image: none !important;
-}
-
-a,
-.link {
-	color: <?php echo esc_attr( $link_color ); ?> !important;
-}
-
-#template_footer #credit,
-#template_footer #credit p {
-	color: <?php echo esc_attr( $footer_text ); ?> !important;
-}
-<?php endif; ?>
 
 @media screen and (max-width: 600px) {
 	<?php if ( $email_improvements_enabled ) : ?>
