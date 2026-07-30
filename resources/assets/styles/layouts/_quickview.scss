@@ -228,16 +228,8 @@ div.pp_woocommerce_quick_view {
   div.product span.price {
     @include media-breakpoint-down(sm) {
       font-size: 1.75rem;
-      position: fixed;
-      bottom: 0.5rem;
-      z-index: 9;
-      left: 1rem;
       color: $highlight;
     }
-  }
-
-  div.product .woocommerce-variation-price span.price {
-    bottom: 1.5rem;
   }
 
   div.product div.summary {
@@ -285,6 +277,8 @@ div.pp_woocommerce_quick_view {
   div.product form.cart {
     @include media-breakpoint-down(sm) {
       display: flex !important;
+      flex-direction: column;
+      align-items: stretch;
       justify-content: flex-end;
       position: fixed;
       bottom: 0;
@@ -296,6 +290,61 @@ div.pp_woocommerce_quick_view {
       background: #fff;
       box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.16), 0 -35px 40px 0 rgb(255, 255, 255);
       overscroll-behavior: none;
+    }
+  }
+
+  div.product.product-type-simple form.cart {
+    @include media-breakpoint-down(sm) {
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      padding-left: 7rem;
+    }
+  }
+
+  div.product.product-type-simple div.summary > p.price {
+    @include media-breakpoint-down(sm) {
+      position: fixed;
+      bottom: 0.5rem;
+      left: 1rem;
+      z-index: 9;
+    }
+  }
+
+  div.product.product-type-variable:has(.single_variation_wrap .woocommerce-variation-price:not(:empty)) div.summary > p.price {
+    @include media-breakpoint-down(sm) {
+      display: none;
+    }
+  }
+
+  div.product .variations_form {
+    @include media-breakpoint-down(sm) {
+      flex-direction: column;
+
+      .single_variation_wrap {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        width: 100%;
+
+        > .woocommerce-variation {
+          flex: 0 1 auto;
+          margin-right: auto;
+          min-width: 0;
+        }
+
+        .woocommerce-variation-price .price {
+          white-space: nowrap;
+        }
+
+        .woocommerce-variation-add-to-cart.variations_button {
+          display: flex;
+          align-items: center;
+          flex: 0 0 auto;
+          gap: 0.5rem;
+        }
+      }
     }
   }
 
@@ -341,17 +390,6 @@ div.pp_woocommerce_quick_view {
     .bundle_wrap .price {
       margin-right: 0.5rem !important;
       min-width: unset !important;
-    }
-  }
-
-  div.product .variations_form {
-    @include media-breakpoint-down(sm) {
-      flex-direction: column;
-
-      .single_variation_wrap {
-        display: flex;
-        justify-content: flex-end;
-      }
     }
   }
 
@@ -732,10 +770,6 @@ div.pp_woocommerce_quick_view {
       }
     }
   }
-}
-
-.single_variation_wrap .woocommerce-variation-add-to-cart .single_variation_wrap .single_variation .woocommerce-variation-price {
-  display: none;
 }
 
 form.cart button.single_add_to_cart_button,
