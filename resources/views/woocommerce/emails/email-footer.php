@@ -17,7 +17,7 @@ $body  = get_option( 'woocommerce_email_body_background_color', '#ffffff' );
 
 $force_light_bg = static function ( $color ) {
 	return sprintf(
-		'background-color:%1$s;background-image:linear-gradient(%1$s,%1$s);',
+		'background-color:%1$s !important;background-image:linear-gradient(%1$s,%1$s) !important;',
 		esc_attr( $color )
 	);
 };

@@ -19,19 +19,30 @@ $email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improveme
 $store_name                 = $store_name ?? get_bloginfo( 'name', 'display' );
 $bg                         = get_option( 'woocommerce_email_background_color', '#fcfcfc' );
 $body                       = get_option( 'woocommerce_email_body_background_color', '#ffffff' );
+$text                       = get_option( 'woocommerce_email_text_color', '#4b4b4b' );
+$link_color                 = '#53C999';
 
 /**
  * Force light backgrounds in dark-mode clients (Spark, Gmail, Apple Mail).
- * Background images are inverted less aggressively than background-color alone.
  *
  * @param string $color Hex background color.
  */
 $force_light_bg = static function ( $color ) {
 	return sprintf(
-		'background-color:%1$s;background-image:linear-gradient(%1$s,%1$s);',
+		'background-color:%1$s !important;background-image:linear-gradient(%1$s,%1$s) !important;',
 		esc_attr( $color )
 	);
 };
+
+$heading_style = sprintf(
+	'margin:0;color:%1$s !important;background-color:transparent !important;font-family:Georgia,\'Times New Roman\',serif;font-size:32px;font-weight:700;line-height:120%%;word-break:normal;white-space:normal;',
+	esc_attr( $text )
+);
+
+$body_text_style = sprintf(
+	'color:%1$s !important;font-family:Helvetica,Arial,sans-serif;font-size:16px;line-height:150%%;',
+	esc_attr( $text )
+);
 
 ?>
 <!DOCTYPE html>
@@ -90,7 +101,7 @@ $force_light_bg = static function ( $color ) {
 												<table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_header" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
 													<tr>
 														<td id="header_wrapper" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
-															<h1><?php echo esc_html( $email_heading ); ?></h1>
+															<h1 style="<?php echo esc_attr( $heading_style ); ?>"><?php echo esc_html( $email_heading ); ?></h1>
 														</td>
 													</tr>
 												</table>
@@ -107,4 +118,4 @@ $force_light_bg = static function ( $color ) {
 															<table border="0" cellpadding="20" cellspacing="0" width="100%">
 																<tr>
 																	<td valign="top" id="body_content_inner_cell" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
-																		<div id="body_content_inner">
+																		<div id="body_content_inner" style="<?php echo esc_attr( $body_text_style ); ?>">
