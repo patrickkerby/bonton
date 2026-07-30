@@ -74,19 +74,27 @@ $base_lighter_40 = wc_hex_lighter( $base, 40 );
 $text_lighter_20 = wc_hex_lighter( $text, 20 );
 $text_lighter_40 = wc_hex_lighter( $text, 40 );
 ?>
+:root {
+	color-scheme: light only;
+	supported-color-schemes: light;
+}
+
 body {
 	background-color: <?php echo esc_attr( $bg ); ?>;
+	background-image: linear-gradient(<?php echo esc_attr( $bg ); ?>, <?php echo esc_attr( $bg ); ?>);
 	padding: 0;
 	text-align: center;
 }
 
 #outer_wrapper {
 	background-color: <?php echo esc_attr( $bg ); ?>;
+	background-image: linear-gradient(<?php echo esc_attr( $bg ); ?>, <?php echo esc_attr( $bg ); ?>);
 }
 
 <?php if ( $email_improvements_enabled ) : ?>
 #inner_wrapper {
 	background-color: <?php echo esc_attr( $body ); ?>;
+	background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>);
 	border-radius: 8px;
 }
 <?php endif; ?>
@@ -102,12 +110,14 @@ body {
 #template_container {
 	box-shadow: <?php echo $email_improvements_enabled ? 'none' : '0 1px 4px rgba(0, 0, 0, 0.1) !important'; ?>;
 	background-color: <?php echo esc_attr( $body ); ?>;
+	background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>);
 	border: <?php echo $email_improvements_enabled ? '0' : '1px solid ' . esc_attr( $bg_darker_10 ); ?>;
 	border-radius: 3px !important;
 }
 
 #template_header {
 	background-color: <?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>;
+	background-image: linear-gradient(<?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>, <?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>);
 	border-radius: 3px 3px 0 0 !important;
 	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base_text ); ?>;
 	border-bottom: 0;
@@ -141,6 +151,7 @@ body {
 #template_header_image {
 	padding: 32px 32px 0;
 	background-color: <?php echo esc_attr( $body ); ?>;
+	background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>);
 }
 
 #template_header_image p {
@@ -214,6 +225,7 @@ body {
 
 #body_content {
 	background-color: <?php echo esc_attr( $body ); ?>;
+	background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>);
 }
 
 #body_content table td {

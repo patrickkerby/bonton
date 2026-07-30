@@ -15,6 +15,13 @@ $email = $email ?? null;
 $bg    = get_option( 'woocommerce_email_background_color', '#fcfcfc' );
 $body  = get_option( 'woocommerce_email_body_background_color', '#ffffff' );
 
+$force_light_bg = static function ( $color ) {
+	return sprintf(
+		'background-color:%1$s;background-image:linear-gradient(%1$s,%1$s);',
+		esc_attr( $color )
+	);
+};
+
 ?>
 																		</div>
 																	</td>
@@ -31,14 +38,14 @@ $body  = get_option( 'woocommerce_email_body_background_color', '#ffffff' );
 								</td>
 							</tr>
 							<tr>
-								<td align="center" valign="top" bgcolor="<?php echo esc_attr( $bg ); ?>" style="background-color:<?php echo esc_attr( $bg ); ?>;">
+								<td align="center" valign="top" bgcolor="<?php echo esc_attr( $bg ); ?>" style="<?php echo esc_attr( $force_light_bg( $bg ) ); ?>">
 									<!-- Footer -->
-									<table border="0" cellpadding="10" cellspacing="0" width="100%" id="template_footer" bgcolor="<?php echo esc_attr( $body ); ?>" style="background-color:<?php echo esc_attr( $body ); ?>;">
+									<table border="0" cellpadding="10" cellspacing="0" width="100%" id="template_footer" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
 										<tr>
-											<td valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="background-color:<?php echo esc_attr( $body ); ?>;">
+											<td valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
 												<table border="0" cellpadding="10" cellspacing="0" width="100%">
 													<tr>
-														<td colspan="2" valign="middle" id="credit" bgcolor="<?php echo esc_attr( $body ); ?>" style="background-color:<?php echo esc_attr( $body ); ?>;">
+														<td colspan="2" valign="middle" id="credit" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
 															<?php
 															$email_footer_text = get_option( 'woocommerce_email_footer_text' );
 															if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
