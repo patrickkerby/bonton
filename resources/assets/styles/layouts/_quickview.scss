@@ -363,7 +363,7 @@ div.pp_woocommerce_quick_view {
       bottom: 100%;
       background: $highlight;
       color: #fff;
-      padding: 1rem;
+      padding: 1rem 2.75rem 1rem 1rem;
       left: 0;
       margin: 1rem 5%;
       width: 90%;
@@ -383,7 +383,11 @@ div.pp_woocommerce_quick_view {
         border-width: 8px;
         margin-left: -8px;
       }
+    }
+  }
 
+  .woocommerce-variation-description p {
+    @include media-breakpoint-down(sm) {
       &::before {
         content: "X";
         position: absolute;
@@ -392,6 +396,27 @@ div.pp_woocommerce_quick_view {
         display: flex;
         color: #fff;
       }
+    }
+  }
+
+  .extra-info .collapse-panel-close {
+    @include media-breakpoint-down(sm) {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 2;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: #fff;
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 

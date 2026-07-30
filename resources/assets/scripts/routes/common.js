@@ -62,6 +62,54 @@ export default {
       window.requestAnimationFrame(stackBottomNotices);
     });
 
+    // Mobile ingredients/storage popup: CSS "X" was non-interactive; inject a real close control.
+    (function () {
+      function ensureExtraInfoCollapseCloseButtons() {
+        $('.extra-info .collapse').each(function () {
+          var $collapse = $(this);
+
+          if ($collapse.find('.collapse-panel-close').length) {
+            return;
+          }
+
+          $collapse.prepend(
+            '<button type="button" class="collapse-panel-close" aria-label="Close">' +
+            '<span aria-hidden="true">&times;</span></button>'
+          );
+        });
+      }
+
+      function closeExtraInfoCollapse($collapse) {
+        var collapseId = $collapse.attr('id');
+
+        if (!collapseId) {
+          return;
+        }
+
+        var $trigger = $('.extra-info a.showmore[href="#' + collapseId + '"]');
+
+        $collapse.collapse('hide');
+        $trigger.addClass('collapsed').attr('aria-expanded', 'false');
+      }
+
+      ensureExtraInfoCollapseCloseButtons();
+
+      $(document).on('click', '.extra-info a.showmore', function () {
+        ensureExtraInfoCollapseCloseButtons();
+      });
+
+      $(document).on('click', '.extra-info .collapse-panel-close', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        closeExtraInfoCollapse($(this).closest('.collapse'));
+      });
+
+      $(document).on('click', '.inside-thumb, .quick-view-button', function () {
+        window.setTimeout(ensureExtraInfoCollapseCloseButtons, 200);
+        window.setTimeout(ensureExtraInfoCollapseCloseButtons, 600);
+      });
+    })();
+
     // Checkout: keep processing feedback in view when placing an order.
     $(document.body).on('checkout_place_order', function() {
       var $target = $('#place_order').length ? $('#place_order') : $('#order_review');
