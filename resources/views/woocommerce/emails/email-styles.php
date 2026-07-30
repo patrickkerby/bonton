@@ -25,10 +25,6 @@ $base      = get_option( 'woocommerce_email_base_color' );
 $base_text = wc_light_or_dark( $base, '#202020', '#ffffff' );
 $text      = get_option( 'woocommerce_email_text_color' );
 
-$header_bg   = $email_improvements_enabled ? $body : $base;
-$header_text = $email_improvements_enabled ? $text : $base_text;
-$h1_color    = $header_text;
-
 // Pick a contrasting color for links.
 $link_color = wc_hex_is_light( $base ) ? $base : $base_text;
 
@@ -49,8 +45,15 @@ $text_lighter_40 = wc_hex_lighter( $text, 40 );
 
 $email_font = 'Georgia, "Times New Roman", serif, "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif';
 
-// !important; is a gmail hack to prevent styles being stripped if it doesn't like something.
-// body{padding: 0;} ensures proper scale/positioning of the email in the iOS native email app.
+// Keep transactional emails readable in clients that force dark mode (Spark, Apple Mail, etc.).
+$email_outer_bg = wc_hex_is_light( $bg ) ? $bg : '#f3f3f0';
+$email_body_bg  = '#ffffff';
+$email_text     = wc_hex_is_light( $body ) ? $text : '#3c3c3c';
+$email_text_soft = wc_hex_is_light( $body ) ? $text_lighter_20 : '#575757';
+
+$header_bg   = $email_improvements_enabled ? $email_body_bg : $base;
+$header_text = $email_improvements_enabled ? $email_text : $base_text;
+$h1_color    = $header_text;
 ?>
 :root {
 	color-scheme: light only;
@@ -58,13 +61,13 @@ $email_font = 'Georgia, "Times New Roman", serif, "Helvetica Neue", Helvetica, R
 }
 
 body {
-	background-color: <?php echo esc_attr( $bg ); ?>;
+	background-color: <?php echo esc_attr( $email_outer_bg ); ?> !important;
 	padding: 0;
 	text-align: center;
 }
 
 #wrapper {
-	background-color: <?php echo esc_attr( $bg ); ?>;
+	background-color: <?php echo esc_attr( $email_outer_bg ); ?> !important;
 	margin: 0;
 	padding: 70px 0;
 	-webkit-text-size-adjust: none !important;
@@ -73,15 +76,15 @@ body {
 
 #template_container {
 	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
-	background-color: <?php echo esc_attr( $body ); ?>;
+	background-color: <?php echo esc_attr( $email_body_bg ); ?> !important;
 	border: 1px solid <?php echo esc_attr( $bg_darker_10 ); ?>;
 	border-radius: 3px !important;
 }
 
 #template_header {
-	background-color: <?php echo esc_attr( $header_bg ); ?>;
+	background-color: <?php echo esc_attr( $header_bg ); ?> !important;
 	border-radius: 3px 3px 0 0 !important;
-	color: <?php echo esc_attr( $header_text ); ?>;
+	color: <?php echo esc_attr( $header_text ); ?> !important;
 	border-bottom: 0;
 	font-weight: bold;
 	line-height: 100%;
@@ -135,11 +138,12 @@ body {
 #template_footer td {
 	padding: 0;
 	border-radius: 6px;
+	background-color: <?php echo esc_attr( $email_body_bg ); ?> !important;
 }
 
 #template_footer #credit {
 	border: 0;
-	color: <?php echo esc_attr( $text_lighter_40 ); ?>;
+	color: <?php echo esc_attr( $email_text_soft ); ?> !important;
 	font-family: <?php echo esc_attr( $email_font ); ?>;
 	font-size: 12px;
 	line-height: 150%;
@@ -152,7 +156,7 @@ body {
 }
 
 #body_content {
-	background-color: <?php echo esc_attr( $body ); ?>;
+	background-color: <?php echo esc_attr( $email_body_bg ); ?> !important;
 }
 
 #body_content table td {
@@ -188,7 +192,7 @@ body {
 }
 
 #body_content_inner {
-	color: <?php echo esc_attr( $text_lighter_20 ); ?>;
+	color: <?php echo esc_attr( $email_text_soft ); ?> !important;
 	font-family: "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
 	font-size: 14px;
 	line-height: 150%;
@@ -276,3 +280,41 @@ img {
 	margin-<?php echo is_rtl() ? 'left' : 'right'; ?>: 10px;
 	max-width: 100%;
 }
+
+@media (prefers-color-scheme: dark) {
+	body,
+	#wrapper,
+	#outer_wrapper,
+	#inner_wrapper,
+	#template_container,
+	#template_body,
+	#body_content,
+	#body_content_inner_cell,
+	#template_header,
+	#template_header_image,
+	#header_wrapper {
+		background-color: #ffffff !important;
+	}
+
+	body,
+	#wrapper {
+		background-color: #f3f3f0 !important;
+	}
+
+	#body_content_inner,
+	#template_header h1,
+	h1,
+	h2,
+	p,
+	li,
+	.text,
+	.td {
+		color: #3c3c3c !important;
+	}
+
+	a,
+	.link {
+		color: #53c999 !important;
+	}
+}
+<?php
