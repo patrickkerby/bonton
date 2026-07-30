@@ -298,10 +298,61 @@ export default {
         }, 100);
       }
 
+      function applyUtilityBannerBulkProgress(progress) {
+        var $banner = $('.utility-banner');
+        if (!$banner.length) {
+          return;
+        }
+
+        if (!progress || !progress.enabled) {
+          $banner.attr('data-total-units', '0');
+          $banner.find('.utility-banner__dot').removeClass('filled tier-reached');
+          $banner.find('.utility-banner__milestone').removeClass('reached');
+          $banner.find('.utility-banner__bulk-label').text('Add bread for bulk savings');
+          return;
+        }
+
+        var totalUnits = progress.total_units || 0;
+        var currentTier = progress.current_tier || 0;
+        var unitsToNext = progress.units_to_next || 0;
+        var label;
+
+        $banner.attr('data-total-units', String(totalUnits));
+
+        $banner.find('.utility-banner__dot').each(function (index) {
+          var unitIndex = index + 1;
+          var $dot = $(this);
+
+          $dot.toggleClass('filled', totalUnits >= unitIndex);
+          $dot.toggleClass(
+            'tier-reached',
+            unitIndex <= 5 ? currentTier >= 10 : currentTier >= 20
+          );
+        });
+
+        $banner.find('.utility-banner__milestone').each(function (index) {
+          $(this).toggleClass('reached', index === 0 ? currentTier >= 10 : currentTier >= 20);
+        });
+
+        if (currentTier >= 20) {
+          label = '20% off bread!';
+        } else if (currentTier >= 10) {
+          label = '10% off! ' + Math.ceil(unitsToNext) + ' more for 20%';
+        } else if (totalUnits > 0) {
+          label = Math.ceil(unitsToNext) + ' more for 10% off bread';
+        } else {
+          label = 'Add bread for bulk savings';
+        }
+
+        $banner.find('.utility-banner__bulk-label').text(label);
+      }
+
       function applyUtilityBannerFromState(data) {
         if (!data) {
           return;
         }
+
+        applyUtilityBannerBulkProgress(data.bulk_discount_progress);
 
         leadHours = parseInt(data.lead_time_hours, 10) || 33;
         if (window.bontonData) {
@@ -314,6 +365,13 @@ export default {
           if (ymd.length === 3) {
             $picker.data('selected-date', ymd[2] + '/' + ymd[1] + '/' + ymd[0]);
           }
+
+          var sessionDate = dayjs(data.session_pickup_date, 'YYYY-MM-DD');
+          if (sessionDate.isValid()) {
+            $btn.find('.utility-banner__date-label').text(sessionDate.format('ddd, MMM D'));
+          }
+        } else {
+          $btn.find('.utility-banner__date-label').text('Select pickup date');
         }
 
         initBootstrap();
@@ -877,22 +935,9 @@ export default {
     // WooCommerce triggers fragment refresh on updated_wc_div, but the header count can
     // stay stale for the last item (race / timing). wc_cart_emptied only fires when the
     // cart becomes empty — force sync after the session has settled.
-    // The utility banner bulk progress is Blade-rendered; reset it when the cart empties via AJAX.
     (function () {
-      function resetUtilityBannerBulkProgress() {
-        var $banner = $('.utility-banner');
-        if (!$banner.length) {
-          return;
-        }
-        $banner.attr('data-total-units', '0');
-        $banner.find('.utility-banner__dot').removeClass('filled tier-reached');
-        $banner.find('.utility-banner__milestone').removeClass('reached');
-        $banner.find('.utility-banner__bulk-label').text('Add bread for bulk savings');
-      }
-
       $(document.body).on('wc_cart_emptied', function () {
         $('.cart-icon__count').text('0');
-        resetUtilityBannerBulkProgress();
         if (typeof wc_cart_fragments_params === 'undefined') {
           return;
         }
@@ -1054,6 +1099,7 @@ export default {
           }
 
           $input.data('qty-committed', current);
+          $(document.body).data('bontonReloadCartAfterTotals', true);
           $('[name="update_cart"]').trigger('click');
         };
 

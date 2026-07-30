@@ -406,7 +406,14 @@ export default {
     }
 
     jQuery(function ($) {
-      $('body').on('updated_cart_totals', function () {
+      // Full reload only for qty/bag-fee cart updates (flag set before update_cart submit).
+      // Item remove also fires updated_cart_totals but should stay on AJAX DOM update.
+      $(document.body).on('updated_cart_totals', function () {
+        if (!$(document.body).data('bontonReloadCartAfterTotals')) {
+          return;
+        }
+
+        $(document.body).removeData('bontonReloadCartAfterTotals');
         window.location.replace(window.location.pathname + window.location.search);
       });
 

@@ -112,6 +112,7 @@ function pickup_bag_fee_script_js()
                     $('body').trigger('update_checkout');
                     var $update = $('body').find('[name="update_cart"]');
                     if ($update.length) {
+                        $(document.body).data('bontonReloadCartAfterTotals', true);
                         $update.prop('disabled', false).trigger('click');
                     }
                 }
