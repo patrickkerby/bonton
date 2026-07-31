@@ -997,10 +997,31 @@ function prevent_restricted_product_purchase($purchasable, $product) {
 // -----------------------------------------
 // 6. Add restriction notice for restricted products
 
-add_action('woocommerce_before_add_to_cart_button', 'App\display_restricted_product_notice');
+add_action('woocommerce_after_variations_table', 'App\display_restricted_product_notice', 10);
+add_action('woocommerce_before_add_to_cart_button', 'App\display_restricted_product_notice', 10);
 
 function display_restricted_product_notice() {
     global $product;
+
+    if (!$product) {
+        return;
+    }
+
+    $hook = current_filter();
+
+    // Variable products: render above price/qty row, not inside the add-to-cart flex group.
+    if ($product->is_type('variable') && $hook !== 'woocommerce_after_variations_table') {
+        return;
+    }
+
+    // Simple products: keep notice beside the add-to-cart button.
+    if ($product->is_type('simple') && $hook !== 'woocommerce_before_add_to_cart_button') {
+        return;
+    }
+
+    if (!$product->is_type('variable') && !$product->is_type('simple')) {
+        return;
+    }
     
     // Prevent duplicate output using product ID
     static $output_products = array();
