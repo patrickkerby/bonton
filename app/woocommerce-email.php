@@ -34,6 +34,40 @@ function bonton_wc_locate_email_template( $template, $template_name, $template_p
 add_filter( 'woocommerce_locate_template', __NAMESPACE__ . '\\bonton_wc_locate_email_template', 10, 3 );
 
 /**
+ * Ensure email asset URLs are absolute (WC email editor may store root-relative paths).
+ *
+ * @param string $url Image or asset URL.
+ */
+function bonton_wc_email_absolute_url( $url ) {
+	$url = trim( (string) $url );
+
+	if ( '' === $url ) {
+		return '';
+	}
+
+	if ( is_numeric( $url ) ) {
+		$url = wp_get_attachment_url( (int) $url );
+		if ( ! $url ) {
+			return '';
+		}
+	}
+
+	if ( preg_match( '#^https?://#i', $url ) ) {
+		return $url;
+	}
+
+	if ( 0 === strpos( $url, '//' ) ) {
+		return ( is_ssl() ? 'https:' : 'http:' ) . $url;
+	}
+
+	if ( 0 === strpos( $url, '/' ) ) {
+		return home_url( $url );
+	}
+
+	return home_url( '/' . ltrim( $url, '/' ) );
+}
+
+/**
  * Inline styles for a white logo plate (Spark ignores <style> @media blocks).
  */
 function bonton_wc_email_logo_plate_style() {
@@ -48,6 +82,8 @@ function bonton_wc_email_logo_plate_style() {
  * @param string $width      Optional width in pixels.
  */
 function bonton_wc_email_render_logo( $img_url, $store_name, $width = '' ) {
+	$img_url = bonton_wc_email_absolute_url( $img_url );
+
 	if ( ! $img_url ) {
 		return '';
 	}
