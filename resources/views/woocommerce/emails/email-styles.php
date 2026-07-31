@@ -328,10 +328,23 @@ body {
 }
 
 .td {
-	color: <?php echo esc_attr( $text_lighter_20 ); ?>;
+	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $text_lighter_20 ); ?>;
 	border: <?php echo $email_improvements_enabled ? '0' : '1px solid ' . esc_attr( $body_darker_10 ); ?>;
 	vertical-align: middle;
 }
+
+<?php if ( $email_improvements_enabled ) : ?>
+#body_content .email-order-details td,
+#body_content .email-order-details th,
+#body_content .email-order-details .order-totals td,
+#body_content .email-order-details .order-totals th,
+#body_content .email-order-details .order-customer-note td,
+#body_content .email-order-details tbody td,
+#body_content .email-order-details tfoot td,
+#body_content .email-order-details tfoot th {
+	color: <?php echo esc_attr( $text ); ?>;
+}
+<?php endif; ?>
 
 .address {
 	<?php if ( $email_improvements_enabled ) { ?>
@@ -453,7 +466,7 @@ img {
 }
 
 h2.email-order-detail-heading span {
-	color: <?php echo esc_attr( $footer_text ); ?>;
+	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $footer_text ); ?>;
 	display: block;
 	font-size: 14px;
 	font-weight: normal;
@@ -488,14 +501,22 @@ h2.email-order-detail-heading span {
 	h1,
 	h2,
 	h3,
+	h2.email-order-detail-heading span,
 	#body_content_inner,
 	#body_content_inner p,
 	#body_content_inner li,
 	.text,
 	.td,
+	th.td,
+	td.td,
 	.address-title,
 	.order-item-data,
-	.email-introduction p {
+	.email-introduction p,
+	#body_content .email-order-details td,
+	#body_content .email-order-details th,
+	#body_content .email-order-details tfoot td,
+	#body_content .email-order-details tfoot th,
+	.email-order-item-meta {
 		color: <?php echo esc_attr( $text ); ?> !important;
 	}
 
