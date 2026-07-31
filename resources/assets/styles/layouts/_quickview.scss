@@ -277,7 +277,6 @@ div.pp_woocommerce_quick_view {
   div.product form.cart {
     @include media-breakpoint-down(sm) {
       display: flex !important;
-      flex-direction: column;
       align-items: stretch;
       justify-content: flex-end;
       position: fixed;
@@ -290,6 +289,12 @@ div.pp_woocommerce_quick_view {
       background: #fff;
       box-shadow: 0 0 14px 0 rgba(0, 0, 0, 0.16), 0 -35px 40px 0 rgb(255, 255, 255);
       overscroll-behavior: none;
+    }
+  }
+
+  div.product:not(.product-type-simple) form.cart {
+    @include media-breakpoint-down(sm) {
+      flex-direction: column;
     }
   }
 
@@ -306,15 +311,34 @@ div.pp_woocommerce_quick_view {
   div.product.product-type-simple form.cart {
     @include media-breakpoint-down(sm) {
       flex-direction: row;
-      flex-wrap: wrap;
-      align-items: center;
+      flex-wrap: nowrap;
+      align-items: flex-end;
       justify-content: flex-end;
       padding-left: 7rem;
+      gap: 0.5rem;
 
-      .restricted-product-notice {
-        flex: 1 1 100%;
-        order: -1;
-        padding-left: 0 !important;
+      > .quantity,
+      > .qib-container,
+      > button.single_add_to_cart_button {
+        flex: 0 0 auto;
+      }
+
+      > .quantity,
+      > .qib-container {
+        margin-right: 0 !important;
+      }
+    }
+
+    &:has(.restricted-product-notice) {
+      @include media-breakpoint-down(sm) {
+        flex-wrap: wrap;
+        align-items: center;
+
+        .restricted-product-notice {
+          flex: 1 1 100%;
+          order: -1;
+          padding-left: 0 !important;
+        }
       }
     }
   }
@@ -322,7 +346,7 @@ div.pp_woocommerce_quick_view {
   div.product.product-type-simple div.summary > p.price {
     @include media-breakpoint-down(sm) {
       position: fixed;
-      bottom: 0.5rem;
+      bottom: 1rem;
       left: 1rem;
       z-index: 9;
     }
