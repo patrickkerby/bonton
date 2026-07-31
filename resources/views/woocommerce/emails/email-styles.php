@@ -70,8 +70,6 @@ $base_lighter_20 = wc_hex_lighter( $base, 20 );
 $base_lighter_40 = wc_hex_lighter( $base, 40 );
 $text_lighter_20 = wc_hex_lighter( $text, 20 );
 $text_lighter_40 = wc_hex_lighter( $text, 40 );
-$spark_text      = \App\bonton_wc_email_spark_text( $text );
-$spark_footer    = \App\bonton_wc_email_spark_text( $footer_text );
 
 $light_bg_css = static function ( $color ) {
 	return 'background-color:' . esc_attr( $color ) . ';background-image:linear-gradient(' . esc_attr( $color ) . ',' . esc_attr( $color ) . ');';
@@ -488,72 +486,6 @@ h2.email-order-detail-heading span {
 
 .text-align-right {
 	text-align: <?php echo is_rtl() ? 'left' : 'right'; ?>;
-}
-
-@media (prefers-color-scheme: dark) {
-	#template_header,
-	#header_wrapper,
-	#template_header_image,
-	#body_content,
-	#body_content_inner_cell,
-	#template_container,
-	#template_body,
-	#template_footer,
-	#template_footer td,
-	#template_footer #credit {
-		background-color: <?php echo esc_attr( $body ); ?> !important;
-		background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>) !important;
-	}
-
-	/*
-	 * Spark color-inverts td/h2/footer text — use pre-inverted source colors
-	 * so they render as the intended WooCommerce palette after inversion.
-	 */
-	#body_content_inner td,
-	#body_content_inner h2,
-	#body_content_inner h3,
-	h2.email-order-detail-heading,
-	h2.email-order-detail-heading span,
-	.order-item-data td,
-	#body_content .email-order-details tbody td,
-	#body_content .email-order-details tfoot td,
-	#template_footer #credit,
-	#template_footer #credit p {
-		color: <?php echo esc_attr( $spark_text ); ?> !important;
-	}
-
-	#template_footer #credit a {
-		color: <?php echo esc_attr( $link_color ); ?> !important;
-	}
-
-	#header_wrapper h1,
-	#template_header h1,
-	h1,
-	#body_content_inner,
-	#body_content_inner p,
-	#body_content_inner li,
-	#body_content_inner th,
-	th.td,
-	.text,
-	.address-title,
-	.order-item-data,
-	.email-introduction p,
-	#body_content .email-order-details th,
-	#body_content .email-order-details tfoot th,
-	#body_content_inner address,
-	#body_content_inner .address,
-	#body_content_inner b,
-	#body_content_inner strong,
-	#addresses .address,
-	#addresses .address-title,
-	#addresses address {
-		color: <?php echo esc_attr( $text ); ?> !important;
-	}
-
-	a,
-	.link {
-		color: <?php echo esc_attr( $link_color ); ?> !important;
-	}
 }
 
 @media screen and (max-width: 600px) {

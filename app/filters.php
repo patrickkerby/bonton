@@ -361,8 +361,8 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
 	// ok, we will add the separate version for plaintext emails
 	if ( $plain_text === false ) {
 
-        echo '<h2 style="' . esc_attr( \App\bonton_wc_email_text_style() ) . '">Important: Pickup Details</h2>
-		<ul style="' . esc_attr( \App\bonton_wc_email_text_style() ) . '">
+        echo '<h2>Important: Pickup Details</h2>
+		<ul>
 		<li><strong>Pickup Date:</strong> ' . esc_html( $date ) . '</li>
 		</ul>';
  

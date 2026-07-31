@@ -9,11 +9,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$email              = $email ?? null;
-$email_colors       = \App\bonton_wc_email_colors();
-$bg                 = $email_colors['bg'];
-$body               = $email_colors['body'];
-$footer_text_style  = \App\bonton_wc_email_text_style( $email_colors['footer_text'] );
+$email        = $email ?? null;
+$email_colors = \App\bonton_wc_email_colors();
+$body         = $email_colors['body'];
 
 ?>
 																		</div>
@@ -38,7 +36,7 @@ $footer_text_style  = \App\bonton_wc_email_text_style( $email_colors['footer_tex
 											<td valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 												<table border="0" cellpadding="10" cellspacing="0" width="100%">
 													<tr>
-														<td colspan="2" valign="middle" id="credit" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?><?php echo esc_attr( $footer_text_style ); ?>">
+														<td colspan="2" valign="middle" id="credit" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 															<?php
 															$email_footer_text = get_option( 'woocommerce_email_footer_text' );
 															if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
