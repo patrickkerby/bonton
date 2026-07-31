@@ -148,7 +148,8 @@ body {
 	text-align: <?php echo esc_attr( $header_alignment ); ?>;
 }
 
-#template_header_image img {
+#template_header_image img,
+div#template_header_image img {
 	width: <?php echo esc_attr( $logo_image_width ); ?>px;
 }
 
@@ -495,6 +496,18 @@ h2.email-order-detail-heading span {
 
 .text-align-right {
 	text-align: <?php echo is_rtl() ? 'left' : 'right'; ?>;
+}
+
+@media (prefers-color-scheme: dark) {
+	#template_header_image img,
+	div#template_header_image img {
+		filter: invert(1);
+	}
+}
+
+html.woocommerce-email-preview #template_header_image img,
+html.woocommerce-email-preview div#template_header_image img {
+	filter: none !important;
 }
 
 @media screen and (max-width: 600px) {
