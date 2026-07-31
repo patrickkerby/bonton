@@ -979,38 +979,89 @@ export default {
       $(window).on('load', scrollToProductResults);
     })();
 
-    // Classic cart "remove line" uses GET + update_wc_div (not mini-cart remove_from_cart).
-    // After we stopped full-page reload on remove, the header count must come from fragments.
+    // Classic cart remove uses update_wc_div (not removed_from_cart fragments).
+    // Do not rely on wc-cart-fragments on the cart page — full-page cache can serve
+    // stale get_refreshed_fragments responses and overwrite the icon after remove.
     (function () {
-      function syncCartIconFromCartForm() {
+      var cartCountRequest = null;
+
+      function setCartIconCount(count) {
+        var value = String(Math.max(0, parseInt(count, 10) || 0));
+        $('#header-cart-count, #mobile-cart-count, .cart-icon__count').text(value);
+      }
+
+      function readCartCountFromForm() {
+        if (!$('.woocommerce-cart-form').length) {
+          return null;
+        }
+
+        if ($('.wc-empty-cart-message').length) {
+          return 0;
+        }
+
         var count = 0;
 
-        $('.woocommerce-cart-form .qty').each(function () {
+        $('.woocommerce-cart-form').find('input[name^="cart["][name$="[qty]"]').each(function () {
           var qty = parseInt($(this).val(), 10);
           if (!isNaN(qty) && qty > 0) {
             count += qty;
           }
         });
 
-        $('.cart-icon__count').text(count);
+        return count;
       }
 
-      function refreshCartIconCount() {
-        if (typeof wc_cart_fragments_params === 'undefined') {
-          syncCartIconFromCartForm();
-          return;
+      function fetchCartCountFromServer() {
+        if (!window.bontonData || !window.bontonData.ajaxUrl) {
+          return $.Deferred().reject().promise();
         }
 
-        $(document.body).trigger('wc_fragment_refresh');
+        if (cartCountRequest) {
+          cartCountRequest.abort();
+        }
+
+        cartCountRequest = $.post(window.bontonData.ajaxUrl, {
+          action: 'bonton_cart_count',
+          nonce: window.bontonData.nonce,
+        });
+
+        return cartCountRequest;
+      }
+
+      function syncCartIconCount() {
+        var formCount = readCartCountFromForm();
+
+        if (formCount !== null) {
+          setCartIconCount(formCount);
+        }
+
+        fetchCartCountFromServer()
+          .done(function (response) {
+            if (response && response.success && response.data && typeof response.data.count !== 'undefined') {
+              setCartIconCount(response.data.count);
+            }
+          })
+          .always(function () {
+            cartCountRequest = null;
+          });
       }
 
       $(document.body).on('wc_cart_emptied', function () {
-        $('.cart-icon__count').text('0');
-        setTimeout(refreshCartIconCount, 150);
+        setCartIconCount(0);
+        syncCartIconCount();
       });
 
-      $(document.body).on('updated_wc_div item_removed_from_classic_cart', function () {
-        setTimeout(refreshCartIconCount, 150);
+      $(document.body).on('updated_wc_div item_removed_from_classic_cart updated_cart_totals', function () {
+        syncCartIconCount();
+      });
+
+      // WC fragments can return cached counts; re-sync after they run on non-cart pages.
+      $(document.body).on('wc_fragments_refreshed added_to_cart removed_from_cart', function () {
+        if ($('body').hasClass('woocommerce-cart')) {
+          return;
+        }
+
+        syncCartIconCount();
       });
     })();
 

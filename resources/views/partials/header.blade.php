@@ -27,7 +27,7 @@ $sub_title = get_field('sub_title');
       @if (has_nav_menu('top_navigation'))
         {!! wp_nav_menu(['theme_location' => 'top_navigation', 'menu_class' => 'top-nav']) !!}
       @endif
-      @include('partials.cart-icon')
+      @include('partials.cart-icon', ['count_id' => 'header-cart-count'])
     </div>
   </div>
   <div class="container-fluid">

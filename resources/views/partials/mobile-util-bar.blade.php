@@ -11,6 +11,9 @@
       'id_suffix' => '-mobile',
     ])
 
-    @include('partials.cart-icon', ['extra_class' => 'mobile-util-bar__cart'])
+    @include('partials.cart-icon', [
+      'extra_class' => 'mobile-util-bar__cart',
+      'count_id' => 'mobile-cart-count',
+    ])
   </div>
 </div>

@@ -268,12 +268,31 @@ add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
 }, 10, 3 );
 
 
-// Cart count in header + mobile util bar: fragment updates `.cart-icon__count`
+// Cart count in header + mobile util bar.
 add_filter( 'woocommerce_add_to_cart_fragments', 'add_to_cart_fragment' );
 function add_to_cart_fragment( $fragments ) {
     $count = absint( WC()->cart->get_cart_contents_count() );
+
     $fragments['.cart-icon__count'] = '<span class="cart-icon__count">' . $count . '</span>';
+    $fragments['#header-cart-count'] = '<span class="cart-icon__count" id="header-cart-count">' . $count . '</span>';
+    $fragments['#mobile-cart-count'] = '<span class="cart-icon__count" id="mobile-cart-count">' . $count . '</span>';
+
     return $fragments;
+}
+
+add_action( 'wp_ajax_bonton_cart_count', 'App\\bonton_ajax_cart_count' );
+add_action( 'wp_ajax_nopriv_bonton_cart_count', 'App\\bonton_ajax_cart_count' );
+
+function bonton_ajax_cart_count() {
+    check_ajax_referer( 'bonton_nonce', 'nonce' );
+
+    if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+        wp_send_json_success( [ 'count' => 0 ] );
+    }
+
+    wp_send_json_success( [
+        'count' => absint( WC()->cart->get_cart_contents_count() ),
+    ] );
 }
 
 // Let's see if we can get these damned sorting options setup right

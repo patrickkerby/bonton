@@ -43,11 +43,15 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('sage/woo.css', asset_path('styles/woo.css'), false, null);
     }
 
-    // Header/mobile cart count sync after classic cart AJAX (remove line, etc.).
-    // WC only auto-enqueues this with the cart widget; without it, updated_wc_div
-    // never refreshes `.cart-icon__count` fragments.
+    // Shop/other pages: WC fragments for add-to-cart AJAX updates.
+    // Cart page: skip fragments — it listens to updated_wc_div and cached responses
+    // can overwrite the header count after line-item removes.
     if (function_exists('WC')) {
         wp_enqueue_script('wc-cart-fragments');
+
+        if (is_cart()) {
+            wp_dequeue_script('wc-cart-fragments');
+        }
     }
 
     // Enqueue Quick View script on the home page template so the
