@@ -20,10 +20,13 @@ $store_name                 = $store_name ?? get_bloginfo( 'name', 'display' );
 $email_colors               = \App\bonton_wc_email_colors();
 $bg                         = $email_colors['bg'];
 $body                       = $email_colors['body'];
+$email_text_color           = get_option( 'woocommerce_email_text_color', '#4c4c4c' );
+$inline_text_style          = \App\bonton_wc_email_color_style( $email_text_color );
+$inline_heading_style       = \App\bonton_wc_email_color_style( $email_text_color );
 
 ?>
 <!DOCTYPE html>
-<html <?php language_attributes(); ?> class="<?php echo apply_filters( 'woocommerce_is_email_preview', false ) ? 'woocommerce-email-preview' : ''; ?>">
+<html <?php language_attributes(); ?>>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo( 'charset' ); ?>" />
 		<meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -78,7 +81,7 @@ $body                       = $email_colors['body'];
 												<table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_header" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 													<tr>
 														<td id="header_wrapper" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
-															<h1><?php echo esc_html( $email_heading ); ?></h1>
+															<h1 style="<?php echo esc_attr( $inline_heading_style ); ?>"><?php echo esc_html( $email_heading ); ?></h1>
 														</td>
 													</tr>
 												</table>
@@ -95,4 +98,4 @@ $body                       = $email_colors['body'];
 															<table border="0" cellpadding="20" cellspacing="0" width="100%">
 																<tr>
 																	<td valign="top" id="body_content_inner_cell" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
-																		<div id="body_content_inner">
+																		<div id="body_content_inner" style="<?php echo esc_attr( $inline_text_style ); ?>">

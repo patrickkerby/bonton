@@ -95,3 +95,21 @@ function bonton_wc_email_invert_hex( $hex ) {
 function bonton_wc_email_spark_text( $color ) {
 	return bonton_wc_email_invert_hex( $color );
 }
+
+/**
+ * Resolve a color for the current render context (preview vs sent email).
+ */
+function bonton_wc_email_client_color( $color ) {
+	if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
+		return $color;
+	}
+
+	return bonton_wc_email_spark_text( $color );
+}
+
+/**
+ * Inline color style for email HTML elements.
+ */
+function bonton_wc_email_color_style( $color ) {
+	return 'color:' . esc_attr( bonton_wc_email_client_color( $color ) ) . ';';
+}

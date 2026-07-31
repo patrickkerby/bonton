@@ -71,14 +71,22 @@ $base_lighter_40 = wc_hex_lighter( $base, 40 );
 $text_lighter_20 = wc_hex_lighter( $text, 20 );
 $text_lighter_40 = wc_hex_lighter( $text, 40 );
 
-// Theme override: use full WC text color for body/table (not lightened $text_lighter_20).
-$email_text     = $text;
-$heading_color  = $email_improvements_enabled ? $text : $base;
-$spark_text     = \App\bonton_wc_email_spark_text( $text );
-$spark_heading  = \App\bonton_wc_email_spark_text( $heading_color );
-$spark_footer   = \App\bonton_wc_email_spark_text( $footer_text );
-$spark_link     = \App\bonton_wc_email_spark_text( $link_color );
-$spark_subhead  = \App\bonton_wc_email_spark_text( $email_improvements_enabled ? $text : $footer_text );
+// Theme override: full WC text color (not lightened). Pre-invert for sent emails
+// so Spark's CSS inversion renders the intended dark palette on white backgrounds.
+$heading_color   = $email_improvements_enabled ? $text : $base;
+$header_h1_color = $email_improvements_enabled ? $text : $base_text;
+$subhead_color   = $email_improvements_enabled ? $text : $footer_text;
+
+$client_color = static function ( $color ) use ( $is_email_preview ) {
+	return $is_email_preview ? $color : \App\bonton_wc_email_spark_text( $color );
+};
+
+$email_text    = $client_color( $text );
+$css_heading   = $client_color( $heading_color );
+$css_header_h1 = $client_color( $header_h1_color );
+$css_footer    = $client_color( $footer_text );
+$css_link      = $client_color( $link_color );
+$css_subhead   = $client_color( $subhead_color );
 
 $light_bg_css = static function ( $color ) {
 	return 'background-color:' . esc_attr( $color ) . ';background-image:linear-gradient(' . esc_attr( $color ) . ',' . esc_attr( $color ) . ');';
@@ -133,7 +141,7 @@ body {
 
 #template_header h1,
 #template_header h1 a {
-	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base_text ); ?>;
+	color: <?php echo esc_attr( $css_header_h1 ); ?>;
 }
 
 <?php if ( $email_improvements_enabled ) : ?>
@@ -166,7 +174,7 @@ body {
 }
 
 .email-logo-text {
-	color: <?php echo esc_attr( $link_color ); ?>;
+	color: <?php echo esc_attr( $css_link ); ?>;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 	font-size: 18px;
 }
@@ -182,7 +190,7 @@ body {
 }
 
 #body_content table td td.email-additional-content {
-	color: <?php echo esc_attr( $text ); ?>;
+	color: <?php echo esc_attr( $email_text ); ?>;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 	padding: 32px 0 0;
 }
@@ -217,7 +225,7 @@ body {
 		border-top: 1px solid <?php echo esc_attr( $border_color ); ?>;
 		<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php endif; ?>
-	color: <?php echo esc_attr( $footer_text ); ?>;
+	color: <?php echo esc_attr( $css_footer ); ?>;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 	font-size: 12px;
 	line-height: <?php echo $email_improvements_enabled ? '140%' : '150%'; ?>;
@@ -374,7 +382,7 @@ body {
 
 .address {
 	<?php if ( $email_improvements_enabled ) { ?>
-		color: <?php echo esc_attr( $text ); ?>;
+		color: <?php echo esc_attr( $email_text ); ?>;
 		font-style: normal;
 		padding: 8px 0;
 	<?php } else { ?>
@@ -405,12 +413,12 @@ body {
 .text,
 .address-title,
 .order-item-data {
-	color: <?php echo esc_attr( $text ); ?>;
+	color: <?php echo esc_attr( $email_text ); ?>;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 }
 
 .link {
-	color: <?php echo esc_attr( $link_color ); ?>;
+	color: <?php echo esc_attr( $css_link ); ?>;
 }
 
 #header_wrapper {
@@ -427,12 +435,16 @@ body {
 <?php endif; ?>
 
 #template_footer #credit,
+#template_footer #credit p {
+	color: <?php echo esc_attr( $css_footer ); ?>;
+}
+
 #template_footer #credit a {
-	color: <?php echo esc_attr( $footer_text ); ?>;
+	color: <?php echo esc_attr( $css_link ); ?>;
 }
 
 h1 {
-	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base ); ?>;
+	color: <?php echo esc_attr( $css_heading ); ?>;
 	font-family: <?php echo esc_attr( $heading_font ); ?>;
 	font-size: <?php echo $email_improvements_enabled ? '32px' : '30px'; ?>;
 	font-weight: <?php echo $email_improvements_enabled ? 700 : 300; ?>;
@@ -450,7 +462,7 @@ h1 {
 }
 
 h2 {
-	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base ); ?>;
+	color: <?php echo esc_attr( $css_heading ); ?>;
 	display: block;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 	font-size: <?php echo $email_improvements_enabled ? '20px' : '18px'; ?>;
@@ -461,7 +473,7 @@ h2 {
 }
 
 h3 {
-	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base ); ?>;
+	color: <?php echo esc_attr( $css_heading ); ?>;
 	display: block;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 	font-size: 16px;
@@ -472,7 +484,7 @@ h3 {
 }
 
 a {
-	color: <?php echo esc_attr( $link_color ); ?>;
+	color: <?php echo esc_attr( $css_link ); ?>;
 	font-weight: normal;
 	text-decoration: underline;
 }
@@ -492,7 +504,7 @@ img {
 }
 
 h2.email-order-detail-heading span {
-	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $footer_text ); ?>;
+	color: <?php echo esc_attr( $css_subhead ); ?>;
 	display: block;
 	font-size: 14px;
 	font-weight: normal;
@@ -508,130 +520,6 @@ h2.email-order-detail-heading span {
 
 .text-align-right {
 	text-align: <?php echo is_rtl() ? 'left' : 'right'; ?>;
-}
-
-/*
- * Spark dark mode inverts CSS text colors when backgrounds are locked white.
- * Pre-invert source colors so they render as the intended palette after inversion.
- * .woocommerce-email-preview overrides below keep the WC admin preview readable
- * when the OS/browser is in dark mode.
- */
-@media (prefers-color-scheme: dark) {
-	#header_wrapper h1,
-	#template_header h1,
-	h1 {
-		color: <?php echo esc_attr( $spark_heading ); ?> !important;
-	}
-
-	h2,
-	h3,
-	h2.email-order-detail-heading span {
-		color: <?php echo esc_attr( $spark_heading ); ?> !important;
-	}
-
-	#body_content_inner,
-	#body_content_inner p,
-	#body_content_inner li,
-	#body_content_inner td,
-	#body_content_inner th,
-	#body_content_inner address,
-	#body_content_inner .address,
-	#body_content_inner b,
-	#body_content_inner strong,
-	#body_content_inner h2,
-	#body_content_inner h3,
-	.text,
-	.td,
-	th.td,
-	td.td,
-	.address,
-	.address-title,
-	.order-item-data,
-	.order-item-data td,
-	.email-introduction,
-	.email-introduction p,
-	.email-order-item-meta,
-	.additional-fields,
-	#body_content .email-order-details td,
-	#body_content .email-order-details th,
-	#body_content .email-order-details tbody td,
-	#body_content .email-order-details tfoot td,
-	#body_content .email-order-details tfoot th,
-	#addresses .address,
-	#addresses .address-title,
-	#addresses address,
-	#template_footer #credit,
-	#template_footer #credit p {
-		color: <?php echo esc_attr( $spark_text ); ?> !important;
-	}
-
-	h2.email-order-detail-heading span {
-		color: <?php echo esc_attr( $spark_subhead ); ?> !important;
-	}
-
-	a,
-	.link,
-	#template_footer #credit a {
-		color: <?php echo esc_attr( $spark_link ); ?> !important;
-	}
-}
-
-html.woocommerce-email-preview #header_wrapper h1,
-html.woocommerce-email-preview #template_header h1,
-html.woocommerce-email-preview h1 {
-	color: <?php echo esc_attr( $heading_color ); ?> !important;
-}
-
-html.woocommerce-email-preview h2,
-html.woocommerce-email-preview h3,
-html.woocommerce-email-preview h2.email-order-detail-heading span {
-	color: <?php echo esc_attr( $heading_color ); ?> !important;
-}
-
-html.woocommerce-email-preview #body_content_inner,
-html.woocommerce-email-preview #body_content_inner p,
-html.woocommerce-email-preview #body_content_inner li,
-html.woocommerce-email-preview #body_content_inner td,
-html.woocommerce-email-preview #body_content_inner th,
-html.woocommerce-email-preview #body_content_inner address,
-html.woocommerce-email-preview #body_content_inner .address,
-html.woocommerce-email-preview #body_content_inner b,
-html.woocommerce-email-preview #body_content_inner strong,
-html.woocommerce-email-preview #body_content_inner h2,
-html.woocommerce-email-preview #body_content_inner h3,
-html.woocommerce-email-preview .text,
-html.woocommerce-email-preview .td,
-html.woocommerce-email-preview th.td,
-html.woocommerce-email-preview td.td,
-html.woocommerce-email-preview .address,
-html.woocommerce-email-preview .address-title,
-html.woocommerce-email-preview .order-item-data,
-html.woocommerce-email-preview .order-item-data td,
-html.woocommerce-email-preview .email-introduction,
-html.woocommerce-email-preview .email-introduction p,
-html.woocommerce-email-preview .email-order-item-meta,
-html.woocommerce-email-preview .additional-fields,
-html.woocommerce-email-preview #body_content .email-order-details td,
-html.woocommerce-email-preview #body_content .email-order-details th,
-html.woocommerce-email-preview #body_content .email-order-details tbody td,
-html.woocommerce-email-preview #body_content .email-order-details tfoot td,
-html.woocommerce-email-preview #body_content .email-order-details tfoot th,
-html.woocommerce-email-preview #addresses .address,
-html.woocommerce-email-preview #addresses .address-title,
-html.woocommerce-email-preview #addresses address,
-html.woocommerce-email-preview #template_footer #credit,
-html.woocommerce-email-preview #template_footer #credit p {
-	color: <?php echo esc_attr( $email_text ); ?> !important;
-}
-
-html.woocommerce-email-preview h2.email-order-detail-heading span {
-	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $footer_text ); ?> !important;
-}
-
-html.woocommerce-email-preview a,
-html.woocommerce-email-preview .link,
-html.woocommerce-email-preview #template_footer #credit a {
-	color: <?php echo esc_attr( $link_color ); ?> !important;
 }
 
 @media screen and (max-width: 600px) {
