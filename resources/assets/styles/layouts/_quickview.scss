@@ -360,7 +360,11 @@ div.pp_woocommerce_quick_view {
           align-items: center;
           flex: 0 0 auto;
           flex-wrap: nowrap;
-          gap: 0.5rem;
+          // gap: 0.5rem;
+
+          .quantity {
+            margin-right: 0 !important;
+          }
         }
       }
     }

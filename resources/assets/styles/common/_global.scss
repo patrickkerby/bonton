@@ -137,7 +137,7 @@ a {
 .woocommerce input.button.alt:disabled[disabled],
 .woocommerce input.button.alt:disabled[disabled]:hover {
   background: $highlight;
-  padding: 0.85rem 1.5rem !important;
+  padding: 0.85rem 1.5rem;
 }
 
 .woocommerce #respond input#submit,
