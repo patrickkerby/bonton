@@ -70,20 +70,27 @@ $base_lighter_20 = wc_hex_lighter( $base, 20 );
 $base_lighter_40 = wc_hex_lighter( $base, 40 );
 $text_lighter_20 = wc_hex_lighter( $text, 20 );
 $text_lighter_40 = wc_hex_lighter( $text, 40 );
+
+$light_bg_css = static function ( $color ) {
+	return 'background-color:' . esc_attr( $color ) . ';background-image:linear-gradient(' . esc_attr( $color ) . ',' . esc_attr( $color ) . ');';
+};
 ?>
 body {
 	background-color: <?php echo esc_attr( $bg ); ?>;
+	<?php echo $light_bg_css( $bg ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	padding: 0;
 	text-align: center;
 }
 
 #outer_wrapper {
 	background-color: <?php echo esc_attr( $bg ); ?>;
+	<?php echo $light_bg_css( $bg ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 }
 
 <?php if ( $email_improvements_enabled ) : ?>
 #inner_wrapper {
 	background-color: <?php echo esc_attr( $body ); ?>;
+	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	border-radius: 8px;
 }
 <?php endif; ?>
@@ -99,14 +106,15 @@ body {
 #template_container {
 	box-shadow: <?php echo $email_improvements_enabled ? 'none' : '0 1px 4px rgba(0, 0, 0, 0.1) !important'; ?>;
 	background-color: <?php echo esc_attr( $body ); ?>;
+	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	border: <?php echo $email_improvements_enabled ? '0' : '1px solid ' . esc_attr( $bg_darker_10 ); ?>;
 	border-radius: 3px !important;
 }
 
 #template_header {
 	background-color: <?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>;
+	<?php echo $light_bg_css( $email_improvements_enabled ? $body : $base ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	border-radius: 3px 3px 0 0 !important;
-	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base_text ); ?>;
 	border-bottom: 0;
 	font-weight: bold;
 	line-height: 100%;
@@ -117,7 +125,6 @@ body {
 #template_header h1,
 #template_header h1 a {
 	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $base_text ); ?>;
-	background-color: inherit;
 }
 
 <?php if ( $email_improvements_enabled ) : ?>
@@ -137,6 +144,7 @@ body {
 
 #template_header_image {
 	padding: 32px 32px 0;
+	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 }
 
 #template_header_image p {
@@ -210,6 +218,7 @@ body {
 
 #body_content {
 	background-color: <?php echo esc_attr( $body ); ?>;
+	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 }
 
 #body_content table td {
@@ -311,7 +320,7 @@ body {
 }
 
 #body_content_inner {
-	color: <?php echo esc_attr( $text_lighter_20 ); ?>;
+	color: <?php echo esc_attr( $text ); ?>;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 	font-size: <?php echo $email_improvements_enabled ? '16px' : '14px'; ?>;
 	line-height: 150%;
@@ -367,6 +376,9 @@ body {
 
 #header_wrapper {
 	padding: <?php echo $email_improvements_enabled ? '20px 32px 0' : '36px 48px'; ?>;
+	<?php if ( $email_improvements_enabled ) : ?>
+	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+	<?php endif; ?>
 }
 
 <?php if ( $header_alignment ) : ?>
@@ -457,6 +469,40 @@ h2.email-order-detail-heading span {
 
 .text-align-right {
 	text-align: <?php echo is_rtl() ? 'left' : 'right'; ?>;
+}
+
+@media (prefers-color-scheme: dark) {
+	#template_header,
+	#header_wrapper,
+	#template_header_image,
+	#body_content,
+	#body_content_inner_cell,
+	#template_container,
+	#template_body {
+		background-color: <?php echo esc_attr( $body ); ?> !important;
+		background-image: linear-gradient(<?php echo esc_attr( $body ); ?>, <?php echo esc_attr( $body ); ?>) !important;
+	}
+
+	#header_wrapper h1,
+	#template_header h1,
+	h1,
+	h2,
+	h3,
+	#body_content_inner,
+	#body_content_inner p,
+	#body_content_inner li,
+	.text,
+	.td,
+	.address-title,
+	.order-item-data,
+	.email-introduction p {
+		color: <?php echo esc_attr( $text ); ?> !important;
+	}
+
+	a,
+	.link {
+		color: <?php echo esc_attr( $link_color ); ?> !important;
+	}
 }
 
 @media screen and (max-width: 600px) {
