@@ -33,6 +33,23 @@ function bonton_wc_locate_email_template( $template, $template_name, $template_p
 
 add_filter( 'woocommerce_locate_template', __NAMESPACE__ . '\\bonton_wc_locate_email_template', 10, 3 );
 
+/**
+ * Nudge pure white/black — Apple Mail and Spark auto-invert those hex values.
+ */
+function bonton_wc_email_avoid_pure( $color ) {
+	$hex = strtolower( ltrim( (string) $color, '#' ) );
+
+	if ( in_array( $hex, array( 'fff', 'ffffff' ), true ) ) {
+		return '#fffffe';
+	}
+
+	if ( in_array( $hex, array( '000', '000000' ), true ) ) {
+		return '#010101';
+	}
+
+	return $color;
+}
+
 function bonton_wc_email_colors() {
 	static $colors = null;
 
@@ -42,7 +59,7 @@ function bonton_wc_email_colors() {
 
 	$colors = array(
 		'bg'   => get_option( 'woocommerce_email_background_color', '#fcfcfc' ),
-		'body' => get_option( 'woocommerce_email_body_background_color', '#ffffff' ),
+		'body' => bonton_wc_email_avoid_pure( get_option( 'woocommerce_email_body_background_color', '#ffffff' ) ),
 	);
 
 	if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
@@ -52,7 +69,7 @@ function bonton_wc_email_colors() {
 		) as $key => $option ) {
 			$transient = get_transient( $option );
 			if ( $transient ) {
-				$colors[ $key ] = $transient;
+				$colors[ $key ] = 'body' === $key ? bonton_wc_email_avoid_pure( $transient ) : $transient;
 			}
 		}
 	}
@@ -61,55 +78,10 @@ function bonton_wc_email_colors() {
 }
 
 function bonton_wc_email_light_bg( $color ) {
+	$color = bonton_wc_email_avoid_pure( $color );
+
 	return sprintf(
 		'background-color:%1$s !important;background-image:linear-gradient(%1$s,%1$s) !important;',
 		esc_attr( $color )
 	);
-}
-
-/**
- * Invert a hex color — Spark dark mode inverts CSS text on forced-white backgrounds.
- */
-function bonton_wc_email_invert_hex( $hex ) {
-	$hex = ltrim( (string) $hex, '#' );
-
-	if ( 3 === strlen( $hex ) ) {
-		$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
-	}
-
-	if ( 6 !== strlen( $hex ) ) {
-		return $hex;
-	}
-
-	return sprintf(
-		'#%02x%02x%02x',
-		255 - hexdec( substr( $hex, 0, 2 ) ),
-		255 - hexdec( substr( $hex, 2, 2 ) ),
-		255 - hexdec( substr( $hex, 4, 2 ) )
-	);
-}
-
-/**
- * Pre-invert a color so Spark renders the intended shade after its CSS inversion.
- */
-function bonton_wc_email_spark_text( $color ) {
-	return bonton_wc_email_invert_hex( $color );
-}
-
-/**
- * Resolve a color for the current render context (preview vs sent email).
- */
-function bonton_wc_email_client_color( $color ) {
-	if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
-		return $color;
-	}
-
-	return bonton_wc_email_spark_text( $color );
-}
-
-/**
- * Inline color style for email HTML elements.
- */
-function bonton_wc_email_color_style( $color ) {
-	return 'color:' . esc_attr( bonton_wc_email_client_color( $color ) ) . ';';
 }

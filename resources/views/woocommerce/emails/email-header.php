@@ -20,9 +20,6 @@ $store_name                 = $store_name ?? get_bloginfo( 'name', 'display' );
 $email_colors               = \App\bonton_wc_email_colors();
 $bg                         = $email_colors['bg'];
 $body                       = $email_colors['body'];
-$email_text_color           = get_option( 'woocommerce_email_text_color', '#4c4c4c' );
-$inline_text_style          = \App\bonton_wc_email_color_style( $email_text_color );
-$inline_heading_style       = \App\bonton_wc_email_color_style( $email_text_color );
 
 ?>
 <!DOCTYPE html>
@@ -81,7 +78,7 @@ $inline_heading_style       = \App\bonton_wc_email_color_style( $email_text_colo
 												<table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_header" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 													<tr>
 														<td id="header_wrapper" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
-															<h1 style="<?php echo esc_attr( $inline_heading_style ); ?>"><?php echo esc_html( $email_heading ); ?></h1>
+															<h1><?php echo esc_html( $email_heading ); ?></h1>
 														</td>
 													</tr>
 												</table>
@@ -98,4 +95,4 @@ $inline_heading_style       = \App\bonton_wc_email_color_style( $email_text_colo
 															<table border="0" cellpadding="20" cellspacing="0" width="100%">
 																<tr>
 																	<td valign="top" id="body_content_inner_cell" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
-																		<div id="body_content_inner" style="<?php echo esc_attr( $inline_text_style ); ?>">
+																		<div id="body_content_inner">
