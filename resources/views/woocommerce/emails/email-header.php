@@ -17,20 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $email_improvements_enabled = FeaturesUtil::feature_is_enabled( 'email_improvements' );
 $store_name                 = $store_name ?? get_bloginfo( 'name', 'display' );
-$bg                         = get_option( 'woocommerce_email_background_color', '#fcfcfc' );
-$body                       = get_option( 'woocommerce_email_body_background_color', '#ffffff' );
-
-/**
- * Lock backgrounds in dark-mode clients. Text colors are left to WooCommerce CSS.
- *
- * @param string $color Hex background color.
- */
-$force_light_bg = static function ( $color ) {
-	return sprintf(
-		'background-color:%1$s !important;background-image:linear-gradient(%1$s,%1$s) !important;',
-		esc_attr( $color )
-	);
-};
+$email_colors               = \App\bonton_wc_email_colors();
+$bg                         = $email_colors['bg'];
+$body                       = $email_colors['body'];
 
 ?>
 <!DOCTYPE html>
@@ -42,13 +31,13 @@ $force_light_bg = static function ( $color ) {
 		<meta name="supported-color-schemes" content="light">
 		<title><?php echo esc_html( $store_name ); ?></title>
 	</head>
-	<body <?php echo is_rtl() ? 'rightmargin' : 'leftmargin'; ?>="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" bgcolor="<?php echo esc_attr( $bg ); ?>" style="margin:0;padding:0;<?php echo esc_attr( $force_light_bg( $bg ) ); ?>;">
-		<table width="100%" id="outer_wrapper" border="0" cellpadding="0" cellspacing="0" bgcolor="<?php echo esc_attr( $bg ); ?>" style="<?php echo esc_attr( $force_light_bg( $bg ) ); ?>;">
+	<body <?php echo is_rtl() ? 'rightmargin' : 'leftmargin'; ?>="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" bgcolor="<?php echo esc_attr( $bg ); ?>" style="margin:0;padding:0;<?php echo esc_attr( \App\bonton_wc_email_light_bg( $bg ) ); ?>">
+		<table width="100%" id="outer_wrapper" border="0" cellpadding="0" cellspacing="0" bgcolor="<?php echo esc_attr( $bg ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $bg ) ); ?>">
 			<tr>
 				<td><!-- Deliberately empty to support consistent sizing and layout across multiple email clients. --></td>
-				<td width="600" bgcolor="<?php echo esc_attr( $bg ); ?>" style="<?php echo esc_attr( $force_light_bg( $bg ) ); ?>">
+				<td width="600" bgcolor="<?php echo esc_attr( $bg ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $bg ) ); ?>">
 					<div id="wrapper" dir="<?php echo is_rtl() ? 'rtl' : 'ltr'; ?>">
-						<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="inner_wrapper" bgcolor="<?php echo esc_attr( $email_improvements_enabled ? $body : $bg ); ?>" style="<?php echo esc_attr( $force_light_bg( $email_improvements_enabled ? $body : $bg ) ); ?>">
+						<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="inner_wrapper" bgcolor="<?php echo esc_attr( $email_improvements_enabled ? $body : $bg ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $email_improvements_enabled ? $body : $bg ) ); ?>">
 							<tr>
 								<td align="center" valign="top">
 									<?php
@@ -62,7 +51,7 @@ $force_light_bg = static function ( $color ) {
 										?>
 										<table border="0" cellpadding="0" cellspacing="0" width="100%">
 											<tr>
-												<td id="template_header_image" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+												<td id="template_header_image" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 													<?php
 													if ( $img ) {
 														echo '<p style="margin-top:0;"><img src="' . esc_url( $img ) . '" alt="' . esc_attr( $store_name ) . '" /></p>';
@@ -82,13 +71,13 @@ $force_light_bg = static function ( $color ) {
 											?>
 										</div>
 									<?php endif; ?>
-									<table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_container" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+									<table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_container" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 										<tr>
-											<td align="center" valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+											<td align="center" valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 												<!-- Header -->
-												<table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_header" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+												<table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_header" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 													<tr>
-														<td id="header_wrapper" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+														<td id="header_wrapper" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 															<h1><?php echo esc_html( $email_heading ); ?></h1>
 														</td>
 													</tr>
@@ -97,13 +86,13 @@ $force_light_bg = static function ( $color ) {
 											</td>
 										</tr>
 										<tr>
-											<td align="center" valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+											<td align="center" valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 												<!-- Body -->
-												<table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_body" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+												<table border="0" cellpadding="0" cellspacing="0" width="100%" id="template_body" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 													<tr>
-														<td valign="top" id="body_content" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+														<td valign="top" id="body_content" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 															<!-- Content -->
 															<table border="0" cellpadding="20" cellspacing="0" width="100%">
 																<tr>
-																	<td valign="top" id="body_content_inner_cell" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+																	<td valign="top" id="body_content_inner_cell" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 																		<div id="body_content_inner">

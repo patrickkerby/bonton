@@ -2,8 +2,6 @@
 /**
  * Email Footer
  *
- * This template can be overridden by copying it to yourtheme/woocommerce/emails/email-footer.php.
- *
  * @see https://woocommerce.com/document/template-structure/
  * @package WooCommerce\Templates\Emails
  * @version 10.0.0
@@ -11,16 +9,11 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$email = $email ?? null;
-$bg    = get_option( 'woocommerce_email_background_color', '#fcfcfc' );
-$body  = get_option( 'woocommerce_email_body_background_color', '#ffffff' );
-
-$force_light_bg = static function ( $color ) {
-	return sprintf(
-		'background-color:%1$s !important;background-image:linear-gradient(%1$s,%1$s) !important;',
-		esc_attr( $color )
-	);
-};
+$email              = $email ?? null;
+$email_colors       = \App\bonton_wc_email_colors();
+$bg                 = $email_colors['bg'];
+$body               = $email_colors['body'];
+$footer_text_style  = \App\bonton_wc_email_text_style( $email_colors['footer_text'] );
 
 ?>
 																		</div>
@@ -38,14 +31,14 @@ $force_light_bg = static function ( $color ) {
 								</td>
 							</tr>
 							<tr>
-								<td align="center" valign="top" bgcolor="<?php echo esc_attr( $bg ); ?>" style="<?php echo esc_attr( $force_light_bg( $bg ) ); ?>">
+								<td align="center" valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 									<!-- Footer -->
-									<table border="0" cellpadding="10" cellspacing="0" width="100%" id="template_footer" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+									<table border="0" cellpadding="10" cellspacing="0" width="100%" id="template_footer" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 										<tr>
-											<td valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+											<td valign="top" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?>">
 												<table border="0" cellpadding="10" cellspacing="0" width="100%">
 													<tr>
-														<td colspan="2" valign="middle" id="credit" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( $force_light_bg( $body ) ); ?>">
+														<td colspan="2" valign="middle" id="credit" bgcolor="<?php echo esc_attr( $body ); ?>" style="<?php echo esc_attr( \App\bonton_wc_email_light_bg( $body ) ); ?><?php echo esc_attr( $footer_text_style ); ?>">
 															<?php
 															$email_footer_text = get_option( 'woocommerce_email_footer_text' );
 															if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {

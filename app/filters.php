@@ -360,11 +360,10 @@ function bonton_add_email_order_meta( $order_obj, $sent_to_admin, $plain_text ){
  
 	// ok, we will add the separate version for plaintext emails
 	if ( $plain_text === false ) {
- 
-		// you shouldn't have to worry about inline styles, WooCommerce adds them itself depending on the theme you use
-        echo '<h2>Important: Pickup Details</h2>
-		<ul>
-		<li><strong>Pickup Date:</strong> ' . $date . '</li>
+
+        echo '<h2 style="' . esc_attr( \App\bonton_wc_email_text_style() ) . '">Important: Pickup Details</h2>
+		<ul style="' . esc_attr( \App\bonton_wc_email_text_style() ) . '">
+		<li><strong>Pickup Date:</strong> ' . esc_html( $date ) . '</li>
 		</ul>';
  
 	} else {
