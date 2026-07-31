@@ -980,18 +980,37 @@ export default {
     })();
 
     // Classic cart "remove line" uses GET + update_wc_div (not mini-cart remove_from_cart).
-    // WooCommerce triggers fragment refresh on updated_wc_div, but the header count can
-    // stay stale for the last item (race / timing). wc_cart_emptied only fires when the
-    // cart becomes empty — force sync after the session has settled.
+    // After we stopped full-page reload on remove, the header count must come from fragments.
     (function () {
-      $(document.body).on('wc_cart_emptied', function () {
-        $('.cart-icon__count').text('0');
+      function syncCartIconFromCartForm() {
+        var count = 0;
+
+        $('.woocommerce-cart-form .qty').each(function () {
+          var qty = parseInt($(this).val(), 10);
+          if (!isNaN(qty) && qty > 0) {
+            count += qty;
+          }
+        });
+
+        $('.cart-icon__count').text(count);
+      }
+
+      function refreshCartIconCount() {
         if (typeof wc_cart_fragments_params === 'undefined') {
+          syncCartIconFromCartForm();
           return;
         }
-        setTimeout(function () {
-          $(document.body).trigger('wc_fragment_refresh');
-        }, 150);
+
+        $(document.body).trigger('wc_fragment_refresh');
+      }
+
+      $(document.body).on('wc_cart_emptied', function () {
+        $('.cart-icon__count').text('0');
+        setTimeout(refreshCartIconCount, 150);
+      });
+
+      $(document.body).on('updated_wc_div item_removed_from_classic_cart', function () {
+        setTimeout(refreshCartIconCount, 150);
       });
     })();
 

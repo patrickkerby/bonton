@@ -43,6 +43,13 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('sage/woo.css', asset_path('styles/woo.css'), false, null);
     }
 
+    // Header/mobile cart count sync after classic cart AJAX (remove line, etc.).
+    // WC only auto-enqueues this with the cart widget; without it, updated_wc_div
+    // never refreshes `.cart-icon__count` fragments.
+    if (function_exists('WC')) {
+        wp_enqueue_script('wc-cart-fragments');
+    }
+
     // Enqueue Quick View script on the home page template so the
     // WooCommerce Quick View plugin can handle product popovers.
     // The plugin registers the script globally but only enqueues it
