@@ -658,7 +658,20 @@ function after_checkout_validation( $posted ) {
     }
 }
 
+add_action('woocommerce_before_add_to_cart_button', 'App\simple_product_purchase_bar_price', 5);
 add_action('woocommerce_before_add_to_cart_form', 'App\sixth_item_free_language');
+
+function simple_product_purchase_bar_price() {
+    global $product;
+
+    if (!$product || !$product->is_type('simple')) {
+        return;
+    }
+
+    echo '<div class="simple-purchase-bar-price d-md-none">';
+    woocommerce_template_single_price();
+    echo '</div>';
+}
 
 function sixth_item_free_language() {
     global $product;
