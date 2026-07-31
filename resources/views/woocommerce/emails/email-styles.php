@@ -38,8 +38,8 @@ if ( $is_email_preview ) {
 	$logo_image_width_transient = get_transient( 'woocommerce_email_header_image_width' );
 	$font_family_transient      = get_transient( 'woocommerce_email_font_family' );
 
-	$bg               = \App\bonton_wc_email_avoid_pure( $bg_transient ? $bg_transient : $bg );
-	$body             = \App\bonton_wc_email_avoid_pure( $body_transient ? $body_transient : $body );
+	$bg               = $bg_transient ? $bg_transient : $bg;
+	$body             = $body_transient ? $body_transient : $body;
 	$base             = $base_transient ? $base_transient : $base;
 	$text             = $text_transient ? $text_transient : $text;
 	$footer_text      = $footer_text_transient ? $footer_text_transient : $footer_text;
@@ -47,9 +47,6 @@ if ( $is_email_preview ) {
 	$logo_image_width = $logo_image_width_transient ? $logo_image_width_transient : $logo_image_width;
 	$font_family      = $font_family_transient ? $font_family_transient : $font_family;
 }
-
-$bg   = \App\bonton_wc_email_avoid_pure( $bg );
-$body = \App\bonton_wc_email_avoid_pure( $body );
 
 $safe_font_family = EmailFont::$font[ $font_family ] ?? EmailFont::$font[ $default_font ];
 $heading_font     = 'Georgia, "Times New Roman", serif';
@@ -79,29 +76,20 @@ $email_text      = $text;
 $heading_color   = $email_improvements_enabled ? $text : $base;
 $header_h1_color = $email_improvements_enabled ? $text : $base_text;
 $subhead_color   = $email_improvements_enabled ? $text : $footer_text;
-
-$light_bg_css = static function ( $color ) {
-	$color = \App\bonton_wc_email_avoid_pure( $color );
-
-	return 'background-color:' . esc_attr( $color ) . ';background-image:linear-gradient(' . esc_attr( $color ) . ',' . esc_attr( $color ) . ');';
-};
 ?>
 body {
 	background-color: <?php echo esc_attr( $bg ); ?>;
-	<?php echo $light_bg_css( $bg ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	padding: 0;
 	text-align: center;
 }
 
 #outer_wrapper {
 	background-color: <?php echo esc_attr( $bg ); ?>;
-	<?php echo $light_bg_css( $bg ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 }
 
 <?php if ( $email_improvements_enabled ) : ?>
 #inner_wrapper {
 	background-color: <?php echo esc_attr( $body ); ?>;
-	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	border-radius: 8px;
 }
 <?php endif; ?>
@@ -117,14 +105,12 @@ body {
 #template_container {
 	box-shadow: <?php echo $email_improvements_enabled ? 'none' : '0 1px 4px rgba(0, 0, 0, 0.1) !important'; ?>;
 	background-color: <?php echo esc_attr( $body ); ?>;
-	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	border: <?php echo $email_improvements_enabled ? '0' : '1px solid ' . esc_attr( $bg_darker_10 ); ?>;
 	border-radius: 3px !important;
 }
 
 #template_header {
 	background-color: <?php echo esc_attr( $email_improvements_enabled ? $body : $base ); ?>;
-	<?php echo $light_bg_css( $email_improvements_enabled ? $body : $base ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	border-radius: 3px 3px 0 0 !important;
 	border-bottom: 0;
 	font-weight: bold;
@@ -155,7 +141,6 @@ body {
 
 #template_header_image {
 	padding: 32px 32px 0;
-	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 }
 
 #template_header_image p {
@@ -209,7 +194,6 @@ body {
 	padding: 0;
 	border-radius: <?php echo $email_improvements_enabled ? '0' : '6px'; ?>;
 	<?php if ( $email_improvements_enabled ) : ?>
-	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php endif; ?>
 }
 
@@ -217,7 +201,6 @@ body {
 	border: 0;
 	<?php if ( $email_improvements_enabled ) : ?>
 		border-top: 1px solid <?php echo esc_attr( $border_color ); ?>;
-		<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php endif; ?>
 	color: <?php echo esc_attr( $footer_text ); ?>;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
@@ -233,7 +216,6 @@ body {
 
 #body_content {
 	background-color: <?php echo esc_attr( $body ); ?>;
-	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 }
 
 #body_content table td {
@@ -418,7 +400,6 @@ body {
 #header_wrapper {
 	padding: <?php echo $email_improvements_enabled ? '20px 32px 0' : '36px 48px'; ?>;
 	<?php if ( $email_improvements_enabled ) : ?>
-	<?php echo $light_bg_css( $body ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 	<?php endif; ?>
 }
 
