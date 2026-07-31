@@ -189,11 +189,13 @@ if(isset($pickup_restriction_end_data_check)) {
 
 			<div class="extra-info d-md-none">
 			<?php
+					$collapse_close = \App\bonton_collapse_panel_close_button();
+
 					// Ingredients list
 					if ( $ingredients && ! is_wp_error( $ingredients ) && $recommended_storage && ! is_wp_error( $recommended_storage ) ) { 
 						echo '
 						<a class="ingredients showmore collapsed" data-toggle="collapse" href="#collapseIngredients" role="button" aria-expanded="false" aria-controls="collapseIngredients">Ingredients & Storage Recommendations</a>
-						<div class="collapse" id="collapseIngredients">
+						<div class="collapse" id="collapseIngredients">' . $collapse_close . '
 							<h4>Ingredients:</h4>
 							<div class="ingredients">'.$ingredients.'</div>
 							<h4>Recommended Storage:</h4>
@@ -204,7 +206,7 @@ if(isset($pickup_restriction_end_data_check)) {
 					elseif ( $recommended_storage && ! is_wp_error( $recommended_storage )) { 
 						echo '
 						<a class="storage showmore collapsed" data-toggle="collapse" href="#collapseStorage" role="button" aria-expanded="false" aria-controls="collapseStorage">Recommended Storage</a>
-						<div class="collapse" id="collapseStorage">
+						<div class="collapse" id="collapseStorage">' . $collapse_close . '
 							<h4>Recommended Storage:</h4>
 							<div>'.$recommended_storage.'</div>
 						</div>';
@@ -212,7 +214,7 @@ if(isset($pickup_restriction_end_data_check)) {
 					elseif ( $ingredients && ! is_wp_error( $ingredients ) ) { 
 						echo '
 						<a class="storage showmore collapsed" data-toggle="collapse" href="#collapseStorage" role="button" aria-expanded="false" aria-controls="collapseStorage">Ingredients</a>
-						<div class="collapse" id="collapseStorage">
+						<div class="collapse" id="collapseStorage">' . $collapse_close . '
 							<h4>Ingredients:</h4>
 							<div>'.$ingredients.'</div>
 						</div>';

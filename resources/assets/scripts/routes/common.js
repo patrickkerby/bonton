@@ -108,6 +108,10 @@ export default {
         window.setTimeout(ensureExtraInfoCollapseCloseButtons, 200);
         window.setTimeout(ensureExtraInfoCollapseCloseButtons, 600);
       });
+
+      $(document).on('shown.bs.collapse', '.extra-info .collapse', function () {
+        ensureExtraInfoCollapseCloseButtons();
+      });
     })();
 
     // Checkout: keep processing feedback in view when placing an order.

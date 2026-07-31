@@ -1018,3 +1018,13 @@ function bonton_points_rewards_points_label($count)
     return $label;
 }
 
+/**
+ * Close control for mobile ingredients/storage collapse panels.
+ *
+ * @return string
+ */
+function bonton_collapse_panel_close_button()
+{
+    return '<button type="button" class="collapse-panel-close" aria-label="' . esc_attr__('Close', 'sage') . '">' .
+        '<span aria-hidden="true">&times;</span></button>';
+}
