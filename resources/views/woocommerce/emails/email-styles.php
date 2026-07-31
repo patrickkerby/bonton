@@ -72,7 +72,13 @@ $text_lighter_20 = wc_hex_lighter( $text, 20 );
 $text_lighter_40 = wc_hex_lighter( $text, 40 );
 
 // Theme override: use full WC text color for body/table (not lightened $text_lighter_20).
-$email_text = $text;
+$email_text     = $text;
+$heading_color  = $email_improvements_enabled ? $text : $base;
+$spark_text     = \App\bonton_wc_email_spark_text( $text );
+$spark_heading  = \App\bonton_wc_email_spark_text( $heading_color );
+$spark_footer   = \App\bonton_wc_email_spark_text( $footer_text );
+$spark_link     = \App\bonton_wc_email_spark_text( $link_color );
+$spark_subhead  = \App\bonton_wc_email_spark_text( $email_improvements_enabled ? $text : $footer_text );
 
 $light_bg_css = static function ( $color ) {
 	return 'background-color:' . esc_attr( $color ) . ';background-image:linear-gradient(' . esc_attr( $color ) . ',' . esc_attr( $color ) . ');';
@@ -502,6 +508,130 @@ h2.email-order-detail-heading span {
 
 .text-align-right {
 	text-align: <?php echo is_rtl() ? 'left' : 'right'; ?>;
+}
+
+/*
+ * Spark dark mode inverts CSS text colors when backgrounds are locked white.
+ * Pre-invert source colors so they render as the intended palette after inversion.
+ * .woocommerce-email-preview overrides below keep the WC admin preview readable
+ * when the OS/browser is in dark mode.
+ */
+@media (prefers-color-scheme: dark) {
+	#header_wrapper h1,
+	#template_header h1,
+	h1 {
+		color: <?php echo esc_attr( $spark_heading ); ?> !important;
+	}
+
+	h2,
+	h3,
+	h2.email-order-detail-heading span {
+		color: <?php echo esc_attr( $spark_heading ); ?> !important;
+	}
+
+	#body_content_inner,
+	#body_content_inner p,
+	#body_content_inner li,
+	#body_content_inner td,
+	#body_content_inner th,
+	#body_content_inner address,
+	#body_content_inner .address,
+	#body_content_inner b,
+	#body_content_inner strong,
+	#body_content_inner h2,
+	#body_content_inner h3,
+	.text,
+	.td,
+	th.td,
+	td.td,
+	.address,
+	.address-title,
+	.order-item-data,
+	.order-item-data td,
+	.email-introduction,
+	.email-introduction p,
+	.email-order-item-meta,
+	.additional-fields,
+	#body_content .email-order-details td,
+	#body_content .email-order-details th,
+	#body_content .email-order-details tbody td,
+	#body_content .email-order-details tfoot td,
+	#body_content .email-order-details tfoot th,
+	#addresses .address,
+	#addresses .address-title,
+	#addresses address,
+	#template_footer #credit,
+	#template_footer #credit p {
+		color: <?php echo esc_attr( $spark_text ); ?> !important;
+	}
+
+	h2.email-order-detail-heading span {
+		color: <?php echo esc_attr( $spark_subhead ); ?> !important;
+	}
+
+	a,
+	.link,
+	#template_footer #credit a {
+		color: <?php echo esc_attr( $spark_link ); ?> !important;
+	}
+}
+
+html.woocommerce-email-preview #header_wrapper h1,
+html.woocommerce-email-preview #template_header h1,
+html.woocommerce-email-preview h1 {
+	color: <?php echo esc_attr( $heading_color ); ?> !important;
+}
+
+html.woocommerce-email-preview h2,
+html.woocommerce-email-preview h3,
+html.woocommerce-email-preview h2.email-order-detail-heading span {
+	color: <?php echo esc_attr( $heading_color ); ?> !important;
+}
+
+html.woocommerce-email-preview #body_content_inner,
+html.woocommerce-email-preview #body_content_inner p,
+html.woocommerce-email-preview #body_content_inner li,
+html.woocommerce-email-preview #body_content_inner td,
+html.woocommerce-email-preview #body_content_inner th,
+html.woocommerce-email-preview #body_content_inner address,
+html.woocommerce-email-preview #body_content_inner .address,
+html.woocommerce-email-preview #body_content_inner b,
+html.woocommerce-email-preview #body_content_inner strong,
+html.woocommerce-email-preview #body_content_inner h2,
+html.woocommerce-email-preview #body_content_inner h3,
+html.woocommerce-email-preview .text,
+html.woocommerce-email-preview .td,
+html.woocommerce-email-preview th.td,
+html.woocommerce-email-preview td.td,
+html.woocommerce-email-preview .address,
+html.woocommerce-email-preview .address-title,
+html.woocommerce-email-preview .order-item-data,
+html.woocommerce-email-preview .order-item-data td,
+html.woocommerce-email-preview .email-introduction,
+html.woocommerce-email-preview .email-introduction p,
+html.woocommerce-email-preview .email-order-item-meta,
+html.woocommerce-email-preview .additional-fields,
+html.woocommerce-email-preview #body_content .email-order-details td,
+html.woocommerce-email-preview #body_content .email-order-details th,
+html.woocommerce-email-preview #body_content .email-order-details tbody td,
+html.woocommerce-email-preview #body_content .email-order-details tfoot td,
+html.woocommerce-email-preview #body_content .email-order-details tfoot th,
+html.woocommerce-email-preview #addresses .address,
+html.woocommerce-email-preview #addresses .address-title,
+html.woocommerce-email-preview #addresses address,
+html.woocommerce-email-preview #template_footer #credit,
+html.woocommerce-email-preview #template_footer #credit p {
+	color: <?php echo esc_attr( $email_text ); ?> !important;
+}
+
+html.woocommerce-email-preview h2.email-order-detail-heading span {
+	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $footer_text ); ?> !important;
+}
+
+html.woocommerce-email-preview a,
+html.woocommerce-email-preview .link,
+html.woocommerce-email-preview #template_footer #credit a {
+	color: <?php echo esc_attr( $link_color ); ?> !important;
 }
 
 @media screen and (max-width: 600px) {

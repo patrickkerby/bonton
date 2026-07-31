@@ -23,7 +23,7 @@ $body                       = $email_colors['body'];
 
 ?>
 <!DOCTYPE html>
-<html <?php language_attributes(); ?>>
+<html <?php language_attributes(); ?> class="<?php echo apply_filters( 'woocommerce_is_email_preview', false ) ? 'woocommerce-email-preview' : ''; ?>">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=<?php bloginfo( 'charset' ); ?>" />
 		<meta content="width=device-width, initial-scale=1.0" name="viewport">

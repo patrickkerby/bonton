@@ -68,17 +68,30 @@ function bonton_wc_email_light_bg( $color ) {
 }
 
 /**
- * Primary text color for the new email template — always the WC setting, never lightened.
+ * Invert a hex color — Spark dark mode inverts CSS text on forced-white backgrounds.
  */
-function bonton_wc_email_text_color() {
-	$text = get_option( 'woocommerce_email_text_color', '#4c4c4c' );
+function bonton_wc_email_invert_hex( $hex ) {
+	$hex = ltrim( (string) $hex, '#' );
 
-	if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
-		$transient = get_transient( 'woocommerce_email_text_color' );
-		if ( $transient ) {
-			$text = $transient;
-		}
+	if ( 3 === strlen( $hex ) ) {
+		$hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
 	}
 
-	return $text;
+	if ( 6 !== strlen( $hex ) ) {
+		return $hex;
+	}
+
+	return sprintf(
+		'#%02x%02x%02x',
+		255 - hexdec( substr( $hex, 0, 2 ) ),
+		255 - hexdec( substr( $hex, 2, 2 ) ),
+		255 - hexdec( substr( $hex, 4, 2 ) )
+	);
+}
+
+/**
+ * Pre-invert a color so Spark renders the intended shade after its CSS inversion.
+ */
+function bonton_wc_email_spark_text( $color ) {
+	return bonton_wc_email_invert_hex( $color );
 }
