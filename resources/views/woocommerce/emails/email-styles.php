@@ -71,6 +71,9 @@ $base_lighter_40 = wc_hex_lighter( $base, 40 );
 $text_lighter_20 = wc_hex_lighter( $text, 20 );
 $text_lighter_40 = wc_hex_lighter( $text, 40 );
 
+// Theme override: use full WC text color for body/table (not lightened $text_lighter_20).
+$email_text = $text;
+
 $light_bg_css = static function ( $color ) {
 	return 'background-color:' . esc_attr( $color ) . ';background-image:linear-gradient(' . esc_attr( $color ) . ',' . esc_attr( $color ) . ');';
 };
@@ -167,7 +170,7 @@ body {
 }
 
 .email-order-item-meta {
-	color: <?php echo esc_attr( $text ); ?>;
+	color: <?php echo esc_attr( $email_text ); ?>;
 	font-size: 14px;
 	line-height: 140%;
 }
@@ -324,7 +327,7 @@ body {
 }
 
 #body_content_inner {
-	color: <?php echo esc_attr( $text ); ?>;
+	color: <?php echo esc_attr( $email_text ); ?>;
 	font-family: <?php echo $safe_font_family; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
 	font-size: <?php echo $email_improvements_enabled ? '16px' : '14px'; ?>;
 	line-height: 150%;
@@ -332,12 +335,11 @@ body {
 }
 
 .td {
-	color: <?php echo esc_attr( $email_improvements_enabled ? $text : $text_lighter_20 ); ?>;
+	color: <?php echo esc_attr( $email_text ); ?>;
 	border: <?php echo $email_improvements_enabled ? '0' : '1px solid ' . esc_attr( $body_darker_10 ); ?>;
 	vertical-align: middle;
 }
 
-<?php if ( $email_improvements_enabled ) : ?>
 #body_content .email-order-details td,
 #body_content .email-order-details th,
 #body_content .email-order-details .order-totals td,
@@ -346,9 +348,23 @@ body {
 #body_content .email-order-details tbody td,
 #body_content .email-order-details tfoot td,
 #body_content .email-order-details tfoot th {
-	color: <?php echo esc_attr( $text ); ?>;
+	color: <?php echo esc_attr( $email_text ); ?>;
 }
-<?php endif; ?>
+
+#body_content_inner p,
+#body_content_inner li,
+#body_content_inner td,
+#body_content_inner th,
+#body_content_inner h2,
+#body_content_inner h3,
+#body_content_inner b,
+#body_content_inner strong,
+.email-introduction,
+.email-introduction p,
+.order-item-data,
+.order-item-data td {
+	color: <?php echo esc_attr( $email_text ); ?>;
+}
 
 .address {
 	<?php if ( $email_improvements_enabled ) { ?>
@@ -357,7 +373,7 @@ body {
 		padding: 8px 0;
 	<?php } else { ?>
 		padding: 12px;
-		color: <?php echo esc_attr( $text_lighter_20 ); ?>;
+		color: <?php echo esc_attr( $email_text ); ?>;
 		border: 1px solid <?php echo esc_attr( $body_darker_10 ); ?>;
 	<?php } ?>
 	word-break: break-all;
@@ -371,7 +387,7 @@ body {
 
 .additional-fields {
 	padding: 12px 12px 0;
-	color: <?php echo esc_attr( $text_lighter_20 ); ?>;
+	color: <?php echo esc_attr( $email_text ); ?>;
 	border: 1px solid <?php echo esc_attr( $body_darker_10 ); ?>;
 	list-style: none outside;
 }
