@@ -167,7 +167,7 @@ body {
 }
 
 .email-order-item-meta {
-	color: <?php echo esc_attr( $footer_text ); ?>;
+	color: <?php echo esc_attr( $text ); ?>;
 	font-size: 14px;
 	line-height: 140%;
 }
@@ -484,6 +484,31 @@ h2.email-order-detail-heading span {
 	text-align: <?php echo is_rtl() ? 'left' : 'right'; ?>;
 }
 
+<?php if ( $email_improvements_enabled ) : ?>
+/*
+ * Spark inverts td text but not th when backgrounds are locked white.
+ * Force readable colors on all value cells and secondary sections.
+ */
+#body_content_inner td,
+#body_content_inner address,
+#body_content_inner .address,
+#body_content_inner b,
+#body_content_inner strong,
+#body_content_inner h2,
+#body_content_inner h3,
+.order-item-data td,
+#addresses .address,
+#addresses .address-title,
+#addresses address {
+	color: <?php echo esc_attr( $text ); ?> !important;
+}
+
+#body_content_inner a,
+#body_content_inner address a {
+	color: <?php echo esc_attr( $link_color ); ?> !important;
+}
+<?php endif; ?>
+
 @media (prefers-color-scheme: dark) {
 	#template_header,
 	#header_wrapper,
@@ -516,7 +541,16 @@ h2.email-order-detail-heading span {
 	#body_content .email-order-details th,
 	#body_content .email-order-details tfoot td,
 	#body_content .email-order-details tfoot th,
-	.email-order-item-meta {
+	.email-order-item-meta,
+	#body_content_inner td,
+	#body_content_inner address,
+	#body_content_inner .address,
+	#body_content_inner b,
+	#body_content_inner strong,
+	#addresses .address,
+	#addresses .address-title,
+	#addresses address,
+	.order-item-data td {
 		color: <?php echo esc_attr( $text ); ?> !important;
 	}
 
