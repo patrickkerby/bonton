@@ -35,9 +35,12 @@ $store_name                 = $store_name ?? get_bloginfo( 'name', 'display' );
 								<td align="center" valign="top">
 									<?php
 									$img = get_option( 'woocommerce_email_header_image' );
+									$logo_width = get_option( 'woocommerce_email_header_image_width', '120' );
 									if ( apply_filters( 'woocommerce_is_email_preview', false ) ) {
 										$img_transient = get_transient( 'woocommerce_email_header_image' );
 										$img           = false !== $img_transient ? $img_transient : $img;
+										$width_transient = get_transient( 'woocommerce_email_header_image_width' );
+										$logo_width    = false !== $width_transient ? $width_transient : $logo_width;
 									}
 
 									if ( $email_improvements_enabled ) :
@@ -47,7 +50,7 @@ $store_name                 = $store_name ?? get_bloginfo( 'name', 'display' );
 												<td id="template_header_image">
 													<?php
 													if ( $img ) {
-														echo '<p style="margin-top:0;"><img src="' . esc_url( $img ) . '" alt="' . esc_attr( $store_name ) . '" /></p>';
+														echo \App\bonton_wc_email_render_logo( $img, $store_name, $logo_width ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 													} else {
 														echo '<p class="email-logo-text">' . esc_html( $store_name ) . '</p>';
 													}
@@ -59,7 +62,7 @@ $store_name                 = $store_name ?? get_bloginfo( 'name', 'display' );
 										<div id="template_header_image">
 											<?php
 											if ( $img ) {
-												echo '<p style="margin-top:0;"><img src="' . esc_url( $img ) . '" alt="' . esc_attr( $store_name ) . '" /></p>';
+												echo \App\bonton_wc_email_render_logo( $img, $store_name, $logo_width ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 											}
 											?>
 										</div>

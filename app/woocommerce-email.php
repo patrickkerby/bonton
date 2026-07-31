@@ -32,3 +32,33 @@ function bonton_wc_locate_email_template( $template, $template_name, $template_p
 }
 
 add_filter( 'woocommerce_locate_template', __NAMESPACE__ . '\\bonton_wc_locate_email_template', 10, 3 );
+
+/**
+ * Inline styles for a white logo plate (Spark ignores <style> @media blocks).
+ */
+function bonton_wc_email_logo_plate_style() {
+	return 'background-color:#fffffe;background-image:linear-gradient(#fffffe,#fffffe);padding:16px 24px;';
+}
+
+/**
+ * Render the email logo on a forced-white plate so it stays visible in dark-mode clients.
+ *
+ * @param string $img_url    Logo image URL.
+ * @param string $store_name Alt text.
+ * @param string $width      Optional width in pixels.
+ */
+function bonton_wc_email_render_logo( $img_url, $store_name, $width = '' ) {
+	if ( ! $img_url ) {
+		return '';
+	}
+
+	$width_style = $width ? 'width:' . esc_attr( $width ) . 'px;' : '';
+
+	return sprintf(
+		'<table role="presentation" border="0" cellpadding="0" cellspacing="0" align="center"><tr><td bgcolor="#fffffe" style="%1$s"><img src="%2$s" alt="%3$s" style="display:block;margin:0 auto;%4$s" /></td></tr></table>',
+		esc_attr( bonton_wc_email_logo_plate_style() ),
+		esc_url( $img_url ),
+		esc_attr( $store_name ),
+		esc_attr( $width_style )
+	);
+}
