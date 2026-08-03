@@ -269,7 +269,7 @@ add_filter( 'nav_menu_link_attributes', function ( $atts, $item, $args ) {
 
 
 // Cart count in header + mobile util bar.
-add_filter( 'woocommerce_add_to_cart_fragments', 'add_to_cart_fragment' );
+add_filter( 'woocommerce_add_to_cart_fragments', __NAMESPACE__ . '\\add_to_cart_fragment' );
 function add_to_cart_fragment( $fragments ) {
     $count = absint( WC()->cart->get_cart_contents_count() );
 
