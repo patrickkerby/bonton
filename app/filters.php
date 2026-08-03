@@ -594,6 +594,9 @@ function write_my_log( $log ) {
     }
 }
 
+// Coupons are applied on the cart page; hide WooCommerce's default checkout coupon banner.
+remove_action('woocommerce_before_checkout_form', 'woocommerce_checkout_coupon_form', 10);
+
 // Validate session pickup date on place order
 add_action('woocommerce_after_checkout_validation', 'App\after_checkout_validation');
 

@@ -100,7 +100,8 @@ add_action('woocommerce_order_status_completed', function ($orderId) {
 
 add_filter('wc_points_rewards_event_description', function ($description, $eventType, $event) {
     if ($eventType === 'bonton-condo-welcome-coupon') {
-        $label = get_option('wc_points_rewards_points_label', __('Points', 'woocommerce-points-and-rewards'));
+        // Option is stored as "singular:plural" (e.g. "Point:Points"); use the plural form.
+        $label = bonton_points_rewards_points_label(2);
         return sprintf(
             __('%1$s: Condo welcome bonus (coupon)', 'sage'),
             $label
