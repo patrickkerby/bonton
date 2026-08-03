@@ -35,9 +35,11 @@ class BulkPricing
 
         $blackout_dates = get_field('bulk_discount_blackout_dates', 'option');
         if ($blackout_dates) {
-            $blackout_array = array_map(function ($b) {
-                return $b['date'];
-            }, $blackout_dates);
+            // ACF returns d/m/Y; the session stores Y-m-d, so normalize before comparing.
+            $blackout_array = array_filter(array_map(function ($b) {
+                $date = \DateTime::createFromFormat('!d/m/Y', $b['date']);
+                return $date ? $date->format('Y-m-d') : null;
+            }, $blackout_dates));
 
             $session_date = WC()->session ? WC()->session->get('pickup_date_formatted') : null;
             if ($session_date && in_array($session_date, $blackout_array)) {

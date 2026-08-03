@@ -62,7 +62,7 @@ function is_giftcertificate()
 
         $product_id = apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
 
-        if ($product_id == 5317 || $product_id == 18153 || $product_id == 18200) {
+        if (in_array((int) $product_id, bonton_gift_certificate_product_ids(), true)) {
             $giftcertificate_in_cart = true;
             $gc_cart_count++;
         }

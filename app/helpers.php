@@ -343,7 +343,7 @@ function get_newest_products($count = 6)
  */
 function bonton_gift_certificate_product_ids()
 {
-    return [5317, 18153, 18200];
+    return [5317];
 }
 
 /**

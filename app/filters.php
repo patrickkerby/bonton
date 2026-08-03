@@ -346,7 +346,7 @@ add_filter( 'woocommerce_cart_item_price', '__return_empty_string' );
 add_action('woocommerce_checkout_update_order_meta', 'App\add_pickup_to_order');
 function add_pickup_to_order($order_id) {
     $pickup_date = WC()->session->get('pickup_date'); // e.g., "Saturday, August 23, 2025"
-    $pickup_date_formatted = WC()->session->get('pickup_date_formatted'); // e.g., "28/08/2025"
+    $pickup_date_formatted = WC()->session->get('pickup_date_formatted'); // "Y-m-d" (legacy sessions may hold "d/m/Y")
     $pickup_object = WC()->session->get('pickup_date_object');
 
     $order = wc_get_order( $order_id );
@@ -355,9 +355,11 @@ function add_pickup_to_order($order_id) {
     $order->update_meta_data( 'pickup_date_formatted', $pickup_date_formatted );
     $order->update_meta_data( 'pickup_date_object', $pickup_object );
 
-    // Convert dd/mm/yyyy to Y-m-d for sorting
+    // Normalize to Y-m-d for sorting; accept both current (Y-m-d) and legacy (d/m/Y) session formats.
     $sortable_date = '';
-    if ($pickup_date_formatted && preg_match('#^(\d{2})/(\d{2})/(\d{4})$#', $pickup_date_formatted, $m)) {
+    if ($pickup_date_formatted && preg_match('#^\d{4}-\d{2}-\d{2}$#', $pickup_date_formatted)) {
+        $sortable_date = $pickup_date_formatted;
+    } elseif ($pickup_date_formatted && preg_match('#^(\d{2})/(\d{2})/(\d{4})$#', $pickup_date_formatted, $m)) {
         $sortable_date = "{$m[3]}-{$m[2]}-{$m[1]}"; // Y-m-d
     }
     $order->update_meta_data( 'pickup_date_sort', $sortable_date );
