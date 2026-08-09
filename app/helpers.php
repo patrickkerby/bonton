@@ -562,6 +562,46 @@ function bonton_delivery_note_for_pickup_date($pickup_ymd = null)
 }
 
 /**
+ * Whether shipping address_1 / address_2 look like the old checkout split
+ * (civic number in line 1, street name in line 2) rather than WooCommerce defaults
+ * (full street in line 1, apartment in line 2).
+ */
+function bonton_shipping_address_looks_legacy_split($line1, $line2)
+{
+    $line1 = trim((string) $line1);
+    $line2 = trim((string) $line2);
+
+    if ($line1 === '' || $line2 === '') {
+        return false;
+    }
+
+    // New format already has a street type in address_1 (e.g. "10823 Jasper Ave NW").
+    if (preg_match('/\b(st|street|ave|avenue|rd|road|blvd|drive|dr|way|cres|crescent|trail|terrace|close|gate|hwy|highway|lane|ln|court|ct|place|pl|circle|cir)\b/i', $line1)) {
+        return false;
+    }
+
+    // Civic / house number only: "10823", "12A", "#37", "113, 4635".
+    if (!preg_match('/^[#\d][\d\s,\-\/A-Za-z]*$/', $line1)) {
+        return false;
+    }
+
+    // address_2 is clearly a unit label, not a street name.
+    if (preg_match('/^(apt\.?|apartment|unit|suite|ste\.?|buzzer|#)\b/i', $line2)) {
+        return false;
+    }
+    if (preg_match('/^\d+[A-Za-z]?$/', $line2)) {
+        return false;
+    }
+
+    // Street name in address_2 (e.g. "Jasper Ave NW", "199 St NW").
+    if (preg_match('/\b(st|street|ave|avenue|rd|road|blvd|drive|dr|way|cres|crescent|trail|terrace|close|gate|hwy|highway|lane|ln|court|ct|place|pl|circle|cir|nw|ne|sw|se)\b/i', $line2)) {
+        return true;
+    }
+
+    return preg_match('/[A-Za-z]{2,}/', $line2) && str_word_count($line2) >= 2;
+}
+
+/**
  * Shipping address parts for staff lists / exports.
  *
  * Legacy orders (third-party delivery layout) stored house # + street in address_1/2
@@ -580,7 +620,8 @@ function bonton_order_shipping_address_for_lists(\WC_Order $order)
     $line1 = trim((string) $order->get_shipping_address_1());
     $line2 = trim((string) $order->get_shipping_address_2());
 
-    if ($legacy_unit !== '') {
+    // Explicit legacy unit meta, or address lines still in the old number/street split.
+    if ($legacy_unit !== '' || bonton_shipping_address_looks_legacy_split($line1, $line2)) {
         return [
             'unit'   => $legacy_unit,
             'street' => trim($line1 . ' ' . $line2),
@@ -591,6 +632,26 @@ function bonton_order_shipping_address_for_lists(\WC_Order $order)
         'unit'   => $line2,
         'street' => $line1,
     ];
+}
+
+/**
+ * Full province/state name for exports (e.g. AB → Alberta). Falls back to the code.
+ */
+function bonton_order_shipping_province_label(\WC_Order $order)
+{
+    $country = $order->get_shipping_country() ?: 'CA';
+    $state   = trim((string) $order->get_shipping_state());
+
+    if ($state === '' || !function_exists('WC') || !WC()->countries) {
+        return $state;
+    }
+
+    $states = WC()->countries->get_states($country);
+    if (is_array($states) && isset($states[$state])) {
+        return (string) $states[$state];
+    }
+
+    return $state;
 }
 
 /**
