@@ -10,6 +10,21 @@
       // $date_selector_date = get_field('list_date');
       // $timeslot = $order->get_meta( 'pickup_timeslot', true );
 
+      if (!isset($bagfee)) {
+          $bagfee = $details->get_meta( '_pickup_bag_fee', true );
+      }
+      if (!isset($timeslot_delivery)) {
+          $timeslot_delivery = $details->get_meta( '_timeslot', true );
+      }
+      if (!isset($timeslot_delivery_esc)) {
+          if ($timeslot_delivery == 'Between 10 am &amp; 1 pm') {
+              $timeslot_delivery_esc = '10 - 1';
+          } elseif ($timeslot_delivery == 'Between 3 pm &amp; 6 pm') {
+              $timeslot_delivery_esc = '4 - 7';
+          } elseif ($timeslot_delivery) {
+              $timeslot_delivery_esc = $timeslot_delivery;
+          }
+      }
   @endphp
   <style>
 @media print {

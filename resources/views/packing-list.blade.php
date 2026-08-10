@@ -250,7 +250,9 @@ $sorted_orders = array();
               elseif ($timeslot_delivery == 'Between 3 pm &amp; 6 pm') {
                 $timeslot_delivery_esc = '4 - 7';
               }
-              else {}
+              elseif ($timeslot_delivery) {
+                $timeslot_delivery_esc = $timeslot_delivery;
+              }
 
               // Check to see if the products associated with the order are shelf or cooler.
               $list_check = array();

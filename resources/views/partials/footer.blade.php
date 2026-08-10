@@ -5,6 +5,11 @@
   @else
     
     @unless(is_cart())
+      @php
+        if (is_array($acf_options)) {
+          $acf_options = (object) $acf_options;
+        }
+      @endphp
       <div class="col-sm-6 col-md-4 order-first">
         <div class="hours">
           <ul>
