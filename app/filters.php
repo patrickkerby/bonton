@@ -522,14 +522,17 @@ function bonton_ajax_cart_pickup_calendar_state() {
 }
 
 /**
- * Lightweight session pickup date for sitewide header hydration.
- * Prefer bonton_cart_pickup_calendar_state when cart calendar rules are also needed;
- * this action exists so Sucuri/CDN never cache a date-only payload.
+ * Fast sitewide header hydration (date + cart count + bulk progress).
+ * Avoids cartItemsData() / available-dates work — use bonton_cart_pickup_calendar_state
+ * when opening the datepicker or after cart mutations.
  */
-add_action('wp_ajax_bonton_get_pickup_date', 'App\\bonton_ajax_get_pickup_date');
-add_action('wp_ajax_nopriv_bonton_get_pickup_date', 'App\\bonton_ajax_get_pickup_date');
+add_action('wp_ajax_bonton_header_ui_state', 'App\\bonton_ajax_header_ui_state');
+add_action('wp_ajax_nopriv_bonton_header_ui_state', 'App\\bonton_ajax_header_ui_state');
+// Legacy alias (date-only clients).
+add_action('wp_ajax_bonton_get_pickup_date', 'App\\bonton_ajax_header_ui_state');
+add_action('wp_ajax_nopriv_bonton_get_pickup_date', 'App\\bonton_ajax_header_ui_state');
 
-function bonton_ajax_get_pickup_date() {
+function bonton_ajax_header_ui_state() {
     check_ajax_referer('bonton_nonce', 'nonce');
     nocache_headers();
     header('Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0');
@@ -546,9 +549,16 @@ function bonton_ajax_get_pickup_date() {
         }
     }
 
+    $count = 0;
+    if (function_exists('WC') && WC()->cart) {
+        $count = absint(WC()->cart->get_cart_contents_count());
+    }
+
     wp_send_json_success([
-        'date_display' => $short,
-        'date_ymd'     => $ymd ?: '',
+        'date_display'           => $short,
+        'date_ymd'               => $ymd ?: '',
+        'count'                  => $count,
+        'bulk_discount_progress' => \App\Helpers\BulkPricing::get_progress(),
     ]);
 }
 

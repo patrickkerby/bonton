@@ -168,13 +168,71 @@ export default {
       var ignorePickerChange = true;
       var calendarStateStale = false;
       var refreshInFlight = null;
+      var headerUiInFlight = null;
       var suppressOutsideCloseUntil = 0;
+      var PICKUP_DATE_STORAGE_KEY = 'bonton_pickup_date';
 
       function formatPickupLabelFromDate(d) {
         var w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         var m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return w[d.getDay()] + ', ' + m[d.getMonth()] + ' ' + d.getDate();
       }
+
+      function readStoredPickupDate() {
+        try {
+          var raw = window.sessionStorage.getItem(PICKUP_DATE_STORAGE_KEY);
+          if (!raw) {
+            return null;
+          }
+          var parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== 'object') {
+            return null;
+          }
+          return parsed;
+        } catch (err) {
+          return null;
+        }
+      }
+
+      function writeStoredPickupDate(ymd, display) {
+        try {
+          if (!ymd || !display) {
+            window.sessionStorage.removeItem(PICKUP_DATE_STORAGE_KEY);
+            return;
+          }
+          window.sessionStorage.setItem(
+            PICKUP_DATE_STORAGE_KEY,
+            JSON.stringify({ ymd: ymd, display: display })
+          );
+        } catch (err) {
+          // Ignore quota / private-mode failures.
+        }
+      }
+
+      function applyPickupDateLabel(ymd, display) {
+        var $label = $btn.find('[data-pickup-date-label]');
+        if (ymd && display) {
+          var parts = String(ymd).split('-');
+          if (parts.length === 3) {
+            $picker.data('selected-date', parts[2] + '/' + parts[1] + '/' + parts[0]);
+          }
+          $label.text(display);
+          writeStoredPickupDate(ymd, display);
+        } else {
+          $picker.data('selected-date', '');
+          $label.text('Select pickup date');
+          writeStoredPickupDate('', '');
+        }
+        $btn.attr('aria-busy', 'false');
+      }
+
+      // Instant paint from this tab's last known date (never from HTML cache).
+      (function paintPickupDateFromStorage() {
+        var stored = readStoredPickupDate();
+        if (stored && stored.ymd && stored.display) {
+          applyPickupDateLabel(stored.ymd, stored.display);
+        }
+      })();
 
       function setUtilityBannerDateSaving(on) {
         var $overlay = $('#utility-banner-date-saving');
@@ -247,6 +305,16 @@ export default {
             }
             if (response.data && response.data.date_display) {
               $label.text(response.data.date_display);
+              var storedYmd = '';
+              if (pickedDate && !isNaN(pickedDate.getTime())) {
+                storedYmd =
+                  pickedDate.getFullYear() +
+                  '-' +
+                  ('0' + (pickedDate.getMonth() + 1)).slice(-2) +
+                  '-' +
+                  ('0' + pickedDate.getDate()).slice(-2);
+              }
+              writeStoredPickupDate(storedYmd, response.data.date_display);
             }
             if (!isCartPage && response.data && response.data.delivery_toast) {
               showUtilityDeliveryToast(response.data.delivery_toast);
@@ -406,29 +474,68 @@ export default {
 
         applyUtilityBannerBulkProgress(data.bulk_discount_progress);
 
-        leadHours = parseInt(data.lead_time_hours, 10) || 33;
-        if (window.bontonData) {
-          window.bontonData.needsExtraLeadTime = leadHours >= 57 ? 1 : 0;
-        }
-        startDate = dayjs().add(leadHours, 'hour').toDate();
-
-        if (data.session_pickup_date) {
-          var ymd = String(data.session_pickup_date).split('-');
-          if (ymd.length === 3) {
-            $picker.data('selected-date', ymd[2] + '/' + ymd[1] + '/' + ymd[0]);
+        if (typeof data.lead_time_hours !== 'undefined') {
+          leadHours = parseInt(data.lead_time_hours, 10) || 33;
+          if (window.bontonData) {
+            window.bontonData.needsExtraLeadTime = leadHours >= 57 ? 1 : 0;
           }
+          startDate = dayjs().add(leadHours, 'hour').toDate();
+        }
 
-          var sessionDate = dayjs(data.session_pickup_date, 'YYYY-MM-DD');
+        var ymd = data.session_pickup_date || data.date_ymd || '';
+        var display = data.date_display || '';
+        if (ymd && !display) {
+          var sessionDate = dayjs(ymd, 'YYYY-MM-DD');
           if (sessionDate.isValid()) {
-            $btn.find('[data-pickup-date-label]').text(sessionDate.format('ddd, MMM D'));
+            display = sessionDate.format('ddd, MMM D');
           }
-        } else {
-          $picker.data('selected-date', '');
-          $btn.find('[data-pickup-date-label]').text('Select pickup date');
+        }
+        applyPickupDateLabel(ymd, display);
+
+        if (typeof data.lead_time_hours !== 'undefined' || data.available_dates) {
+          initBootstrap();
+        }
+      }
+
+      function fetchHeaderUiState() {
+        if (!window.bontonData) {
+          return $.Deferred().reject().promise();
         }
 
-        $btn.attr('aria-busy', 'false');
-        initBootstrap();
+        return $.ajax({
+          type: 'POST',
+          url: window.bontonData.ajaxUrl,
+          cache: false,
+          data: {
+            action: 'bonton_header_ui_state',
+            nonce: window.bontonData.nonce,
+          },
+          dataType: 'json',
+        });
+      }
+
+      function refreshHeaderUiState() {
+        if (headerUiInFlight) {
+          return headerUiInFlight;
+        }
+
+        headerUiInFlight = fetchHeaderUiState()
+          .done(function (response) {
+            if (!response || !response.success || !response.data) {
+              $btn.attr('aria-busy', 'false');
+              return;
+            }
+            applyUtilityBannerFromState(response.data);
+            $(document.body).trigger('bonton_header_ui_state_updated', [response.data]);
+          })
+          .fail(function () {
+            $btn.attr('aria-busy', 'false');
+          })
+          .always(function () {
+            headerUiInFlight = null;
+          });
+
+        return headerUiInFlight;
       }
 
       function fetchPickupCalendarState() {
@@ -593,18 +700,22 @@ export default {
         bindUtilityDateOutsideClose();
       }
 
-      // Always hydrate from the real WC session on load. Full-page cache can serve
-      // another visitor's (or an older session's) date/bulk markup in the HTML.
+      // Fast hydrate on load (session date / bulk / cart count). Heavy calendar
+      // rules stay stale until the picker opens or the cart changes.
       calendarStateStale = true;
-      refreshPickupCalendarState();
+      refreshHeaderUiState();
 
       $(window).on('resize', positionDateDropdown);
 
       // bfcache (back/forward): re-hydrate so logo → home → product doesn't show a stale label.
       window.addEventListener('pageshow', function (event) {
         if (event.persisted) {
+          var stored = readStoredPickupDate();
+          if (stored && stored.ymd && stored.display) {
+            applyPickupDateLabel(stored.ymd, stored.display);
+          }
           calendarStateStale = true;
-          refreshPickupCalendarState();
+          refreshHeaderUiState();
         }
       });
     })();
@@ -1089,11 +1200,23 @@ export default {
         syncCartIconCount();
       });
 
-      // Hydrate immediately — cached HTML always shows 0 until this runs.
-      syncCartIconCount();
+      // Header UI hydrate includes cart count (avoids a second admin-ajax on load).
+      $(document.body).on('bonton_header_ui_state_updated', function (_event, data) {
+        if (data && typeof data.count !== 'undefined') {
+          setCartIconCount(data.count);
+        }
+      });
+
+      // Fallback if header hydrate is unavailable (e.g. wholesale / no utility banner).
+      if (!$('#global-date-picker-btn').length) {
+        syncCartIconCount();
+      }
 
       window.addEventListener('pageshow', function (event) {
         if (event.persisted) {
+          if ($('#global-date-picker-btn').length) {
+            return;
+          }
           syncCartIconCount();
         }
       });
