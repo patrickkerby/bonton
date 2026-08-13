@@ -6,7 +6,8 @@
         <i class="fa fa-circle-notch fa-spin" aria-hidden="true"></i>
         <span>Saving date…</span>
       </div>
-      <div id="global-datepicker" data-selected-date="{{ $global_pickup_date_picker ?? '' }}"></div>
+      {{-- selected-date is filled by AJAX hydration (common.js) so page cache cannot bake in another visitor's session date --}}
+      <div id="global-datepicker" data-selected-date=""></div>
     </div>
     <p class="utility-banner__date-note">3&nbsp;PM cutoff for next-day pickup.<br>Home delivery available on Saturdays!</p>
   </div>

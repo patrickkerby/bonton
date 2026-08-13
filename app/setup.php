@@ -29,6 +29,18 @@ add_action('updated_option', function($option_name, $old_value, $value) {
 }, 10, 3);
 
 /**
+ * Do not serve full-page cache once a WooCommerce session/cart cookie exists.
+ * Pickup date + cart UI are session-specific; caching personalized HTML caused
+ * guests to see another visitor's (or an older) date/cart count after navigation.
+ */
+add_filter('rocket_cache_reject_cookies', function ($cookies) {
+    $cookies[] = 'woocommerce_cart_hash';
+    $cookies[] = 'woocommerce_items_in_cart';
+    $cookies[] = 'wp_woocommerce_session_';
+    return $cookies;
+});
+
+/**
  * Theme assets
  */
 add_action('wp_enqueue_scripts', function () {

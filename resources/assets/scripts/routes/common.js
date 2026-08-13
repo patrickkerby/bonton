@@ -220,7 +220,7 @@ export default {
           return;
         }
         savePickupDateInFlight = true;
-        var $label = $btn.find('.utility-banner__date-label');
+        var $label = $btn.find('[data-pickup-date-label]');
         var prevLabel = $label.text();
         var optimistic = formatPickupLabelFromDate(pickedDate);
         $label.text(optimistic);
@@ -420,12 +420,14 @@ export default {
 
           var sessionDate = dayjs(data.session_pickup_date, 'YYYY-MM-DD');
           if (sessionDate.isValid()) {
-            $btn.find('.utility-banner__date-label').text(sessionDate.format('ddd, MMM D'));
+            $btn.find('[data-pickup-date-label]').text(sessionDate.format('ddd, MMM D'));
           }
         } else {
-          $btn.find('.utility-banner__date-label').text('Select pickup date');
+          $picker.data('selected-date', '');
+          $btn.find('[data-pickup-date-label]').text('Select pickup date');
         }
 
+        $btn.attr('aria-busy', 'false');
         initBootstrap();
       }
 
@@ -437,6 +439,7 @@ export default {
         return $.ajax({
           type: 'POST',
           url: window.bontonData.ajaxUrl,
+          cache: false,
           data: {
             action: 'bonton_cart_pickup_calendar_state',
             nonce: window.bontonData.nonce,
@@ -453,11 +456,18 @@ export default {
         refreshInFlight = fetchPickupCalendarState()
           .done(function (response) {
             if (!response || !response.success || !response.data) {
+              $btn.attr('aria-busy', 'false');
               return;
             }
             applyUtilityBannerFromState(response.data);
             calendarStateStale = false;
             $(document.body).trigger('bonton_pickup_calendar_state_updated', [response.data]);
+          })
+          .fail(function () {
+            $btn.attr('aria-busy', 'false');
+            if (!$picker.data('datepicker')) {
+              initBootstrap();
+            }
           })
           .always(function () {
             refreshInFlight = null;
@@ -574,8 +584,6 @@ export default {
 
         bindUtilityDateOutsideClose();
       } else {
-        initBootstrap();
-
         $btn.on('click', function(e) {
           e.stopPropagation();
           suppressOutsideCloseUntil = Date.now() + 400;
@@ -585,7 +593,20 @@ export default {
         bindUtilityDateOutsideClose();
       }
 
+      // Always hydrate from the real WC session on load. Full-page cache can serve
+      // another visitor's (or an older session's) date/bulk markup in the HTML.
+      calendarStateStale = true;
+      refreshPickupCalendarState();
+
       $(window).on('resize', positionDateDropdown);
+
+      // bfcache (back/forward): re-hydrate so logo → home → product doesn't show a stale label.
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+          calendarStateStale = true;
+          refreshPickupCalendarState();
+        }
+      });
     })();
 
     // --- Utility Banner: Bulk Discount Popover ---
@@ -1066,6 +1087,15 @@ export default {
         }
 
         syncCartIconCount();
+      });
+
+      // Hydrate immediately — cached HTML always shows 0 until this runs.
+      syncCartIconCount();
+
+      window.addEventListener('pageshow', function (event) {
+        if (event.persisted) {
+          syncCartIconCount();
+        }
       });
     })();
 

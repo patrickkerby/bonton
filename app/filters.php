@@ -285,6 +285,8 @@ add_action( 'wp_ajax_nopriv_bonton_cart_count', 'App\\bonton_ajax_cart_count' );
 
 function bonton_ajax_cart_count() {
     check_ajax_referer( 'bonton_nonce', 'nonce' );
+    nocache_headers();
+    header( 'Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0' );
 
     if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
         wp_send_json_success( [ 'count' => 0 ] );
@@ -498,6 +500,9 @@ add_action('wp_ajax_nopriv_bonton_cart_pickup_calendar_state', 'App\bonton_ajax_
 
 function bonton_ajax_cart_pickup_calendar_state() {
     check_ajax_referer('bonton_nonce', 'nonce');
+    // Explicit no-store so edge CDNs (Sucuri) never cache session-specific calendar state.
+    nocache_headers();
+    header('Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0');
 
     $controller = new \App\Controllers\WoocommerceCart();
     $controller->cartItemsData();
@@ -516,12 +521,45 @@ function bonton_ajax_cart_pickup_calendar_state() {
     ]);
 }
 
+/**
+ * Lightweight session pickup date for sitewide header hydration.
+ * Prefer bonton_cart_pickup_calendar_state when cart calendar rules are also needed;
+ * this action exists so Sucuri/CDN never cache a date-only payload.
+ */
+add_action('wp_ajax_bonton_get_pickup_date', 'App\\bonton_ajax_get_pickup_date');
+add_action('wp_ajax_nopriv_bonton_get_pickup_date', 'App\\bonton_ajax_get_pickup_date');
+
+function bonton_ajax_get_pickup_date() {
+    check_ajax_referer('bonton_nonce', 'nonce');
+    nocache_headers();
+    header('Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0');
+
+    $short = '';
+    $ymd = '';
+    if (function_exists('WC') && WC()->session) {
+        $ymd = (string) WC()->session->get('pickup_date_formatted');
+        if ($ymd) {
+            $date_obj = \DateTime::createFromFormat('Y-m-d', $ymd);
+            if ($date_obj) {
+                $short = $date_obj->format('D, M j');
+            }
+        }
+    }
+
+    wp_send_json_success([
+        'date_display' => $short,
+        'date_ymd'     => $ymd ?: '',
+    ]);
+}
+
 // AJAX: Save pickup date to WC session (used by the global utility banner date picker)
 add_action('wp_ajax_save_pickup_date', 'App\ajax_save_pickup_date');
 add_action('wp_ajax_nopriv_save_pickup_date', 'App\ajax_save_pickup_date');
 
 function ajax_save_pickup_date() {
     check_ajax_referer('bonton_nonce', 'nonce');
+    nocache_headers();
+    header('Cache-Control: private, no-store, no-cache, must-revalidate, max-age=0');
 
     $date_raw = isset($_POST['date']) ? wp_unslash($_POST['date']) : '';
     $date_obj = bonton_parse_pickup_date_string($date_raw);
