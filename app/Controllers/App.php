@@ -67,82 +67,11 @@ class App extends Controller
         return $is_wholesale_user;
     }
 
-    public function bulkDiscountProgress()
-    {
-        if (!function_exists('WC') || !WC()->cart) {
-            return null;
-        }
-        return \App\Helpers\BulkPricing::get_progress();
-    }
-
-    /**
-     * If the cart form just POSTed a date, flush it into the session
-     * before any template reads the stale value.
-     */
-    protected function syncPostDateToSession()
-    {
-        static $done = false;
-        if ($done || !function_exists('WC') || !WC()->session) {
-            return;
-        }
-        $done = true;
-
-        if (isset($_POST['date']) && !empty($_POST['date'])) {
-            if (isset($_POST['bonton_set_pickup_date'])) {
-                return;
-            }
-            if (function_exists('is_cart') && is_cart() && !isset($_POST['apply_coupon'])) {
-                return;
-            }
-            $date_obj = \App\bonton_parse_pickup_date_string(wp_unslash($_POST['date']));
-            if ($date_obj) {
-                \App\bonton_persist_pickup_date_to_session($date_obj);
-            }
-        }
-    }
-
-    public function globalPickupDate()
-    {
-        if (!function_exists('WC') || !WC()->session) {
-            return null;
-        }
-        $this->syncPostDateToSession();
-        return WC()->session->get('pickup_date');
-    }
-
-    public function globalPickupDateShort()
-    {
-        if (!function_exists('WC') || !WC()->session) {
-            return null;
-        }
-        $this->syncPostDateToSession();
-        $formatted = WC()->session->get('pickup_date_formatted');
-        if (!$formatted) {
-            return null;
-        }
-        $date_obj = \DateTime::createFromFormat('Y-m-d', $formatted);
-        return $date_obj ? $date_obj->format('D, M j') : null;
-    }
-
-    /**
-     * Selected pickup date in dd/mm/yyyy for the Bootstrap Datepicker initial value.
-     */
-    public function globalPickupDatePicker()
-    {
-        if (!function_exists('WC') || !WC()->session) {
-            return null;
-        }
-        $this->syncPostDateToSession();
-        $formatted = WC()->session->get('pickup_date_formatted');
-        if (!$formatted) {
-            return null;
-        }
-        $date_obj = \DateTime::createFromFormat('Y-m-d', $formatted);
-        return $date_obj ? $date_obj->format('d/m/Y') : null;
-    }
-
     /**
      * Pickup vacation / closure dates (Y-m-d) for utility banner datepicker — same source as cart.
+     *
+     * Pickup date, cart count, and bulk progress are hydrated via AJAX so Sage
+     * does not load the Woo session/cart on every cached storefront page.
      *
      * @return string[]
      */

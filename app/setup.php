@@ -29,19 +29,11 @@ add_action('updated_option', function($option_name, $old_value, $value) {
 }, 10, 3);
 
 /**
- * Do not serve full-page cache once a WooCommerce session/cart cookie exists.
- * Pickup date + cart UI are session-specific; caching personalized HTML caused
- * guests to see another visitor's (or an older) date/cart count after navigation.
- */
-add_filter('rocket_cache_reject_cookies', function ($cookies) {
-    $cookies[] = 'woocommerce_cart_hash';
-    $cookies[] = 'woocommerce_items_in_cart';
-    $cookies[] = 'wp_woocommerce_session_';
-    return $cookies;
-});
-
-/**
  * Theme assets
+ *
+ * Header pickup date / cart count / bulk dots are hydrated via AJAX, so a Woo
+ * session cookie (set when choosing a pickup date) must not bypass WP Rocket.
+ * Cart and checkout remain excluded by WooCommerce/Rocket defaults.
  */
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('sage/main.css', asset_path('styles/main.css'), false, null);
@@ -55,13 +47,15 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('sage/woo.css', asset_path('styles/woo.css'), false, null);
     }
 
-    // Shop/other pages: WC fragments for add-to-cart AJAX updates.
-    // Cart page: skip fragments — it listens to updated_wc_div and cached responses
-    // can overwrite the header count after line-item removes.
+    // Fragments AJAX is expensive. Only load it when a cart cookie exists so
+    // date-only sessions (pickup date, empty cart) do not fire get_refreshed_fragments
+    // on every page. Add-to-cart still updates the header via bonton_cart_count.
+    // Cart page: skip fragments — it listens to updated_wc_div.
     if (function_exists('WC')) {
-        wp_enqueue_script('wc-cart-fragments');
-
-        if (is_cart()) {
+        $has_cart_cookie = !empty($_COOKIE['woocommerce_items_in_cart']);
+        if ($has_cart_cookie && !is_cart()) {
+            wp_enqueue_script('wc-cart-fragments');
+        } else {
             wp_dequeue_script('wc-cart-fragments');
         }
     }
@@ -82,21 +76,11 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_script('sage/lists.js', asset_path('scripts/lists.js'), [], null, true);
     }
 
-    $needs_extra_lead_time = false;
-    if (function_exists('WC') && WC()->cart) {
-        foreach (WC()->cart->get_cart() as $cart_item) {
-            $pid = $cart_item['product_id'];
-            if (has_term(['long-fermentation'], 'product_tag', $pid) || get_field('requires_two_days_notice', $pid)) {
-                $needs_extra_lead_time = true;
-                break;
-            }
-        }
-    }
-
     wp_localize_script('sage/main.js', 'bontonData', [
         'ajaxUrl'            => admin_url('admin-ajax.php'),
         'nonce'              => wp_create_nonce('bonton_nonce'),
-        'needsExtraLeadTime' => $needs_extra_lead_time ? 1 : 0,
+        // Lead time is applied when the datepicker opens (calendar-state AJAX).
+        'needsExtraLeadTime' => 0,
     ]);
 }, 100);
 

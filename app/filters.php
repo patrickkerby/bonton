@@ -550,15 +550,18 @@ function bonton_ajax_header_ui_state() {
     }
 
     $count = 0;
-    if (function_exists('WC') && WC()->cart) {
+    $bulk = ['enabled' => false];
+    // Skip cart/ACF work for date-only sessions (session cookie, empty cart).
+    if (!empty($_COOKIE['woocommerce_items_in_cart']) && function_exists('WC') && WC()->cart) {
         $count = absint(WC()->cart->get_cart_contents_count());
+        $bulk = \App\Helpers\BulkPricing::get_progress();
     }
 
     wp_send_json_success([
         'date_display'           => $short,
         'date_ymd'               => $ymd ?: '',
         'count'                  => $count,
-        'bulk_discount_progress' => \App\Helpers\BulkPricing::get_progress(),
+        'bulk_discount_progress' => $bulk,
     ]);
 }
 

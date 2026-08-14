@@ -1191,8 +1191,7 @@ export default {
         syncCartIconCount();
       });
 
-      // WC fragments can return cached counts; re-sync after they run on non-cart pages.
-      $(document.body).on('wc_fragments_refreshed added_to_cart removed_from_cart', function () {
+      $(document.body).on('added_to_cart removed_from_cart', function () {
         if ($('body').hasClass('woocommerce-cart')) {
           return;
         }
