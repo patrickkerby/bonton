@@ -1120,10 +1120,41 @@ export default {
     // stale get_refreshed_fragments responses and overwrite the icon after remove.
     (function () {
       var cartCountRequest = null;
+      var CART_COUNT_STORAGE_KEY = 'bonton_cart_count';
+
+      function writeStoredCartCount(count) {
+        try {
+          window.sessionStorage.setItem(
+            CART_COUNT_STORAGE_KEY,
+            String(Math.max(0, parseInt(count, 10) || 0))
+          );
+        } catch (err) {
+          // Ignore quota / private-mode failures.
+        }
+      }
+
+      function readStoredCartCount() {
+        try {
+          var raw = window.sessionStorage.getItem(CART_COUNT_STORAGE_KEY);
+          if (raw === null || raw === '') {
+            return null;
+          }
+          var n = parseInt(raw, 10);
+          return isNaN(n) ? null : n;
+        } catch (err) {
+          return null;
+        }
+      }
 
       function setCartIconCount(count) {
         var value = String(Math.max(0, parseInt(count, 10) || 0));
         $('#header-cart-count, #mobile-cart-count, .cart-icon__count').text(value);
+        writeStoredCartCount(value);
+      }
+
+      var storedCount = readStoredCartCount();
+      if (storedCount !== null) {
+        setCartIconCount(storedCount);
       }
 
       function readCartCountFromForm() {
@@ -1189,6 +1220,14 @@ export default {
 
       $(document.body).on('updated_wc_div item_removed_from_classic_cart updated_cart_totals', function () {
         syncCartIconCount();
+      });
+
+      $(document.body).on('wc_fragments_refreshed', function () {
+        var text = $('#header-cart-count, #mobile-cart-count, .cart-icon__count').first().text();
+        var n = parseInt(text, 10);
+        if (!isNaN(n)) {
+          writeStoredCartCount(n);
+        }
       });
 
       $(document.body).on('added_to_cart removed_from_cart', function () {
