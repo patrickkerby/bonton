@@ -47,17 +47,13 @@ add_action('wp_enqueue_scripts', function () {
         wp_enqueue_style('sage/woo.css', asset_path('styles/woo.css'), false, null);
     }
 
-    // Fragments AJAX is expensive. Only load it when a cart cookie exists so
-    // date-only sessions (pickup date, empty cart) do not fire get_refreshed_fragments
-    // on every page. Add-to-cart still updates the header via bonton_cart_count.
-    // Cart page: skip fragments — it listens to updated_wc_div.
+    // Never load wc-cart-fragments on the storefront. get_refreshed_fragments is
+    // expensive, and cookie-conditional enqueue fights WP Rocket: a cart user's
+    // cached HTML can leak the script to date-only sessions. Header count is
+    // sessionStorage + bonton_header_ui_state / bonton_cart_count instead.
     if (function_exists('WC')) {
-        $has_cart_cookie = !empty($_COOKIE['woocommerce_items_in_cart']);
-        if ($has_cart_cookie && !is_cart()) {
-            wp_enqueue_script('wc-cart-fragments');
-        } else {
-            wp_dequeue_script('wc-cart-fragments');
-        }
+        wp_dequeue_script('wc-cart-fragments');
+        wp_deregister_script('wc-cart-fragments');
     }
 
     // Enqueue Quick View script on the home page template so the
@@ -82,6 +78,13 @@ add_action('wp_enqueue_scripts', function () {
         // Lead time is applied when the datepicker opens (calendar-state AJAX).
         'needsExtraLeadTime' => 0,
     ]);
+}, 100);
+
+add_action('wp_print_scripts', function () {
+    if (function_exists('WC')) {
+        wp_dequeue_script('wc-cart-fragments');
+        wp_deregister_script('wc-cart-fragments');
+    }
 }, 100);
 
 /**
