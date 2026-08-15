@@ -234,11 +234,12 @@ export default {
         }
       })();
 
-      function setUtilityBannerDateSaving(on) {
+      function setUtilityBannerDateSaving(on, message) {
         var $overlay = $('#utility-banner-date-saving');
         if ($overlay.length) {
           $overlay.toggleClass('is-visible', on);
           $overlay.attr('aria-hidden', on ? 'false' : 'true');
+          $overlay.find('span').text(message || 'Saving date…');
         }
         $dropdown.toggleClass('is-saving', on);
         $btn.attr('aria-busy', on ? 'true' : 'false');
@@ -620,26 +621,48 @@ export default {
         });
       }
 
-      function openUtilityDateDropdown() {
-        if ($dropdown.is(':visible')) {
-          $dropdown.fadeOut(150);
-        } else {
+      function showUtilityDateDropdown() {
+        if (!$dropdown.is(':visible')) {
           positionDateDropdown();
           $dropdown.fadeIn(150, positionDateDropdown);
+        } else {
+          positionDateDropdown();
         }
         $('#bulk-info-popover').fadeOut(150);
       }
 
+      function hideUtilityDateDropdown() {
+        $dropdown.fadeOut(150);
+        setUtilityBannerDateSaving(false);
+      }
+
       function openUtilityDateDropdownWhenReady() {
-        if (calendarStateStale || refreshInFlight) {
-          $.when(refreshInFlight || refreshPickupCalendarState()).always(openUtilityDateDropdown);
+        var loadingCalendar = calendarStateStale || !!refreshInFlight;
+
+        if ($dropdown.is(':visible')) {
+          if (loadingCalendar) {
+            return;
+          }
+          hideUtilityDateDropdown();
           return;
         }
 
         if (!$picker.data('datepicker')) {
           initBootstrap();
         }
-        openUtilityDateDropdown();
+        showUtilityDateDropdown();
+
+        if (!loadingCalendar) {
+          return;
+        }
+
+        setUtilityBannerDateSaving(true, 'Loading calendar…');
+        $.when(refreshInFlight || refreshPickupCalendarState()).always(function () {
+          setUtilityBannerDateSaving(false);
+          if ($dropdown.is(':visible')) {
+            positionDateDropdown();
+          }
+        });
       }
 
       $(document.body).on(
