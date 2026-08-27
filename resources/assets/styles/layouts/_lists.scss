@@ -60,6 +60,23 @@
     width: 100%;
   }
 
+  // Print buttons. Font Awesome 7 forces .fa to 1.25em; labels that were
+  // nested inside <i class="fa fa-print"> then wrap one word per line.
+  .btn.btn-default {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    line-height: 1.2;
+    height: auto;
+
+    .fa {
+      width: auto;
+      font-size: 17px;
+      margin-right: 0.35em;
+      line-height: 1;
+    }
+  }
+
   h5 {
     border-top: solid 2px $cream;
     padding-top: 0.75rem;

@@ -184,7 +184,7 @@
           </ul>
         </div>
         <br><br>
-      <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;">Print All Order Items </i></button>
+      <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true"></i> Print All Order Items</button>
 
       <div id="receipt-printer-all" class="d-none">
         @include('partials.print-all-breadclub')

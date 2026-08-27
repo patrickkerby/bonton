@@ -7,3 +7,10 @@
 
 // v4 shim to support legacy markup like: <i class="fa fa-print"></i>
 @import "~@fortawesome/fontawesome-free/scss/v4-shims";
+
+// FA7 sets width: 1.25em on every .fa icon (FA4 only did this for .fa-fw).
+// Buttons that still nest their label inside the <i> would otherwise stack
+// each word vertically. Keep icon-only .fa at the default fixed width.
+.btn .fa {
+  width: auto;
+}

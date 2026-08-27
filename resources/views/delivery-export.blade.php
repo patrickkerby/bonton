@@ -267,7 +267,7 @@ $cooler_list = array(  '22', '53', '51','107','103' );
       
       <br><br>
       {{-- @endforeach     --}}
-      <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true" style="    font-size: 17px;">Print All Order Items </i></button>
+      <button class="btn btn-default" onclick="printDiv('receipt-printer-all', 'receiptPrint')"><i class="fa fa-print" aria-hidden="true"></i> Print All Order Items</button>
 
       <div id="receipt-printer-all" class="d-none">
         @include('partials.print-all-delivery-contents')
