@@ -48,7 +48,8 @@ add_action('admin_enqueue_scripts', function ($hook) {
 		return;
 	}
 
-	$admin_uri = get_template_directory_uri() . '/resources/admin';
+	// Sage 9: get_template_directory_uri() already points at /resources
+	$admin_uri = get_template_directory_uri() . '/admin';
 
 	wp_enqueue_script('jquery-ui-datepicker');
 	wp_enqueue_style(
