@@ -939,22 +939,6 @@ function custom_dashboard_help() {
 // 1. Add custom field input @ Product Data > Variations > Single Variation
  
 add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variation_data, $variation ) {
-
-    echo '<script>
-        jQuery(document).ready(function($) {
-            $(".datepicker").multiDatesPicker({
-                minDate: 0,
-                dateFormat: "y-m-d",
-                showButtonPanel: true,
-                changeMonth: true,
-                changeYear: true,
-                onSelect: function(dateText, inst) {
-                    inst.settings.defaultDate = dateText;
-                },
-            });
-        });
-    </script>';
-    
     $existing_soldout_value = get_post_meta( $variation->ID, 'sold_out', true );
     $available_override = get_post_meta( $variation->ID, 'available_override', true );
     $restrict_online_purchase = get_post_meta( $variation->ID, '_restrict_online_purchase', true );
@@ -963,7 +947,7 @@ add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variatio
             <label for="sold_out[' . $loop . ']">Sold Out / Unavailable Dates</label>
             <input
                 type="text" 
-                class="datepicker form-control"
+                class="datepicker form-control bonton-variation-datepicker"
                 id="sold_out[' . $loop . ']"
                 name="sold_out[' . $loop . ']"
                 value="' . $existing_soldout_value . '"
@@ -975,7 +959,7 @@ add_action( 'woocommerce_variation_options_pricing', function ( $loop, $variatio
             <label for="available_override[' . $loop . ']">Availability Override</label>
             <input
                 type="text" 
-                class="datepicker form-control"
+                class="datepicker form-control bonton-variation-datepicker"
                 id="available_override[' . $loop . ']"
                 name="available_override[' . $loop . ']"
                 value="' . $available_override . '"

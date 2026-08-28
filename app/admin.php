@@ -27,14 +27,58 @@ add_action('customize_preview_init', function () {
 
 
 add_action('admin_enqueue_scripts', function ($hook) {
-	// Only load on WooCommerce order edit/add screens
-	global $typenow;
-	if (
-		($typenow === 'shop_order' && ($hook === 'post.php' || $hook === 'post-new.php')) ||
-		(isset($_GET['post_type']) && $_GET['post_type'] === 'shop_order')
-	) {
-		wp_enqueue_script('jquery-ui-datepicker');
-		wp_enqueue_script('jquery-ui.multidatespicker', 'https://cdn.rawgit.com/dubrox/Multiple-Dates-Picker-for-jQuery-UI/master/jquery-ui.multidatespicker.js', array('jquery-ui-datepicker'));
+	$screen = function_exists('get_current_screen') ? get_current_screen() : null;
+	$screen_id = $screen ? $screen->id : '';
+	$post_type = $screen && !empty($screen->post_type) ? $screen->post_type : '';
+
+	if (!$post_type && $hook === 'post.php' && !empty($_GET['post'])) {
+		$post_type = get_post_type((int) $_GET['post']);
+	}
+
+	$is_product = in_array($hook, ['post.php', 'post-new.php'], true) && (
+		$post_type === 'product' ||
+		(isset($_GET['post_type']) && $_GET['post_type'] === 'product')
+	);
+
+	$is_order = in_array($screen_id, ['shop_order', 'woocommerce_page_wc-orders'], true) ||
+		(isset($_GET['post_type']) && $_GET['post_type'] === 'shop_order') ||
+		(isset($_GET['page']) && $_GET['page'] === 'wc-orders');
+
+	if (!$is_product && !$is_order) {
+		return;
+	}
+
+	$admin_uri = get_template_directory_uri() . '/resources/admin';
+
+	wp_enqueue_script('jquery-ui-datepicker');
+	wp_enqueue_style(
+		'jquery-ui-smoothness',
+		'https://code.jquery.com/ui/1.13.3/themes/smoothness/jquery-ui.css',
+		[],
+		'1.13.3'
+	);
+	wp_enqueue_style(
+		'jquery-ui.multidatespicker',
+		$admin_uri . '/jquery-ui.multidatespicker.css',
+		['jquery-ui-smoothness'],
+		'1.6.6'
+	);
+	wp_enqueue_script(
+		'jquery-ui.multidatespicker',
+		$admin_uri . '/jquery-ui.multidatespicker.js',
+		['jquery-ui-datepicker'],
+		'1.6.6',
+		true
+	);
+
+	if ($is_product) {
+		wp_enqueue_script(
+			'bonton-variation-dates',
+			$admin_uri . '/variation-dates.js',
+			['jquery-ui.multidatespicker'],
+			'1.0.0',
+			true
+		);
 	}
 });
 
