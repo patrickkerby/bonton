@@ -1021,6 +1021,13 @@ function add_simple_product_restriction_field() {
     // Only show for simple products
     if ($product_object && $product_object->is_type('simple')) {
         echo '<div class="options_group show_if_simple">';
+        woocommerce_wp_text_input(array(
+            'id' => 'sold_out',
+            'label' => __('Sold Out / Unavailable Dates', 'woocommerce'),
+            'description' => __('Pickup dates this product cannot be ordered for. Same calendar as variations; does not change WooCommerce stock.', 'woocommerce'),
+            'desc_tip' => true,
+            'class' => 'bonton-soldout-datepicker',
+        ));
         woocommerce_wp_checkbox(array(
             'id' => '_restrict_online_purchase_simple',
             'label' => __('Restrict Online Purchase', 'woocommerce'),
@@ -1038,7 +1045,67 @@ function save_simple_product_restriction_field($product) {
     if ($product->is_type('simple')) {
         $restrict_online = isset($_POST['_restrict_online_purchase_simple']) ? 'yes' : 'no';
         $product->update_meta_data('_restrict_online_purchase_simple', $restrict_online);
+
+        $sold_out = isset($_POST['sold_out']) ? sanitize_text_field(wp_unslash($_POST['sold_out'])) : '';
+        $product->update_meta_data('sold_out', $sold_out);
     }
+}
+
+// -----------------------------------------
+// 4b. Sold-out dates on product categories (bulk off for a pickup date)
+
+add_action('product_cat_add_form_fields', 'App\bonton_taxonomy_sold_out_add_field');
+add_action('product_tag_add_form_fields', 'App\bonton_taxonomy_sold_out_add_field');
+add_action('product_cat_edit_form_fields', 'App\bonton_taxonomy_sold_out_edit_field', 10, 1);
+add_action('product_tag_edit_form_fields', 'App\bonton_taxonomy_sold_out_edit_field', 10, 1);
+add_action('created_product_cat', 'App\bonton_save_taxonomy_sold_out');
+add_action('edited_product_cat', 'App\bonton_save_taxonomy_sold_out');
+add_action('created_product_tag', 'App\bonton_save_taxonomy_sold_out');
+add_action('edited_product_tag', 'App\bonton_save_taxonomy_sold_out');
+
+function bonton_taxonomy_sold_out_description($taxonomy) {
+    if ($taxonomy === 'product_tag') {
+        return __('Pickup dates when products with this tag cannot be ordered. Same calendar as product sold-out dates; does not change WooCommerce stock.', 'woocommerce');
+    }
+
+    return __('Pickup dates when products in this category (and its subcategories) cannot be ordered. Same calendar as product sold-out dates; does not change WooCommerce stock.', 'woocommerce');
+}
+
+function bonton_taxonomy_sold_out_add_field($taxonomy) {
+    ?>
+    <div class="form-field">
+        <label for="sold_out"><?php esc_html_e('Sold Out / Unavailable Dates', 'woocommerce'); ?></label>
+        <input type="text" name="sold_out" id="sold_out" class="bonton-soldout-datepicker" value="">
+        <p><?php echo esc_html(bonton_taxonomy_sold_out_description($taxonomy)); ?></p>
+    </div>
+    <?php
+}
+
+function bonton_taxonomy_sold_out_edit_field($term) {
+    $sold_out = get_term_meta($term->term_id, 'sold_out', true);
+    $taxonomy = isset($term->taxonomy) ? $term->taxonomy : '';
+    ?>
+    <tr class="form-field">
+        <th scope="row">
+            <label for="sold_out"><?php esc_html_e('Sold Out / Unavailable Dates', 'woocommerce'); ?></label>
+        </th>
+        <td>
+            <input type="text" name="sold_out" id="sold_out" class="bonton-soldout-datepicker" value="<?php echo esc_attr($sold_out); ?>">
+            <p class="description"><?php echo esc_html(bonton_taxonomy_sold_out_description($taxonomy)); ?></p>
+        </td>
+    </tr>
+    <?php
+}
+
+function bonton_save_taxonomy_sold_out($term_id) {
+    if (!current_user_can('edit_term', $term_id)) {
+        return;
+    }
+    if (!isset($_POST['sold_out'])) {
+        return;
+    }
+
+    update_term_meta($term_id, 'sold_out', sanitize_text_field(wp_unslash($_POST['sold_out'])));
 }
 
 // -----------------------------------------

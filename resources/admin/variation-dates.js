@@ -1,5 +1,5 @@
 /**
- * Init MultiDatesPicker on variation sold-out / availability fields.
+ * Init MultiDatesPicker on sold-out / availability fields.
  * WooCommerce loads variation HTML via AJAX, so this re-runs after those events.
  */
 (function ($) {
@@ -9,7 +9,7 @@
     }
 
     $(context)
-      .find('.bonton-variation-datepicker')
+      .find('.bonton-variation-datepicker, .bonton-soldout-datepicker')
       .each(function () {
         var $field = $(this);
         if ($field.hasClass('hasDatepicker')) {

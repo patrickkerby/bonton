@@ -44,7 +44,9 @@ add_action('admin_enqueue_scripts', function ($hook) {
 		(isset($_GET['post_type']) && $_GET['post_type'] === 'shop_order') ||
 		(isset($_GET['page']) && $_GET['page'] === 'wc-orders');
 
-	if (!$is_product && !$is_order) {
+	$is_product_term = $screen && !empty($screen->taxonomy) && in_array($screen->taxonomy, ['product_cat', 'product_tag'], true);
+
+	if (!$is_product && !$is_order && !$is_product_term) {
 		return;
 	}
 
@@ -72,12 +74,12 @@ add_action('admin_enqueue_scripts', function ($hook) {
 		true
 	);
 
-	if ($is_product) {
+	if ($is_product || $is_product_term) {
 		wp_enqueue_script(
 			'bonton-variation-dates',
 			$admin_uri . '/variation-dates.js',
 			['jquery-ui.multidatespicker'],
-			'1.0.0',
+			'1.1.0',
 			true
 		);
 	}

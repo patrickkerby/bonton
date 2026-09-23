@@ -262,24 +262,21 @@ class WoocommerceCart extends Controller
                 $gc_cart_count++;
             }
 
-            // Sold out override
-            $variation_id = $cart_item['variation_id'];
-            $sold_out_raw = get_post_meta($variation_id, 'sold_out', true);
-            $sold_out_strings = $sold_out_raw ? explode(', ', $sold_out_raw) : [];
-            $availability_override_raw = get_post_meta($variation_id, 'available_override', true);
+            // Sold out: variation, simple product, and product-category dates
+            $variation_id = (int) $cart_item['variation_id'];
+            $availability_override_raw = $variation_id ? get_post_meta($variation_id, 'available_override', true) : '';
             $availability_override_strings = $availability_override_raw ? explode(', ', $availability_override_raw) : [];
 
             $sold_out_conflict = '';
-            $sold_out_strings = array_diff($sold_out_strings, $availability_override_strings);
-
-            // Parse sold-out dates (stored as Y-m-d)
             $sold_out_dates_display = [];
-            foreach ($sold_out_strings as $dateStr) {
-                $sold_out_day = DateTime::createFromFormat('Y-m-d', trim($dateStr));
+            $session_ymd = $session_date_object ? $session_date_object->format('Y-m-d') : '';
+
+            foreach (\App\Helpers\SoldOutDates::forCartItem((int) $product_id, $variation_id) as $sold_out_ymd) {
+                $sold_out_day = DateTime::createFromFormat('!Y-m-d', $sold_out_ymd);
                 if ($sold_out_day && $sold_out_day > $today) {
                     $sold_out_dates_display[] = $sold_out_day->format('M j');
 
-                    if ($session_date_object && $session_date_object->format('Y-m-d') === $sold_out_day->format('Y-m-d')) {
+                    if ($session_ymd && $session_ymd === $sold_out_ymd) {
                         $this->_conflict = true;
                         $sold_out_conflict = 'sold_out_conflict';
                         $availability_status = 'not-available';
@@ -290,7 +287,6 @@ class WoocommerceCart extends Controller
 
             $sold_out_msg = '';
             if ($sold_out_dates_display) {
-                sort($sold_out_dates_display);
                 $sold_out_msg = '<span class="special-availability sold-out ' . $sold_out_conflict . '"><strong>Sold out: </strong> ' . implode(', ', $sold_out_dates_display) . '</span><br>';
             }
 
