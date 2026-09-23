@@ -150,14 +150,20 @@ class SoldOutDates
             return null;
         }
 
-        if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $trimmed)) {
-            $dt = DateTime::createFromFormat('!Y-m-d', $trimmed);
-            return self::validYmd($dt);
-        }
+        // Picker stores y-m-d without padding (e.g. 26-9-25). Also accept
+        // ISO Y-m-d and compact Ymd.
+        if (preg_match('/^(\d{2}|\d{4})-(\d{1,2})-(\d{1,2})$/', $trimmed, $parts)) {
+            $year = (int) $parts[1];
+            if ($year < 100) {
+                $year += ($year >= 70) ? 1900 : 2000;
+            }
+            $month = (int) $parts[2];
+            $day = (int) $parts[3];
+            if (!checkdate($month, $day, $year)) {
+                return null;
+            }
 
-        if (preg_match('/^\d{2}-\d{2}-\d{2}$/', $trimmed)) {
-            $dt = DateTime::createFromFormat('!y-m-d', $trimmed);
-            return self::validYmd($dt);
+            return sprintf('%04d-%02d-%02d', $year, $month, $day);
         }
 
         if (preg_match('/^\d{8}$/', $trimmed)) {
