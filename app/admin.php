@@ -79,7 +79,7 @@ add_action('admin_enqueue_scripts', function ($hook) {
 			'bonton-variation-dates',
 			$admin_uri . '/variation-dates.js',
 			['jquery-ui.multidatespicker'],
-			'1.1.0',
+			'1.1.1',
 			true
 		);
 	}

@@ -24,6 +24,9 @@
           changeYear: true,
           onSelect: function (dateText, inst) {
             inst.settings.defaultDate = dateText;
+            // Datepicker writes the value without a native change event, so
+            // Woo never marks the variation dirty / enables "Save changes".
+            $(this).trigger('change');
           },
         });
       });
