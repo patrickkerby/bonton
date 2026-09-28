@@ -570,10 +570,49 @@ body.woocommerce-order-received {
   }
 }
 
+@keyframes bonton-address-search-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.25;
+  }
+}
+
 // Full-page overlay only when the checkout form itself is blocked (place order).
 // update_checkout also uses blockUI on the payment/totals fragments; stretching
 // those overlays to the viewport hides address autocomplete until AJAX finishes.
 body.woocommerce-checkout {
+  .woocommerce-input-wrapper.autocomplete-available {
+    position: relative;
+
+    .address-search-status {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: calc(100% + 4px);
+      z-index: 20;
+      padding: 0.7rem 0.9rem;
+      background: #fff;
+      border: 2px solid $bonton-field-border;
+      border-radius: 2px;
+      box-shadow: $bonton-card-shadow;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: $charcoal;
+    }
+
+    &.is-searching .address-search-icon {
+      animation: bonton-address-search-pulse 0.9s ease-in-out infinite;
+    }
+  }
+
+  .woocommerce-address-suggestions {
+    z-index: 30;
+  }
+
   form.checkout.processing > .blockUI.blockOverlay {
     position: fixed !important;
     top: 0 !important;

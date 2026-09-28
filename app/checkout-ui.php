@@ -606,6 +606,43 @@ function bonton_checkout_ui_js()
             $('.checkout-ship-different').toggleClass('is-active', $shipToggle.is(':checked'));
         }
 
+        function bindAddressSearchCue(type) {
+            var input = document.getElementById(type + '_address_1');
+            var box = document.getElementById('address_suggestions_' + type);
+            if (!input) {
+                return;
+            }
+            var wrap = input.closest('.woocommerce-input-wrapper');
+            if (!wrap) {
+                return;
+            }
+            var list = box ? box.querySelector('.suggestions-list') : null;
+            var status = document.createElement('div');
+            status.className = 'address-search-status';
+            status.setAttribute('role', 'status');
+            status.hidden = true;
+            status.textContent = <?php echo wp_json_encode(__('Looking up addresses…', 'sage')); ?>;
+            wrap.appendChild(status);
+
+            function sync() {
+                var query = (input.value || '').trim();
+                var itemCount = list ? list.querySelectorAll('li').length : 0;
+                var searching = query.length >= 3 && itemCount === 0;
+                wrap.classList.toggle('is-searching', searching);
+                status.hidden = !searching;
+            }
+
+            input.addEventListener('input', sync);
+            if (list) {
+                new MutationObserver(sync).observe(list, { childList: true });
+            }
+            if (box) {
+                new MutationObserver(sync).observe(box, { attributes: true, attributeFilter: ['style', 'class'] });
+            }
+        }
+        bindAddressSearchCue('billing');
+        bindAddressSearchCue('shipping');
+
         var $pointsForm = $('#bonton-checkout-points-form');
         var $pointsPill = $('.checkout-points-pill');
         if ($pointsForm.length && $pointsPill.length) {
