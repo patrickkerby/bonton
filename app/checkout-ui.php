@@ -623,16 +623,30 @@ function bonton_checkout_ui_js()
             status.hidden = true;
             status.textContent = <?php echo wp_json_encode(__('Looking up addresses…', 'sage')); ?>;
             wrap.appendChild(status);
+            var pending = false;
 
-            function sync() {
-                var query = (input.value || '').trim();
-                var itemCount = list ? list.querySelectorAll('li').length : 0;
-                var searching = query.length >= 3 && itemCount === 0;
+            function setSearching(searching) {
                 wrap.classList.toggle('is-searching', searching);
                 status.hidden = !searching;
             }
 
-            input.addEventListener('input', sync);
+            function sync() {
+                var query = (input.value || '').trim();
+                var itemCount = list ? list.querySelectorAll('li').length : 0;
+                if (query.length < 3 || itemCount > 0) {
+                    pending = false;
+                }
+                setSearching(pending && itemCount === 0 && query.length >= 3);
+            }
+
+            input.addEventListener('input', function () {
+                pending = (input.value || '').trim().length >= 3;
+                sync();
+            });
+            input.addEventListener('change', function () {
+                pending = false;
+                sync();
+            });
             if (list) {
                 new MutationObserver(sync).observe(list, { childList: true });
             }
