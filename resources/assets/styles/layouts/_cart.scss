@@ -1414,12 +1414,20 @@ td.product-meta {
 
 body.woocommerce-cart,
 body.woocommerce-checkout {
+  @include media-breakpoint-down(md) {
+    .wrap {
+      max-width: 100%;
+      overflow-x: hidden;
+    }
+  }
+
   .woocommerce-error,
   .woocommerce-info,
   .woocommerce-message {
     position: fixed;
     left: 0;
-    width: 100vw;
+    width: 100%;
+    max-width: 100%;
     margin: 0;
     z-index: 1000000;
   }

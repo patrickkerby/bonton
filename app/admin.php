@@ -322,21 +322,110 @@ function site_notice_widget_content() {
 }
 
 /**
- * Honor dismiss cookies from the old custom notice markup so those visitors
- * are not shown the bar again after switching back to WooCommerce's output.
+ * Notice ids WooCommerce uses for the store_notice{md5} cookie, plus the
+ * unslashed variant in case dashboard saves and option reads disagree.
+ */
+function bonton_store_notice_hashes($notice = null)
+{
+    if ($notice === null) {
+        $notice = get_option('woocommerce_demo_store_notice');
+        if (empty($notice)) {
+            $notice = __('This is a demo store for testing purposes &mdash; no orders shall be fulfilled.', 'woocommerce');
+        }
+    }
+
+    $notice = is_string($notice) ? $notice : '';
+
+    return array_values(array_unique(array_filter([
+        $notice !== '' ? md5($notice) : null,
+        md5(wp_unslash($notice)),
+    ])));
+}
+
+function bonton_store_notice_is_dismissed($notice = null)
+{
+    foreach (bonton_store_notice_hashes($notice) as $hash) {
+        if (!empty($_COOKIE['bonton_notice_dismissed_' . $hash])) {
+            return true;
+        }
+        if (isset($_COOKIE['store_notice' . $hash]) && $_COOKIE['store_notice' . $hash] === 'hidden') {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Never print a dismissed bar (cart/checkout are uncached, so this stops the
+ * reload flash). Also honor old bonton_notice_dismissed_* cookies.
  */
 add_filter('woocommerce_demo_store', function ($html, $notice) {
-    $notice = is_string($notice) ? $notice : '';
-    $hashes = array_unique([md5($notice), md5(wp_unslash($notice))]);
-
-    foreach ($hashes as $hash) {
-        if (!empty($_COOKIE['bonton_notice_dismissed_' . $hash])) {
-            return '';
-        }
+    if (bonton_store_notice_is_dismissed($notice)) {
+        return '';
     }
 
     return $html;
 }, 10, 2);
+
+/**
+ * Hide the bar before first paint. Woo's own JS only hide()/show() after
+ * jQuery ready, which is why dismissed visitors see a flash on reload.
+ */
+add_action('wp_head', function () {
+    if (!function_exists('is_store_notice_showing') || !is_store_notice_showing()) {
+        return;
+    }
+
+    $hashes = bonton_store_notice_hashes();
+    ?>
+    <style id="bonton-store-notice-css">
+      html.bonton-store-notice-hidden .woocommerce-store-notice,
+      html.bonton-store-notice-hidden p.demo_store { display: none !important; }
+    </style>
+    <script>
+    function bontonStoreNoticeGate() {
+      var hashes = <?php echo wp_json_encode($hashes); ?>;
+      var cookies = document.cookie ? document.cookie.split(';') : [];
+      var dismissed = false;
+      for (var h = 0; h < hashes.length; h++) {
+        var woo = 'store_notice' + hashes[h] + '=hidden';
+        var bonton = 'bonton_notice_dismissed_' + hashes[h] + '=';
+        for (var i = 0; i < cookies.length; i++) {
+          var c = cookies[i].trim();
+          if (c.indexOf(woo) === 0 || c.indexOf(bonton) === 0) {
+            dismissed = true;
+            break;
+          }
+        }
+        if (dismissed) {
+          break;
+        }
+      }
+      if (dismissed) {
+        document.documentElement.classList.add('bonton-store-notice-hidden');
+      }
+    }
+    bontonStoreNoticeGate();
+    </script>
+    <?php
+}, 0);
+
+add_filter('rocket_delay_js_exclusions', function ($exclusions) {
+    $exclusions[] = 'bontonStoreNoticeGate';
+    return $exclusions;
+});
+
+/**
+ * Native Woo notice hooks to wp_body_open. If a layout skips that, still print
+ * it in the footer so the bar is not missing on older templates.
+ */
+add_action('wp_footer', function () {
+    if (!function_exists('woocommerce_demo_store') || did_action('wp_body_open')) {
+        return;
+    }
+    woocommerce_demo_store();
+}, 5);
 
 // Clear breadclub caches when new orders are saved to ensure real-time updates
 add_action('woocommerce_new_order', 'App\clear_breadclub_caches');

@@ -315,6 +315,7 @@ ul.flex-direction-nav {
 p.demo_store,
 .woocommerce-store-notice p.demo_store,
 .admin-bar p.demo_store {
+  display: none;
   background-color: $highlight !important;
   color: #fff !important;
   font-size: 1.15rem;
@@ -350,6 +351,13 @@ p.demo_store,
     font-weight: 500;
     z-index: 2;
   }
+}
+
+html.bonton-store-notice-hidden .woocommerce-store-notice,
+html.bonton-store-notice-hidden p.demo_store,
+html.bonton-store-notice-hidden .woocommerce-store-notice p.demo_store,
+html.bonton-store-notice-hidden .admin-bar p.demo_store {
+  display: none !important;
 }
 
 .landing-topbar {
