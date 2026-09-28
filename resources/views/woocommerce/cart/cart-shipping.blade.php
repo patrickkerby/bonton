@@ -184,14 +184,21 @@
     @endif
     @php \App\bonton_checkout_hidden_shipping_option_fields(); @endphp
 
-    @if ( $intended_rate )
-      @php
-        $shipping_cost = WC()->cart->display_prices_including_tax()
-          ? $intended_rate->cost + $intended_rate->get_shipping_tax()
-          : $intended_rate->cost;
-      @endphp
-      {!! wp_kses_post( wc_price( $shipping_cost ) ) !!}
-    @endif
+    @php
+      $shipping_cost = 0.0;
+      if ( $intended_rate ) {
+        $shipping_cost = (float) $intended_rate->get_cost();
+        if ( WC()->cart->display_prices_including_tax() ) {
+          $shipping_cost += (float) $intended_rate->get_shipping_tax();
+        }
+      } elseif ( WC()->cart ) {
+        $shipping_cost = (float) WC()->cart->get_shipping_total();
+        if ( WC()->cart->display_prices_including_tax() ) {
+          $shipping_cost += (float) WC()->cart->get_shipping_tax();
+        }
+      }
+    @endphp
+    {!! wp_kses_post( wc_price( $shipping_cost ) ) !!}
   </td>
 </tr>
 @if ( $delivery_address_unavailable && $checkout_is_delivery )

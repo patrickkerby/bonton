@@ -570,9 +570,11 @@ body.woocommerce-order-received {
   }
 }
 
-// Keep WooCommerce blockUI spinner centered in the viewport while checkout processes.
+// Full-page overlay only when the checkout form itself is blocked (place order).
+// update_checkout also uses blockUI on the payment/totals fragments; stretching
+// those overlays to the viewport hides address autocomplete until AJAX finishes.
 body.woocommerce-checkout {
-  .blockUI.blockOverlay {
+  form.checkout.processing > .blockUI.blockOverlay {
     position: fixed !important;
     top: 0 !important;
     right: 0 !important;
@@ -584,7 +586,7 @@ body.woocommerce-checkout {
     z-index: 100000 !important;
   }
 
-  .blockUI.blockMsg {
+  form.checkout.processing > .blockUI.blockMsg {
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
