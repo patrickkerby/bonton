@@ -99,7 +99,7 @@ function timeslot_settings()
         'label_name'       => __('Delivery Time', 'woocommerce'),
         'field_options'    => [
             __('Choose a delivery time', 'woocommerce'),
-            'Between 10 am &amp; 2 pm',
+            '10am - 2pm',
         ],
     ];
 }

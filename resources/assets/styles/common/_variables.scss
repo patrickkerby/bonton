@@ -73,10 +73,37 @@ $slick-font-path:   "#{$slick-loader-path}fonts/";
 $font-family-sans-serif: greycliff, arial, sans-serif;
 $font-family-serif: orpheuspro, serif;
 
+$bonton-page-wash: linear-gradient(180deg, #fff 2%, #faf9f5 44%, #fff 100%);
+$bonton-card-shadow: 0 0 38px -20px rgba(0, 0, 0, 0.2);
+$bonton-card-shadow-lg: 0 0 52px -22px rgba(0, 0, 0, 0.2);
+$bonton-field-border: 2px solid #e0ded7;
+
 @mixin slowfade($time: 0.4) {
   -webkit-transition: all #{$time}s ease-in-out;
   -moz-transition: all #{$time}s ease-in-out;
   transition: all #{$time}s ease-in-out;
+}
+
+@mixin bonton-card($shadow: $bonton-card-shadow, $radius: 8px) {
+  background: #fff;
+  border: 0;
+  border-radius: $radius;
+  box-shadow: $shadow;
+}
+
+@mixin bonton-field-control {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  border: $bonton-field-border;
+  border-radius: 2px;
+  background: transparent;
+
+  &:focus {
+    border-color: $highlight;
+    outline: none;
+    background: transparent;
+  }
 }
 
 @mixin fullwidth() {

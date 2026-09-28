@@ -17,11 +17,9 @@
 
 defined( 'ABSPATH' ) || exit;
 
-$session_pickup_date = WC()->session->get('pickup_date');
-
 ?>
 <table class="shop_table woocommerce-checkout-review-order-table">
-	<thead>
+	<thead class="screen-reader-text">
 		<tr>
 			<th class="product-name"><?php esc_html_e( 'Product', 'woocommerce' ); ?></th>
 			<th class="product-total"><?php esc_html_e( 'Subtotal', 'woocommerce' ); ?></th>
@@ -61,13 +59,6 @@ $session_pickup_date = WC()->session->get('pickup_date');
 			<th><?php esc_html_e( 'Subtotal', 'woocommerce' ); ?></th>
 			<td><?php wc_cart_totals_subtotal_html(); ?></td>
 		</tr>
-
-		@if ($session_pickup_date)
-		<tr class="cart-subtotal">
-			<th>Pick-up / Delivery Date:</th>
-			<td>{{ $session_pickup_date }}</td>
-		</tr>
-		@endif
 
 		<?php foreach ( WC()->cart->get_coupons() as $code => $coupon ) : ?>
 			<tr class="cart-discount coupon-<?php echo esc_attr( sanitize_title( $code ) ); ?>">

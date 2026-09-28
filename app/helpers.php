@@ -767,6 +767,124 @@ function bonton_is_delivery_shipping_method($method_id)
 }
 
 /**
+ * Shipping method the customer chose on the cart (locked for checkout).
+ */
+function bonton_checkout_intended_shipping_method()
+{
+    if (!function_exists('WC') || !WC()->session) {
+        return '';
+    }
+
+    $intended = WC()->session->get('bonton_checkout_intended_shipping');
+    if (is_string($intended) && $intended !== '') {
+        return $intended;
+    }
+
+    $chosen = WC()->session->get('chosen_shipping_methods');
+
+    return (!empty($chosen[0]) && is_string($chosen[0])) ? $chosen[0] : '';
+}
+
+/**
+ * Whether checkout should use delivery copy (vs pickup).
+ */
+function bonton_checkout_is_delivery()
+{
+    return bonton_is_delivery_shipping_method(bonton_checkout_intended_shipping_method());
+}
+
+/**
+ * Display label for a cart shipping-option select stored in session.
+ */
+function bonton_checkout_shipping_option_label($field_id)
+{
+    if (!function_exists('WC') || !WC()->session) {
+        return '';
+    }
+
+    $value = WC()->session->get($field_id);
+    if ($value === '' || $value === null || $value === false || $value === 0 || $value === '0') {
+        return '';
+    }
+
+    $settings = [];
+    if ($field_id === 'timeslot' && function_exists(__NAMESPACE__ . '\\timeslot_settings')) {
+        $settings = timeslot_settings();
+    } elseif ($field_id === 'timeslot_pickup' && function_exists(__NAMESPACE__ . '\\timeslot_pickup_settings')) {
+        $settings = timeslot_pickup_settings();
+    } elseif ($field_id === 'pickup_bag_fee' && function_exists(__NAMESPACE__ . '\\pickup_bag_fee_settings')) {
+        $settings = pickup_bag_fee_settings();
+    }
+
+    $options = isset($settings['field_options']) && is_array($settings['field_options'])
+        ? $settings['field_options']
+        : [];
+
+    if (!isset($options[$value])) {
+        return '';
+    }
+
+    return html_entity_decode(wp_strip_all_tags((string) $options[$value]), ENT_QUOTES, 'UTF-8');
+}
+
+/**
+ * Sidebar fulfillment summary for the simplified checkout.
+ *
+ * @return array{is_delivery: bool, title: string, date: string, time: string, change_url: string}
+ */
+function bonton_checkout_fulfillment_summary()
+{
+    $is_delivery = bonton_checkout_is_delivery();
+    $obj         = function_exists(__NAMESPACE__ . '\\bonton_session_pickup_date_object')
+        ? bonton_session_pickup_date_object()
+        : null;
+    $date        = '';
+
+    if ($obj instanceof \DateTimeInterface) {
+        $date = $obj->format('l, M j');
+    } elseif (function_exists('WC') && WC()->session) {
+        $date = (string) WC()->session->get('pickup_date');
+    }
+
+    $time = $is_delivery
+        ? bonton_checkout_shipping_option_label('timeslot')
+        : bonton_checkout_shipping_option_label('timeslot_pickup');
+
+    return [
+        'is_delivery' => $is_delivery,
+        'title'       => $is_delivery
+            ? __('Delivery date & time', 'sage')
+            : __('Pickup date & time', 'sage'),
+        'date'        => $date,
+        'time'        => $time,
+        'change_url'  => function_exists('wc_get_cart_url') ? wc_get_cart_url() : '/cart',
+    ];
+}
+
+/**
+ * Visible checkout pay CTA label (modal opens the gateway).
+ */
+function bonton_checkout_pay_button_label()
+{
+    if (!function_exists('WC') || !WC()->payment_gateways()) {
+        return __('Pay with Credit Card', 'sage');
+    }
+
+    $gateways = WC()->payment_gateways()->get_available_payment_gateways();
+    $ids      = array_keys($gateways);
+
+    if ($ids === ['cod']) {
+        return __('Place order', 'sage');
+    }
+
+    if (count($ids) > 1) {
+        return __('Continue to payment', 'sage');
+    }
+
+    return __('Pay with Credit Card', 'sage');
+}
+
+/**
  * Whether calculated shipping packages include a delivery rate for the current destination.
  *
  * @param array<int, array<string, mixed>>|null $packages
@@ -1071,6 +1189,45 @@ function bonton_zero_bulk_discount_fee_taxes($fee_taxes, $fee)
     }
 
     return $fee_taxes;
+}
+
+/**
+ * Redeemable checkout points offer for the Your Items pill, or null.
+ *
+ * @return array{points:int,discount:string}|null
+ */
+function bonton_checkout_points_offer()
+{
+    if (!is_user_logged_in() || bonton_is_wholesale_user() || bonton_is_gift_certificate_only_cart()) {
+        return null;
+    }
+
+    if (!class_exists('WC_Points_Rewards_Cart_Checkout') || !class_exists('WC_Points_Rewards_Manager')) {
+        return null;
+    }
+
+    if (!function_exists('wc_coupons_enabled') || !wc_coupons_enabled()) {
+        return null;
+    }
+
+    if (\WC_Points_Rewards_Cart_Checkout::is_discount_applied()) {
+        return null;
+    }
+
+    $discount = \WC_Points_Rewards_Cart_Checkout::get_discount_for_redeeming_points(false, null, true);
+    if (!$discount || (float) $discount <= 0) {
+        return null;
+    }
+
+    $points = \WC_Points_Rewards_Manager::calculate_points_for_discount($discount);
+    if (!$points) {
+        return null;
+    }
+
+    return [
+        'points'   => (int) $points,
+        'discount' => wp_strip_all_tags(html_entity_decode(wc_price($discount), ENT_QUOTES, 'UTF-8')),
+    ];
 }
 
 /**

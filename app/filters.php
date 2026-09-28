@@ -1383,6 +1383,86 @@ function bonton_default_checkout_country_state( $fields ) {
 }
 
 /**
+ * WooCommerce checkout.js updates totals on every address-field keydown (1s debounce)
+ * and on change/blur. That replaces the payment fragment, which rebuilds the Moneris
+ * iframe and feels like a full page refresh — especially while typing a postal code.
+ *
+ * Keep updates for fields that can change shipping/tax, but only after the value is
+ * committed (change/blur), never while typing.
+ */
+add_action('wp_footer', 'App\\bonton_checkout_throttle_address_updates_js', 30);
+
+function bonton_checkout_throttle_address_updates_js()
+{
+    if (!function_exists('is_checkout') || !is_checkout() || is_wc_endpoint_url()) {
+        return;
+    }
+    ?>
+    <script type="text/javascript">
+    jQuery(function ($) {
+        var $form = $('form.checkout');
+        if (!$form.length) {
+            return;
+        }
+
+        // Selectors must match woocommerce/assets/js/frontend/checkout.js exactly.
+        $form.off('keydown', '.address-field input.input-text, .update_totals_on_change input.input-text');
+        $form.off('change', '.address-field input.input-text, .update_totals_on_change input.input-text');
+        $form.off('change', '.address-field select');
+
+        $form.on(
+            'change.bontonCheckoutAddress',
+            '#billing_country, #billing_state, #billing_city, #billing_postcode, #shipping_country, #shipping_state, #shipping_city, #shipping_postcode',
+            function () {
+                $(document.body).trigger('update_checkout');
+            }
+        );
+
+        // Payment fragment is omitted when totals/gateways are unchanged, so
+        // WooCommerce will not unblock it. Always clear the overlay.
+        $(document.body).on('updated_checkout', function () {
+            $('.woocommerce-checkout-payment').unblock();
+        });
+    });
+    </script>
+    <?php
+}
+
+/**
+ * Skip replacing the payment box when the order total and available gateways
+ * have not changed. WooCommerce otherwise rebuilds it on every update_checkout,
+ * which reloads the Moneris iframe even when the customer is only editing
+ * name/email/street.
+ */
+add_filter('woocommerce_update_order_review_fragments', 'App\\bonton_skip_unchanged_checkout_payment_fragment', 100);
+
+function bonton_skip_unchanged_checkout_payment_fragment($fragments)
+{
+    if (!function_exists('WC') || !WC()->cart || !WC()->session) {
+        return $fragments;
+    }
+
+    if (!isset($fragments['.woocommerce-checkout-payment'])) {
+        return $fragments;
+    }
+
+    $gateways  = WC()->payment_gateways()->get_available_payment_gateways();
+    $signature = wp_json_encode([
+        'total'    => (string) WC()->cart->get_total('edit'),
+        'gateways' => array_keys($gateways),
+    ]);
+
+    $previous = WC()->session->get('bonton_checkout_payment_signature');
+    if (is_string($previous) && $previous === $signature) {
+        unset($fragments['.woocommerce-checkout-payment']);
+    }
+
+    WC()->session->set('bonton_checkout_payment_signature', $signature);
+
+    return $fragments;
+}
+
+/**
  * Checkout AJAX uses abbreviated address params that can leave shipping_postcode stale.
  * Use the full serialized checkout form so package destination matches the visible fields.
  */

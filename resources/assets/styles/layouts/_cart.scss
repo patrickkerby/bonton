@@ -1,7 +1,7 @@
 /* stylelint-disable no-descending-specificity */
 
 .cart {
-  background-image: linear-gradient(180deg, #fff 2%, #faf9f5 44%, #fff 100%);
+  background-image: $bonton-page-wash;
 }
 
 body.woocommerce-order-received {
@@ -246,11 +246,10 @@ body:not(.woocommerce-order-received) ul.woocommerce-thankyou-order-details li {
 }
 
 .calendar-container {
-  background: #fff;
+  @include bonton-card($radius: 4px);
+
   margin: auto;
   width: 100%;
-  box-shadow: 0 0 38px -20px rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
 
   .acf-field-date-picker .acf-label {
     background: none;
@@ -544,8 +543,8 @@ body:not(.woocommerce-order-received) ul.woocommerce-thankyou-order-details li {
   margin-bottom: 1.5rem;
 }
 
-.shop_table {
-  border: solid 3px $cream !important;
+.woocommerce-cart .shop_table {
+  border: none !important;
   border-radius: 0 !important;
 
   td {
@@ -555,7 +554,7 @@ body:not(.woocommerce-order-received) ul.woocommerce-thankyou-order-details li {
 
   tr.title td.product-name,
   tr.title td.product-remove {
-    border-top: solid 3px $cream !important;
+    // border-top: solid 3px $cream !important;
     padding: 1rem 0 0.5rem 0 !important;
   }
 
@@ -757,10 +756,9 @@ body:not(.woocommerce-order-received) ul.woocommerce-thankyou-order-details li {
 
 //Mobile cart items table
 .woocommerce-cart-form__contents {
+  @include bonton-card;
+
   border: none !important;
-  background: #fff;
-  box-shadow: 0 0 38px -20px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
 
   p,
   span.availability {
@@ -1032,9 +1030,8 @@ body:not(.woocommerce-order-received) ul.woocommerce-thankyou-order-details li {
 
 // Cart Totals
 .woocommerce .cart-totals-container {
-  background: #fff;
-  box-shadow: 0 0 52px -22px rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
+  @include bonton-card($bonton-card-shadow-lg);
+
   padding-bottom: 0.5rem;
   margin-bottom: 1rem;
 
@@ -1427,6 +1424,13 @@ body.woocommerce-checkout {
     z-index: 1000000;
   }
 
+  &.bonton-checkout-simplified {
+    .wc_points_redeem_earn_points,
+    .wc_points_rewards_earn_points {
+      display: none !important;
+    }
+  }
+
   .wc_points_rewards_earn_points {
     margin: 0;
     padding: 0;
@@ -1519,7 +1523,7 @@ body.woocommerce-checkout {
   font-size: 0.9rem;
 }
 
-.woocommerce-shipping-totals .form-row {
+.woocommerce-cart .woocommerce-shipping-totals .form-row {
   font-size: 1rem;
 }
 

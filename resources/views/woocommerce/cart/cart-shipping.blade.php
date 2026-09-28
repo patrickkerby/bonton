@@ -165,88 +165,47 @@
 </div>
 
 @else
-{{-- CHECKOUT PAGE: table row for review-order --}}
+{{-- CHECKOUT PAGE: read-only method + cost. Change pickup/delivery in cart. --}}
+@php
+  $intended_method = \App\bonton_checkout_intended_shipping_method() ?: $chosen_method;
+  $intended_rate   = ($intended_method && ! empty( $available_methods[ $intended_method ] ))
+    ? $available_methods[ $intended_method ]
+    : null;
+  $checkout_is_delivery = \App\bonton_checkout_is_delivery();
+  $shipping_row_label = $checkout_is_delivery
+    ? __( 'Shipping', 'sage' )
+    : __( 'Pickup', 'sage' );
+@endphp
 <tr class="woocommerce-shipping-totals shipping">
-  <th>{!! wp_kses_post( $package_name ) !!}</th>
-  <td data-title="{{ esc_attr( $package_name ) }}">
-    <div class="checkout-shipment-panel">
-
-    @if ( $available_methods )
-      <ul id="shipping_method" class="woocommerce-shipping-methods">
-        @foreach ( $available_methods as $method )
-          @if($delivery_available)
-            <li>
-              @php
-                if ( 1 < count( $available_methods ) ) {
-                  printf( '<input type="radio" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" %4$s />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ), checked( $method->id, $chosen_method, false ) );
-                } else {
-                  printf( '<input type="hidden" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ) );
-                }
-                printf( '<label for="shipping_method_%1$s_%2$s">%3$s</label>', $index, esc_attr( sanitize_title( $method->id ) ), wc_cart_totals_shipping_method_label( $method ) );
-                do_action( 'woocommerce_after_shipping_rate', $method, $index );
-              @endphp
-            </li>
-          @elseif($method->method_id === 'local_pickup')
-            <li>
-              @php
-                if ( 1 < count( $available_methods ) ) {
-                  printf( '<input type="radio" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" %4$s />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ), checked( $method->id, $chosen_method, false ) );
-                } else {
-                  printf( '<input type="hidden" name="shipping_method[%1$d]" data-index="%1$d" id="shipping_method_%1$d_%2$s" value="%3$s" class="shipping_method" />', $index, esc_attr( sanitize_title( $method->id ) ), esc_attr( $method->id ) );
-                }
-                printf( '<label for="shipping_method_%1$s_%2$s">%3$s</label>', $index, esc_attr( sanitize_title( $method->id ) ), wc_cart_totals_shipping_method_label( $method ) );
-                do_action( 'woocommerce_after_shipping_rate', $method, $index );
-              @endphp
-            </li>
-          @endif
-        @endforeach
-      </ul>
-
-      @if ( $delivery_address_unavailable )
-        <p class="delivery-unavailable-notice" role="alert">
-          {!! sprintf(
-            esc_html__( 'Home delivery is not available for %s. Your order is set to pickup at Bon Ton — please confirm this is what you want before placing your order.', 'sage' ),
-            '<strong>' . esc_html( $formatted_destination ) . '</strong>'
-          ) !!}
-        </p>
-      @endif
-
-      @if ( $icecream_conflict)
-        <p class="small">We do deliver on this day, however you have icecream in your cart! Please remove the icecream if you'd like delivery.</p>
-      @elseif ( $delivery_override && $delivery_day)
-        <p class="small">We do deliver on this day, however you have a product in your cart that's not available for delivery. Please remove the that item if you'd like delivery</p>
-      @elseif ( $delivery_available && ! $delivery_address_unavailable && $delivery_method_chosen )
-        <p class="woocommerce-shipping-destination">
-          @if ( $formatted_destination )
-            {!! sprintf( esc_html__( '%s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) !!}
-            @php $calculator_text = esc_html__( 'Change address', 'woocommerce' ) @endphp
-          @else
-            {!! wp_kses_post( apply_filters( 'woocommerce_shipping_estimate_html', __( 'Set your location if you would like delivery!', 'woocommerce' ) ) ) !!}
-          @endif
-        </p>
-      @endif
-
-    @elseif ( ! $has_calculated_shipping || ! $formatted_destination )
-      @if ( 'no' === get_option( 'woocommerce_enable_shipping_calc' ) )
-        {!! wp_kses_post( apply_filters( 'woocommerce_shipping_not_enabled_on_cart_html', __( 'Shipping costs are calculated during checkout.', 'woocommerce' ) ) ) !!}
-      @else
-        {!! wp_kses_post( apply_filters( 'woocommerce_shipping_may_be_available_html', __( 'Enter your address to view shipping options.', 'woocommerce' ) ) ) !!}
-      @endif
-    @elseif ( ! is_cart() )
-      {!! wp_kses_post( apply_filters( 'woocommerce_no_shipping_available_html', __( 'There are no shipping options available. Please ensure that your address has been entered correctly, or contact us if you need any help.', 'woocommerce' ) ) ) !!}
-    @else
-      {!! wp_kses_post( apply_filters( 'woocommerce_cart_no_shipping_available_html', sprintf( esc_html__( 'No shipping options were found for %s.', 'woocommerce' ) . ' ', '<strong>' . esc_html( $formatted_destination ) . '</strong>' ) ) ) !!}
-      @php $calculator_text = esc_html__( 'Enter a different address', 'woocommerce' ) @endphp
+  <th>{{ $shipping_row_label }}</th>
+  <td data-title="{{ esc_attr( $shipping_row_label ) }}">
+    @if ( $intended_method )
+      <input type="hidden" name="shipping_method[{{ (int) $index }}]" data-index="{{ (int) $index }}" id="shipping_method_{{ (int) $index }}_{{ esc_attr( sanitize_title( $intended_method ) ) }}" value="{{ esc_attr( $intended_method ) }}" class="shipping_method" />
     @endif
+    @php \App\bonton_checkout_hidden_shipping_option_fields(); @endphp
 
-    @if ( $show_package_details )
-      <p class="woocommerce-shipping-contents"><small>{{ esc_html( $package_details ) }}</small></p>
+    @if ( $intended_rate )
+      @php
+        $shipping_cost = WC()->cart->display_prices_including_tax()
+          ? $intended_rate->cost + $intended_rate->get_shipping_tax()
+          : $intended_rate->cost;
+      @endphp
+      {!! wp_kses_post( wc_price( $shipping_cost ) ) !!}
     @endif
-
-    @if ( $show_shipping_calculator && $delivery_available && !$icecream_conflict )
-      @php woocommerce_shipping_calculator( $calculator_text ) @endphp
-    @endif
-    </div>
   </td>
 </tr>
+@if ( $delivery_address_unavailable && $checkout_is_delivery )
+  <tr class="checkout-delivery-unavailable">
+    <td colspan="2">
+      <p class="delivery-unavailable-notice" role="alert">
+        {!! sprintf(
+          esc_html__( 'We cannot deliver to %s. Enter a different address, or %sreturn to the cart%s to choose pickup.', 'sage' ),
+          '<strong>' . esc_html( $formatted_destination ) . '</strong>',
+          '<a href="' . esc_url( wc_get_cart_url() ) . '">',
+          '</a>'
+        ) !!}
+      </p>
+    </td>
+  </tr>
+@endif
 @endif

@@ -28,7 +28,7 @@ export default {
         return;
       }
 
-      var $notices = $body.find('.woocommerce-error, .woocommerce-info, .woocommerce-message');
+      var $notices = $body.find('.woocommerce-error, .woocommerce-info, .woocommerce-message').not('.wc_points_redeem_earn_points').not('.wc_points_rewards_earn_points *');
       var $cartAlert = $body.find('.woocommerce-cart .alert:visible');
       var $items = $notices.add($cartAlert);
 

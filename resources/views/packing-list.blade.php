@@ -244,8 +244,8 @@ $sorted_orders = array();
 
               }
               //Simplify output for timeslots - Delivery
-              if($timeslot_delivery == 'Between 10 am &amp; 1 pm') {
-                $timeslot_delivery_esc = '10 - 1';
+              if($timeslot_delivery == '10am - 2pm') {
+                $timeslot_delivery_esc = '10 - 2';
               }
               elseif ($timeslot_delivery == 'Between 3 pm &amp; 6 pm') {
                 $timeslot_delivery_esc = '4 - 7';

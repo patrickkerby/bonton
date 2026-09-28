@@ -22,8 +22,14 @@ if ( is_user_logged_in() || 'no' === get_option( 'woocommerce_enable_checkout_lo
 }
 
 ?>
-<div class="woocommerce-form-login-toggle">
-	<?php wc_print_notice( apply_filters( 'woocommerce_checkout_login_message', esc_html__( 'Returning customer?', 'woocommerce' ) ) . ' <a href="#" class="showlogin">' . esc_html__( 'Click here to login', 'woocommerce' ) . '</a>', 'notice' ); ?>
+<div class="woocommerce-form-login-toggle checkout-login-prompt">
+	<?php echo wp_kses_post(
+		apply_filters(
+			'woocommerce_checkout_login_message',
+			esc_html__( 'Returning customer?', 'sage' )
+		)
+	); ?>
+	<a href="#" class="showlogin"><?php esc_html_e( 'Login for faster checkout + loyalty points', 'sage' ); ?></a>
 </div>
 <?php
 

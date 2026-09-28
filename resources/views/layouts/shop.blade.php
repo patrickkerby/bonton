@@ -2,6 +2,7 @@
 <html {!! get_language_attributes() !!}>
   @include('partials.head')
   <body @php body_class() @endphp>
+    @php wp_body_open(); @endphp
     @include('partials.site-header-utility')
     <div class="site-header-shell" id="site-header-shell">
     @php do_action('get_header') @endphp
