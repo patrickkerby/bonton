@@ -10,7 +10,11 @@ namespace App;
  *
  * Run on production:
  *   wp bonton checkout_health
+ *   wp bonton checkout_health --full
  *   wp bonton checkout_health --format=json --output=/tmp/checkout-health.json
+ *
+ * Default runs are incremental: the six-month baseline is reused, and only
+ * orders/logs since the launch week are recounted. Use --full to rebuild.
  */
 
 const BONTON_CHECKOUT_HEALTH_SHIPPED = '2026-10-03 09:00:00';
@@ -74,6 +78,7 @@ function bonton_checkout_health_command($args, $assoc_args)
     $report = bonton_checkout_health_build_report($assoc_args);
     bonton_checkout_health_store_report($report);
 
+    $build = !empty($report['build']) ? $report['build'] : 'full';
     $tz      = new \DateTimeZone(BONTON_CHECKOUT_HEALTH_TZ);
     $start   = new \DateTime($report['range']['start']);
     $end     = new \DateTime($report['range']['end']);
@@ -88,12 +93,16 @@ function bonton_checkout_health_command($args, $assoc_args)
     $debug  = $report['place_order_debug'];
 
     \WP_CLI::log(sprintf(
-        'Checkout health %s → %s (shipped %s %s)',
+        'Checkout health %s → %s (shipped %s %s) [%s]',
         $start->format('Y-m-d H:i'),
         $end->format('Y-m-d H:i'),
         $shipped->format('Y-m-d H:i'),
-        BONTON_CHECKOUT_HEALTH_TZ
+        BONTON_CHECKOUT_HEALTH_TZ,
+        $build
     ));
+    if ($build === 'incremental') {
+        \WP_CLI::log('Incremental: baseline kept from cache; recounted orders since the launch week.');
+    }
 
     \WP_CLI::log('');
     \WP_CLI::log('Before vs after (failed / (failed + paid))');
@@ -170,10 +179,33 @@ function bonton_checkout_health_command($args, $assoc_args)
         }
     }
 
-    \WP_CLI::success('Done. The dashboard widget uses this cached report.');
+    \WP_CLI::success('Done (' . $build . '). The dashboard widget uses this cached report.');
 }
 
 function bonton_checkout_health_build_report($assoc_args = [])
+{
+    $force_full = !empty($assoc_args['full']);
+    $custom_range = !empty($assoc_args['since']) || !empty($assoc_args['before']) || !empty($assoc_args['shipped']);
+    $cached = get_option('bonton_checkout_health_report');
+
+    if (!$force_full && !$custom_range && bonton_checkout_health_cache_usable($cached)) {
+        return bonton_checkout_health_build_incremental($cached, $assoc_args);
+    }
+
+    return bonton_checkout_health_build_full($assoc_args);
+}
+
+function bonton_checkout_health_cache_usable($cached)
+{
+    return is_array($cached)
+        && !empty($cached['weeks'])
+        && !empty($cached['shipped_at'])
+        && !empty($cached['range']['start'])
+        && isset($cached['totals']['before'])
+        && is_array($cached['totals']['before']);
+}
+
+function bonton_checkout_health_build_full($assoc_args = [])
 {
     $tz      = new \DateTimeZone(BONTON_CHECKOUT_HEALTH_TZ);
     $shipped = !empty($assoc_args['shipped'])
@@ -190,6 +222,108 @@ function bonton_checkout_health_build_report($assoc_args = [])
 
     $detail_limit = isset($assoc_args['limit-details']) ? max(0, intval($assoc_args['limit-details'])) : 40;
 
+    return bonton_checkout_health_assemble_report($start, $end, $shipped, $detail_limit, 'full');
+}
+
+function bonton_checkout_health_build_incremental(array $cached, $assoc_args = [])
+{
+    $tz = new \DateTimeZone(BONTON_CHECKOUT_HEALTH_TZ);
+    $shipped = new \DateTime($cached['shipped_at']);
+    $shipped->setTimezone($tz);
+    $end = new \DateTime('now', $tz);
+    $start = new \DateTime($cached['range']['start']);
+    $start->setTimezone($tz);
+
+    $fill_start = clone $shipped;
+    $fill_start->setTime(0, 0, 0);
+    $fill_start->modify('monday this week');
+
+    $detail_limit = isset($assoc_args['limit-details']) ? max(0, intval($assoc_args['limit-details'])) : 40;
+
+    $weeks = [];
+    foreach ($cached['weeks'] as $week) {
+        if (empty($week['week'])) {
+            continue;
+        }
+        $weeks[$week['week']] = $week;
+    }
+
+    $fresh = bonton_checkout_health_empty_weeks($fill_start, $end, $shipped);
+    foreach ($fresh as $key => $blank) {
+        $weeks[$key] = $blank;
+    }
+
+    $weeks = bonton_checkout_health_fill_orders($weeks, $fill_start, $end, $shipped, $detail_limit);
+    $debug = bonton_checkout_health_scan_place_order_logs($fill_start, $end, $shipped);
+    $moneris_scan = bonton_checkout_health_scan_moneris_logs($fill_start, $end, $shipped);
+    $ours_scan = bonton_checkout_health_scan_named_logs(BONTON_CHECKOUT_HEALTH_SOURCE, $fill_start, $end, $shipped);
+
+    foreach ($debug['weekly'] as $week => $row) {
+        if (!isset($weeks[$week])) {
+            continue;
+        }
+        $weeks[$week]['place_order_debug'] = $row['count'];
+        $weeks[$week]['validation_debug']  = $row['validation'];
+        $weeks[$week]['payment_debug']     = $row['payment'];
+    }
+
+    $sample = isset($weeks['_sample']) ? $weeks['_sample'] : [];
+    $split  = isset($weeks['_split']) ? $weeks['_split'] : null;
+    unset($weeks['_sample'], $weeks['_split']);
+    $week_rows = array_values($weeks);
+
+    $debug_before = isset($cached['place_order_debug']['before']) && is_array($cached['place_order_debug']['before'])
+        ? $cached['place_order_debug']['before']
+        : ['count' => 0, 'validation' => 0, 'payment' => 0];
+
+    $moneris = isset($cached['moneris_logs']) && is_array($cached['moneris_logs']) ? $cached['moneris_logs'] : [];
+    $moneris['after'] = $moneris_scan['after'];
+    $moneris['files'] = $moneris_scan['files'];
+
+    $ours = isset($cached['checkout_health_logs']) && is_array($cached['checkout_health_logs']) ? $cached['checkout_health_logs'] : [];
+    $ours['after'] = $ours_scan['after'];
+    $ours['lines'] = (isset($ours['before']) ? intval($ours['before']) : 0) + intval($ours_scan['after']);
+
+    $now = new \DateTime('now', $tz);
+    $after = $split && isset($split['after'])
+        ? bonton_checkout_health_with_fail_rate($split['after'])
+        : bonton_checkout_health_period_totals($week_rows, 'after');
+
+    return [
+        'build'                => 'incremental',
+        'generated_at'         => $now->format(DATE_ATOM),
+        'shipped_at'           => $shipped->format(DATE_ATOM),
+        'timezone'             => BONTON_CHECKOUT_HEALTH_TZ,
+        'range'                => [
+            'start' => $start->format(DATE_ATOM),
+            'end'   => $end->format(DATE_ATOM),
+        ],
+        'weeks'                => $week_rows,
+        'months'               => bonton_checkout_health_months_from_weeks($week_rows),
+        'failed_order_sample'  => bonton_checkout_health_merge_failed_sample(
+            isset($cached['failed_order_sample']) ? $cached['failed_order_sample'] : [],
+            $sample,
+            $detail_limit
+        ),
+        'place_order_debug'    => [
+            'attempts'     => intval($debug_before['count']) + intval($debug['after']['count']),
+            'by_last_step' => $debug['by_step'],
+            'by_class'     => $debug['by_class'],
+            'before'       => $debug_before,
+            'after'        => $debug['after'],
+        ],
+        'moneris_logs'         => $moneris,
+        'checkout_health_logs' => $ours,
+        'totals'               => [
+            'before' => $cached['totals']['before'],
+            'after'  => $after,
+        ],
+    ];
+}
+
+function bonton_checkout_health_assemble_report(\DateTime $start, \DateTime $end, \DateTime $shipped, $detail_limit, $build)
+{
+    $tz      = new \DateTimeZone(BONTON_CHECKOUT_HEALTH_TZ);
     $weeks   = bonton_checkout_health_empty_weeks($start, $end, $shipped);
     $weeks   = bonton_checkout_health_fill_orders($weeks, $start, $end, $shipped, $detail_limit);
     $debug   = bonton_checkout_health_scan_place_order_logs($start, $end, $shipped);
@@ -206,12 +340,14 @@ function bonton_checkout_health_build_report($assoc_args = [])
     }
 
     $sample = isset($weeks['_sample']) ? $weeks['_sample'] : [];
-    unset($weeks['_sample']);
+    $split  = isset($weeks['_split']) ? $weeks['_split'] : null;
+    unset($weeks['_sample'], $weeks['_split']);
     $week_rows = array_values($weeks);
 
     $now = new \DateTime('now', $tz);
 
     return [
+        'build'                => $build,
         'generated_at'         => $now->format(DATE_ATOM),
         'shipped_at'           => $shipped->format(DATE_ATOM),
         'timezone'             => BONTON_CHECKOUT_HEALTH_TZ,
@@ -232,10 +368,39 @@ function bonton_checkout_health_build_report($assoc_args = [])
         'moneris_logs'         => $moneris,
         'checkout_health_logs' => $ours,
         'totals'               => [
-            'before' => bonton_checkout_health_period_totals($week_rows, 'before'),
-            'after'  => bonton_checkout_health_period_totals($week_rows, 'after'),
+            'before' => $split
+                ? bonton_checkout_health_with_fail_rate($split['before'])
+                : bonton_checkout_health_period_totals($week_rows, 'before'),
+            'after'  => $split
+                ? bonton_checkout_health_with_fail_rate($split['after'])
+                : bonton_checkout_health_period_totals($week_rows, 'after'),
         ],
     ];
+}
+
+function bonton_checkout_health_merge_failed_sample($cached_sample, $new_sample, $limit)
+{
+    $by_id = [];
+    foreach (array_merge((array) $cached_sample, (array) $new_sample) as $row) {
+        if (empty($row['id'])) {
+            continue;
+        }
+        $by_id[(int) $row['id']] = $row;
+    }
+
+    $rows = array_values($by_id);
+    usort($rows, function ($a, $b) {
+        $ad = isset($a['date']) ? $a['date'] : '';
+        $bd = isset($b['date']) ? $b['date'] : '';
+
+        return strcmp($ad, $bd);
+    });
+
+    if ($limit > 0 && count($rows) > $limit) {
+        $rows = array_slice($rows, -$limit);
+    }
+
+    return array_reverse($rows);
 }
 
 function bonton_checkout_health_store_report($report)
@@ -253,8 +418,9 @@ function bonton_checkout_health_refresh()
     }
 
     set_transient('bonton_checkout_health_lock', 1, 15 * MINUTE_IN_SECONDS);
+    $cached = get_option('bonton_checkout_health_report');
     if (function_exists('set_time_limit')) {
-        set_time_limit(180);
+        set_time_limit(bonton_checkout_health_cache_usable($cached) ? 60 : 180);
     }
 
     try {
@@ -370,7 +536,7 @@ function bonton_checkout_health_widget()
     echo '</span></p>';
 
     if (!$after_ready) {
-        echo '<p style="margin:0 0 12px;padding:8px 10px;background:#f0f0f1;">Since checkout page updates: no paid or failed orders yet. This number stays as the baseline until the first ones land.</p>';
+        echo '<p style="margin:0 0 12px;padding:8px 10px;background:#f0f0f1;">Since checkout page updates: none in the last snapshot. Refresh (or wait for 6:15am) to pick up orders since then — that refresh is incremental now.</p>';
     } else {
         echo '<p style="margin:0 0 12px;">Since checkout page updates: <strong>' . esc_html(bonton_checkout_health_pct($after)) . '</strong> (' . intval($after['failed']) . ' failed / ' . intval($after['paid']) . ' paid).</p>';
     }
@@ -444,7 +610,11 @@ function bonton_checkout_health_admin_page()
     $when = !empty($report['generated_at']) ? new \DateTime($report['generated_at']) : null;
     if ($when) {
         $when->setTimezone($tz);
-        echo '<p>Last updated ' . esc_html($when->format('l, F j, Y g:ia T')) . '. Refreshes every morning around 6:15am Edmonton.</p>';
+        echo '<p>Last updated ' . esc_html($when->format('l, F j, Y g:ia T'));
+        if (!empty($report['build']) && $report['build'] === 'incremental') {
+            echo ' (incremental — baseline reused)';
+        }
+        echo '. This is a snapshot — it does not update as orders come in. The next automatic run is around 6:15am Edmonton. Refresh recounts orders since launch week; it no longer walks the six-month baseline.</p>';
     }
 
     bonton_checkout_health_refresh_form();
@@ -459,7 +629,7 @@ function bonton_checkout_health_admin_page()
 
     echo '<h2>Since checkout page updates</h2>';
     if (!$after_ready) {
-        echo '<p>No paid or failed orders yet. Keep this page open as a scoreboard — it will fill in as orders come through.</p>';
+        echo '<p>None in the last snapshot. Orders since then will show after the next report run (Refresh, or 6:15am).</p>';
     } else {
         echo '<p><strong>' . esc_html(bonton_checkout_health_pct($after)) . '</strong> fail rate (' . intval($after['failed']) . ' failed / ' . intval($after['paid']) . ' paid). Compare that to the baseline above.</p>';
     }
@@ -602,6 +772,11 @@ function bonton_checkout_health_fill_orders(array $weeks, \DateTime $start, \Dat
     $paid_statuses = ['processing', 'completed', 'ws-processing', 'ws-completed'];
     $fail_statuses = ['failed', 'cancelled', 'pending', 'on-hold', 'checkout-draft'];
     $sample        = [];
+    $split         = [
+        'before' => bonton_checkout_health_empty_period_row(),
+        'after'  => bonton_checkout_health_empty_period_row(),
+    ];
+    $shipped_ts    = $shipped->getTimestamp();
 
     $paged = 1;
     $batch = 100;
@@ -628,18 +803,23 @@ function bonton_checkout_health_fill_orders(array $weeks, \DateTime $start, \Dat
                 continue;
             }
 
+            $side   = $created->getTimestamp() >= $shipped_ts ? 'after' : 'before';
             $status = $order->get_status();
             if (in_array($status, $paid_statuses, true)) {
                 $weeks[$week]['paid']++;
+                $split[$side]['paid']++;
                 continue;
             }
 
             if ($status === 'failed') {
                 $weeks[$week]['failed']++;
+                $split[$side]['failed']++;
             } elseif ($status === 'cancelled') {
                 $weeks[$week]['cancelled']++;
+                $split[$side]['cancelled']++;
             } elseif (in_array($status, ['pending', 'checkout-draft'], true)) {
                 $weeks[$week]['pending']++;
+                $split[$side]['pending']++;
             } else {
                 $weeks[$week]['other']++;
             }
@@ -648,8 +828,10 @@ function bonton_checkout_health_fill_orders(array $weeks, \DateTime $start, \Dat
             $class = bonton_checkout_health_classify_text($blob);
             if ($class === 'avs_address') {
                 $weeks[$week]['avs_address']++;
+                $split[$side]['avs_address']++;
             } elseif ($class === 'cvd') {
                 $weeks[$week]['cvd']++;
+                $split[$side]['cvd']++;
             } elseif ($status === 'failed') {
                 $weeks[$week]['other_decline']++;
             }
@@ -658,7 +840,7 @@ function bonton_checkout_health_fill_orders(array $weeks, \DateTime $start, \Dat
                 $sample[] = [
                     'id'             => $order->get_id(),
                     'date'           => $local->format(DATE_ATOM),
-                    'period'         => $created->getTimestamp() >= $shipped->getTimestamp() ? 'after' : 'before',
+                    'period'         => $side,
                     'status'         => $status,
                     'class'          => $class,
                     'payment_method' => $order->get_payment_method(),
@@ -674,14 +856,17 @@ function bonton_checkout_health_fill_orders(array $weeks, \DateTime $start, \Dat
     } while (count($orders) === $batch);
 
     foreach ($weeks as $key => $week) {
-        if ($key === '_sample') {
+        if ($key === '_sample' || $key === '_split') {
             continue;
         }
-        $denom = $week['paid'] + $week['failed'];
-        $weeks[$key]['fail_rate'] = $denom > 0 ? round(100 * $week['failed'] / $denom, 1) : 0;
+        $weeks[$key] = bonton_checkout_health_with_fail_rate($week);
     }
 
     $weeks['_sample'] = $sample;
+    $weeks['_split']  = [
+        'before' => bonton_checkout_health_with_fail_rate($split['before']),
+        'after'  => bonton_checkout_health_with_fail_rate($split['after']),
+    ];
 
     return $weeks;
 }
@@ -762,7 +947,7 @@ function bonton_checkout_health_scan_place_order_logs(\DateTime $start, \DateTim
         'after'    => ['count' => 0, 'validation' => 0, 'payment' => 0],
     ];
 
-    $files = bonton_checkout_health_glob_logs('place-order-debug');
+    $files = bonton_checkout_health_glob_logs('place-order-debug', $start);
     $tz    = new \DateTimeZone(BONTON_CHECKOUT_HEALTH_TZ);
 
     foreach ($files as $file) {
@@ -886,7 +1071,7 @@ function bonton_checkout_health_scan_moneris_logs(\DateTime $start, \DateTime $e
         'after'  => 0,
     ];
 
-    foreach (bonton_checkout_health_glob_logs('moneris') as $file) {
+    foreach (bonton_checkout_health_glob_logs('moneris', $start) as $file) {
         $hits['files']++;
         $fh = fopen($file, 'r');
         if (!$fh) {
@@ -926,7 +1111,7 @@ function bonton_checkout_health_scan_named_logs($source, \DateTime $start, \Date
 {
     $out = ['files' => 0, 'lines' => 0, 'before' => 0, 'after' => 0, 'by_class' => []];
 
-    foreach (bonton_checkout_health_glob_logs($source) as $file) {
+    foreach (bonton_checkout_health_glob_logs($source, $start) as $file) {
         $out['files']++;
         $fh = fopen($file, 'r');
         if (!$fh) {
@@ -961,7 +1146,7 @@ function bonton_checkout_health_scan_named_logs($source, \DateTime $start, \Date
     return $out;
 }
 
-function bonton_checkout_health_glob_logs($source_prefix)
+function bonton_checkout_health_glob_logs($source_prefix, $mtime_after = null)
 {
     $dir = bonton_checkout_health_log_dir();
     if (!is_dir($dir)) {
@@ -969,6 +1154,14 @@ function bonton_checkout_health_glob_logs($source_prefix)
     }
 
     $matches = glob(trailingslashit($dir) . $source_prefix . '*.log') ?: [];
+    if ($mtime_after) {
+        $min = $mtime_after->getTimestamp();
+        $matches = array_values(array_filter($matches, function ($file) use ($min) {
+            $mtime = @filemtime($file);
+
+            return $mtime !== false && $mtime >= $min;
+        }));
+    }
 
     return $matches;
 }
@@ -1093,6 +1286,28 @@ function bonton_checkout_health_fail_bar($rate)
     $width = max(0, min(100, floatval($rate)));
 
     return '<span style="display:inline-block;width:72px;height:8px;background:#dcdcde;vertical-align:middle;margin-right:6px;"><span style="display:block;height:8px;width:' . esc_attr($width) . '%;background:#b32d2e;"></span></span>';
+}
+
+function bonton_checkout_health_empty_period_row()
+{
+    return [
+        'paid'        => 0,
+        'failed'      => 0,
+        'cancelled'   => 0,
+        'pending'     => 0,
+        'avs_address' => 0,
+        'cvd'         => 0,
+        'fail_rate'   => 0,
+    ];
+}
+
+function bonton_checkout_health_with_fail_rate(array $row)
+{
+    $paid   = isset($row['paid']) ? intval($row['paid']) : 0;
+    $failed = isset($row['failed']) ? intval($row['failed']) : 0;
+    $row['fail_rate'] = ($paid + $failed) > 0 ? round(100 * $failed / ($paid + $failed), 1) : 0;
+
+    return $row;
 }
 
 function bonton_checkout_health_period_totals(array $weeks, $period)
