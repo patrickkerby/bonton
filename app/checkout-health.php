@@ -188,7 +188,7 @@ function bonton_checkout_health_build_report($assoc_args = [])
         ? new \DateTime($assoc_args['since'], $tz)
         : (clone $shipped)->modify('-6 months');
 
-    $detail_limit = isset($assoc_args['limit-details']) ? max(0, intval($assoc_args['limit-details'])) : 0;
+    $detail_limit = isset($assoc_args['limit-details']) ? max(0, intval($assoc_args['limit-details'])) : 40;
 
     $weeks   = bonton_checkout_health_empty_weeks($start, $end, $shipped);
     $weeks   = bonton_checkout_health_fill_orders($weeks, $start, $end, $shipped, $detail_limit);
@@ -220,7 +220,8 @@ function bonton_checkout_health_build_report($assoc_args = [])
             'end'   => $end->format(DATE_ATOM),
         ],
         'weeks'                => $week_rows,
-        'failed_order_sample'  => $sample,
+        'months'               => bonton_checkout_health_months_from_weeks($week_rows),
+        'failed_order_sample'  => array_reverse($sample),
         'place_order_debug'    => [
             'attempts'     => $debug['total'],
             'by_last_step' => $debug['by_step'],
@@ -239,9 +240,7 @@ function bonton_checkout_health_build_report($assoc_args = [])
 
 function bonton_checkout_health_store_report($report)
 {
-    $stored = $report;
-    unset($stored['failed_order_sample']);
-    update_option('bonton_checkout_health_report', $stored, false);
+    update_option('bonton_checkout_health_report', $report, false);
 }
 
 function bonton_checkout_health_refresh()
@@ -259,7 +258,7 @@ function bonton_checkout_health_refresh()
     }
 
     try {
-        $report = bonton_checkout_health_build_report(['limit-details' => 0]);
+        $report = bonton_checkout_health_build_report(['limit-details' => 40]);
         bonton_checkout_health_store_report($report);
     } finally {
         delete_transient('bonton_checkout_health_lock');
@@ -345,7 +344,7 @@ function bonton_checkout_health_widget()
 
     $report = get_option('bonton_checkout_health_report');
     if (!is_array($report) || empty($report['totals'])) {
-        echo '<p>No report yet. Generate it once — after that it refreshes every morning.</p>';
+        echo '<p>No report yet. Click refresh once — after that it updates every morning.</p>';
         bonton_checkout_health_refresh_form();
         return;
     }
@@ -359,28 +358,60 @@ function bonton_checkout_health_widget()
         $when->setTimezone($tz);
     }
 
-    echo '<p style="margin-top:0;">Checkout redesign shipped <strong>3 Oct 2026, 9am</strong>. Fail rate is failed ÷ (failed + paid).</p>';
-    echo '<table class="widefat striped" style="margin-bottom:12px;">';
-    echo '<thead><tr><th></th><th>Paid</th><th>Failed</th><th>Fail rate</th><th>AVS / address</th></tr></thead><tbody>';
-    echo '<tr><th scope="row">Before</th><td>' . intval($before['paid']) . '</td><td>' . intval($before['failed']) . '</td><td><strong>' . esc_html($before['fail_rate']) . '%</strong></td><td>' . intval($before['avs_address']) . '</td></tr>';
-    echo '<tr><th scope="row">After</th><td>' . intval($after['paid']) . '</td><td>' . intval($after['failed']) . '</td><td><strong>' . esc_html($after['fail_rate']) . '%</strong></td><td>' . intval($after['avs_address']) . '</td></tr>';
-    echo '</tbody></table>';
+    $after_ready = (intval($after['paid']) + intval($after['failed'])) > 0;
 
-    $weeks = array_slice(array_reverse($report['weeks']), 0, 4);
+    echo '<p style="margin:0 0 10px;">Baseline is the six months before the 3 Oct 2026, 9am launch. Fail rate = failed ÷ (failed + paid).</p>';
+
+    echo '<p style="margin:0 0 12px;font-size:1.35em;line-height:1.3;"><strong>' . esc_html(bonton_checkout_health_pct($before)) . '</strong> baseline fail rate';
+    echo '<span style="display:block;font-size:13px;font-weight:normal;color:#646970;">' . intval($before['failed']) . ' failed · ' . intval($before['paid']) . ' paid';
+    if (!empty($before['avs_address'])) {
+        echo ' · ' . intval($before['avs_address']) . ' AVS/address';
+    }
+    echo '</span></p>';
+
+    if (!$after_ready) {
+        echo '<p style="margin:0 0 12px;padding:8px 10px;background:#f0f0f1;">Since launch: no paid or failed orders yet. This number stays as the baseline until the first ones land.</p>';
+    } else {
+        echo '<p style="margin:0 0 12px;">Since launch: <strong>' . esc_html(bonton_checkout_health_pct($after)) . '</strong> (' . intval($after['failed']) . ' failed / ' . intval($after['paid']) . ' paid).</p>';
+    }
+
+    $weeks = array_slice(array_reverse($report['weeks']), 0, 8);
     if ($weeks) {
-        echo '<p style="margin:0 0 6px;"><strong>Last weeks</strong></p>';
-        echo '<table class="widefat striped"><thead><tr><th>Week</th><th>Paid</th><th>Failed</th><th>Rate</th></tr></thead><tbody>';
+        echo '<p style="margin:0 0 6px;"><strong>Last 8 weeks</strong></p>';
+        echo '<table class="widefat striped"><thead><tr><th>Week of</th><th>Paid</th><th>Failed</th><th>Fail rate</th></tr></thead><tbody>';
         foreach ($weeks as $week) {
-            echo '<tr><td>' . esc_html($week['week'] . ' · ' . $week['period']) . '</td><td>' . intval($week['paid']) . '</td><td>' . intval($week['failed']) . '</td><td>' . esc_html($week['fail_rate']) . '%</td></tr>';
+            echo '<tr>';
+            echo '<td>' . esc_html($week['week_start']) . '</td>';
+            echo '<td>' . intval($week['paid']) . '</td>';
+            echo '<td>' . intval($week['failed']) . '</td>';
+            echo '<td>' . bonton_checkout_health_fail_bar($week['fail_rate']) . esc_html(bonton_checkout_health_pct($week)) . '</td>';
+            echo '</tr>';
         }
         echo '</tbody></table>';
+    }
+
+    $recent = array_slice(isset($report['failed_order_sample']) ? $report['failed_order_sample'] : [], 0, 5);
+    if ($recent) {
+        echo '<p style="margin:12px 0 6px;"><strong>Recent failed orders</strong></p><ul style="margin:0;">';
+        foreach ($recent as $row) {
+            try {
+                $dt = new \DateTime($row['date']);
+                $dt->setTimezone($tz);
+                $when_row = $dt->format('M j');
+            } catch (\Exception $e) {
+                $when_row = '';
+            }
+            $url = bonton_checkout_health_order_url($row['id']);
+            echo '<li><a href="' . esc_url($url) . '">#' . intval($row['id']) . '</a> · ' . esc_html($when_row) . ' · ' . esc_html(bonton_checkout_health_class_label($row['class'])) . '</li>';
+        }
+        echo '</ul>';
     }
 
     echo '<p style="margin:12px 0 0;">';
     if ($when) {
         echo 'Updated ' . esc_html($when->format('D, M j g:ia')) . ' · ';
     }
-    echo '<a href="' . esc_url($page) . '">Full weekly table</a></p>';
+    echo '<a href="' . esc_url($page) . '">Months, weeks, and all recent failures</a></p>';
     echo '<p style="margin:8px 0 0;">';
     bonton_checkout_health_refresh_form();
     echo '</p>';
@@ -400,10 +431,10 @@ function bonton_checkout_health_admin_page()
     }
 
     $report = get_option('bonton_checkout_health_report');
-    echo '<p>Tracks whether the 3 Oct 2026 checkout changes reduced failed orders and address/AVS mismatches. Fail rate = failed ÷ (failed + paid). The shipped week is labeled <code>straddle</code> because it contains both periods.</p>';
+    echo '<p>Fail rate = failed orders ÷ (failed + paid). That is the number to watch as the new checkout accumulates orders. Incomplete checkouts that never created an order show up in <code>place-order-debug</code> (Woo deletes those logs on success).</p>';
 
     if (!is_array($report) || empty($report['weeks'])) {
-        echo '<p>No cached report yet.</p>';
+        echo '<p>No cached report yet. This first run can take a minute.</p>';
         bonton_checkout_health_refresh_form();
         echo '</div>';
         return;
@@ -420,44 +451,107 @@ function bonton_checkout_health_admin_page()
 
     $before = $report['totals']['before'];
     $after  = $report['totals']['after'];
-    echo '<h2>Before vs after</h2>';
-    echo '<table class="widefat striped" style="max-width:40rem;">';
-    echo '<thead><tr><th></th><th>Paid</th><th>Failed</th><th>Cancelled</th><th>Fail rate</th><th>AVS / address</th><th>CVD</th></tr></thead><tbody>';
-    foreach (['before' => $before, 'after' => $after] as $label => $row) {
-        echo '<tr><th scope="row">' . esc_html(ucfirst($label)) . '</th>';
-        echo '<td>' . intval($row['paid']) . '</td>';
-        echo '<td>' . intval($row['failed']) . '</td>';
-        echo '<td>' . intval($row['cancelled']) . '</td>';
-        echo '<td><strong>' . esc_html($row['fail_rate']) . '%</strong></td>';
-        echo '<td>' . intval($row['avs_address']) . '</td>';
-        echo '<td>' . intval($row['cvd']) . '</td></tr>';
-    }
-    echo '</tbody></table>';
+    $after_ready = (intval($after['paid']) + intval($after['failed'])) > 0;
 
-    $debug = isset($report['place_order_debug']) ? $report['place_order_debug'] : [];
-    if (!empty($debug['attempts'])) {
-        echo '<p style="max-width:40rem;">Leftover Woo <code>place-order-debug</code> logs (cleared on success): <strong>' . intval($debug['attempts']) . '</strong> incomplete attempts. Before: ' . intval($debug['before']['count']) . ' (' . intval($debug['before']['validation']) . ' stopped at validation). After: ' . intval($debug['after']['count']) . ' (' . intval($debug['after']['validation']) . ' validation).</p>';
+    echo '<h2>Baseline (before 3 Oct 2026, 9am)</h2>';
+    echo '<p style="font-size:1.5em;margin:0.25em 0 0.5em;"><strong>' . esc_html(bonton_checkout_health_pct($before)) . '</strong> of created orders failed</p>';
+    echo '<p>' . intval($before['failed']) . ' failed · ' . intval($before['paid']) . ' paid · ' . intval($before['cancelled']) . ' cancelled · ' . intval($before['avs_address']) . ' tagged AVS/address · ' . intval($before['cvd']) . ' tagged CVD.</p>';
+
+    echo '<h2>Since launch</h2>';
+    if (!$after_ready) {
+        echo '<p>No paid or failed orders yet. Keep this page open as a scoreboard — it will fill in as orders come through.</p>';
+    } else {
+        echo '<p><strong>' . esc_html(bonton_checkout_health_pct($after)) . '</strong> fail rate (' . intval($after['failed']) . ' failed / ' . intval($after['paid']) . ' paid). Compare that to the baseline above.</p>';
     }
 
-    echo '<h2>Weekly</h2>';
+    $months = isset($report['months']) ? $report['months'] : bonton_checkout_health_months_from_weeks($report['weeks']);
+    if ($months) {
+        echo '<h2>By month</h2>';
+        echo '<table class="widefat striped" style="max-width:48rem;">';
+        echo '<thead><tr><th>Month</th><th>Paid</th><th>Failed</th><th>Fail rate</th><th>AVS / address</th><th>CVD</th></tr></thead><tbody>';
+        foreach (array_reverse($months) as $month) {
+            $label = $month['month'];
+            try {
+                $md = new \DateTime($month['month'] . '-01', $tz);
+                $label = $md->format('F Y');
+            } catch (\Exception $e) {
+                // keep Y-m
+            }
+            echo '<tr>';
+            echo '<td>' . esc_html($label) . '</td>';
+            echo '<td>' . intval($month['paid']) . '</td>';
+            echo '<td>' . intval($month['failed']) . '</td>';
+            echo '<td>' . bonton_checkout_health_fail_bar($month['fail_rate']) . esc_html(bonton_checkout_health_pct($month)) . '</td>';
+            echo '<td>' . intval($month['avs_address']) . '</td>';
+            echo '<td>' . intval($month['cvd']) . '</td>';
+            echo '</tr>';
+        }
+        echo '</tbody></table>';
+    }
+
+    echo '<h2>By week</h2>';
     echo '<table class="widefat striped">';
-    echo '<thead><tr><th>Week</th><th>Period</th><th>Paid</th><th>Failed</th><th>Cancelled</th><th>Pending</th><th>Fail rate</th><th>AVS / address</th><th>CVD</th><th>Debug attempts</th><th>Validation debug</th></tr></thead><tbody>';
-    foreach ($report['weeks'] as $week) {
+    echo '<thead><tr><th>Week of</th><th>Period</th><th>Paid</th><th>Failed</th><th>Cancelled</th><th>Fail rate</th><th>AVS / address</th><th>CVD</th><th>Incomplete checkouts</th></tr></thead><tbody>';
+    foreach (array_reverse($report['weeks']) as $week) {
         echo '<tr>';
-        echo '<td>' . esc_html($week['week']) . '</td>';
+        echo '<td>' . esc_html($week['week_start']) . '</td>';
         echo '<td>' . esc_html($week['period']) . '</td>';
         echo '<td>' . intval($week['paid']) . '</td>';
         echo '<td>' . intval($week['failed']) . '</td>';
         echo '<td>' . intval($week['cancelled']) . '</td>';
-        echo '<td>' . intval($week['pending']) . '</td>';
-        echo '<td>' . esc_html($week['fail_rate']) . '%</td>';
+        echo '<td>' . bonton_checkout_health_fail_bar($week['fail_rate']) . esc_html(bonton_checkout_health_pct($week)) . '</td>';
         echo '<td>' . intval($week['avs_address']) . '</td>';
         echo '<td>' . intval($week['cvd']) . '</td>';
         echo '<td>' . intval($week['place_order_debug']) . '</td>';
-        echo '<td>' . intval($week['validation_debug']) . '</td>';
         echo '</tr>';
     }
     echo '</tbody></table>';
+
+    $sample = isset($report['failed_order_sample']) ? $report['failed_order_sample'] : [];
+    if ($sample) {
+        echo '<h2>Recent failed orders</h2>';
+        echo '<p>Newest ' . count($sample) . ' failed orders (no customer details). Open one to read the Moneris/AVS note.</p>';
+        echo '<table class="widefat striped">';
+        echo '<thead><tr><th>Order</th><th>When</th><th>Likely cause</th><th>Gateway note</th></tr></thead><tbody>';
+        foreach ($sample as $row) {
+            try {
+                $dt = new \DateTime($row['date']);
+                $dt->setTimezone($tz);
+                $when_row = $dt->format('M j, Y g:ia');
+            } catch (\Exception $e) {
+                $when_row = '';
+            }
+            $note = isset($row['note']) ? $row['note'] : '';
+            if (strlen($note) > 160) {
+                $note = substr($note, 0, 157) . '...';
+            }
+            echo '<tr>';
+            echo '<td><a href="' . esc_url(bonton_checkout_health_order_url($row['id'])) . '">#' . intval($row['id']) . '</a></td>';
+            echo '<td>' . esc_html($when_row) . '</td>';
+            echo '<td>' . esc_html(bonton_checkout_health_class_label($row['class'])) . '</td>';
+            echo '<td>' . esc_html($note) . '</td>';
+            echo '</tr>';
+        }
+        echo '</tbody></table>';
+    }
+
+    $debug = isset($report['place_order_debug']) ? $report['place_order_debug'] : [];
+    if (!empty($debug['attempts'])) {
+        echo '<h2>Incomplete Place Order attempts</h2>';
+        echo '<p>Woo leftover <code>place-order-debug</code> files: <strong>' . intval($debug['attempts']) . '</strong>. These never became orders. Validation stops (address/fields) before launch: ' . intval($debug['before']['validation']) . '. After launch: ' . intval($debug['after']['validation']) . '.</p>';
+        if (!empty($debug['by_last_step'])) {
+            echo '<ul>';
+            $i = 0;
+            foreach ($debug['by_last_step'] as $step => $count) {
+                if ($i++ > 8) {
+                    break;
+                }
+                echo '<li>' . intval($count) . ' × ' . esc_html($step) . '</li>';
+            }
+            echo '</ul>';
+        }
+    }
+
     echo '</div>';
 }
 
@@ -560,7 +654,7 @@ function bonton_checkout_health_fill_orders(array $weeks, \DateTime $start, \Dat
                 $weeks[$week]['other_decline']++;
             }
 
-            if ($status === 'failed' && count($sample) < $detail_limit) {
+            if ($status === 'failed' && $detail_limit > 0) {
                 $sample[] = [
                     'id'             => $order->get_id(),
                     'date'           => $local->format(DATE_ATOM),
@@ -570,6 +664,9 @@ function bonton_checkout_health_fill_orders(array $weeks, \DateTime $start, \Dat
                     'payment_method' => $order->get_payment_method(),
                     'note'           => $blob,
                 ];
+                if (count($sample) > $detail_limit) {
+                    $sample = array_slice($sample, -$detail_limit);
+                }
             }
         }
 
@@ -915,6 +1012,87 @@ function bonton_checkout_health_scan_db_logs($source_like, \DateTime $start, \Da
     }
 
     return $out;
+}
+
+function bonton_checkout_health_months_from_weeks(array $weeks)
+{
+    $months = [];
+    foreach ($weeks as $week) {
+        if (empty($week['week_start'])) {
+            continue;
+        }
+        $key = substr($week['week_start'], 0, 7);
+        if (!isset($months[$key])) {
+            $months[$key] = [
+                'month'       => $key,
+                'paid'        => 0,
+                'failed'      => 0,
+                'cancelled'   => 0,
+                'avs_address' => 0,
+                'cvd'         => 0,
+                'fail_rate'   => 0,
+            ];
+        }
+        $months[$key]['paid']        += $week['paid'];
+        $months[$key]['failed']      += $week['failed'];
+        $months[$key]['cancelled']   += $week['cancelled'];
+        $months[$key]['avs_address'] += $week['avs_address'];
+        $months[$key]['cvd']         += $week['cvd'];
+    }
+
+    foreach ($months as $key => $month) {
+        $denom = $month['paid'] + $month['failed'];
+        $months[$key]['fail_rate'] = $denom > 0 ? round(100 * $month['failed'] / $denom, 1) : 0;
+    }
+
+    return array_values($months);
+}
+
+function bonton_checkout_health_pct($row)
+{
+    $paid   = isset($row['paid']) ? intval($row['paid']) : 0;
+    $failed = isset($row['failed']) ? intval($row['failed']) : 0;
+    if ($paid + $failed === 0) {
+        return '—';
+    }
+    $rate = isset($row['fail_rate']) ? $row['fail_rate'] : 0;
+
+    return $rate . '%';
+}
+
+function bonton_checkout_health_class_label($class)
+{
+    $map = [
+        'avs_address'  => 'AVS / address',
+        'cvd'          => 'CVD / card code',
+        'decline'      => 'Card declined',
+        'validation'   => 'Checkout validation',
+        'exception'    => 'Checkout exception',
+        'payment'      => 'Payment',
+        'order_create' => 'Could not create order',
+        'other'        => 'Other / unknown',
+    ];
+
+    return isset($map[$class]) ? $map[$class] : $class;
+}
+
+function bonton_checkout_health_order_url($order_id)
+{
+    if (function_exists('wc_get_order')) {
+        $order = wc_get_order($order_id);
+        if ($order && is_callable([$order, 'get_edit_order_url'])) {
+            return $order->get_edit_order_url();
+        }
+    }
+
+    return admin_url('post.php?post=' . intval($order_id) . '&action=edit');
+}
+
+function bonton_checkout_health_fail_bar($rate)
+{
+    $width = max(0, min(100, floatval($rate)));
+
+    return '<span style="display:inline-block;width:72px;height:8px;background:#dcdcde;vertical-align:middle;margin-right:6px;"><span style="display:block;height:8px;width:' . esc_attr($width) . '%;background:#b32d2e;"></span></span>';
 }
 
 function bonton_checkout_health_period_totals(array $weeks, $period)
