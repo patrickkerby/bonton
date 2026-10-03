@@ -84,6 +84,34 @@ function bonton_checkout_needs_shipping_address($needs)
     return $needs;
 }
 
+/**
+ * Pickup hides shipping fields, so Woo skips copying billing → shipping.
+ * Restore that copy so the orders list (and packing lists) still show an address
+ * for pickup, matching the pre-redesign admin experience.
+ */
+add_filter('woocommerce_checkout_posted_data', __NAMESPACE__ . '\\bonton_checkout_copy_billing_to_shipping', 20);
+
+function bonton_checkout_copy_billing_to_shipping($data)
+{
+    if (!empty($data['ship_to_different_address'])) {
+        return $data;
+    }
+
+    if (!empty($data['shipping_address_1']) || !empty($data['shipping_city']) || !empty($data['shipping_postcode'])) {
+        return $data;
+    }
+
+    foreach (['first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'state', 'postcode', 'country', 'phone'] as $field) {
+        $from = 'billing_' . $field;
+        $to   = 'shipping_' . $field;
+        if (isset($data[$from]) && (!isset($data[$to]) || $data[$to] === '')) {
+            $data[$to] = $data[$from];
+        }
+    }
+
+    return $data;
+}
+
 add_filter('woocommerce_ship_to_different_address_checked', '__return_false', 20);
 
 add_action('woocommerce_checkout_process', __NAMESPACE__ . '\\bonton_checkout_reject_silent_pickup_switch', 5);

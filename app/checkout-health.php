@@ -360,7 +360,7 @@ function bonton_checkout_health_widget()
 
     $after_ready = (intval($after['paid']) + intval($after['failed'])) > 0;
 
-    echo '<p style="margin:0 0 10px;">Baseline is the six months before the 3 Oct 2026, 9am launch. Fail rate = failed ÷ (failed + paid).</p>';
+    echo '<p style="margin:0 0 10px;">Baseline is the six months before the 3 Oct 2026, 9am checkout page updates. Fail rate = failed ÷ (failed + paid).</p>';
 
     echo '<p style="margin:0 0 12px;font-size:1.35em;line-height:1.3;"><strong>' . esc_html(bonton_checkout_health_pct($before)) . '</strong> baseline fail rate';
     echo '<span style="display:block;font-size:13px;font-weight:normal;color:#646970;">' . intval($before['failed']) . ' failed · ' . intval($before['paid']) . ' paid';
@@ -370,9 +370,9 @@ function bonton_checkout_health_widget()
     echo '</span></p>';
 
     if (!$after_ready) {
-        echo '<p style="margin:0 0 12px;padding:8px 10px;background:#f0f0f1;">Since launch: no paid or failed orders yet. This number stays as the baseline until the first ones land.</p>';
+        echo '<p style="margin:0 0 12px;padding:8px 10px;background:#f0f0f1;">Since checkout page updates: no paid or failed orders yet. This number stays as the baseline until the first ones land.</p>';
     } else {
-        echo '<p style="margin:0 0 12px;">Since launch: <strong>' . esc_html(bonton_checkout_health_pct($after)) . '</strong> (' . intval($after['failed']) . ' failed / ' . intval($after['paid']) . ' paid).</p>';
+        echo '<p style="margin:0 0 12px;">Since checkout page updates: <strong>' . esc_html(bonton_checkout_health_pct($after)) . '</strong> (' . intval($after['failed']) . ' failed / ' . intval($after['paid']) . ' paid).</p>';
     }
 
     $weeks = array_slice(array_reverse($report['weeks']), 0, 8);
@@ -457,7 +457,7 @@ function bonton_checkout_health_admin_page()
     echo '<p style="font-size:1.5em;margin:0.25em 0 0.5em;"><strong>' . esc_html(bonton_checkout_health_pct($before)) . '</strong> of created orders failed</p>';
     echo '<p>' . intval($before['failed']) . ' failed · ' . intval($before['paid']) . ' paid · ' . intval($before['cancelled']) . ' cancelled · ' . intval($before['avs_address']) . ' tagged AVS/address · ' . intval($before['cvd']) . ' tagged CVD.</p>';
 
-    echo '<h2>Since launch</h2>';
+    echo '<h2>Since checkout page updates</h2>';
     if (!$after_ready) {
         echo '<p>No paid or failed orders yet. Keep this page open as a scoreboard — it will fill in as orders come through.</p>';
     } else {
@@ -538,7 +538,7 @@ function bonton_checkout_health_admin_page()
     $debug = isset($report['place_order_debug']) ? $report['place_order_debug'] : [];
     if (!empty($debug['attempts'])) {
         echo '<h2>Incomplete Place Order attempts</h2>';
-        echo '<p>Woo leftover <code>place-order-debug</code> files: <strong>' . intval($debug['attempts']) . '</strong>. These never became orders. Validation stops (address/fields) before launch: ' . intval($debug['before']['validation']) . '. After launch: ' . intval($debug['after']['validation']) . '.</p>';
+        echo '<p>Woo leftover <code>place-order-debug</code> files: <strong>' . intval($debug['attempts']) . '</strong>. These never became orders. Validation stops (address/fields) before the checkout page updates: ' . intval($debug['before']['validation']) . '. After: ' . intval($debug['after']['validation']) . '.</p>';
         if (!empty($debug['by_last_step'])) {
             echo '<ul>';
             $i = 0;
