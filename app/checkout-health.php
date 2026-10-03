@@ -436,6 +436,14 @@ function bonton_checkout_health_refresh()
 add_action('bonton_checkout_health_refresh', __NAMESPACE__ . '\\bonton_checkout_health_refresh');
 
 add_action('init', function () {
+    // Skip the Action Scheduler lookup on most requests. One option read
+    // per day is enough to keep the 6:15am job scheduled.
+    $checked_key = 'bonton_checkout_health_sched_checked';
+    if ((int) get_option($checked_key, 0) > time() - DAY_IN_SECONDS) {
+        return;
+    }
+    update_option($checked_key, time(), false);
+
     $hook = 'bonton_checkout_health_refresh';
     $next = (new \DateTime('tomorrow 06:15', new \DateTimeZone(BONTON_CHECKOUT_HEALTH_TZ)))->getTimestamp();
 
