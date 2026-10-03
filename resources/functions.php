@@ -58,7 +58,7 @@ array_map(function ($file) use ($sage_error) {
     if (!locate_template($file, true, true)) {
         $sage_error(sprintf(__('Error locating <code>%s</code> for inclusion.', 'sage'), $file), 'File not found');
     }
-}, ['helpers', 'setup', 'filters', 'timeslot-picker', 'bag-fee-picker', 'checkout-ui', 'admin', 'wp-cli-backfill', 'wp-cli-delivery-export', 'woocommerce-condo-welcome-points', 'woocommerce-email']);
+}, ['helpers', 'setup', 'filters', 'timeslot-picker', 'bag-fee-picker', 'checkout-ui', 'admin', 'wp-cli-backfill', 'wp-cli-delivery-export', 'woocommerce-condo-welcome-points', 'woocommerce-email', 'checkout-health']);
 
 /**
  * Here's what's happening with these hooks:
