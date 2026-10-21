@@ -517,7 +517,6 @@ function bonton_ajax_cart_pickup_calendar_state() {
         'two_days_notice_in_cart'   => $controller->twoDaysNoticeInCart(),
         'available_dates'         => $controller->allAvailableDates(),
         'vacation_dates'          => $controller->pickupVacationDates(),
-        'limited_menu_dates'      => $controller->limitedMenuDates(),
         'bulk_discount_progress'  => \App\Helpers\BulkPricing::get_progress(),
     ]);
 }

@@ -142,9 +142,6 @@ export default {
         data.two_days_notice_in_cart ? '1' : ''
       );
       setPickupDetailJson('pickup_vacation_dates_in_cart', data.vacation_dates);
-      if (data.limited_menu_dates) {
-        setPickupDetailJson('limited_menu_dates_in_cart', data.limited_menu_dates);
-      }
 
       const availableEl = document.getElementById('available_dates_in_cart');
       if (availableEl) {
@@ -191,19 +188,6 @@ export default {
         }
       }
 
-      let limitedMenuDates = [];
-      const rawLimited = text('limited_menu_dates_in_cart');
-      if (rawLimited) {
-        try {
-          limitedMenuDates = JSON.parse(rawLimited);
-          if (!Array.isArray(limitedMenuDates)) {
-            limitedMenuDates = [];
-          }
-        } catch (e) {
-          limitedMenuDates = [];
-        }
-      }
-
       return {
         pickupRestriction: text('pickup_restriction_data') || null,
         pickupRestrictionEnd: text('pickup_restriction_end_data') || null,
@@ -212,7 +196,6 @@ export default {
         leadHours: Number.isFinite(leadHours) ? leadHours : 33,
         vacationDays,
         availableDatesFormatted,
-        limitedMenuDates,
       };
     }
 
@@ -249,7 +232,7 @@ export default {
       });
     }
 
-    function initializeDatePicker(allowedDates, selectedDate, earliestPickupFormatted, limitedMenuDates) {
+    function initializeDatePicker(allowedDates, selectedDate, earliestPickupFormatted) {
       const $picker = $('#datepicker');
       const $input = $('#dateInput');
 
@@ -286,9 +269,7 @@ export default {
             return [false];
           }
 
-          const allowed = allowedDates.includes(string);
-          const limited = (limitedMenuDates || []).includes(string);
-          return [allowed, limited ? 'limited-menu-day' : ''];
+          return [allowedDates.includes(string)];
         },
       });
 
@@ -385,12 +366,7 @@ export default {
           )
         );
 
-      initializeDatePicker(
-        allowedDates,
-        data.selectedDate,
-        earliestPickupFormatted,
-        data.limitedMenuDates
-      );
+      initializeDatePicker(allowedDates, data.selectedDate, earliestPickupFormatted);
       markCartPickupCalendarReady();
 
       if (window.gtag && $('.cart-collaterals').hasClass('conflict')) {

@@ -605,16 +605,6 @@ class WoocommerceCart extends Controller
     }
 
     /**
-     * Y-m-d dates covered by an active limited menu (cart calendar highlight).
-     *
-     * @return string[]
-     */
-    public function limitedMenuDates()
-    {
-        return \App\Helpers\LimitedMenu::allDates();
-    }
-
-    /**
      * Cache-safe limited-menu period payload for cart notices / JS.
      *
      * @return array

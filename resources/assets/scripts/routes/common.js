@@ -440,21 +440,6 @@ export default {
           datesDisabled: datesDisabled,
           todayHighlight: true,
           maxViewMode: 0,
-          beforeShowDay: function (date) {
-            if (!date) {
-              return { enabled: true };
-            }
-            var ymd =
-              date.getFullYear() +
-              '-' +
-              ('0' + (date.getMonth() + 1)).slice(-2) +
-              '-' +
-              ('0' + date.getDate()).slice(-2);
-            if (limitedMenuPeriodForYmd(ymd)) {
-              return { enabled: true, classes: 'limited-menu-day' };
-            }
-            return { enabled: true };
-          },
         });
 
         ignorePickerChange = true;
