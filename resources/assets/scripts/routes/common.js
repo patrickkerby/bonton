@@ -165,6 +165,8 @@ export default {
       var startDate = dayjs().add(leadHours, 'hour').toDate();
       var isCartPage = $('body').hasClass('woocommerce-cart');
       var savePickupDateInFlight = false;
+      var pickupDateWriteGeneration = 0;
+      var previewedPickupYmd = null;
       var ignorePickerChange = true;
       var calendarStateStale = false;
       var refreshInFlight = null;
@@ -176,6 +178,19 @@ export default {
         var w = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         var m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return w[d.getDay()] + ', ' + m[d.getMonth()] + ' ' + d.getDate();
+      }
+
+      function ymdFromDate(d) {
+        if (!d || isNaN(d.getTime())) {
+          return '';
+        }
+        return (
+          d.getFullYear() +
+          '-' +
+          ('0' + (d.getMonth() + 1)).slice(-2) +
+          '-' +
+          ('0' + d.getDate()).slice(-2)
+        );
       }
 
       function readStoredPickupDate() {
@@ -209,17 +224,24 @@ export default {
         }
       }
 
+      var limitedMenuPeriodsCache = null;
+
       function readLimitedMenuPeriods() {
+        if (limitedMenuPeriodsCache) {
+          return limitedMenuPeriodsCache;
+        }
         var el = document.getElementById('limited_menu_periods_global');
         if (!el || !el.textContent.trim()) {
-          return [];
+          limitedMenuPeriodsCache = [];
+          return limitedMenuPeriodsCache;
         }
         try {
           var parsed = JSON.parse(el.textContent.trim());
-          return Array.isArray(parsed) ? parsed : [];
+          limitedMenuPeriodsCache = Array.isArray(parsed) ? parsed : [];
         } catch (err) {
-          return [];
+          limitedMenuPeriodsCache = [];
         }
+        return limitedMenuPeriodsCache;
       }
 
       function limitedMenuPeriodForYmd(ymd) {
@@ -237,23 +259,35 @@ export default {
       }
 
       function applyLimitedMenuNotice(ymd) {
-        var $el = $('#limited-menu-notice');
-        if (!$el.length) {
+        var $notices = $('#limited-menu-notice, #cart-limited-menu-notice');
+        if (!$notices.length) {
           return;
         }
         var period = limitedMenuPeriodForYmd(ymd);
         if (!period) {
-          $el.attr('hidden', true);
+          $notices.prop('hidden', true).attr('aria-hidden', 'true');
           return;
         }
-        $el.find('[data-limited-menu-text]').text(period.message || period.title || '');
-        var $link = $el.find('[data-limited-menu-link]');
-        if (period.url) {
-          $link.attr('href', period.url).text(period.link_label || 'View limited menu').show();
-        } else {
-          $link.hide();
-        }
-        $el.removeAttr('hidden');
+        $notices.each(function () {
+          var $el = $(this);
+          $el.find('[data-limited-menu-text]').text(period.message || period.title || '');
+          $el.find('[data-limited-menu-title]').text(period.title || '');
+          var $link = $el.find('[data-limited-menu-link]');
+          var $linkWrap = $el.find('[data-limited-menu-link-wrap]');
+          if (period.url) {
+            $link.attr('href', period.url).text(period.link_label || 'View limited menu');
+            if ($linkWrap.length) {
+              $linkWrap.prop('hidden', false);
+            } else {
+              $link.show();
+            }
+          } else if ($linkWrap.length) {
+            $linkWrap.prop('hidden', true);
+          } else {
+            $link.hide();
+          }
+          $el.prop('hidden', false).attr('aria-hidden', 'false');
+        });
       }
 
       function applyPickupDateLabel(ymd, display) {
@@ -271,7 +305,7 @@ export default {
           writeStoredPickupDate('', '');
         }
         $btn.attr('aria-busy', 'false');
-        applyLimitedMenuNotice(ymd || '');
+        applyLimitedMenuNotice(previewedPickupYmd !== null ? previewedPickupYmd : (ymd || ''));
       }
 
       // Instant paint from this tab's last known date (never from HTML cache).
@@ -322,15 +356,29 @@ export default {
         }, 6000);
       }
 
+      function revertPickupDate(prevStored) {
+        previewedPickupYmd = prevStored && prevStored.ymd ? prevStored.ymd : '';
+        if (prevStored && prevStored.ymd && prevStored.display) {
+          applyPickupDateLabel(prevStored.ymd, prevStored.display);
+          return;
+        }
+        applyPickupDateLabel('', '');
+      }
+
       function saveDateAndUpdate(dateText, pickedDate) {
         if (savePickupDateInFlight) {
           return;
         }
         savePickupDateInFlight = true;
-        var $label = $btn.find('[data-pickup-date-label]');
-        var prevLabel = $label.text();
+        pickupDateWriteGeneration += 1;
+        var writeGeneration = pickupDateWriteGeneration;
+        var prevStored = readStoredPickupDate();
         var optimistic = formatPickupLabelFromDate(pickedDate);
-        $label.text(optimistic);
+        var storedYmd = ymdFromDate(pickedDate);
+
+        // Banner uses in-page period JSON — do not wait on the session save.
+        previewedPickupYmd = storedYmd || '';
+        applyPickupDateLabel(storedYmd, optimistic);
         setUtilityBannerDateSaving(true);
 
         $.ajax({
@@ -346,25 +394,17 @@ export default {
           timeout: 30000,
         })
           .done(function (response) {
+            if (writeGeneration !== pickupDateWriteGeneration) {
+              return;
+            }
             if (!response || !response.success) {
               savePickupDateInFlight = false;
               setUtilityBannerDateSaving(false);
-              $label.text(prevLabel);
+              revertPickupDate(prevStored);
               return;
             }
-            if (response.data && response.data.date_display) {
-              $label.text(response.data.date_display);
-              var storedYmd = '';
-              if (pickedDate && !isNaN(pickedDate.getTime())) {
-                storedYmd =
-                  pickedDate.getFullYear() +
-                  '-' +
-                  ('0' + (pickedDate.getMonth() + 1)).slice(-2) +
-                  '-' +
-                  ('0' + pickedDate.getDate()).slice(-2);
-              }
-              writeStoredPickupDate(storedYmd, response.data.date_display);
-            }
+            var display = (response.data && response.data.date_display) || optimistic;
+            applyPickupDateLabel(storedYmd, display);
             if (!isCartPage && response.data && response.data.delivery_toast) {
               showUtilityDeliveryToast(response.data.delivery_toast);
             }
@@ -383,9 +423,12 @@ export default {
             $dropdown.fadeOut(150);
           })
           .fail(function () {
+            if (writeGeneration !== pickupDateWriteGeneration) {
+              return;
+            }
             savePickupDateInFlight = false;
             setUtilityBannerDateSaving(false);
-            $label.text(prevLabel);
+            revertPickupDate(prevStored);
           });
       }
 
@@ -539,6 +582,10 @@ export default {
             display = sessionDate.format('ddd, MMM D');
           }
         }
+        if (savePickupDateInFlight) {
+          return;
+        }
+
         applyPickupDateLabel(ymd, display);
 
         if (typeof data.lead_time_hours !== 'undefined' || data.available_dates) {
@@ -568,8 +615,13 @@ export default {
           return headerUiInFlight;
         }
 
+        var requestGeneration = pickupDateWriteGeneration;
+
         headerUiInFlight = fetchHeaderUiState()
           .done(function (response) {
+            if (requestGeneration !== pickupDateWriteGeneration) {
+              return;
+            }
             if (!response || !response.success || !response.data) {
               $btn.attr('aria-busy', 'false');
               return;
@@ -770,6 +822,11 @@ export default {
 
         bindUtilityDateOutsideClose();
       }
+
+      $(document.body).on('bonton_preview_pickup_date', function (e, ymd) {
+        previewedPickupYmd = ymd || '';
+        applyLimitedMenuNotice(previewedPickupYmd);
+      });
 
       // Fast hydrate on load (session date / bulk / cart count). Heavy calendar
       // rules stay stale until the picker opens or the cart changes.

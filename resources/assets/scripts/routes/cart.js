@@ -207,6 +207,23 @@ export default {
       return `${dd}/${mm}/${yyyy}`;
     }
 
+    function ymdFromPickerDate(date) {
+      if (!date) {
+        return '';
+      }
+      const dd = String(date.getDate()).padStart(2, '0');
+      const mm = String(date.getMonth() + 1).padStart(2, '0');
+      return `${date.getFullYear()}-${mm}-${dd}`;
+    }
+
+    function previewLimitedMenuFromPicker($picker) {
+      if (!$picker.length || !$picker.hasClass('hasDatepicker')) {
+        return;
+      }
+      const picked = $picker.datepicker('getDate');
+      $(document.body).trigger('bonton_preview_pickup_date', [picked ? ymdFromPickerDate(picked) : '']);
+    }
+
     function syncDateInputFromPicker($picker, $input) {
       if (!$picker.length || !$input.length || !$picker.hasClass('hasDatepicker')) {
         return;
@@ -255,6 +272,7 @@ export default {
       $picker.datepicker({
         onSelect: function () {
           syncDateInputFromPicker($picker, $input);
+          previewLimitedMenuFromPicker($picker);
         },
         dateFormat: 'dd/mm/yy',
         beforeShowDay: function (date) {
@@ -278,6 +296,7 @@ export default {
       $picker.on('click.bontonPickupDate', '.ui-datepicker-calendar td a', function () {
         window.setTimeout(function () {
           syncDateInputFromPicker($picker, $input);
+          previewLimitedMenuFromPicker($picker);
         }, 0);
       });
 
@@ -292,6 +311,7 @@ export default {
           selectedDateFormatted.format('DD/MM/YYYY')
         );
         syncDateInputFromPicker($picker, $input);
+        previewLimitedMenuFromPicker($picker);
       } else {
         $input.val('');
         if (firstDate) {

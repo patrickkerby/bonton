@@ -1093,6 +1093,10 @@ body:not(.woocommerce-order-received) ul.woocommerce-thankyou-order-details li {
   line-height: 1.25rem;
   border-radius: 0 0 4px 4px;
 
+  &[hidden] {
+    display: none !important;
+  }
+
   strong {
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
