@@ -36,6 +36,7 @@ class WoocommerceCart extends Controller
     private $_restricted_start_date = null;
     private $_restricted_end_date = null;
     private $_pickup_restriction_data = null;
+    private $_limited_menu_notice = null;
 
     /**
      * Process and store the pickup date from POST data into the WC session.
@@ -143,6 +144,7 @@ class WoocommerceCart extends Controller
         $this->_restricted_start_date = null;
         $this->_restricted_end_date = null;
         $this->_pickup_restriction_data = null;
+        $this->_limited_menu_notice = \App\Helpers\LimitedMenu::noticeForDate($this->sessionFormatted());
 
         $cart_count = 0;
         $gc_cart_count = 0;
@@ -224,8 +226,20 @@ class WoocommerceCart extends Controller
             // Day-of-week availability check
             $availability_status = 'available';
             $availability_msg = '';
+            $session_ymd = $this->sessionFormatted() ?: '';
+            $is_bundled = wc_pb_is_bundled_cart_item($cart_item);
+            $limited_menu_skips_weekday = $session_ymd && (
+                $is_bundled
+                    ? \App\Helpers\LimitedMenu::isActiveDate($session_ymd)
+                    : \App\Helpers\LimitedMenu::skipsWeekdayRules((int) $product_id, $session_ymd)
+            );
 
-            if ($session_pickup_date && $pickup_day_of_week && !in_array($pickup_day_of_week, $days_available_array)) {
+            if (
+                $session_pickup_date
+                && $pickup_day_of_week
+                && !$limited_menu_skips_weekday
+                && !in_array($pickup_day_of_week, $days_available_array)
+            ) {
                 $availability_status = 'not-available';
                 $availability_msg = '<span class="not-available-message">Not available on your pickup date. Remove this item or choose another date.</span>';
             }
@@ -269,7 +283,7 @@ class WoocommerceCart extends Controller
 
             $sold_out_conflict = '';
             $sold_out_dates_display = [];
-            $session_ymd = $session_date_object ? $session_date_object->format('Y-m-d') : '';
+            $limited_menu_conflict = '';
 
             foreach (\App\Helpers\SoldOutDates::forCartItem((int) $product_id, $variation_id) as $sold_out_ymd) {
                 $sold_out_day = DateTime::createFromFormat('!Y-m-d', $sold_out_ymd);
@@ -324,13 +338,21 @@ class WoocommerceCart extends Controller
             }
 
             // Pickup restriction conflict checks
-            if ($pickup_restriction_data && $restricted_start_date && $restricted_end_date) {
+            if (!$limited_menu_skips_weekday && $pickup_restriction_data && $restricted_start_date && $restricted_end_date) {
                 if ($session_date_object && ($session_date_object < $restricted_start_date || $session_date_object > $restricted_end_date)) {
                     $this->_conflict = true;
                 }
                 if ($session_pickup_date && in_array($session_pickup_date, $available_dates)) {
                     $this->_conflict = false;
                 }
+            }
+
+            // Limited menu gate: after override, so extra availability cannot punch through.
+            if (!$is_bundled && \App\Helpers\LimitedMenu::blocksProduct((int) $product_id, $session_ymd)) {
+                $this->_conflict = true;
+                $limited_menu_conflict = 'limited_menu_conflict';
+                $availability_status = 'not-available';
+                $availability_msg = '<span class="not-available-message limited-menu-conflict">Not on the limited menu for your pickup date. Remove this item, choose another date, or browse the limited menu.</span>';
             }
 
             // Same-day pickup and post-3pm "tomorrow" cutoff (Y-m-d avoids DateTime/session quirks).
@@ -368,6 +390,7 @@ class WoocommerceCart extends Controller
                 'two_days_notice' => $two_days_notice,
                 'sold_out_msg' => $sold_out_msg,
                 'sold_out_conflict' => $sold_out_conflict,
+                'limited_menu_conflict' => $limited_menu_conflict,
                 'special_availability_msg' => $special_availability_msg,
                 'pickup_restriction_data' => $pickup_restriction_data,
                 'restriction_msg' => $restriction_msg,
@@ -394,6 +417,17 @@ class WoocommerceCart extends Controller
 
         $this->_cart_items_result = $items;
         return $items;
+    }
+
+    /**
+     * Limited-menu notice for the selected pickup date, or null.
+     */
+    public function limitedMenuNotice()
+    {
+        if (!$this->_cart_items_computed) {
+            $this->cartItemsData();
+        }
+        return $this->_limited_menu_notice;
     }
 
     /**
@@ -568,6 +602,26 @@ class WoocommerceCart extends Controller
         }
 
         return $earliest;
+    }
+
+    /**
+     * Y-m-d dates covered by an active limited menu (cart calendar highlight).
+     *
+     * @return string[]
+     */
+    public function limitedMenuDates()
+    {
+        return \App\Helpers\LimitedMenu::allDates();
+    }
+
+    /**
+     * Cache-safe limited-menu period payload for cart notices / JS.
+     *
+     * @return array
+     */
+    public function limitedMenuPeriodsPublic()
+    {
+        return \App\Helpers\LimitedMenu::publicPeriods();
     }
 
     /**

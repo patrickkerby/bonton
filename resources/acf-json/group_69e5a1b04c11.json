@@ -1,0 +1,183 @@
+{
+    "key": "group_69e5a1b04c11",
+    "title": "Limited Menu",
+    "fields": [
+        {
+            "key": "field_69e5a1b04c12",
+            "label": "Limited Menu Periods",
+            "name": "limited_menu_periods",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Products in the chosen category can be ordered on those pickup dates (weekday schedule is ignored). Everything else is unavailable for those dates. Sold-out dates and two-days notice still apply. Use a separate period when the product list changes. Do not also add these dates as cart blackouts — they stay selectable.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "field_69e5a1b04c14",
+            "button_label": "Add limited menu period",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_69e5a1b04c13",
+                    "label": "Enabled",
+                    "name": "enabled",
+                    "aria-label": "",
+                    "type": "true_false",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "15",
+                        "class": "",
+                        "id": ""
+                    },
+                    "message": "",
+                    "default_value": 1,
+                    "allow_in_bindings": 0,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "parent_repeater": "field_69e5a1b04c12"
+                },
+                {
+                    "key": "field_69e5a1b04c14",
+                    "label": "Title",
+                    "name": "title",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "Optional. Defaults to the category name.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "85",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "placeholder": "Holiday limited menu",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_69e5a1b04c12"
+                },
+                {
+                    "key": "field_69e5a1b04c15",
+                    "label": "Start date",
+                    "name": "start_date",
+                    "aria-label": "",
+                    "type": "date_picker",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "25",
+                        "class": "",
+                        "id": ""
+                    },
+                    "display_format": "F j, Y",
+                    "return_format": "Y-m-d",
+                    "first_day": 1,
+                    "default_to_current_date": 0,
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_69e5a1b04c12"
+                },
+                {
+                    "key": "field_69e5a1b04c16",
+                    "label": "End date",
+                    "name": "end_date",
+                    "aria-label": "",
+                    "type": "date_picker",
+                    "instructions": "Inclusive.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "25",
+                        "class": "",
+                        "id": ""
+                    },
+                    "display_format": "F j, Y",
+                    "return_format": "Y-m-d",
+                    "first_day": 1,
+                    "default_to_current_date": 0,
+                    "allow_in_bindings": 0,
+                    "parent_repeater": "field_69e5a1b04c12"
+                },
+                {
+                    "key": "field_69e5a1b04c17",
+                    "label": "Menu category",
+                    "name": "menu_category",
+                    "aria-label": "",
+                    "type": "taxonomy",
+                    "instructions": "Allowlist. Assign products (or a spreadsheet import) to this category. Subcategories are included.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "taxonomy": "product_cat",
+                    "add_term": 1,
+                    "save_terms": 0,
+                    "load_terms": 0,
+                    "return_format": "id",
+                    "field_type": "select",
+                    "allow_null": 1,
+                    "bidirectional": 0,
+                    "multiple": 0,
+                    "bidirectional_target": [],
+                    "parent_repeater": "field_69e5a1b04c12"
+                },
+                {
+                    "key": "field_69e5a1b04c18",
+                    "label": "Customer message",
+                    "name": "message",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "Shown when a customer picks a date in this range. Leave blank for the default.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "rows": 2,
+                    "placeholder": "This pickup date has a limited menu. Only items on that menu can be ordered.",
+                    "new_lines": "",
+                    "parent_repeater": "field_69e5a1b04c12"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "bonton-general-settings"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "modified": 1761063600
+}

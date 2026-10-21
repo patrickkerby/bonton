@@ -209,6 +209,53 @@ export default {
         }
       }
 
+      function readLimitedMenuPeriods() {
+        var el = document.getElementById('limited_menu_periods_global');
+        if (!el || !el.textContent.trim()) {
+          return [];
+        }
+        try {
+          var parsed = JSON.parse(el.textContent.trim());
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (err) {
+          return [];
+        }
+      }
+
+      function limitedMenuPeriodForYmd(ymd) {
+        if (!ymd) {
+          return null;
+        }
+        var periods = readLimitedMenuPeriods();
+        var i;
+        for (i = 0; i < periods.length; i += 1) {
+          if (periods[i].start && periods[i].end && ymd >= periods[i].start && ymd <= periods[i].end) {
+            return periods[i];
+          }
+        }
+        return null;
+      }
+
+      function applyLimitedMenuNotice(ymd) {
+        var $el = $('#limited-menu-notice');
+        if (!$el.length) {
+          return;
+        }
+        var period = limitedMenuPeriodForYmd(ymd);
+        if (!period) {
+          $el.attr('hidden', true);
+          return;
+        }
+        $el.find('[data-limited-menu-text]').text(period.message || period.title || '');
+        var $link = $el.find('[data-limited-menu-link]');
+        if (period.url) {
+          $link.attr('href', period.url).text(period.link_label || 'View limited menu').show();
+        } else {
+          $link.hide();
+        }
+        $el.removeAttr('hidden');
+      }
+
       function applyPickupDateLabel(ymd, display) {
         var $label = $btn.find('[data-pickup-date-label]');
         if (ymd && display) {
@@ -224,6 +271,7 @@ export default {
           writeStoredPickupDate('', '');
         }
         $btn.attr('aria-busy', 'false');
+        applyLimitedMenuNotice(ymd || '');
       }
 
       // Instant paint from this tab's last known date (never from HTML cache).
@@ -392,6 +440,21 @@ export default {
           datesDisabled: datesDisabled,
           todayHighlight: true,
           maxViewMode: 0,
+          beforeShowDay: function (date) {
+            if (!date) {
+              return { enabled: true };
+            }
+            var ymd =
+              date.getFullYear() +
+              '-' +
+              ('0' + (date.getMonth() + 1)).slice(-2) +
+              '-' +
+              ('0' + date.getDate()).slice(-2);
+            if (limitedMenuPeriodForYmd(ymd)) {
+              return { enabled: true, classes: 'limited-menu-day' };
+            }
+            return { enabled: true };
+          },
         });
 
         ignorePickerChange = true;

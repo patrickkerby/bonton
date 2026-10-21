@@ -11,4 +11,5 @@
     <div id="available_dates_in_cart">{!! json_encode($all_available_dates) !!}</div>
   @endif
   <div id="pickup_vacation_dates_in_cart">{!! json_encode($pickup_vacation_dates) !!}</div>
+  <div id="limited_menu_dates_in_cart">{!! json_encode($limited_menu_dates ?? []) !!}</div>
 </div>

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Helpers\LimitedMenu;
 use App\Helpers\PickupVacationDates;
 use Sober\Controller\Controller;
 
@@ -78,6 +79,16 @@ class App extends Controller
     public function pickupVacationDates()
     {
         return PickupVacationDates::getDates();
+    }
+
+    /**
+     * Active limited-menu periods for datepickers / notices (site-wide, cache-safe).
+     *
+     * @return array
+     */
+    public function limitedMenuPeriodsPublic()
+    {
+        return LimitedMenu::publicPeriods();
     }
 
   /**

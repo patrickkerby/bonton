@@ -125,6 +125,15 @@ function bonton_checkout_health_command($args, $assoc_args)
         $debug['after']['validation']
     ));
 
+    $before_causes = bonton_checkout_health_fail_causes_text($before);
+    $after_causes  = bonton_checkout_health_fail_causes_text($after);
+    if ($before_causes) {
+        \WP_CLI::log('  ' . $before_causes);
+    }
+    if ($after_causes) {
+        \WP_CLI::log('  ' . $after_causes);
+    }
+
     $rows = [];
     foreach ($report['weeks'] as $week) {
         $rows[] = [
@@ -538,15 +547,15 @@ function bonton_checkout_health_widget()
 
     echo '<p style="margin:0 0 12px;font-size:1.35em;line-height:1.3;"><strong>' . esc_html(bonton_checkout_health_pct($before)) . '</strong> baseline fail rate';
     echo '<span style="display:block;font-size:13px;font-weight:normal;color:#646970;">' . intval($before['failed']) . ' failed · ' . intval($before['paid']) . ' paid';
-    if (!empty($before['avs_address'])) {
-        echo ' · ' . intval($before['avs_address']) . ' AVS/address';
-    }
+    echo bonton_checkout_health_fail_causes_suffix($before);
     echo '</span></p>';
 
     if (!$after_ready) {
         echo '<p style="margin:0 0 12px;padding:8px 10px;background:#f0f0f1;">Since checkout page updates: none in the last snapshot. Refresh (or wait for 6:15am) to pick up orders since then — that refresh is incremental now.</p>';
     } else {
-        echo '<p style="margin:0 0 12px;">Since checkout page updates: <strong>' . esc_html(bonton_checkout_health_pct($after)) . '</strong> (' . intval($after['failed']) . ' failed / ' . intval($after['paid']) . ' paid).</p>';
+        echo '<p style="margin:0 0 12px;">Since checkout page updates: <strong>' . esc_html(bonton_checkout_health_pct($after)) . '</strong> (' . intval($after['failed']) . ' failed / ' . intval($after['paid']) . ' paid)';
+        echo bonton_checkout_health_fail_causes_suffix($after);
+        echo '.</p>';
     }
 
     $weeks = array_slice(array_reverse($report['weeks']), 0, 8);
@@ -633,13 +642,15 @@ function bonton_checkout_health_admin_page()
 
     echo '<h2>Baseline (before 3 Oct 2026, 9am)</h2>';
     echo '<p style="font-size:1.5em;margin:0.25em 0 0.5em;"><strong>' . esc_html(bonton_checkout_health_pct($before)) . '</strong> of created orders failed</p>';
-    echo '<p>' . intval($before['failed']) . ' failed · ' . intval($before['paid']) . ' paid · ' . intval($before['cancelled']) . ' cancelled · ' . intval($before['avs_address']) . ' tagged AVS/address · ' . intval($before['cvd']) . ' tagged CVD.</p>';
+    echo '<p>' . intval($before['failed']) . ' failed · ' . intval($before['paid']) . ' paid · ' . intval($before['cancelled']) . ' cancelled.</p>';
+    bonton_checkout_health_echo_fail_causes($before, true);
 
     echo '<h2>Since checkout page updates</h2>';
     if (!$after_ready) {
         echo '<p>None in the last snapshot. Orders since then will show after the next report run (Refresh, or 6:15am).</p>';
     } else {
         echo '<p><strong>' . esc_html(bonton_checkout_health_pct($after)) . '</strong> fail rate (' . intval($after['failed']) . ' failed / ' . intval($after['paid']) . ' paid). Compare that to the baseline above.</p>';
+        bonton_checkout_health_echo_fail_causes($after, false);
     }
 
     $months = isset($report['months']) ? $report['months'] : bonton_checkout_health_months_from_weeks($report['weeks']);
@@ -842,6 +853,11 @@ function bonton_checkout_health_fill_orders(array $weeks, \DateTime $start, \Dat
                 $split[$side]['cvd']++;
             } elseif ($status === 'failed') {
                 $weeks[$week]['other_decline']++;
+            }
+
+            if ($status === 'failed') {
+                $bucket = bonton_checkout_health_fail_bucket($class);
+                $split[$side]['by_class'][$bucket]++;
             }
 
             if ($status === 'failed' && $detail_limit > 0) {
@@ -1306,7 +1322,89 @@ function bonton_checkout_health_empty_period_row()
         'avs_address' => 0,
         'cvd'         => 0,
         'fail_rate'   => 0,
+        'by_class'    => bonton_checkout_health_empty_by_class(),
     ];
+}
+
+function bonton_checkout_health_empty_by_class()
+{
+    return [
+        'avs_address' => 0,
+        'cvd'         => 0,
+        'decline'     => 0,
+        'validation'  => 0,
+        'other'       => 0,
+    ];
+}
+
+function bonton_checkout_health_fail_bucket($class)
+{
+    if (in_array($class, ['avs_address', 'cvd', 'decline', 'validation'], true)) {
+        return $class;
+    }
+
+    return 'other';
+}
+
+function bonton_checkout_health_normalize_by_class($by_class)
+{
+    $out = bonton_checkout_health_empty_by_class();
+    if (!is_array($by_class)) {
+        return $out;
+    }
+    foreach ($by_class as $key => $count) {
+        $out[bonton_checkout_health_fail_bucket($key)] += intval($count);
+    }
+
+    return $out;
+}
+
+function bonton_checkout_health_fail_causes_text($row)
+{
+    if (empty($row['by_class']) || !is_array($row['by_class']) || array_sum($row['by_class']) === 0) {
+        return '';
+    }
+
+    $failed = isset($row['failed']) ? intval($row['failed']) : 0;
+    if ($failed === 0) {
+        return '';
+    }
+
+    $parts = [];
+    foreach (bonton_checkout_health_normalize_by_class($row['by_class']) as $class => $count) {
+        if ($count <= 0) {
+            continue;
+        }
+        $parts[] = $count . ' ' . bonton_checkout_health_class_label($class);
+    }
+
+    if (!$parts) {
+        return '';
+    }
+
+    return 'Of ' . $failed . ' failed: ' . implode(' · ', $parts);
+}
+
+function bonton_checkout_health_fail_causes_suffix($row)
+{
+    $text = bonton_checkout_health_fail_causes_text($row);
+    if ($text === '') {
+        return '';
+    }
+
+    return ' · ' . esc_html($text);
+}
+
+function bonton_checkout_health_echo_fail_causes($row, $awaiting_full)
+{
+    $text = bonton_checkout_health_fail_causes_text($row);
+    if ($text !== '') {
+        echo '<p>' . esc_html($text) . '.</p>';
+        return;
+    }
+    if ($awaiting_full && intval($row['failed']) > 0) {
+        echo '<p>Cause breakdown of those failed orders will appear after a full rebuild (<code>wp bonton checkout_health --full</code>).</p>';
+    }
 }
 
 function bonton_checkout_health_with_fail_rate(array $row)

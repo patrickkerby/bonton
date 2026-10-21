@@ -120,6 +120,16 @@
           <strong>Notice!</strong> <br>You have selected a special product that is extremely limited, and <em>only</em> available on the day(s) listed above.
         </div>
       @endif
+
+      @if (!empty($limited_menu_notice['active']))
+        <div class="lf_notice limited-menu-notice">
+          <strong>{{ $limited_menu_notice['title'] }}</strong><br>
+          {{ $limited_menu_notice['message'] }}
+          @if (!empty($limited_menu_notice['url']))
+            <br><a href="{{ esc_url($limited_menu_notice['url']) }}">{{ $limited_menu_notice['link_label'] }}</a>
+          @endif
+        </div>
+      @endif
     </div>
   </form>
 

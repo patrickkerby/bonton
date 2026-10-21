@@ -16,7 +16,9 @@ class PickupVacationDates
     {
         $dates = self::loadFromAcf();
 
-        return apply_filters('bonton_pickup_vacation_dates', $dates);
+        $dates = apply_filters('bonton_pickup_vacation_dates', $dates);
+
+        return LimitedMenu::openVacationDates($dates);
     }
 
     /**

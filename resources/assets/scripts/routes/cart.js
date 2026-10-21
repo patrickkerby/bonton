@@ -142,6 +142,9 @@ export default {
         data.two_days_notice_in_cart ? '1' : ''
       );
       setPickupDetailJson('pickup_vacation_dates_in_cart', data.vacation_dates);
+      if (data.limited_menu_dates) {
+        setPickupDetailJson('limited_menu_dates_in_cart', data.limited_menu_dates);
+      }
 
       const availableEl = document.getElementById('available_dates_in_cart');
       if (availableEl) {
@@ -188,6 +191,19 @@ export default {
         }
       }
 
+      let limitedMenuDates = [];
+      const rawLimited = text('limited_menu_dates_in_cart');
+      if (rawLimited) {
+        try {
+          limitedMenuDates = JSON.parse(rawLimited);
+          if (!Array.isArray(limitedMenuDates)) {
+            limitedMenuDates = [];
+          }
+        } catch (e) {
+          limitedMenuDates = [];
+        }
+      }
+
       return {
         pickupRestriction: text('pickup_restriction_data') || null,
         pickupRestrictionEnd: text('pickup_restriction_end_data') || null,
@@ -196,6 +212,7 @@ export default {
         leadHours: Number.isFinite(leadHours) ? leadHours : 33,
         vacationDays,
         availableDatesFormatted,
+        limitedMenuDates,
       };
     }
 
@@ -232,7 +249,7 @@ export default {
       });
     }
 
-    function initializeDatePicker(allowedDates, selectedDate, earliestPickupFormatted) {
+    function initializeDatePicker(allowedDates, selectedDate, earliestPickupFormatted, limitedMenuDates) {
       const $picker = $('#datepicker');
       const $input = $('#dateInput');
 
@@ -269,7 +286,9 @@ export default {
             return [false];
           }
 
-          return [allowedDates.includes(string)];
+          const allowed = allowedDates.includes(string);
+          const limited = (limitedMenuDates || []).includes(string);
+          return [allowed, limited ? 'limited-menu-day' : ''];
         },
       });
 
@@ -366,13 +385,19 @@ export default {
           )
         );
 
-      initializeDatePicker(allowedDates, data.selectedDate, earliestPickupFormatted);
+      initializeDatePicker(
+        allowedDates,
+        data.selectedDate,
+        earliestPickupFormatted,
+        data.limitedMenuDates
+      );
       markCartPickupCalendarReady();
 
       if (window.gtag && $('.cart-collaterals').hasClass('conflict')) {
         const reasons = [];
         if ($('.not-available-message').length) reasons.push('product_not_available');
         if ($('.sold_out_conflict').length) reasons.push('sold_out');
+        if ($('.limited-menu-conflict').length) reasons.push('limited_menu');
         if (!data.selectedDate) reasons.push('no_date_selected');
         window.gtag('event', 'cart_date_conflict', {
           conflict_reasons: reasons.join(', ') || 'unknown',

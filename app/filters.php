@@ -517,6 +517,7 @@ function bonton_ajax_cart_pickup_calendar_state() {
         'two_days_notice_in_cart'   => $controller->twoDaysNoticeInCart(),
         'available_dates'         => $controller->allAvailableDates(),
         'vacation_dates'          => $controller->pickupVacationDates(),
+        'limited_menu_dates'      => $controller->limitedMenuDates(),
         'bulk_discount_progress'  => \App\Helpers\BulkPricing::get_progress(),
     ]);
 }
@@ -709,6 +710,33 @@ function after_checkout_validation( $posted ) {
             $min_ymd = $min_pickup->format('Y-m-d');
             if ($session_ymd < $min_ymd) {
                 wc_add_notice( __( 'Your cart has items that need 2 days notice. Return to the cart and choose a later pickup date.', 'woocommerce' ), 'error' );
+            }
+        }
+    }
+
+    $session_ymd = WC()->session->get('pickup_date_formatted');
+    if ($session_ymd && preg_match('#^\d{2}/\d{2}/\d{4}$#', $session_ymd)) {
+        $legacy = \DateTime::createFromFormat('!d/m/Y', $session_ymd);
+        $session_ymd = $legacy ? $legacy->format('Y-m-d') : $session_ymd;
+    }
+
+    if ($session_ymd) {
+        foreach (WC()->cart->get_cart() as $cart_item_key => $cart_item) {
+            $product_id = (int) apply_filters('woocommerce_cart_item_product_id', $cart_item['product_id'], $cart_item, $cart_item_key);
+            $variation_id = (int) ($cart_item['variation_id'] ?? 0);
+
+            if (function_exists('wc_pb_is_bundled_cart_item') && wc_pb_is_bundled_cart_item($cart_item)) {
+                continue;
+            }
+
+            if (\App\Helpers\LimitedMenu::blocksProduct($product_id, $session_ymd)) {
+                wc_add_notice(__('Some items are not on the limited menu for your pickup date. Return to the cart to update your order.', 'woocommerce'), 'error');
+                break;
+            }
+
+            if (in_array($session_ymd, \App\Helpers\SoldOutDates::forCartItem($product_id, $variation_id), true)) {
+                wc_add_notice(__('Some items are not available on your pickup date. Return to the cart to update your order.', 'woocommerce'), 'error');
+                break;
             }
         }
     }

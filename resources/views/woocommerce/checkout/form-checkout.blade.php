@@ -40,7 +40,19 @@ foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
 	}
 	$days_available = explode(", ",$days_available);
 
-	if(isset($pickup_date) && !empty($pickup_day_of_week) && !in_array($pickup_day_of_week, $days_available)){
+	$session_ymd = '';
+	if ($session_date_object instanceof DateTime) {
+		$session_ymd = $session_date_object->format('Y-m-d');
+	}
+
+	$skip_weekday = $session_ymd && \App\Helpers\LimitedMenu::skipsWeekdayRules((int) $product_id, $session_ymd);
+
+	if(isset($pickup_date) && !empty($pickup_day_of_week) && !$skip_weekday && !in_array($pickup_day_of_week, $days_available)){
+		$conflict = true;
+	}
+
+	$is_bundled_item = function_exists('wc_pb_is_bundled_cart_item') && wc_pb_is_bundled_cart_item($cart_item);
+	if ($session_ymd && !$is_bundled_item && \App\Helpers\LimitedMenu::blocksProduct((int) $product_id, $session_ymd)) {
 		$conflict = true;
 	}
 

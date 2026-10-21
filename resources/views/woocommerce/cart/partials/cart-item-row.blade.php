@@ -127,7 +127,7 @@
   </tr>
 @endif
 
-@if($item['availability_msg'] || $item['sold_out_conflict'] === 'sold_out_conflict')
+@if($item['availability_msg'] || $item['sold_out_conflict'] === 'sold_out_conflict' || !empty($item['limited_menu_conflict']))
   <tr class="not-available">
     <td colspan="5">{!! $item['availability_msg'] !!}</td>
   </tr>

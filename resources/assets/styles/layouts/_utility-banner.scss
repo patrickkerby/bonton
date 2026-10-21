@@ -38,6 +38,46 @@
     margin-left: auto;
   }
 
+  &__limited-menu {
+    background: $highlight;
+    color: #fff;
+
+    &[hidden] {
+      display: none !important;
+    }
+  }
+
+  &__limited-menu-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem 0.85rem;
+    max-width: 50rem;
+    margin: 0 auto;
+    padding: 0.45rem 1rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: center;
+
+    @media screen and (min-width: 768px) {
+      max-width: none;
+      padding: 0.5rem 1.25rem;
+    }
+
+    a {
+      color: #fff;
+      font-weight: 700;
+      text-decoration: underline;
+      white-space: nowrap;
+
+      &:hover {
+        opacity: 0.85;
+      }
+    }
+  }
+
   &__divider {
     width: 1px;
     height: 1.5rem;

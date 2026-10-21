@@ -6,6 +6,7 @@
   --}}
   <div class="utility-banner" data-total-units="0">
     <div id="pickup_vacation_dates_global" class="d-none" aria-hidden="true">{!! json_encode($pickup_vacation_dates) !!}</div>
+    <div id="limited_menu_periods_global" class="d-none" aria-hidden="true">{!! json_encode($limited_menu_periods_public ?? []) !!}</div>
     <div class="utility-banner__inner">
 
       <div class="utility-banner__cluster">
@@ -50,6 +51,12 @@
           'show_caret' => true,
           'id_suffix' => '-banner',
         ])
+      </div>
+    </div>
+    <div class="utility-banner__limited-menu" id="limited-menu-notice" hidden>
+      <div class="utility-banner__limited-menu-inner">
+        <span data-limited-menu-text></span>
+        <a data-limited-menu-link href="#"></a>
       </div>
     </div>
   </div>
