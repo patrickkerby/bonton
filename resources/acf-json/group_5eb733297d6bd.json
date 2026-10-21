@@ -59,6 +59,117 @@
                     "new_lines": ""
                 },
                 {
+                    "key": "field_698a282e57ca8",
+                    "label": "Featured Categories",
+                    "name": "featured_categories",
+                    "aria-label": "",
+                    "type": "group",
+                    "instructions": "Select up to 6 items per category. Use this to quickly showcase the scope of what Bon Ton has to offer. (We're not just bread!)",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "layout": "row",
+                    "sub_fields": [
+                        {
+                            "key": "field_698a28e857caa",
+                            "label": "Bakery Products",
+                            "name": "bakery_products",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "product"
+                            ],
+                            "post_status": [
+                                "publish"
+                            ],
+                            "taxonomy": [
+                                "product_cat:bakery"
+                            ],
+                            "return_format": "object",
+                            "multiple": 1,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "bidirectional": 0,
+                            "ui": 1,
+                            "bidirectional_target": []
+                        },
+                        {
+                            "key": "field_698a292757cab",
+                            "label": "Patisserie Products",
+                            "name": "patisserie_products",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "product"
+                            ],
+                            "post_status": [
+                                "publish"
+                            ],
+                            "taxonomy": [
+                                "product_cat:patisserie"
+                            ],
+                            "return_format": "object",
+                            "multiple": 1,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "bidirectional": 0,
+                            "ui": 1,
+                            "bidirectional_target": []
+                        },
+                        {
+                            "key": "field_698a296a57cac",
+                            "label": "Grocery Products",
+                            "name": "grocery_products",
+                            "aria-label": "",
+                            "type": "post_object",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "post_type": [
+                                "product"
+                            ],
+                            "post_status": [
+                                "publish"
+                            ],
+                            "taxonomy": [
+                                "product_cat:grocery"
+                            ],
+                            "return_format": "object",
+                            "multiple": 1,
+                            "allow_null": 0,
+                            "allow_in_bindings": 0,
+                            "bidirectional": 0,
+                            "ui": 1,
+                            "bidirectional_target": []
+                        }
+                    ]
+                },
+                {
                     "key": "field_5eb7a020c9480",
                     "label": "Featured Products Row 1",
                     "name": "featured_row_1",
@@ -460,7 +571,7 @@
             {
                 "param": "page_template",
                 "operator": "==",
-                "value": "views\/home-page.blade.php"
+                "value": "views/home-page.blade.php"
             }
         ]
     ],
@@ -474,5 +585,5 @@
     "description": "",
     "show_in_rest": false,
     "display_title": "",
-    "modified": 1774366537
+    "modified": 1792605265
 }
