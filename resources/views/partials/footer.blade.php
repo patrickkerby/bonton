@@ -14,6 +14,11 @@
         <div class="hours">
           <ul>
           @foreach ($acf_options->hours_of_operation as $item)
+            @php
+              if (is_array($item)) {
+                $item = (object) $item;
+              }
+            @endphp
             <li>{{ $item->title }}: <span class="details">{{ $item->details }}</span></li>
           @endforeach
           </ul>

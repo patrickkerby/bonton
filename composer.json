@@ -38,14 +38,14 @@
   "require": {
     "php": ">=8.0",
     "composer/installers": "^2.0",
-    "illuminate/support": "^8.0",
-    "roots/sage-lib": "dev-master",
+    "illuminate/support": "8.83.27",
+    "roots/sage-lib": "dev-master#9be12aca39e147d2020d48256936ac4b487dde1e",
     "soberwp/controller": "~2.1.2",
-    "roots/sage-installer": "dev-master",
+    "roots/sage-installer": "dev-master#50c9698601eb7920bbf0d3fdb4ca54625a5944f9",
     "roots/sage-woocommerce": "^1.0",
     "automattic/woocommerce": "^3.0",
     "illuminate/config": "^8.0",
-    "nesbot/carbon": "2.34.0 as 1.25.0",
+    "nesbot/carbon": "^2.72",
     "kylekatarnls/laravel-carbon-2": "^1.0.0"
   },
   "require-dev": {
@@ -59,10 +59,7 @@
     ]
   },
   "config": {
-    "platform": {
-      "php": "8.0.999"
-    },
-    "platform-check": false,
+    "platform-check": true,
     "allow-plugins": {
       "composer/installers": true
     }
