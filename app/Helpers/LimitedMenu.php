@@ -14,8 +14,12 @@ use DateTime;
 class LimitedMenu
 {
     const GIFT_CERTIFICATE_ID = 5317;
+    const GENERATED_CATEGORY_META = 'bonton_limited_menu';
 
     private static $periods = null;
+    private static $generated_category_ids = null;
+    private static $loading_generated_ids = false;
+    private static $syncing_categories = false;
 
     /**
      * @return array<int, array<string, mixed>>
@@ -163,9 +167,71 @@ class LimitedMenu
             return true;
         }
 
-        $category_ids = self::categoryAndChildren((int) $period['category_id']);
+        return self::productIsInPeriodCategory($product_id, $period);
+    }
 
-        return $category_ids && has_term($category_ids, 'product_cat', $product_id);
+    /**
+     * Enabled, not-yet-ended periods this product is actually in (category allowlist).
+     * Gift certificates that are only allowed as an exception are omitted.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function periodsForProduct(int $product_id): array
+    {
+        return self::upcomingPeriodsForProduct($product_id, true);
+    }
+
+    /**
+     * Enabled, not-yet-ended periods this product cannot be ordered on.
+     * Gift certificates stay purchasable, so they are not listed here.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function periodsExcludingProduct(int $product_id): array
+    {
+        return self::upcomingPeriodsForProduct($product_id, false);
+    }
+
+    public static function productHasMenuNotes(int $product_id): bool
+    {
+        return self::productFlagLabels($product_id) || self::productExclusionLabels($product_id);
+    }
+
+    /**
+     * Date labels for upcoming/active periods this product is on.
+     *
+     * @return string[]
+     */
+    public static function productFlagLabels(int $product_id): array
+    {
+        return self::dateLabelsForPeriods(self::periodsForProduct($product_id));
+    }
+
+    /**
+     * Date labels for upcoming/active periods this product is off.
+     *
+     * @return string[]
+     */
+    public static function productExclusionLabels(int $product_id): array
+    {
+        return self::dateLabelsForPeriods(self::periodsExcludingProduct($product_id));
+    }
+
+    /**
+     * Sidebar items for periods this product is on, and periods it is not.
+     */
+    public static function echoProductFlagListItems(int $product_id): void
+    {
+        self::echoFlagItem(
+            'Limited menu',
+            self::productFlagLabels($product_id),
+            'Shorter menu on these pickup dates. This item is included, in addition to the days above.'
+        );
+        self::echoFlagItem(
+            'Not on the limited menu',
+            self::productExclusionLabels($product_id),
+            'Shorter menu on these pickup dates. This item isn’t included.'
+        );
     }
 
     /**
@@ -216,6 +282,129 @@ class LimitedMenu
         }
 
         return array_values(array_diff($vacation_dates, $open));
+    }
+
+    /**
+     * @param bool $included True for allowlisted periods, false for periods that block the product.
+     * @return array<int, array<string, mixed>>
+     */
+    private static function upcomingPeriodsForProduct(int $product_id, bool $included): array
+    {
+        if ($product_id <= 0 || self::isWholesale()) {
+            return [];
+        }
+
+        $today = (new DateTime('today', new \DateTimeZone('America/Edmonton')))->format('Y-m-d');
+        $out = [];
+
+        foreach (self::getPeriods() as $period) {
+            if ($period['end'] < $today) {
+                continue;
+            }
+
+            $on_menu = self::productIsAllowed($product_id, $period);
+            if ($included) {
+                // Gift certificates can be ordered without being on the menu. Don't claim they are.
+                if (!self::productIsInPeriodCategory($product_id, $period)) {
+                    continue;
+                }
+            } elseif ($on_menu) {
+                continue;
+            }
+
+            $out[] = $period;
+        }
+
+        usort($out, function ($a, $b) {
+            return strcmp($a['start'], $b['start']);
+        });
+
+        return $out;
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $periods
+     * @return string[]
+     */
+    private static function dateLabelsForPeriods(array $periods): array
+    {
+        $labels = [];
+        foreach ($periods as $period) {
+            $label = self::formatPeriodFlagLabel($period);
+            if ($label !== '') {
+                $labels[] = $label;
+            }
+        }
+
+        return $labels;
+    }
+
+    /**
+     * @param string[] $labels
+     */
+    private static function echoFlagItem(string $title, array $labels, string $hint): void
+    {
+        if (!$labels) {
+            return;
+        }
+
+        echo '<li class="limited-menu-flag">' . esc_html($title);
+        foreach ($labels as $label) {
+            echo '<span class="limited-menu-flag__dates">' . esc_html($label) . '</span>';
+        }
+        echo '<span class="limited-menu-flag__hint">' . esc_html($hint) . '</span>';
+        echo '</li>';
+    }
+
+    private static function productIsInPeriodCategory(int $product_id, array $period): bool
+    {
+        if ($product_id <= 0 || empty($period['category_id'])) {
+            return false;
+        }
+
+        $category_ids = self::categoryAndChildren((int) $period['category_id']);
+
+        return $category_ids && has_term($category_ids, 'product_cat', $product_id);
+    }
+
+    private static function formatPeriodFlagLabel(array $period): string
+    {
+        $tz = new \DateTimeZone('America/Edmonton');
+        $start = DateTime::createFromFormat('!Y-m-d', $period['start'], $tz);
+        $end = DateTime::createFromFormat('!Y-m-d', $period['end'], $tz);
+        if (!$start || !$end) {
+            return '';
+        }
+
+        $this_year = (new DateTime('today', $tz))->format('Y');
+        $needs_year = $start->format('Y') !== $this_year
+            || $end->format('Y') !== $this_year
+            || $start->format('Y') !== $end->format('Y');
+
+        if ($start->format('Y-m-d') === $end->format('Y-m-d')) {
+            return self::formatFlagDate($start, $needs_year);
+        }
+
+        if ($start->format('Y-m') === $end->format('Y-m')) {
+            $right = $end->format('j');
+            if ($needs_year) {
+                $right .= $end->format(', Y');
+            }
+
+            return self::formatFlagDate($start, false) . '–' . $right;
+        }
+
+        return self::formatFlagDate($start, $needs_year) . ' – ' . self::formatFlagDate($end, $needs_year);
+    }
+
+    private static function formatFlagDate(DateTime $date, bool $include_year): string
+    {
+        $label = $date->format('M. j');
+        if ($include_year) {
+            $label .= $date->format(', Y');
+        }
+
+        return $label;
     }
 
     /**
@@ -310,5 +499,244 @@ class LimitedMenu
     private static function isWholesale(): bool
     {
         return function_exists('\\App\\bonton_is_wholesale_user') && \App\bonton_is_wholesale_user();
+    }
+
+    public static function register(): void
+    {
+        add_action('acf/save_post', [self::class, 'syncGeneratedCategories'], 20);
+        add_action('pre_get_terms', [self::class, 'hideGeneratedFromTermQueries']);
+        add_filter('get_the_terms', [self::class, 'hideGeneratedFromPostTerms'], 20, 3);
+    }
+
+    /**
+     * Blank menu category: create one named from the title.
+     * A category chosen by hand (Bakery, and so on) is left alone.
+     * Renaming the title renames a generated category. It is not deleted when the dates pass.
+     *
+     * @param mixed $post_id
+     */
+    public static function syncGeneratedCategories($post_id): void
+    {
+        if (self::$syncing_categories || ($post_id !== 'options' && $post_id !== 'option')) {
+            return;
+        }
+        if (!function_exists('get_field') || !function_exists('update_field')) {
+            return;
+        }
+
+        $rows = get_field('limited_menu_periods', 'option');
+        if (!is_array($rows)) {
+            return;
+        }
+
+        $changed = false;
+        foreach ($rows as $index => $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+
+            $name = self::categoryNameForRow($row);
+            $category_id = self::termIdFromField($row['menu_category'] ?? 0);
+            $term = $category_id > 0 ? get_term($category_id, 'product_cat') : null;
+            if (!$term || is_wp_error($term)) {
+                $category_id = 0;
+                $term = null;
+            }
+
+            if ($category_id > 0) {
+                if ($name !== '' && self::isGeneratedCategory($category_id) && $term->name !== $name) {
+                    wp_update_term($category_id, 'product_cat', [
+                        'name' => $name,
+                        'description' => self::generatedCategoryDescription(),
+                    ]);
+                    self::$generated_category_ids = null;
+                }
+                continue;
+            }
+
+            if ($name === '') {
+                continue;
+            }
+
+            $created_id = self::createGeneratedCategory($name);
+            if ($created_id <= 0) {
+                continue;
+            }
+
+            $rows[$index]['menu_category'] = $created_id;
+            $changed = true;
+        }
+
+        if (!$changed) {
+            return;
+        }
+
+        self::$syncing_categories = true;
+        update_field('limited_menu_periods', $rows, 'option');
+        self::$syncing_categories = false;
+        self::$periods = null;
+    }
+
+    public static function isGeneratedCategory(int $category_id): bool
+    {
+        if ($category_id <= 0) {
+            return false;
+        }
+
+        return get_term_meta($category_id, self::GENERATED_CATEGORY_META, true) === '1';
+    }
+
+    /**
+     * @return int[]
+     */
+    public static function generatedCategoryIds(): array
+    {
+        if (self::$generated_category_ids !== null) {
+            return self::$generated_category_ids;
+        }
+        if (self::$loading_generated_ids) {
+            return [];
+        }
+
+        self::$loading_generated_ids = true;
+        $ids = get_terms([
+            'taxonomy' => 'product_cat',
+            'hide_empty' => false,
+            'fields' => 'ids',
+            'meta_query' => [
+                [
+                    'key' => self::GENERATED_CATEGORY_META,
+                    'value' => '1',
+                ],
+            ],
+        ]);
+        self::$loading_generated_ids = false;
+
+        self::$generated_category_ids = array_map('intval', is_array($ids) ? $ids : []);
+
+        return self::$generated_category_ids;
+    }
+
+    /**
+     * @param \WP_Term_Query $query
+     */
+    public static function hideGeneratedFromTermQueries($query): void
+    {
+        if (self::$loading_generated_ids || !self::hidingGeneratedCategories() || !is_object($query)) {
+            return;
+        }
+
+        $taxonomies = $query->query_vars['taxonomy'] ?? null;
+        if (!$taxonomies || !in_array('product_cat', (array) $taxonomies, true)) {
+            return;
+        }
+
+        foreach (['slug', 'name', 'include', 'term_taxonomy_id', 'object_ids'] as $lookup) {
+            if (!empty($query->query_vars[$lookup])) {
+                return;
+            }
+        }
+
+        $ids = self::generatedCategoryIds();
+        if (!$ids) {
+            return;
+        }
+
+        $exclude = array_map('intval', (array) ($query->query_vars['exclude'] ?? []));
+        $query->query_vars['exclude'] = array_values(array_unique(array_merge($exclude, $ids)));
+    }
+
+    /**
+     * @param mixed $terms
+     * @param mixed $post_id
+     * @param mixed $taxonomy
+     * @return mixed
+     */
+    public static function hideGeneratedFromPostTerms($terms, $post_id, $taxonomy)
+    {
+        if ($taxonomy !== 'product_cat' || !is_array($terms)) {
+            return $terms;
+        }
+
+        return array_values(array_filter($terms, function ($term) {
+            return !is_object($term) || !self::isGeneratedCategory((int) $term->term_id);
+        }));
+    }
+
+    private static function categoryNameForRow(array $row): string
+    {
+        $title = trim((string) ($row['title'] ?? ''));
+        if ($title !== '') {
+            return $title;
+        }
+
+        $start = self::normalizeDate($row['start_date'] ?? null);
+        $end = self::normalizeDate($row['end_date'] ?? null);
+        if (!$start || !$end) {
+            return '';
+        }
+
+        $label = self::formatPeriodFlagLabel([
+            'start' => $start,
+            'end' => $end,
+        ]);
+
+        return $label !== '' ? 'Limited menu ' . $label : '';
+    }
+
+    private static function createGeneratedCategory(string $name): int
+    {
+        $name = function_exists('mb_substr') ? mb_substr($name, 0, 200) : substr($name, 0, 200);
+        $slug = self::uniqueCategorySlug($name);
+        $created = wp_insert_term($name, 'product_cat', [
+            'slug' => $slug,
+            'description' => self::generatedCategoryDescription(),
+        ]);
+
+        if (is_wp_error($created) || empty($created['term_id'])) {
+            return 0;
+        }
+
+        $category_id = (int) $created['term_id'];
+        update_term_meta($category_id, self::GENERATED_CATEGORY_META, '1');
+        self::$generated_category_ids = null;
+
+        return $category_id;
+    }
+
+    private static function uniqueCategorySlug(string $name): string
+    {
+        $base = 'limited-menu-' . sanitize_title($name);
+        if ($base === 'limited-menu-') {
+            $base = 'limited-menu';
+        }
+
+        $slug = $base;
+        $suffix = 2;
+        while (term_exists($slug, 'product_cat')) {
+            $slug = $base . '-' . $suffix;
+            $suffix++;
+        }
+
+        return $slug;
+    }
+
+    private static function generatedCategoryDescription(): string
+    {
+        return 'Allowlist for a limited menu. Hidden from the shop category filters.';
+    }
+
+    private static function hidingGeneratedCategories(): bool
+    {
+        if (!is_admin()) {
+            return true;
+        }
+        if (!wp_doing_ajax()) {
+            return false;
+        }
+
+        $referer = wp_get_referer();
+
+        return !$referer || strpos($referer, admin_url()) !== 0;
     }
 }

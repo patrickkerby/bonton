@@ -465,3 +465,6 @@ function clear_breadclub_caches($order_id = null) {
     }
 }
 
+\App\Helpers\LimitedMenu::register();
+\App\Helpers\LimitedMenuChecklist::register();
+

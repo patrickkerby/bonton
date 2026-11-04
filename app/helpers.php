@@ -243,6 +243,87 @@ function get_product_display_category($product_id)
 }
 
 /**
+ * Shop grid heading for the active WPF category filter.
+ * Empty when the catalogue is unfiltered.
+ */
+function bonton_shop_browse_heading(): string
+{
+    $raw = '';
+    if (isset($_REQUEST['wpf_wpf_cat'])) {
+        $raw = wp_unslash($_REQUEST['wpf_wpf_cat']);
+    }
+    if (is_array($raw)) {
+        $raw = implode(',', array_map('strval', $raw));
+    }
+    if (!is_string($raw) || trim($raw) === '') {
+        return '';
+    }
+
+    $terms = [];
+    foreach (explode(',', $raw) as $slug) {
+        $slug = sanitize_title(rawurldecode(trim($slug)));
+        if ($slug === '') {
+            continue;
+        }
+        $term = get_term_by('slug', $slug, 'product_cat');
+        if ($term && !is_wp_error($term)) {
+            $terms[] = $term;
+        }
+    }
+    if (!$terms) {
+        return '';
+    }
+
+    // A tag submit can still carry the menu you opened from. Show the
+    // category that was actually chosen: the one deepest in the tree.
+    usort($terms, function ($a, $b) {
+        $depth = static function ($term) {
+            return count(get_ancestors($term->term_id, 'product_cat'));
+        };
+
+        return $depth($b) <=> $depth($a);
+    });
+
+    return html_entity_decode($terms[0]->name, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+}
+
+/**
+ * Product tags currently selected in the shop "Show only" filter.
+ *
+ * @return array<int, array{slug: string, name: string}>
+ */
+function bonton_shop_browse_tags(): array
+{
+    $raw = '';
+    if (isset($_REQUEST['wpf_show-only'])) {
+        $raw = wp_unslash($_REQUEST['wpf_show-only']);
+    }
+    if (is_array($raw)) {
+        $raw = implode(',', array_map('strval', $raw));
+    }
+    if (!is_string($raw) || trim($raw) === '') {
+        return [];
+    }
+
+    $tags = [];
+    foreach (explode(',', $raw) as $slug) {
+        $slug = sanitize_title(rawurldecode(trim($slug)));
+        if ($slug === '' || isset($tags[$slug])) {
+            continue;
+        }
+        $term = get_term_by('slug', $slug, 'product_tag');
+        if ($term && !is_wp_error($term)) {
+            $tags[$slug] = [
+                'slug' => $term->slug,
+                'name' => html_entity_decode($term->name, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+            ];
+        }
+    }
+
+    return array_values($tags);
+}
+
+/**
  * All product categories for inventory/list tables, same markup as
  * wc_get_product_category_list(), with Yoast primary first when set
  * (display + sort by that leading category).

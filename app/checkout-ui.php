@@ -559,13 +559,31 @@ function bonton_checkout_ui_js()
             }, 250);
         }
 
+        function reloadMonerisIframe() {
+            var frame = document.getElementById('wc-moneris-account-number');
+            if (!frame) {
+                return;
+            }
+            var src = frame.getAttribute('src') || frame.src;
+            if (!src || src.indexOf('about:blank') === 0) {
+                return;
+            }
+            frame.setAttribute('src', 'about:blank');
+            window.setTimeout(function () {
+                frame.setAttribute('src', src);
+            }, 50);
+        }
+
         function openPayModal() {
             if (!$modal.length) {
                 return;
             }
             $modal.attr('hidden', false).addClass('is-open');
             $('body').addClass('bonton-pay-modal-open');
-            $modal.find('.bonton-pay-modal__close').trigger('focus');
+            reloadMonerisIframe();
+            window.setTimeout(function () {
+                $modal.find('.bonton-pay-modal__close').trigger('focus');
+            }, 100);
         }
 
         function closePayModal() {
@@ -594,15 +612,14 @@ function bonton_checkout_ui_js()
             if ($includePayment.length) {
                 $includePayment.val('1');
             }
+            // Open first so the Moneris iframe is injected/reloaded in a visible
+            // container. Firefox Android often never paints frames that started
+            // inside display:none, especially with Enhanced Tracking Protection.
+            openPayModal();
             $(document.body).one('updated_checkout', function () {
-                openPayModal();
+                reloadMonerisIframe();
             });
             $(document.body).trigger('update_checkout');
-            window.setTimeout(function () {
-                if (!$modal.hasClass('is-open')) {
-                    openPayModal();
-                }
-            }, 1200);
         });
 
         $modal.on('click', '.bonton-pay-modal__close, .bonton-pay-modal__backdrop', function (e) {

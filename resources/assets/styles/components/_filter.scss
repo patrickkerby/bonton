@@ -121,8 +121,8 @@
         height: 8px;
         display: flex;
         position: absolute;
-        left: 4px;
-        top: 8px;
+        left: 2px;
+        top: 6px;
         background: $highlight;
         border-radius: 100%;
 
@@ -298,6 +298,77 @@
 
     .wpf_item_count {
       display: inline-flex;
+    }
+  }
+
+  // Day-of-week dropdown. Match the site field control so the Select2
+  // label span stays inside the box instead of stretching the sidebar.
+  .wpf_form {
+    select.wpf_dropdown {
+      @include bonton-field-control;
+
+      height: 44px;
+      padding: 0 2rem 0 0.75rem;
+      color: $charcoal;
+      font-family: $font-family-sans-serif;
+      font-size: 16px;
+      appearance: none;
+      background-image: none;
+    }
+
+    .select2-container {
+      width: 100% !important;
+      max-width: 100%;
+    }
+
+    .select2-container--default .select2-selection--single {
+      @include bonton-field-control;
+
+      position: relative;
+      height: 44px;
+      overflow: hidden;
+
+      .select2-selection__rendered {
+        display: block;
+        height: 40px;
+        margin: 0;
+        padding: 0 2rem 0 0.75rem;
+        line-height: 40px;
+        color: $charcoal;
+        font-family: $font-family-sans-serif;
+        font-size: 16px;
+        background: transparent;
+      }
+
+      .select2-selection__arrow {
+        display: none;
+      }
+
+      &::after {
+        position: absolute;
+        top: 50%;
+        right: 0.85rem;
+        z-index: 2;
+        content: "";
+        margin-top: -5px;
+        width: 8px;
+        height: 8px;
+        rotate: 135deg;
+        border-color: #383838;
+        border-style: solid;
+        border-width: 2px 2px 0 0;
+        pointer-events: none;
+      }
+    }
+  }
+
+  .wpf_selectbox.select2-dropdown {
+    border: $bonton-field-border;
+    border-radius: 2px;
+
+    .select2-results__option--highlighted[aria-selected] {
+      background: $highlight;
+      color: #fff;
     }
   }
 

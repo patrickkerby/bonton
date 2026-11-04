@@ -192,6 +192,24 @@ div.pp_woocommerce_quick_view {
     }
   }
 
+  .sidebar ul li.limited-menu-flag {
+    line-height: 1.35;
+
+    .limited-menu-flag__dates {
+      display: block;
+      margin-top: 0.1rem;
+      white-space: nowrap;
+    }
+
+    .limited-menu-flag__hint {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 13px;
+      line-height: 1.35;
+      color: #575757;
+    }
+  }
+
   .sidebar .notice {
     background: $highlight;
     padding: 1rem;
@@ -807,6 +825,33 @@ div.pp_woocommerce_quick_view {
           width: 30px;
           height: 19px;
           background: url(../../images/check.svg) no-repeat center center;
+        }
+      }
+
+      li.limited-menu-flag {
+        grid-column: 1 / -1;
+        display: block;
+        position: relative;
+        padding-left: 30px;
+
+        &::before {
+          position: absolute;
+          left: 0;
+          top: 0;
+        }
+
+        .limited-menu-flag__dates {
+          display: block;
+          margin-top: 0.1rem;
+          font-weight: 500;
+          white-space: nowrap;
+        }
+
+        .limited-menu-flag__hint {
+          display: block;
+          margin-top: 0.25rem;
+          font-weight: 500;
+          line-height: 1.35;
         }
       }
     }

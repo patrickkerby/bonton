@@ -16,6 +16,92 @@ export default {
   },
   finalize() {
     // JavaScript to be fired on all pages, after page specific JS is fired
+
+    // Shop filters exist twice (mobile + desktop) with the same input ids, and
+    // each form action keeps the category from the first page load. A later
+    // tag click can submit the other form, which never had the subcategory
+    // radio checked, so the original category in the action wins.
+    function uniquifyWpfFormIds() {
+      $('.wpf_form').each(function (index) {
+        var $form = $(this);
+        if ($form.attr('data-bonton-wpf-ids')) {
+          return;
+        }
+        $form.attr('data-bonton-wpf-ids', '1');
+        $form.find('[id]').each(function () {
+          var id = this.id;
+          if (!id || id.indexOf('bonton-wpf-') === 0) {
+            return;
+          }
+          var next = 'bonton-wpf-' + index + '-' + id;
+          $form.find('label[for="' + id + '"]').attr('for', next);
+          this.id = next;
+        });
+      });
+    }
+
+    function syncWpfFormAction() {
+      var url = new URL(window.location.href);
+      // WPF builds the next address from this action and only adds fields
+      // that are still checked. An unchecked tag is omitted, so leave those
+      // params out of the action or they stay in the URL after you clear them.
+      $('.wpf_form').first().find('input[type="checkbox"]').each(function () {
+        var name = (this.name || '').replace(/\[\]$/, '');
+        if (name) {
+          url.searchParams.delete(name);
+        }
+      });
+      $('.wpf_form').attr('action', url.pathname + url.search);
+    }
+
+    if ($('.wpf_form').length) {
+      uniquifyWpfFormIds();
+      syncWpfFormAction();
+
+      // This Select2 build opens the list on mouse press and chooses the
+      // option under the cursor on release. A normal click therefore lands
+      // on All and closes. Only keep the release when the press started
+      // on an option.
+      var wpfSelectDownOnOption = false;
+      document.addEventListener('mousedown', function (event) {
+        var target = event.target;
+        wpfSelectDownOnOption = !!(target && target.closest && target.closest('.wpf_selectbox .select2-results__option'));
+      }, true);
+      document.addEventListener('mouseup', function (event) {
+        var target = event.target;
+        var option = target && target.closest && target.closest('.wpf_selectbox .select2-results__option');
+        if (option && !wpfSelectDownOnOption) {
+          event.stopPropagation();
+        }
+        wpfSelectDownOnOption = false;
+      }, true);
+      $(document).on('wpf_ajax_success', function () {
+        syncWpfFormAction();
+        uniquifyWpfFormIds();
+      });
+
+      $(document).on('click', '.shop-browse-tag', function () {
+        var slug = $(this).attr('data-tag');
+        if (!slug) {
+          return;
+        }
+        $('.wpf_form input[type="checkbox"][name="wpf_show-only[]"]').filter(function () {
+          return this.value === slug;
+        }).prop('checked', false);
+
+        var $form = $();
+        $('.wpf_form').each(function () {
+          if ($(this).is(':visible')) {
+            $form = $(this);
+          }
+        });
+        if (!$form.length) {
+          $form = $('.wpf_form').last();
+        }
+        $form.trigger('submit');
+      });
+    }
+
     $( '.pack' ).click(function() {
       $( this ).toggleClass( 'packed' );
     });

@@ -116,7 +116,7 @@
                     "name": "menu_category",
                     "aria-label": "",
                     "type": "taxonomy",
-                    "instructions": "Allowlist. Assign products (or a spreadsheet import) to this category. Subcategories are included.",
+                    "instructions": "Leave blank to create a category from the title when you save. Or choose an existing category, such as Bakery, to use that whole category. Subcategories are included.",
                     "required": 0,
                     "conditional_logic": 0,
                     "wrapper": {
@@ -179,5 +179,5 @@
     "active": true,
     "description": "",
     "show_in_rest": 0,
-    "modified": 1761063600
+    "modified": 1762225080
 }

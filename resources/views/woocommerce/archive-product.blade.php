@@ -20,7 +20,29 @@ the readme will list any important changes.
   @php
     do_action('get_header', 'shop');
     do_action('woocommerce_before_main_content');
+    $browse_heading = \App\bonton_shop_browse_heading();
+    $browse_tags = \App\bonton_shop_browse_tags();
   @endphp
+
+  @if ($browse_heading || $browse_tags)
+    <div class="shop-browse-heading-row">
+      @if ($browse_heading)
+        <h2 class="shop-browse-heading">{{ $browse_heading }}:</h2>
+      @endif
+      @if ($browse_tags)
+        <ul class="shop-browse-tags">
+          @foreach ($browse_tags as $tag)
+            <li>
+              <button type="button" class="shop-browse-tag" data-tag="{{ $tag['slug'] }}" aria-label="Remove {{ $tag['name'] }}">
+                {{ $tag['name'] }}
+                <span class="shop-browse-tag-remove" aria-hidden="true">&times;</span>
+              </button>
+            </li>
+          @endforeach
+        </ul>
+      @endif
+    </div>
+  @endif
 
   @if(woocommerce_product_loop())
     <section class="row no-gutters justify-content-center">

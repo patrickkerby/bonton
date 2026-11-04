@@ -123,6 +123,8 @@ if(isset($pickup_restriction_end_data_check)) {
 							// $days = implode(', ', $days_available);
 							echo '<li>Available: <span>'.$days_available_string .'</span></li>';
 					}
+
+					\App\Helpers\LimitedMenu::echoProductFlagListItems((int) $product_id);
 					
 					// get product_tags of the current product
 					$current_tags = get_the_terms( $product_id, 'product_tag' );
@@ -225,21 +227,22 @@ if(isset($pickup_restriction_end_data_check)) {
 			<div class="product_meta d-md-none">
 				
 					<?php
-						// get product_tags of the current product
-						if ( $current_tags && ! is_wp_error( $current_tags ) ) { 
-							echo "<ul>";
-							foreach ($current_tags as $tag) {
-								$tag_title = $tag->name; // tag name
-								$tag_link = get_term_link( $tag ); // might use this later. for now only displaying text
-
-								if ($tag_title != "Bulk Discount") {
-									echo '<li>'.$tag_title.'</li>';
+						$limited_menu_labels = \App\Helpers\LimitedMenu::productHasMenuNotes((int) $product_id);
+						$has_tags = !empty($current_tags) && ! is_wp_error( $current_tags );
+						if ( $limited_menu_labels || $has_tags ) {
+							echo '<ul>';
+							\App\Helpers\LimitedMenu::echoProductFlagListItems((int) $product_id);
+							if ( $has_tags ) {
+								foreach ($current_tags as $tag) {
+									$tag_title = $tag->name;
+									if ($tag_title != "Bulk Discount") {
+										echo '<li>'.$tag_title.'</li>';
+									}
 								}
 							}
-							echo "</ul>";
+							echo '</ul>';
 						}
 					?>
-					</ul>
 					<?php echo $bulk_discount ?>
 					<?php echo $sixth_item_free ?>					
 			</div>
