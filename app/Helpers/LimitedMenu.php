@@ -1193,6 +1193,16 @@ class LimitedMenu
             return strcasecmp($a->name, $b->name);
         });
 
+        // The filter hides a category whose own count is 0. Products live on
+        // the menu categories, so the parent total has to include them.
+        $child_count = 0;
+        foreach ($children as $child) {
+            $child_count += (int) $child->count;
+        }
+        if ($child_count > (int) $parent->count) {
+            $parent->count = $child_count;
+        }
+
         return array_merge([$parent], $rest, $children);
     }
 
