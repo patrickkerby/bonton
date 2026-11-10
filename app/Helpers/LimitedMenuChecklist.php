@@ -47,7 +47,7 @@ class LimitedMenuChecklist
             return;
         }
 
-        echo '<p style="margin:0 0 12px;">Download every published product. Each saved limited menu is a column. Mark <strong>Yes</strong> or <strong>No</strong> in Excel, then upload the sheet here. This only adds or removes those menu categories. A blank cell is left unchanged. Add a title and click Update, then download a fresh sheet.</p>';
+        echo '<p style="margin:0 0 12px;">Download every published product, grouped by shop category. Each saved limited menu is a column. Mark <strong>Yes</strong> or <strong>No</strong> in Excel, then upload the sheet here. This only adds or removes those menu categories. The category column is for reference. A blank cell is left unchanged. Add a title and click Update, then download a fresh sheet.</p>';
         self::$uploadFormNeeded = true;
         echo '<p style="margin:0 0 12px;"><a class="button button-primary" href="' . esc_url($export_url) . '">Download CSV</a></p>';
         echo '<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0;">';
@@ -124,16 +124,33 @@ class LimitedMenuChecklist
         }
 
         fwrite($out, "\xEF\xBB\xBF");
-        $header = ['product_id', 'name'];
+        $header = ['product_id', 'name', 'category'];
         foreach ($columns as $column) {
             $header[] = $column['header'];
         }
         fputcsv($out, $header);
 
+        $rows = [];
         foreach (self::publishedProductIds() as $product_id) {
-            $row = [$product_id, get_the_title($product_id)];
+            $rows[] = [
+                'id' => $product_id,
+                'name' => get_the_title($product_id),
+                'category' => self::categoryLabel($product_id),
+            ];
+        }
+        usort($rows, function ($a, $b) {
+            $by_category = strcasecmp($a['category'], $b['category']);
+            if ($by_category !== 0) {
+                return $by_category;
+            }
+
+            return strcasecmp($a['name'], $b['name']);
+        });
+
+        foreach ($rows as $item) {
+            $row = [$item['id'], $item['name'], $item['category']];
             foreach ($columns as $column) {
-                $row[] = has_term((int) $column['category_id'], 'product_cat', $product_id) ? 'Yes' : 'No';
+                $row[] = has_term((int) $column['category_id'], 'product_cat', $item['id']) ? 'Yes' : 'No';
             }
             fputcsv($out, $row);
         }
@@ -319,6 +336,83 @@ class LimitedMenuChecklist
         }
 
         return $columns;
+    }
+
+    /**
+     * Shop category used to group the sheet. Prefers Bread, Sweet Buns, and the
+     * other department categories over seasonal or collection labels.
+     */
+    private static function categoryLabel(int $product_id): string
+    {
+        $terms = get_the_terms($product_id, 'product_cat');
+        if (!is_array($terms)) {
+            return '';
+        }
+
+        $generated = array_fill_keys(LimitedMenu::generatedCategoryIds(), true);
+        $assigned = [];
+        foreach ($terms as $term) {
+            if (isset($generated[(int) $term->term_id])) {
+                continue;
+            }
+            $assigned[(int) $term->term_id] = $term;
+        }
+        if (!$assigned) {
+            return '';
+        }
+
+        $leaves = [];
+        foreach ($assigned as $term_id => $term) {
+            $is_parent = false;
+            foreach ($assigned as $other) {
+                if ((int) $other->parent === $term_id) {
+                    $is_parent = true;
+                    break;
+                }
+            }
+            if (!$is_parent) {
+                $leaves[] = $term;
+            }
+        }
+
+        $departments = array_fill_keys(['bakery', 'patisserie', 'grocery', 'specialties'], true);
+        $preferred = [];
+        $fallback = [];
+        foreach ($leaves as $term) {
+            $root = $term;
+            while ($root->parent) {
+                $parent = get_term((int) $root->parent, 'product_cat');
+                if (!$parent || is_wp_error($parent)) {
+                    break;
+                }
+                $root = $parent;
+            }
+            if (isset($departments[$root->slug])) {
+                $preferred[] = $term;
+            } else {
+                $fallback[] = $term;
+            }
+        }
+
+        $labels = [];
+        foreach ($preferred ?: $fallback as $term) {
+            $name = self::decodeTermName($term->name);
+            if ($term->parent) {
+                $parent = get_term((int) $term->parent, 'product_cat');
+                if ($parent && !is_wp_error($parent)) {
+                    $name = self::decodeTermName($parent->name) . ' > ' . $name;
+                }
+            }
+            $labels[] = $name;
+        }
+        natcasesort($labels);
+
+        return implode(', ', $labels);
+    }
+
+    private static function decodeTermName(string $name): string
+    {
+        return html_entity_decode($name, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     }
 
     /**
