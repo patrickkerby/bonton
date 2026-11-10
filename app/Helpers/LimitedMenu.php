@@ -273,27 +273,21 @@ class LimitedMenu
         }
         echo '</div>';
 
-        foreach (self::periodsForProduct($product_id) as $period) {
-            $range = self::formatAvailabilityRange($period);
-            if ($range === '') {
-                continue;
-            }
+        $included_dates = self::mergedPeriodLabel(self::periodsForProduct($product_id));
+        if ($included_dates !== '') {
             echo '<p class="product-availability__menu">';
             echo '<strong>Special Availability:</strong>';
-            echo '<span>Available every day</span>';
-            echo '<strong>' . esc_html($range) . '</strong>';
+            echo '<span>Available</span>';
+            echo '<strong>' . esc_html($included_dates) . '</strong>';
             echo '</p>';
         }
 
-        foreach (self::periodsExcludingProduct($product_id) as $period) {
-            $range = self::formatAvailabilityRange($period);
-            if ($range === '') {
-                continue;
-            }
+        $excluded_dates = self::mergedPeriodLabel(self::periodsExcludingProduct($product_id));
+        if ($excluded_dates !== '') {
             echo '<p class="product-availability__menu">';
             echo '<strong>Limited Availability:</strong>';
             echo '<span>Not available</span>';
-            echo '<strong>' . esc_html($range) . '</strong>';
+            echo '<strong>' . esc_html($excluded_dates) . '</strong>';
             echo '</p>';
         }
 
@@ -574,6 +568,83 @@ class LimitedMenu
         $category_ids = self::categoryAndChildren((int) $period['category_id']);
 
         return $category_ids && has_term($category_ids, 'product_cat', $product_id);
+    }
+
+    /**
+     * One line of dates for every period with the same outcome.
+     * Adjacent or overlapping menus become a single range. A gap stays split.
+     *
+     * @param array<int, array<string, mixed>> $periods
+     */
+    private static function mergedPeriodLabel(array $periods): string
+    {
+        $ranges = [];
+        foreach ($periods as $period) {
+            if (empty($period['start']) || empty($period['end'])) {
+                continue;
+            }
+            $ranges[] = [
+                'start' => (string) $period['start'],
+                'end' => (string) $period['end'],
+            ];
+        }
+        if (!$ranges) {
+            return '';
+        }
+
+        usort($ranges, function ($a, $b) {
+            return strcmp($a['start'], $b['start']);
+        });
+
+        $merged = [];
+        foreach ($ranges as $range) {
+            if (!$merged) {
+                $merged[] = $range;
+                continue;
+            }
+            $last = count($merged) - 1;
+            if ($range['start'] <= self::nextDay($merged[$last]['end'])) {
+                if ($range['end'] > $merged[$last]['end']) {
+                    $merged[$last]['end'] = $range['end'];
+                }
+                continue;
+            }
+            $merged[] = $range;
+        }
+
+        $labels = [];
+        foreach ($merged as $range) {
+            $label = self::formatAvailabilityRange($range);
+            if ($label !== '') {
+                $labels[] = $label;
+            }
+        }
+
+        $count = count($labels);
+        if ($count === 0) {
+            return '';
+        }
+        if ($count === 1) {
+            return $labels[0];
+        }
+        if ($count === 2) {
+            return $labels[0] . ' and ' . $labels[1];
+        }
+
+        $last = array_pop($labels);
+
+        return implode(', ', $labels) . ', and ' . $last;
+    }
+
+    private static function nextDay(string $ymd): string
+    {
+        $date = DateTime::createFromFormat('!Y-m-d', $ymd, new \DateTimeZone('America/Edmonton'));
+        if (!$date) {
+            return $ymd;
+        }
+        $date->modify('+1 day');
+
+        return $date->format('Y-m-d');
     }
 
     private static function formatAvailabilityRange(array $period): string
