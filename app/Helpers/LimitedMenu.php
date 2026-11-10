@@ -15,11 +15,15 @@ class LimitedMenu
 {
     const GIFT_CERTIFICATE_ID = 5317;
     const GENERATED_CATEGORY_META = 'bonton_limited_menu';
+    const MENU_PARENT_SLUG = 'limited-menu';
+    const MENU_PARENT_NAME = 'Limited Menu';
 
     private static $periods = null;
     private static $generated_category_ids = null;
     private static $loading_generated_ids = false;
     private static $syncing_categories = false;
+    private static $arranging_terms = false;
+    private static $menu_parent_id = null;
 
     /**
      * @return array<int, array<string, mixed>>
@@ -820,7 +824,9 @@ class LimitedMenu
     public static function register(): void
     {
         add_action('acf/save_post', [self::class, 'syncGeneratedCategories'], 20);
+        add_action('init', [self::class, 'syncMenuCategoryParents'], 30);
         add_action('pre_get_terms', [self::class, 'hideGeneratedFromTermQueries']);
+        add_filter('get_terms', [self::class, 'arrangeLimitedMenuParent'], 20, 3);
         add_filter('get_the_terms', [self::class, 'hideGeneratedFromPostTerms'], 20, 3);
     }
 
@@ -883,14 +889,14 @@ class LimitedMenu
             $changed = true;
         }
 
-        if (!$changed) {
-            return;
+        if ($changed) {
+            self::$syncing_categories = true;
+            update_field('limited_menu_periods', $rows, 'option');
+            self::$syncing_categories = false;
+            self::$periods = null;
         }
 
-        self::$syncing_categories = true;
-        update_field('limited_menu_periods', $rows, 'option');
-        self::$syncing_categories = false;
-        self::$periods = null;
+        self::syncMenuCategoryParents();
     }
 
     public static function isGeneratedCategory(int $category_id): bool
@@ -953,7 +959,10 @@ class LimitedMenu
             }
         }
 
-        $ids = self::generatedCategoryIds();
+        $enabled = array_fill_keys(self::enabledMenuCategoryIds(), true);
+        $ids = array_filter(self::generatedCategoryIds(), function ($id) use ($enabled) {
+            return !isset($enabled[(int) $id]);
+        });
         if (!$ids) {
             return;
         }
@@ -1040,6 +1049,246 @@ class LimitedMenu
     private static function generatedCategoryDescription(): string
     {
         return 'Allowlist for a limited menu. Hidden from the shop category filters.';
+    }
+
+    /**
+     * Enabled menus become children of one "Limited Menu" parent.
+     * A category chosen by hand, such as Bakery, is not moved.
+     */
+    public static function syncMenuCategoryParents(): void
+    {
+        if (self::$syncing_categories || !function_exists('get_field')) {
+            return;
+        }
+
+        $rows = get_field('limited_menu_periods', 'option');
+        if (!is_array($rows)) {
+            return;
+        }
+
+        $enabled = [];
+        $managed = [];
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            $category_id = self::termIdFromField($row['menu_category'] ?? 0);
+            if ($category_id <= 0) {
+                continue;
+            }
+            $managed[$category_id] = true;
+            if (!empty($row['enabled'])) {
+                $enabled[$category_id] = true;
+            }
+        }
+
+        if (!$enabled && !self::limitedMenuParentId()) {
+            return;
+        }
+
+        $parent_id = self::ensureLimitedMenuParent();
+        if ($parent_id <= 0) {
+            return;
+        }
+
+        self::$syncing_categories = true;
+        foreach (array_keys($enabled) as $category_id) {
+            if (!self::canNestCategory($category_id, $parent_id)) {
+                continue;
+            }
+            $term = get_term($category_id, 'product_cat');
+            if ($term && !is_wp_error($term) && (int) $term->parent !== $parent_id) {
+                wp_update_term($category_id, 'product_cat', ['parent' => $parent_id]);
+            }
+        }
+
+        $children = get_terms([
+            'taxonomy' => 'product_cat',
+            'parent' => $parent_id,
+            'hide_empty' => false,
+            'fields' => 'ids',
+        ]);
+        foreach (is_array($children) ? $children : [] as $child_id) {
+            $child_id = (int) $child_id;
+            if (isset($enabled[$child_id])) {
+                continue;
+            }
+            if (!isset($managed[$child_id]) && !self::isGeneratedCategory($child_id)) {
+                continue;
+            }
+            wp_update_term($child_id, 'product_cat', ['parent' => 0]);
+        }
+        self::$syncing_categories = false;
+        self::$generated_category_ids = null;
+    }
+
+    /**
+     * The shop filter sorts categories by ID, so a new parent would land last.
+     * Pull Limited Menu to the front and order its menus by start date.
+     *
+     * @param mixed $terms
+     * @param mixed $taxonomies
+     * @param mixed $args
+     * @return mixed
+     */
+    public static function arrangeLimitedMenuParent($terms, $taxonomies, $args = [])
+    {
+        if (self::$arranging_terms || self::$syncing_categories || !is_array($terms) || !$terms) {
+            return $terms;
+        }
+        if (!in_array('product_cat', (array) $taxonomies, true) || !isset($terms[0]->term_id)) {
+            return $terms;
+        }
+        if (!self::hidingGeneratedCategories()) {
+            return $terms;
+        }
+        $args = is_array($args) ? $args : [];
+        foreach (['slug', 'name', 'include', 'term_taxonomy_id', 'object_ids', 'child_of'] as $lookup) {
+            if (!empty($args[$lookup])) {
+                return $terms;
+            }
+        }
+        if (array_key_exists('parent', $args) && $args['parent'] !== '' && $args['parent'] !== false) {
+            return $terms;
+        }
+
+        self::$arranging_terms = true;
+        $parent_id = self::limitedMenuParentId();
+        $starts = self::enabledCategoryStartDates();
+        self::$arranging_terms = false;
+
+        if ($parent_id <= 0) {
+            return $terms;
+        }
+
+        $parent = null;
+        $children = [];
+        $rest = [];
+        foreach ($terms as $term) {
+            if ((int) $term->term_id === $parent_id) {
+                $parent = $term;
+                continue;
+            }
+            if ((int) $term->parent === $parent_id) {
+                $children[] = $term;
+                continue;
+            }
+            $rest[] = $term;
+        }
+        if (!$parent) {
+            return $terms;
+        }
+        if (!$children) {
+            return $rest;
+        }
+
+        usort($children, function ($a, $b) use ($starts) {
+            $left = $starts[(int) $a->term_id] ?? '9999-99-99';
+            $right = $starts[(int) $b->term_id] ?? '9999-99-99';
+            $by_date = strcmp($left, $right);
+            if ($by_date !== 0) {
+                return $by_date;
+            }
+
+            return strcasecmp($a->name, $b->name);
+        });
+
+        return array_merge([$parent], $rest, $children);
+    }
+
+    private static function ensureLimitedMenuParent(): int
+    {
+        $existing = self::limitedMenuParentId();
+        if ($existing > 0) {
+            return $existing;
+        }
+
+        $created = wp_insert_term(self::MENU_PARENT_NAME, 'product_cat', [
+            'slug' => self::MENU_PARENT_SLUG,
+            'description' => 'Groups the limited menus in the shop filter.',
+        ]);
+        if (is_wp_error($created) || empty($created['term_id'])) {
+            return 0;
+        }
+
+        self::$menu_parent_id = (int) $created['term_id'];
+
+        return self::$menu_parent_id;
+    }
+
+    private static function limitedMenuParentId(): int
+    {
+        if (self::$menu_parent_id !== null) {
+            return self::$menu_parent_id;
+        }
+
+        $term = get_term_by('slug', self::MENU_PARENT_SLUG, 'product_cat');
+        self::$menu_parent_id = ($term && !is_wp_error($term)) ? (int) $term->term_id : 0;
+
+        return self::$menu_parent_id;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private static function enabledCategoryStartDates(): array
+    {
+        $starts = [];
+        foreach (self::getPeriods() as $period) {
+            $category_id = (int) ($period['category_id'] ?? 0);
+            if ($category_id <= 0 || empty($period['start'])) {
+                continue;
+            }
+            if (!isset($starts[$category_id]) || $period['start'] < $starts[$category_id]) {
+                $starts[$category_id] = (string) $period['start'];
+            }
+        }
+
+        return $starts;
+    }
+
+    /**
+     * @return int[]
+     */
+    private static function enabledMenuCategoryIds(): array
+    {
+        return array_map('intval', array_keys(self::enabledCategoryStartDates()));
+    }
+
+    private static function canNestCategory(int $category_id, int $parent_id): bool
+    {
+        if ($category_id <= 0 || $category_id === $parent_id) {
+            return false;
+        }
+
+        $term = get_term($category_id, 'product_cat');
+        if (!$term || is_wp_error($term)) {
+            return false;
+        }
+
+        $protected = [
+            'bakery' => true,
+            'patisserie' => true,
+            'grocery' => true,
+            'specialties' => true,
+            'collections' => true,
+            'uncategorized' => true,
+            'holiday' => true,
+            'specials' => true,
+            self::MENU_PARENT_SLUG => true,
+        ];
+        if (isset($protected[$term->slug])) {
+            return false;
+        }
+
+        $parent = (int) $term->parent;
+        if ($parent !== 0 && $parent !== $parent_id) {
+            return false;
+        }
+
+        $children = get_term_children($category_id, 'product_cat');
+
+        return !is_array($children) || !$children;
     }
 
     private static function hidingGeneratedCategories(): bool
