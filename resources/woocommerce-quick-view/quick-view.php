@@ -19,21 +19,7 @@ add_filter( 'woocommerce_add_to_cart_form_action', '__return_empty_string' );
 
 do_action( 'wc_quick_view_before_single_product' );
 
-//Is the product restricted?
-$dateformat = "d/m/Y";
-$pickup_restriction_data = "";
-$pickup_restriction_end_data = "";
 $sixth_item_free = "";
-
-$pickup_restriction_data_check = get_field('restricted_pickup', $product_id);
-$pickup_restriction_end_data_check = get_field('restricted_pickup_end', $product_id);
-
-if(isset($pickup_restriction_data_check)) {
-	$pickup_restriction_data = get_field('restricted_pickup', $product_id);
-}
-if(isset($pickup_restriction_end_data_check)) {
-	$pickup_restriction_end_data = get_field('restricted_pickup_end', $product_id);
-}
 
 ?>
 
@@ -53,79 +39,32 @@ if(isset($pickup_restriction_end_data_check)) {
 		 * Add availability display to product single page and product modal - MOBILE VIEW
 		 */
 
-			$terms = get_the_terms( $product_id, 'pa_availability' );
-
-			usort($terms, function($a, $b) {
-				return strcmp($a->term_id, $b->term_id);
-			});
-
-			$days_available_string = join(', ', wp_list_pluck($terms, 'name'));
 			$long_fermentation = '';
 			$bulk_discount = '';
 
-			if (is_array($terms) || is_object($terms)) {
-				foreach ($terms as $term) {
-					$days = $term->name;
-					$days_available_array[] = $days;
-				}
-			}
-			//Check if requires long fermentation lead time
 			if ( has_term( array('long-fermentation'), 'product_tag', $product_id ) ){
 				$long_fermentation = "<span class=\"long_fermentation\">* Not available for next-day orders</span>";
 			}
 
-			//Check if qualifies for Bulk Ordering
 			if ( has_term( array('bulk-discount'), 'product_tag', $product_id ) ){
 				$bulk_discount = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Eligible for Bulk Discount</a>";
 			}
 
-			//Check if qualifies for buy 5 get 1 free
 			if ( has_term( array('6th-item-free'), 'product_tag', $product_id ) ){
 				$sixth_item_free = "<a class=\"bulk-discount\" target=\"_blank\" href=\"/bulk-bread-pricing\">Sixth item is free when you buy 1/2 dozen!</a>";
 			}
 
 		?>
-		<div class="availability-mobile d-md-none">
+		<div class="product-availability-slot d-md-none">
 			<?php
-				if (in_array('Everyday', $days_available_array)) {
-					$days = "";
-					echo '<strong>Available:</strong> <span>Every day! (Tuesday - Saturday) '.$long_fermentation.'</span>';
-				}
-				else {
-						// $days = implode(', ', $days_available_);
-						echo '<strong>Available:</strong> <span>'.$days_available_string . $long_fermentation.'</span>';
-				}				
+				\App\Helpers\LimitedMenu::echoAvailabilityCard((int) $product_id);
+				echo $long_fermentation;
 			?>
 		</div>
-		
-			<?php
-				//Display notice if the product has restricted pickup dates
-				if ($pickup_restriction_data) {
-					$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
-					$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
-					echo '<div class="restricted d-md-none">Only available from '. $restricted_start_date->format('D, M j') . ' to 	' . $restricted_end_date->format('D, M j').'</div>';
-				}
-			?>
 		<div class="sidebar d-none d-md-block">
+			<?php \App\Helpers\LimitedMenu::echoAvailabilityCard((int) $product_id); ?>
 			<ul>
-
-			
 				<?php
-				/**
-				 * Add availability display to product single page and product modal
-				 */
-					
-					if (in_array('Everyday', $days_available_array)) {
-						$days = "";
-						echo '<li>Available: <span>Every day! (Tuesday - Saturday)</span></li>';
-					}
-					else {
-							// $days = implode(', ', $days_available);
-							echo '<li>Available: <span>'.$days_available_string .'</span></li>';
-					}
-
-					\App\Helpers\LimitedMenu::echoProductFlagListItems((int) $product_id);
-					
 					// get product_tags of the current product
 					$current_tags = get_the_terms( $product_id, 'product_tag' );
 					if ( $current_tags && ! is_wp_error( $current_tags ) ) { 
@@ -163,11 +102,6 @@ if(isset($pickup_restriction_end_data_check)) {
 						</div>';
 					}
 
-					if ($pickup_restriction_data) {
-						$restricted_start_date = DateTime::createFromFormat($dateformat, $pickup_restriction_data);
-						$restricted_end_date = DateTime::createFromFormat($dateformat, $pickup_restriction_end_data);
-						echo '<div class="notice"><strong>Please note!</strong> This product is only available from '. $restricted_start_date->format('D, M j') . ' to 	' . $restricted_end_date->format('D, M j') . '</div>';
-					}
 				?>
 
 
@@ -227,17 +161,13 @@ if(isset($pickup_restriction_end_data_check)) {
 			<div class="product_meta d-md-none">
 				
 					<?php
-						$limited_menu_labels = \App\Helpers\LimitedMenu::productHasMenuNotes((int) $product_id);
 						$has_tags = !empty($current_tags) && ! is_wp_error( $current_tags );
-						if ( $limited_menu_labels || $has_tags ) {
+						if ( $has_tags ) {
 							echo '<ul>';
-							\App\Helpers\LimitedMenu::echoProductFlagListItems((int) $product_id);
-							if ( $has_tags ) {
-								foreach ($current_tags as $tag) {
-									$tag_title = $tag->name;
-									if ($tag_title != "Bulk Discount") {
-										echo '<li>'.$tag_title.'</li>';
-									}
+							foreach ($current_tags as $tag) {
+								$tag_title = $tag->name;
+								if ($tag_title != "Bulk Discount") {
+									echo '<li>'.$tag_title.'</li>';
 								}
 							}
 							echo '</ul>';

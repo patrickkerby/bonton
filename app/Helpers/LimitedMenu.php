@@ -178,18 +178,27 @@ class LimitedMenu
      */
     public static function periodsForProduct(int $product_id): array
     {
-        return self::upcomingPeriodsForProduct($product_id, true);
+        return self::periodsThatChangeAvailability(
+            self::upcomingPeriodsForProduct($product_id, true),
+            $product_id,
+            true
+        );
     }
 
     /**
      * Enabled, not-yet-ended periods this product cannot be ordered on.
      * Gift certificates stay purchasable, so they are not listed here.
+     * Periods the product could not be ordered on anyway are omitted.
      *
      * @return array<int, array<string, mixed>>
      */
     public static function periodsExcludingProduct(int $product_id): array
     {
-        return self::upcomingPeriodsForProduct($product_id, false);
+        return self::periodsThatChangeAvailability(
+            self::upcomingPeriodsForProduct($product_id, false),
+            $product_id,
+            false
+        );
     }
 
     public static function productHasMenuNotes(int $product_id): bool
@@ -222,16 +231,81 @@ class LimitedMenu
      */
     public static function echoProductFlagListItems(int $product_id): void
     {
-        self::echoFlagItem(
-            'Limited menu',
-            self::productFlagLabels($product_id),
-            'Shorter menu on these pickup dates. This item is included, in addition to the days above.'
-        );
+        $included = self::periodsForProduct($product_id);
+        $unusual_only = $included !== [] && !array_filter($included, function ($period) {
+            return empty($period['adds_unusual_days_only']);
+        });
+        $included_hint = $unusual_only
+            ? 'Usually not offered on these days. It is available for this limited menu.'
+            : 'Shorter menu on these pickup dates. This item is included, in addition to the days above.';
+
+        self::echoFlagItem('Limited menu', self::dateLabelsForPeriods($included), $included_hint);
         self::echoFlagItem(
             'Not on the limited menu',
             self::productExclusionLabels($product_id),
             'Shorter menu on these pickup dates. This item isn’t included.'
         );
+    }
+
+    /**
+     * Product-page availability: weekday pills, limited-menu notes, and the date window.
+     */
+    public static function echoAvailabilityCard(int $product_id): void
+    {
+        if ($product_id <= 0) {
+            return;
+        }
+
+        $active_days = array_fill_keys(self::availabilityDayNames($product_id), true);
+        $letters = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        $day_names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        $spoken_days = array_keys($active_days);
+        echo '<div class="product-availability">';
+        echo '<div class="product-availability__heading"><span>Availability</span></div>';
+        if ($spoken_days) {
+            echo '<span class="screen-reader-text">Available ' . esc_html(implode(', ', $spoken_days)) . '.</span>';
+        }
+        echo '<div class="product-availability__days" aria-hidden="true">';
+        foreach ($day_names as $index => $day_name) {
+            $active = isset($active_days[$day_name]) ? ' is-active' : '';
+            echo '<span class="product-availability__day' . $active . '">' . $letters[$index] . '</span>';
+        }
+        echo '</div>';
+
+        foreach (self::periodsForProduct($product_id) as $period) {
+            $range = self::formatAvailabilityRange($period);
+            if ($range === '') {
+                continue;
+            }
+            echo '<p class="product-availability__menu">';
+            echo '<strong>Special Availability:</strong>';
+            echo '<span>Available every day</span>';
+            echo '<strong>' . esc_html($range) . '</strong>';
+            echo '</p>';
+        }
+
+        foreach (self::periodsExcludingProduct($product_id) as $period) {
+            $range = self::formatAvailabilityRange($period);
+            if ($range === '') {
+                continue;
+            }
+            echo '<p class="product-availability__menu">';
+            echo '<strong>Limited Availability:</strong>';
+            echo '<span>Not available</span>';
+            echo '<strong>' . esc_html($range) . '</strong>';
+            echo '</p>';
+        }
+
+        $window = self::restrictedWindowLabel($product_id);
+        if ($window !== '') {
+            echo '<p class="product-availability__window">';
+            echo '<strong>NOTE!</strong>';
+            echo '<span>This item is only available ' . esc_html($window) . '</span>';
+            echo '</p>';
+        }
+
+        echo '</div>';
     }
 
     /**
@@ -323,6 +397,141 @@ class LimitedMenu
     }
 
     /**
+     * Drop a period when it does not change whether this product can be ordered.
+     *
+     * A "not included" note is kept only when the menu covers a day the product
+     * could already be picked up. An "included" note is kept when the product
+     * is still available on its usual days, or when the menu opens days it is
+     * not usually offered. A menu outside the product's own date window is omitted.
+     *
+     * @param array<int, array<string, mixed>> $periods
+     * @return array<int, array<string, mixed>>
+     */
+    private static function periodsThatChangeAvailability(array $periods, int $product_id, bool $included): array
+    {
+        $out = [];
+        foreach ($periods as $period) {
+            $effect = self::periodAvailabilityEffect($product_id, $period);
+            if ($included) {
+                if (!$effect['keeps_normal_days'] && !$effect['adds_unusual_days']) {
+                    continue;
+                }
+                $period['adds_unusual_days_only'] = !$effect['keeps_normal_days'] && $effect['adds_unusual_days'];
+            } elseif (!$effect['keeps_normal_days']) {
+                continue;
+            }
+            $out[] = $period;
+        }
+
+        return $out;
+    }
+
+    /**
+     * @return array{keeps_normal_days: bool, adds_unusual_days: bool}
+     */
+    private static function periodAvailabilityEffect(int $product_id, array $period): array
+    {
+        $effect = [
+            'keeps_normal_days' => false,
+            'adds_unusual_days' => false,
+        ];
+        $today = (new DateTime('today', new \DateTimeZone('America/Edmonton')))->format('Y-m-d');
+        $start = $period['start'] < $today ? $today : $period['start'];
+        $window = self::restrictedWindow($product_id);
+        $sold_out = array_fill_keys(SoldOutDates::forCartItem($product_id, 0), true);
+        $days = self::availabilityDayNames($product_id);
+
+        foreach (self::datesInRange($start, $period['end']) as $ymd) {
+            $date = DateTime::createFromFormat('!Y-m-d', $ymd);
+            if (!$date) {
+                continue;
+            }
+            $weekday_number = (int) $date->format('w');
+            if ($weekday_number === 0 || $weekday_number === 1) {
+                continue;
+            }
+            if (isset($sold_out[$ymd])) {
+                continue;
+            }
+            if ($window && ($ymd < $window['start'] || $ymd > $window['end'])) {
+                continue;
+            }
+
+            $day_name = $date->format('l');
+            if ($days && in_array($day_name, $days, true)) {
+                $effect['keeps_normal_days'] = true;
+            } else {
+                $effect['adds_unusual_days'] = true;
+            }
+        }
+
+        return $effect;
+    }
+
+    /**
+     * Weekday names this product is normally offered. "Everyday" is Tuesday–Saturday.
+     *
+     * @return string[]
+     */
+    private static function availabilityDayNames(int $product_id): array
+    {
+        $names = [];
+        $terms = get_the_terms($product_id, 'pa_availability');
+        if (!is_array($terms) || is_wp_error($terms) || !$terms) {
+            $field = function_exists('get_field') ? get_field('availability', $product_id) : null;
+            $terms = is_array($field) ? $field : [];
+        }
+        foreach ($terms as $term) {
+            if (is_object($term) && isset($term->name)) {
+                $names[] = (string) $term->name;
+            } elseif (is_string($term)) {
+                $names[] = $term;
+            }
+        }
+        if (in_array('Everyday', $names, true)) {
+            return ['Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        }
+
+        return array_values(array_unique($names));
+    }
+
+    /**
+     * Inclusive pickup window, when the product is only offered between two dates.
+     *
+     * @return array{start: string, end: string}|null
+     */
+    private static function restrictedWindow(int $product_id): ?array
+    {
+        if (!function_exists('get_field')) {
+            return null;
+        }
+        $start = self::flexibleDate(get_field('restricted_pickup', $product_id));
+        $end = self::flexibleDate(get_field('restricted_pickup_end', $product_id));
+        if (!$start || !$end || $end < $start) {
+            return null;
+        }
+
+        return ['start' => $start, 'end' => $end];
+    }
+
+    private static function flexibleDate($value): ?string
+    {
+        $ymd = self::normalizeDate($value);
+        if ($ymd) {
+            return $ymd;
+        }
+        if (!is_string($value) || trim($value) === '') {
+            return null;
+        }
+        $dt = DateTime::createFromFormat('!d/m/Y', trim($value));
+        if ($dt instanceof DateTime) {
+            return $dt->format('Y-m-d');
+        }
+
+        return null;
+    }
+
+    /**
      * @param array<int, array<string, mixed>> $periods
      * @return string[]
      */
@@ -365,6 +574,42 @@ class LimitedMenu
         $category_ids = self::categoryAndChildren((int) $period['category_id']);
 
         return $category_ids && has_term($category_ids, 'product_cat', $product_id);
+    }
+
+    private static function formatAvailabilityRange(array $period): string
+    {
+        $tz = new \DateTimeZone('America/Edmonton');
+        $start = DateTime::createFromFormat('!Y-m-d', $period['start'], $tz);
+        $end = DateTime::createFromFormat('!Y-m-d', $period['end'], $tz);
+        if (!$start || !$end) {
+            return '';
+        }
+
+        if ($start->format('Y-m-d') === $end->format('Y-m-d')) {
+            return $start->format('F j');
+        }
+
+        if ($start->format('Y-m') === $end->format('Y-m')) {
+            return $start->format('F j') . ' - ' . $end->format('j');
+        }
+
+        return $start->format('F j') . ' - ' . $end->format('F j');
+    }
+
+    private static function restrictedWindowLabel(int $product_id): string
+    {
+        $window = self::restrictedWindow($product_id);
+        if (!$window) {
+            return '';
+        }
+        $tz = new \DateTimeZone('America/Edmonton');
+        $start = DateTime::createFromFormat('!Y-m-d', $window['start'], $tz);
+        $end = DateTime::createFromFormat('!Y-m-d', $window['end'], $tz);
+        if (!$start || !$end) {
+            return '';
+        }
+
+        return $start->format('D, M j') . ' to ' . $end->format('D, M j');
     }
 
     private static function formatPeriodFlagLabel(array $period): string

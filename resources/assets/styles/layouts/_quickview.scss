@@ -172,7 +172,7 @@ div.pp_woocommerce_quick_view {
 
   .sidebar ul li {
     position: relative;
-    padding-left: 1rem;
+    padding-left: 1.35rem;
     margin-bottom: 0.75rem;
     line-height: 19px;
     list-style-type: none;
@@ -182,13 +182,14 @@ div.pp_woocommerce_quick_view {
     }
 
     &::before {
-      color: $highlight;
-      content: "\2022";
-      font-size: 25px;
+      content: "";
       position: absolute;
       left: 0;
-      top: 0;
-      line-height: 17px;
+      top: 1px;
+      width: 14px;
+      height: 14px;
+      background: url(../../images/check.svg) no-repeat center center;
+      background-size: 12px 11px;
     }
   }
 
@@ -215,6 +216,124 @@ div.pp_woocommerce_quick_view {
     padding: 1rem;
     color: #fff;
     margin-top: 2rem;
+  }
+
+  .product-availability {
+    position: relative;
+    margin: 0.35rem 0 1rem;
+    padding: 0.95rem 0.7rem 0.85rem;
+    border: 2px solid $highlight;
+    text-align: center;
+  }
+
+  .sidebar .product-availability + ul {
+    border-top: 0;
+    padding-top: 0.15rem;
+  }
+
+  .product-availability__heading {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
+
+    span {
+      padding: 0 0.45rem;
+      background: #fff;
+      color: $highlight;
+      font-family: $font-family-sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+  }
+
+  .product-availability__days {
+    display: inline-flex;
+    height: 22px;
+    margin-top: 1rem;
+    border: solid 2px #ddf1e8;
+    border-width: 0 1px;
+  }
+
+  .product-availability__day {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border: solid 2px #ddf1e8;
+    border-width: 2px 1px;
+    color: #ddf1e8;
+    font-family: $font-family-sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1;
+
+    &.is-active {
+      width: 24px;
+      margin: 0 -1px;
+      background: $highlight;
+      border: solid 2px $highlight;
+      border-width: 2px 3px;
+      color: #fff;
+    }
+  }
+
+  .product-availability__menu {
+    margin: 1.25rem 0 0.75rem 0;
+    color: $charcoal;
+    font-family: $font-family-sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.25;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong:first-child {
+      margin-bottom: 0.4rem;
+      color: $highlight;
+      font-weight: 800;
+    }
+
+    span {
+      font-weight: 500;
+    }
+
+    strong:last-child {
+      font-weight: 800;
+    }
+  }
+
+  .product-availability__window {
+    margin: 1.25rem -0.75rem -0.9rem;
+    padding: 1rem 0.5rem;
+    background: $highlight;
+    color: #fff;
+
+    strong,
+    span {
+      display: block;
+      line-height: 1.25;
+    }
+
+    strong {
+      margin-bottom: 0.05rem;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+    }
+
+    span {
+      font-size: 14px;
+      font-weight: 500;
+    }
   }
 
   h1 {
@@ -721,6 +840,19 @@ div.pp_woocommerce_quick_view {
         font-weight: 700;
       }
     }
+  }
+}
+
+.product-availability-slot {
+  margin: 1.25rem 1rem 0;
+
+  .long_fermentation {
+    display: block;
+    margin-top: 0.55rem;
+    color: $highlight;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
   }
 }
 
