@@ -8,9 +8,15 @@
   @version 2.3.6
 --}}
 
-@php defined( 'ABSPATH' ) || exit @endphp
+@php
+  defined( 'ABSPATH' ) || exit;
+  // Rendered again on cart AJAX (remove item, shipping). The checkout lock
+  // lives on a parent that those responses do not replace.
+  $bonton_cart_state = new \App\Controllers\WoocommerceCart();
+  $bonton_cart_conflict = $bonton_cart_state->conflict() ? '1' : '0';
+@endphp
 
-<div class="cart_totals {{ WC()->customer->has_calculated_shipping() ? 'calculated_shipping' : '' }}">
+<div class="cart_totals {{ WC()->customer->has_calculated_shipping() ? 'calculated_shipping' : '' }}" data-bonton-conflict="{{ $bonton_cart_conflict }}">
 
   @php do_action( 'woocommerce_before_cart_totals' ) @endphp
 

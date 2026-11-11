@@ -268,9 +268,22 @@ function bonton_shipping_options_cart_ui_js()
             $collaterals.toggleClass('shipping-options-incomplete', incomplete);
         }
 
+        function syncCartConflictFromTotals() {
+            var flag = $('.cart_totals').attr('data-bonton-conflict');
+            if (flag !== '0' && flag !== '1') {
+                return;
+            }
+            var conflict = flag === '1';
+            $collaterals.toggleClass('conflict', conflict);
+            $('.cart-date-conflict-alert').toggle(conflict);
+        }
+
         updateShippingOptionsUi();
         $selects.on('change', updateShippingOptionsUi);
-        $(document.body).on('updated_cart_totals', updateShippingOptionsUi);
+        $(document.body).on('updated_cart_totals', function () {
+            updateShippingOptionsUi();
+            syncCartConflictFromTotals();
+        });
 
         $(document).on('click', '.cart-collaterals.shipping-options-incomplete a.checkout-button', function (e) {
             e.preventDefault();

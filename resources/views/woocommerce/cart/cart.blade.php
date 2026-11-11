@@ -101,7 +101,7 @@
 
 {{-- Validation messages --}}
 @if ($conflict && $session_pickup_date)
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+  <div class="alert alert-danger alert-dismissible fade show cart-date-conflict-alert" role="alert">
     <div class="alert-danger">
       <strong>Pickup date issue.</strong> Some items aren't available on {{ $session_pickup_date }}. Choose a new date and tap <strong>Update</strong> on the calendar, or remove those items.
     </div>
